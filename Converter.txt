@@ -1,0 +1,5 @@
+python -m PyQt5.uic.pyuic -x untitled.ui -o sample.py
+
+pyrcc5 source.qrc -o source_rc.py
+
+python -m PyQt5.uic.pyuic -x test_remove.ui -o test_remove.py

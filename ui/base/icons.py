@@ -3,65 +3,65 @@ from PyQt5.QtGui import QIcon
 
 
 class IconSize:
-    SIZE_SMALL = QSize(24, 24)
-    SIZE_MEDIUM = QSize(32, 32)
-    # SIZE_LARGE = QSize(40, 40)
-    SIZE_LARGE = QSize(48, 48)
-    SIZE_XLARGE = QSize(64, 64)
+    SMALL = QSize(24, 24)
+    MEDIUM = QSize(32, 32)
+    # LARGE = QSize(40, 40)
+    LARGE = QSize(48, 48)
+    XLARGE = QSize(64, 64)
 
 
-class Icon:
-    # align_center = Qt.AlignCenter
-    SIZES = IconSize
-    APP_ICON = QIcon("Music.ico")
+class Icons:
+    def __init__(self):
+        # align_center = Qt.AlignCenter
+        self.SIZES = IconSize
+        self.APP_ICON = QIcon("Music.ico")
 
-    DELETE = QIcon("images/icons/playlist-delete.png")
-    PLAY_SONG = QIcon("images/icons/play-menu.png")
-    MORE = QIcon("images/icons/more.png")
-    SUBSTRACT = QIcon("images/icons/substract.png")
-    ADD = QIcon("images/icons/add.png")
-    EDIT = QIcon("images/icons/edit-song.png")
-    EDIT_PLAYLIST = QIcon("images/icons/edit-playlist.png")
-    CLOSE = QIcon("images/icons/close.png")
+        self.DELETE = QIcon("src/icons/playlist-delete.png")
+        self.PLAY_SONG = QIcon("src/icons/play-menu.png")
+        self.MORE = QIcon("src/icons/more.png")
+        self.SUBSTRACT = QIcon("src/icons/substract.png")
+        self.ADD = QIcon("src/icons/add.png")
+        self.EDIT = QIcon("src/icons/edit.png")
+        self.CLOSE = QIcon("src/icons/close.png")
 
-    LOVE = QIcon("images/icons/love.png")
-    UNLOVE = QIcon("images/icons/unlove.png")
+        self.LOVE = QIcon("src/icons/love.png")
+        # self.UNLOVE = QIcon("src/icons/unlove.png")
 
-    LIGHT_MINIMIZE = QIcon("images/icons/minimize-light.png")
-    DARK_MINIMIZE = QIcon("images/icons/minimize-dark.png")
-    CLOSE_2 = QIcon("images/icons/close-window.png")
-    LIGHT_BACKWARD = QIcon("images/icons/chevron-backward-light.png")
-    DARK_BACKWARD = QIcon("images/icons/chevron-backward-dark.png")
+        self.LIGHT_MINIMIZE = QIcon("src/icons/minimize-light.png")
+        self.DARK_MINIMIZE = QIcon("src/icons/minimize-dark.png")
+        self.CLOSE_2 = QIcon("src/icons/close-window.png")
+        self.LIGHT_BACKWARD = QIcon("src/icons/chevron-backward-light.png")
+        self.DARK_BACKWARD = QIcon("src/icons/chevron-backward-dark.png")
 
-    LIGHT_FORWARD = QIcon("images/icons/chevron-forward-light.png")
-    DARK_FORWARD = QIcon("images/icons/chevron-forward-dark.png")
+        self.LIGHT_FORWARD = QIcon("src/icons/chevron-forward-light.png")
+        self.DARK_FORWARD = QIcon("src/icons/chevron-forward-dark.png")
 
-    DARK_SETTINGS = QIcon("images/icons/settings-dark.png")
-    LIGHT_SETTINGS = QIcon("images/icons/settings-light.png")
-    LIGHT_LANGUAGE = QIcon("images/icons/language-light.png")
-    DARK_LANGUAGE = QIcon("images/icons/language-dark.png")
-    LIGHT_FOLDER = QIcon("images/icons/folder-light.png")
-    DARK_FOLDER = QIcon("images/icons/folder-dark.png")
-    LIGHT_DARKMODE = QIcon("images/icons/dark-mode-light.png")
-    DARK_DARKMODE = QIcon("images/icons/dark-mode-dark.png")
+        self.DARK_SETTINGS = QIcon("src/icons/settings-dark.png")
+        self.LIGHT_SETTINGS = QIcon("src/icons/settings-light.png")
+        self.LIGHT_LANGUAGE = QIcon("src/icons/language-light.png")
+        self.DARK_LANGUAGE = QIcon("src/icons/language-dark.png")
+        self.LIGHT_FOLDER = QIcon("src/icons/folder-light.png")
+        self.DARK_FOLDER = QIcon("src/icons/folder-dark.png")
+        self.LIGHT_DARKMODE = QIcon("src/icons/dark-mode-light.png")
+        self.DARK_DARKMODE = QIcon("src/icons/dark-mode-dark.png")
 
-    # Icon on Player Bar
-    APPLY = QIcon("images/icons/apply.png")
-    PLAY_PLAYER = QIcon("images/icons/play-player.png")
-    PAUSE = QIcon("images/icons/pause-player.png")
-    PREVIOUS = QIcon("images/icons/previous.png")
-    NEXT = QIcon("images/icons/next.png")
-    LOOP = QIcon("images/icons/loop.png")
-    UNLOOP = QIcon("images/icons/unloop.png")
-    SHUFFLE = QIcon("images/icons/shuffle.png")
-    UNSHUFFLE = QIcon("images/icons/unshuffle.png")
-    VOLUME_UP = QIcon("images/icons/volume-up.png")
-    VOLUME_DOWN = QIcon("images/icons/volume-down.png")
-    VOLUME_SILENT = QIcon("images/icons/volume-silent.png")
-    TIMER = QIcon("images/icons/timer.png")
+        # Icon on Player Bar
+        self.APPLY = QIcon("src/icons/apply.png")
+        self.PLAY_PLAYER = QIcon("src/icons/play-player.png")
+        self.PAUSE = QIcon("src/icons/pause-player.png")
+        self.PREVIOUS = QIcon("src/icons/previous.png")
+        self.NEXT = QIcon("src/icons/next.png")
+        self.LOOP = QIcon("src/icons/loop.png")
+        self.UNLOOP = QIcon("src/icons/unloop.png")
+        self.SHUFFLE = QIcon("src/icons/shuffle.png")
+        self.UNSHUFFLE = QIcon("src/icons/unshuffle.png")
+        self.VOLUME_UP = QIcon("src/icons/volume-up.png")
+        self.VOLUME_DOWN = QIcon("src/icons/volume-down.png")
+        self.VOLUME_SILENT = QIcon("src/icons/volume-silent.png")
+        self.TIMER = QIcon("src/icons/timer.png")
 
-    # # ! magic numbers
-    # PLAYLIST_COVER_SIZE = 320
-    # PLAYLIST_COVER_RADIUS = 32
-    # SONG_COVER_SIZE = 64
-    # SONG_COVER_RADIUS = 12
+        # # ! magic numbers
+        # PLAYLIST_COVER_SIZE = 320
+        # PLAYLIST_COVER_RADIUS = 32
+        # SONG_COVER_SIZE = 64
+        # SONG_COVER_RADIUS = 12
