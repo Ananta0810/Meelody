@@ -3,15 +3,15 @@ from sys import path
 from PyQt5.QtGui import QCursor
 from PyQt5.QtWidgets import QPushButton
 
-from .background_color import BackgroundColor
 from .factory import ButtonFactory
-from .icon import Icon
 from .icon_button import IconButton
 from .toggle_icon_button import ToggleIconButton
 
 path.append(".")
 
 from ui.base.colors import Colors
+from ui.models.background_color import BackgroundColor
+from ui.models.icon import Icon
 
 
 class IconButtonFactory(ButtonFactory):
@@ -89,6 +89,16 @@ class IconButtonFactory(ButtonFactory):
         }
 
         self._toggleButtons: dict = {
+            "primary": ToggleIconButton(
+                backgroundColor=BackgroundColor(
+                    normal=Colors.PRIMARY.withAlpha(0.15),
+                    hover=Colors.PRIMARY.withAlpha(0.25),
+                ),
+                checkedBackgroundColor=BackgroundColor(
+                    normal=Colors.PRIMARY.withAlpha(0.15),
+                    hover=Colors.PRIMARY.withAlpha(0.25),
+                ),
+            ),
             "primary-danger": ToggleIconButton(
                 backgroundColor=BackgroundColor(
                     normal=Colors.PRIMARY.withAlpha(0.15),
@@ -120,7 +130,6 @@ class IconButtonFactory(ButtonFactory):
     def createButton(
         self,
         type: str,
-        name: str,
         iconSize: int,
         icon: Icon,
         checkedIcon: Icon = None,
@@ -134,7 +143,6 @@ class IconButtonFactory(ButtonFactory):
                 if padding is not None:
                     button.padding = padding
                 return button.export(
-                    name=name,
                     padding=padding,
                     iconSize=iconSize,
                     icon=icon,
@@ -147,7 +155,6 @@ class IconButtonFactory(ButtonFactory):
                 if padding is not None:
                     button.padding = padding
                 return button.export(
-                    name=name,
                     iconSize=iconSize,
                     icon=icon,
                     cursor=cursor,

@@ -1,10 +1,14 @@
+from sys import path
+
 from PyQt5.QtGui import QCursor
 from PyQt5.QtWidgets import QPushButton
 
-from .background_color import BackgroundColor
 from .button import Button
-from .icon import Icon
 from .toggle_button import ToggleButton
+
+path.append(".")
+from ui.models.background_color import BackgroundColor
+from ui.models.icon import Icon
 
 
 class ToggleIconButton(Button):
@@ -26,7 +30,6 @@ class ToggleIconButton(Button):
 
     def export(
         self,
-        name: str,
         padding: float,
         iconSize: int,
         icon: Icon,
@@ -74,5 +77,4 @@ class ToggleIconButton(Button):
             + f"background-color:{str(self.checkedBackgroundColor.hover) if self.checkedBackgroundColor is not None else None};"
             + "}"
         )
-        button.setObjectName(name)
         return button

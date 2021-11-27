@@ -5,21 +5,21 @@ class UnicodeString:
     setlocale(LC_ALL, "")
 
     @staticmethod
-    def to_lower(string: str) -> str:
+    def toLower(string: str) -> str:
         if string is None:
             return
         return strxfrm(string.lower())
 
     @staticmethod
-    def to_upper(string: str) -> str:
+    def toUpper(string: str) -> str:
         if string is None:
             return
         return strxfrm(string.upper())
 
     @staticmethod
     def compare(str1: str, str2: str) -> int:
-        str1 = UnicodeString.to_lower(str1)
-        str2 = UnicodeString.to_lower(str2)
+        str1 = UnicodeString.toLower(str1)
+        str2 = UnicodeString.toLower(str2)
         if str1 < str2:
             return -1
         if str1 > str2:
@@ -29,7 +29,7 @@ class UnicodeString:
 
 class Stringify:
     @staticmethod
-    def get_clock_time(time: float) -> str:
+    def floatToClockTime(time: float) -> str:
         time = int(time)
         mm = time // 60
         ss = time % 60

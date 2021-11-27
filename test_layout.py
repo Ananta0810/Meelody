@@ -31,11 +31,15 @@ class Ui_MainWindow(object):
         self.horizontalLayout.addWidget(self.pushButton_2)
         self.pushButton = QtWidgets.QPushButton(self.horizontalLayoutWidget)
         self.pushButton.setObjectName("pushButton")
+        self.pushButton.clicked.connect(self.test)
         self.horizontalLayout.addWidget(self.pushButton)
         MainWindow.setCentralWidget(self.centralwidget)
 
         self.retranslateUi(MainWindow)
         QtCore.QMetaObject.connectSlotsByName(MainWindow)
+
+    def test(self):
+        print('a')
 
     def retranslateUi(self, MainWindow):
         _translate = QtCore.QCoreApplication.translate

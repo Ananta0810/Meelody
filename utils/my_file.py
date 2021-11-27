@@ -1,49 +1,49 @@
-from io import BytesIO
+# from io import BytesIO
 from os import path, scandir
 from shutil import copyfile
 
-from common_types.my_string import UnicodeString
+from .common_types.my_string import UnicodeString
 
 
 class MyFile:
     @staticmethod
-    def generate_path(dir: str, name: str, extension: str) -> str:
+    def generatePath(dir: str, name: str, extension: str) -> str:
         return "".join([dir, "/", name, extension])
 
     @staticmethod
-    def get_filename(your_path: str):
+    def getFilename(your_path: str):
         return your_path.split("/")[-1]
 
     @staticmethod
-    def get_dir_from(your_path: str) -> str:
+    def getDirFrom(your_path: str) -> str:
         return your_path.replace(path.basename(your_path), "")
 
     @staticmethod
-    def get_basename(your_path: str) -> str:
+    def getFileBasename(your_path: str) -> str:
         return path.basename(your_path).split(".")[0]
 
     @staticmethod
-    def get_file_extension(your_path: str) -> str:
+    def getFileExtension(your_path: str) -> str:
         return path.splitext(your_path)[1]
 
     @staticmethod
-    def get_files_from(dir: str, with_extension: str) -> list:
+    def getFilesFrom(dir: str, withExtension: str) -> list[str]:
         while dir.endswith("/"):
             dir = dir[:-1]
         files = scandir(dir)
-        files = sorted(
-            files, key=lambda x: UnicodeString.to_lower(x.name.rsplit(".", 1)[0])
-        )
+        # files = sorted(
+        #     files, key=lambda x: UnicodeString.to_lower(x.name.rsplit(".", 1)[0])
+        # )
 
         your_files = [
             "/".join([dir, file.name])
             for file in files
-            if file.name.endswith(with_extension)
+            if file.name.endswith(withExtension)
         ]
         return your_files
 
     @staticmethod
-    def move_file(file: str, destiny_dir: str) -> str:
+    def moveFile(file: str, destiny_dir: str) -> str:
         new_file_path = "/".join([destiny_dir, MyFile.get_filename(file)])
         if path.exists(new_file_path):
             return

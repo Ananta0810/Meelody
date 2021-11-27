@@ -16,16 +16,16 @@ class ToggleButton(QPushButton):
 
     def setChecked(self, a0: bool):
         super().setChecked(a0)
-        self.__changeIconBaseOnState()
+        self.__changeIconBaseOnState(a0)
 
-    def mousePressEvent(self, QMouseEvent):
-        if self.normalIcon is None or self.checkedIcon is None:
+    def mousePressEvent(self, event):
+        super().mousePressEvent(event)
+        self.__changeIconBaseOnState(not self.isChecked())
+
+    def __changeIconBaseOnState(self, checked: bool):
+        if not self.isCheckable():
             return
-        self.setChecked(not self.isChecked())
-        self.__changeIconBaseOnState()
-
-    def __changeIconBaseOnState(self):
-        if self.isChecked():
+        if checked:
             self.setIcon(self.checkedIcon)
         else:
             self.setIcon(self.normalIcon)

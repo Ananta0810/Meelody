@@ -7,19 +7,19 @@ class MyAudio:
     def __init__(self, file):
         self._data = load(file)
 
-    def get_artist(self) -> str:
+    def getArtist(self) -> str:
         try:
             return self._data.tag.artist
         except:
             return None
 
-    def get_length(self) -> int:
+    def getLength(self) -> int:
         try:
             return int(self._data.info.time_secs)
         except:
             return 0
 
-    def get_cover(self) -> bytes:
+    def getCover(self) -> bytes:
         data = None
         try:
             images = self._data.tag.images
@@ -31,21 +31,25 @@ class MyAudio:
             pass
         return data
 
-    def set_artist(self, artist: str) -> None:
-        self._data.tag.artist = artist
-        self._data.tag.save(version=id3.ID3_V2_3)
+    def setArtist(self, artist: str) -> bool:
+        try:
+            self._data.tag.artist = artist
+            self._data.tag.save(version=id3.ID3_V2_3)
+            return True
+        except FileNotFoundError:
+            return False
 
-    def set_cover(self, new_cover: bytes) -> None:
+    def setCover(self, new_cover: bytes) -> None:
         if self._data.tag == None:
             self._data.initTag()
 
-        self.__remove_existing_covers()
-        self.__add_cover(new_cover)
+        self.__removeExistingCovers()
+        self.__addNewCover(new_cover)
 
-    def __remove_existing_covers(self) -> None:
+    def __removeExistingCovers(self) -> None:
         images = self._data.tag.images
         [images.remove(image.description) for image in images]
 
-    def __add_cover(self, new_cover: bytes, description: str = None) -> None:
+    def __addNewCover(self, new_cover: bytes, description: str = None) -> None:
         self._data.tag.images.set(3, new_cover, description)
         self._data.tag.save(version=id3.ID3_V2_3)

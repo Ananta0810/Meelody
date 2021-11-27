@@ -1,10 +1,14 @@
+from sys import path
+
 from PyQt5.QtGui import QCursor
 from PyQt5.QtWidgets import QPushButton
 
-from .background_color import BackgroundColor
 from .button import Button
-from .icon import Icon
 from .toggle_button import ToggleButton
+
+path.append(".")
+from ui.models.background_color import BackgroundColor
+from ui.models.icon import Icon
 
 
 class IconButton(Button):
@@ -20,7 +24,6 @@ class IconButton(Button):
 
     def export(
         self,
-        name: str,
         iconSize: int,
         icon: Icon,
         cursor: QCursor = None,
@@ -56,5 +59,4 @@ class IconButton(Button):
         )
 
         button.setStyleSheet(stylesheet)
-        button.setObjectName(name)
         return button

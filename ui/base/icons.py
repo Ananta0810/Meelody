@@ -47,8 +47,8 @@ class Icons:
 
         # Icon on Player Bar
         self.APPLY = QIcon("src/icons/apply.png")
-        self.PLAY_PLAYER = QIcon("src/icons/play-player.png")
-        self.PAUSE = QIcon("src/icons/pause-player.png")
+        self.PLAY = QIcon("src/icons/play.png")
+        self.PAUSE = QIcon("src/icons/pause.png")
         self.PREVIOUS = QIcon("src/icons/previous.png")
         self.NEXT = QIcon("src/icons/next.png")
         self.LOOP = QIcon("src/icons/loop.png")

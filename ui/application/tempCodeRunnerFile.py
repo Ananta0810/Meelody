@@ -1,0 +1,2 @@
+
+            songs.insert(song)

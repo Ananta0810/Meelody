@@ -1,8 +1,11 @@
 from abc import ABC, abstractmethod
+from sys import path
 
 from PyQt5.QtWidgets import QPushButton
 
-from .background_color import BackgroundColor
+path.append(".")
+
+from ui.models.background_color import BackgroundColor
 
 
 class Button(ABC):
