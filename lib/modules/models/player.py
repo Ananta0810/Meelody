@@ -4,8 +4,8 @@ from pygame import mixer
 
 from .playlist_songs import PlaylistSongs
 
-path.append(".")
-from lib.modules.entities.song import Song
+path.append(".lib/modules/")
+from entities.song import Song
 
 
 class Player:

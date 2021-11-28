@@ -5,9 +5,9 @@ from PyQt5.QtWidgets import QPushButton
 
 from .button import Button
 
-path.append(".")
-from lib.modules.screens.background_color import BackgroundColor
-from lib.widgets.toggle_icon_button import QToggleButton
+path.append("./lib")
+from modules.screens.background_color import BackgroundColor
+from widgets.toggle_icon_button import QToggleButton
 
 
 class ToggleIconButton(Button):

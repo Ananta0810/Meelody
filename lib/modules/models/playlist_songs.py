@@ -1,10 +1,10 @@
 from sys import path
 
-path.append(".")
+path.append("./lib")
 from random import shuffle
 
-from lib.modules.entities.song import Song
-from lib.utils.helpers.my_list import MyList
+from modules.entities.song import Song
+from utils.helpers.my_list import MyList
 
 
 class PlaylistSongs:

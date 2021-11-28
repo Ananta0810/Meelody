@@ -1,7 +1,7 @@
 from sys import path
 
-path.append(".")
-from lib.utils.helpers.my_bytes import MyBytes
+path.append("./lib/utils/helpers/")
+from my_bytes import MyBytes
 
 
 class ApplicationImage:

@@ -2,8 +2,8 @@ from sys import path
 
 from PyQt5.QtGui import QColor
 
-path.append(".")
-from lib.modules.models.color import Color
+path.append(".lib/modules/")
+from modules.models.color import Color
 
 
 class ColorUtils:

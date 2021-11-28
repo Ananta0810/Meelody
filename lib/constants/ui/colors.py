@@ -1,7 +1,7 @@
 from sys import path
 
-path.append(".")
-from lib.modules.models.color import Color
+path.append("./lib/modules/models/")
+from color import Color
 
 
 class Colors:

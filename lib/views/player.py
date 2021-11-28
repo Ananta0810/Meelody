@@ -4,17 +4,17 @@ from PyQt5.QtCore import QMetaObject, Qt
 from PyQt5.QtGui import QCursor, QIntValidator
 from PyQt5.QtWidgets import QHBoxLayout, QLabel, QLineEdit, QVBoxLayout, QWidget
 
-path.append(".")
-from lib.constants.ui import alignment, colors, icons
-from lib.constants.ui.background_color import BackgroundColorSamples
-from lib.modules.screens.background import Background
-from lib.modules.screens.components.buttons.icon_button_factory import IconButtonFactory
-from lib.modules.screens.components.font_builder import FontBuilder
-from lib.modules.screens.components.slider.horizontal_slider import HorizontalSlider
-from lib.utils.helpers.my_string import Stringify
-from lib.utils.ui.color_utils import ColorUtils
-from lib.utils.ui.icon_utils import IconUtils
-from lib.widgets.image_label import ImageLabel
+path.append("./lib")
+from constants.ui import alignment, colors, icons
+from constants.ui.background_color import BackgroundColorSamples
+from modules.screens.background import Background
+from modules.screens.components.buttons.icon_button_factory import IconButtonFactory
+from modules.screens.components.font_builder import FontBuilder
+from modules.screens.components.slider.horizontal_slider import HorizontalSlider
+from utils.helpers.my_string import Stringify
+from utils.ui.color_utils import ColorUtils
+from utils.ui.icon_utils import IconUtils
+from widgets.image_label import ImageLabel
 
 
 class UIPlayerMusic(QWidget):

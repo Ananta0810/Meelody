@@ -5,9 +5,9 @@ from PyQt5.QtWidgets import QPushButton
 
 from .button import Button
 
-path.append(".")
-from lib.modules.screens.background_color import BackgroundColor
-from lib.widgets.multiple_icon_button import QMultipleIconButton
+path.append("./lib")
+from modules.screens.background_color import BackgroundColor
+from widgets.multiple_icon_button import QMultipleIconButton
 
 
 class MultiIconButton(Button):

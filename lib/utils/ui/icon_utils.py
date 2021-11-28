@@ -1,8 +1,5 @@
-from sys import path
 
 from PyQt5.QtGui import QColor, QIcon, QPainter
-
-path.append(".")
 
 
 class IconUtils:

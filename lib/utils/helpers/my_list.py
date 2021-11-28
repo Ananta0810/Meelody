@@ -2,8 +2,8 @@ from sys import path
 
 from .my_string import UnicodeString
 
-path.append(".")
-from lib.entities.song import Song
+path.append("./lib")
+from entities.song import Song
 
 
 class MyList:

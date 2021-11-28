@@ -5,8 +5,8 @@ from PyQt5.QtWidgets import QPushButton
 
 from .button import Button
 
-path.append(".")
-from lib.modules.screens.background_color import BackgroundColor
+path.append(".lib/modules/")
+from modules.screens.background_color import BackgroundColor
 
 
 class IconButton(Button):

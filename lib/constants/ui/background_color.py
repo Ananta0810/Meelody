@@ -2,9 +2,9 @@ from sys import path
 
 from .colors import Colors
 
-path.append(".")
+path.append("./lib")
 
-from lib.modules.screens.background_color import BackgroundColor
+from modules.screens.background_color import BackgroundColor
 
 
 class BackgroundColorSamples:

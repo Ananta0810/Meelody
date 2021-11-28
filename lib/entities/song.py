@@ -1,9 +1,9 @@
 from os import remove
 from sys import path
 
-path.append(".")
+path.append(".lib/modules/")
 
-from lib.modules.models.audio import MyAudio
+from modules.models.audio import MyAudio
 
 
 class Song:

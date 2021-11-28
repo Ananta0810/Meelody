@@ -4,18 +4,18 @@ from PyQt5.QtCore import QRect
 from PyQt5.QtGui import QPixmap
 from PyQt5.QtWidgets import QApplication, QWidget
 
-path.append(".")
+path.append("./lib")
 from threading import Thread
 from time import sleep
 
-from lib.constants.ui.images import ApplicationImage
-from lib.entities.song import Song
-from lib.modules.models.player import Player
-from lib.modules.models.playlist_songs import PlaylistSongs
-from lib.modules.models.timer import Timer
-from lib.utils.helpers.my_file import MyFile
-from lib.utils.ui.pixmap_utils import PixmapUtils
-from lib.views.player import UIPlayerMusic
+from constants.ui.images import ApplicationImage
+from entities.song import Song
+from modules.models.player import Player
+from modules.models.playlist_songs import PlaylistSongs
+from modules.models.timer import Timer
+from utils.helpers.my_file import MyFile
+from utils.ui.pixmap_utils import PixmapUtils
+from views.player import UIPlayerMusic
 
 
 class MusicPlayer:

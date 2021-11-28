@@ -4,10 +4,10 @@ from PyQt5.QtWidgets import QPushButton, QSizePolicy
 
 from .button import Button
 
-path.append(".")
+path.append("./lib/modules/")
 
-from lib.modules.models.color import Color
-from lib.modules.screens.background_color import BackgroundColor
+from models.color import Color
+from screens.background_color import BackgroundColor
 
 
 class ActionButton(Button):

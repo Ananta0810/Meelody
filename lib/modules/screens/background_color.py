@@ -1,8 +1,8 @@
 from sys import path
 
-path.append(".")
+path.append(".lib/modules/")
 
-from lib.modules.models.color import Color
+from modules.models.color import Color
 
 
 class BackgroundColor:

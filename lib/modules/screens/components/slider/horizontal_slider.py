@@ -5,9 +5,9 @@ from PyQt5.QtWidgets import QSlider
 
 from .slider import Slider
 
-path.append(".")
-from lib.modules.screens.background import Background
-from lib.modules.screens.background_color import BackgroundColor
+path.append("./lib")
+from modules.screens.background import Background
+from modules.screens.background_color import BackgroundColor
 
 
 class HorizontalSlider(Slider):

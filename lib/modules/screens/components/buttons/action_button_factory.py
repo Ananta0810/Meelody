@@ -1,14 +1,14 @@
 from sys import path
 
-from lib.constants.ui.colors import Colors
 from PyQt5.QtWidgets import QPushButton
-
-path.append(".")
-
-from lib.modules.screens.background_color import BackgroundColor
 
 from .action_button import ActionButton
 from .factory import ButtonFactory
+
+path.append("./lib")
+
+from constants.ui.colors import Colors
+from modules.screens.background_color import BackgroundColor
 
 
 class ActionButtonFactory(ButtonFactory):
