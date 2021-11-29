@@ -12,8 +12,7 @@ from modules.screens.components.buttons.icon_button_factory import IconButtonFac
 from modules.screens.components.font_builder import FontBuilder
 from modules.screens.components.slider.horizontal_slider import HorizontalSlider
 from utils.helpers.my_string import Stringify
-from utils.ui.color_utils import ColorUtils
-from utils.ui.icon_utils import IconUtils
+from utils.ui.application_ui_utils import ApplicationUIUtils as AppUI
 from widgets.image_label import ImageLabel
 
 
@@ -33,7 +32,6 @@ class UIPlayerMusic(QWidget):
         musicToggleButtonForm = buttonFactory.getButton("checkable").withBackground(
             background.HIDDEN_PRIMARY, background.HIDDEN_DANGER
         )
-
         slider = HorizontalSlider(
             lineColor=background.BLACK,
             handleColor=background.FLAT_PRIMARY,
@@ -73,20 +71,17 @@ class UIPlayerMusic(QWidget):
         self.song_info_layout.addStretch(0)
 
         # =================PREVIOUS - PLAY - NEXT=================
-        self.music_play_buttons_layout = QHBoxLayout()
-        self.music_play_buttons_layout.setContentsMargins(0, 0, 0, 0)
-        self.music_play_buttons_layout.setSpacing(8)
-        self.left.addLayout(self.music_play_buttons_layout)
+        self.play_buttons = QHBoxLayout()
+        self.play_buttons.setContentsMargins(0, 0, 0, 0)
+        self.play_buttons.setSpacing(8)
+        self.left.addLayout(self.play_buttons)
 
         self.previous_song_btn = normalButtonForm.export(
             iconSize=ICONS.SIZES.SMALL,
-            icon=IconUtils.colorize(
-                ICONS.PREVIOUS, ColorUtils.getQColorFromColor(COLORS.PRIMARY)
-            ),
+            icon=AppUI.paintIcon(ICONS.PREVIOUS, COLORS.PRIMARY),
             cursor=HAND_CURSOR,
         )
-
-        self.music_play_buttons_layout.addWidget(self.previous_song_btn)
+        self.play_buttons.addWidget(self.previous_song_btn)
 
         self.play_song_btn = (
             buttonFactory.getButton("checkable")
@@ -94,26 +89,20 @@ class UIPlayerMusic(QWidget):
             .export(
                 padding=0.75,
                 iconSize=ICONS.SIZES.MEDIUM,
-                icon=IconUtils.colorize(
-                    ICONS.PLAY, ColorUtils.getQColorFromColor(COLORS.PRIMARY)
-                ),
-                checkedIcon=IconUtils.colorize(
-                    ICONS.PAUSE, ColorUtils.getQColorFromColor(COLORS.PRIMARY)
-                ),
+                icon=AppUI.paintIcon(ICONS.PLAY, COLORS.PRIMARY),
+                checkedIcon=AppUI.paintIcon(ICONS.PAUSE, COLORS.PRIMARY),
                 cursor=HAND_CURSOR,
             )
         )
         self.play_song_btn.setChecked(False)
-        self.music_play_buttons_layout.addWidget(self.play_song_btn)
+        self.play_buttons.addWidget(self.play_song_btn)
 
         self.next_song_btn = normalButtonForm.export(
             iconSize=ICONS.SIZES.SMALL,
-            icon=IconUtils.colorize(
-                ICONS.NEXT, ColorUtils.getQColorFromColor(COLORS.PRIMARY)
-            ),
+            icon=AppUI.paintIcon(ICONS.NEXT, COLORS.PRIMARY),
             cursor=HAND_CURSOR,
         )
-        self.music_play_buttons_layout.addWidget(self.next_song_btn)
+        self.play_buttons.addWidget(self.next_song_btn)
 
         # =================CENTER=================
         self.center = QWidget()
@@ -143,12 +132,8 @@ class UIPlayerMusic(QWidget):
         self.loop_btn = musicToggleButtonForm.export(
             padding=1,
             iconSize=ICONS.SIZES.SMALL,
-            icon=IconUtils.colorize(
-                ICONS.LOOP, ColorUtils.getQColorFromColor(COLORS.PRIMARY)
-            ),
-            checkedIcon=IconUtils.colorize(
-                ICONS.LOOP, ColorUtils.getQColorFromColor(COLORS.DANGER)
-            ),
+            icon=AppUI.paintIcon(ICONS.LOOP, COLORS.PRIMARY),
+            checkedIcon=AppUI.paintIcon(ICONS.LOOP, COLORS.DANGER),
             cursor=HAND_CURSOR,
         )
         self.right.addWidget(self.loop_btn)
@@ -156,12 +141,8 @@ class UIPlayerMusic(QWidget):
         self.shuffle_btn = musicToggleButtonForm.export(
             padding=1,
             iconSize=ICONS.SIZES.SMALL,
-            icon=IconUtils.colorize(
-                ICONS.SHUFFLE, ColorUtils.getQColorFromColor(COLORS.PRIMARY)
-            ),
-            checkedIcon=IconUtils.colorize(
-                ICONS.SHUFFLE, ColorUtils.getQColorFromColor(COLORS.DANGER)
-            ),
+            icon=AppUI.paintIcon(ICONS.SHUFFLE, COLORS.PRIMARY),
+            checkedIcon=AppUI.paintIcon(ICONS.SHUFFLE, COLORS.DANGER),
             cursor=HAND_CURSOR,
         )
         self.right.addWidget(self.shuffle_btn)
@@ -169,15 +150,10 @@ class UIPlayerMusic(QWidget):
         self.love_btn = musicToggleButtonForm.export(
             padding=1,
             iconSize=ICONS.SIZES.SMALL,
-            icon=IconUtils.colorize(
-                ICONS.LOVE, ColorUtils.getQColorFromColor(COLORS.PRIMARY)
-            ),
-            checkedIcon=IconUtils.colorize(
-                ICONS.LOVE, ColorUtils.getQColorFromColor(COLORS.DANGER)
-            ),
+            icon=AppUI.paintIcon(ICONS.LOVE, COLORS.PRIMARY),
+            checkedIcon=AppUI.paintIcon(ICONS.LOVE, COLORS.DANGER),
             cursor=HAND_CURSOR,
         )
-
         self.right.addWidget(self.love_btn)
 
         self.volume_btn = (
@@ -186,23 +162,14 @@ class UIPlayerMusic(QWidget):
             .export(
                 padding=1,
                 iconSize=ICONS.SIZES.SMALL,
-                iconList={
-                    "volume up": IconUtils.colorize(
-                        ICONS.VOLUME_UP, ColorUtils.getQColorFromColor(COLORS.PRIMARY)
-                    ),
-                    "volume down": IconUtils.colorize(
-                        ICONS.VOLUME_DOWN, ColorUtils.getQColorFromColor(COLORS.PRIMARY)
-                    ),
-                    "silent volume": IconUtils.colorize(
-                        ICONS.VOLUME_SILENT,
-                        ColorUtils.getQColorFromColor(COLORS.PRIMARY),
-                    ),
-                },
+                iconList=[
+                    AppUI.paintIcon(ICONS.VOLUME_UP, COLORS.PRIMARY),
+                    AppUI.paintIcon(ICONS.VOLUME_DOWN, COLORS.PRIMARY),
+                    AppUI.paintIcon(ICONS.VOLUME_SILENT, COLORS.PRIMARY),
+                ],
                 cursor=HAND_CURSOR,
             )
         )
-        self.volume_btn.setCurrentIcon("volume up")
-
         self.volume_btn.clicked.connect(self.showVolumeSlider)
         self.right.addWidget(self.volume_btn)
 
@@ -233,25 +200,36 @@ class UIPlayerMusic(QWidget):
         self.timer_btn = normalButtonForm.export(
             padding=1,
             iconSize=ICONS.SIZES.SMALL,
-            icon=IconUtils.colorize(
-                ICONS.TIMER, ColorUtils.getQColorFromColor(COLORS.PRIMARY)
-            ),
+            icon=AppUI.paintIcon(ICONS.TIMER, COLORS.PRIMARY),
             cursor=HAND_CURSOR,
         )
-
         self.timer_btn.clicked.connect(self.showTimerBox)
         self.right.addWidget(self.timer_btn)
 
         QMetaObject.connectSlotsByName(self)
 
+    def displaySongInfo(self, cover, title, artist):
+        self.song_cover.setPixmap(cover)
+        self.song_title.setText(title)
+        self.song_artist.setText(artist)
+
     def changeVolumeIcon(self):
         volume: int = self.volume_slider.value()
-        currentIcon = "silent volume"
+        VOLUME_UP_ICON = 0
+        VOLUME_DOWN_ICON = 1
+        SILENT_ICON = 2
+        icon = SILENT_ICON
+
         if 0 < volume <= 50:
-            currentIcon = "volume down"
+            icon = VOLUME_DOWN_ICON
         if 50 < volume <= 100:
-            currentIcon = "volume up"
-        self.volume_btn.setCurrentIcon(currentIcon)
+            icon = VOLUME_UP_ICON
+        self.volume_btn.setCurrentIcon(icon)
+
+    def getPixmapForSongCover(self, coverAsByte):
+        return AppUI.getSquaredPixmapFromBytes(
+            coverAsByte, self.song_cover.width(), radius=12
+        )
 
     def showVolumeSlider(self):
         self.volume_slider.setVisible(not self.volume_slider.isVisible())

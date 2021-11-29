@@ -1,20 +1,16 @@
 from sys import argv, exit, path
 
-from PyQt5.QtCore import QRect
-from PyQt5.QtGui import QPixmap
 from PyQt5.QtWidgets import QApplication, QWidget
 
 path.append("./lib")
 from threading import Thread
-from time import sleep
+from time import perf_counter, sleep
 
-from constants.ui.images import ApplicationImage
+from constants.ui.images import ApplicationImage as AppImage
 from entities.song import Song
 from modules.models.player import Player
-from modules.models.playlist_songs import PlaylistSongs
 from modules.models.timer import Timer
-from utils.helpers.my_file import MyFile
-from utils.ui.pixmap_utils import PixmapUtils
+from utils.helpers.playlist_song_utils import getPlaylistFromDir
 from views.player import UIPlayerMusic
 
 
@@ -24,38 +20,30 @@ class MusicPlayer:
         self.ui.setFixedSize(1368, 100)
         self.ui.setupUi()
 
-        self.defaultSongCoverAsPixmap = self.getDisplayCoverFromBytes(
-            ApplicationImage.defaultSongCover,
-            self.ui.song_cover.width(),
-        )
-
         self.currentThreadNumber = 0
         self.canRunTimeSlider = True
-
-        playlist = PlaylistSongs()
-        files = MyFile.getFilesFrom("Library", withExtension="mp3")
-        for file in files:
-            song = Song(location=file, title=MyFile.getFileBasename(file))
-            song.loadInfo()
-            playlist.insert(song)
-
+        self.defaultSongCoverAsPixmap = self.ui.getPixmapForSongCover(
+            AppImage.defaultSongCover
+        )
         self.timer = Timer()
         self.player = Player()
+
+        playlist = getPlaylistFromDir("Library", withExtension=".mp3")
         self.player.loadPlaylist(playlist)
         self.player.loadSongToPlay()
         self.showCurrentSongInfo()
         self.connectSignals()
 
     def connectSignals(self):
+        self.ui.previous_song_btn.clicked.connect(self.prevSong)
         self.ui.play_song_btn.clicked.connect(self.clickedPlayButton)
         self.ui.next_song_btn.clicked.connect(self.nextSong)
-        self.ui.previous_song_btn.clicked.connect(self.prevSong)
-        self.ui.timer_box.returnPressed.connect(self.setTimer)
-        self.ui.volume_slider.valueChanged.connect(self.changeVolume)
         self.ui.time_slider.sliderPressed.connect(self.pauseTimeSlider)
         self.ui.time_slider.sliderReleased.connect(self.unpauseTimeSlider)
         self.ui.shuffle_btn.clicked.connect(self.clickedShuffleSong)
         self.ui.love_btn.clicked.connect(self.loveSong)
+        self.ui.volume_slider.valueChanged.connect(self.changeVolume)
+        self.ui.timer_box.returnPressed.connect(self.setTimer)
 
     def setTimer(self):
         timerBox = self.ui.timer_box
@@ -111,14 +99,26 @@ class MusicPlayer:
         threadNumber: int = self.currentThreadNumber
         player = self.player
         timer = self.timer
-        timer.setInterval(0.25)
+
+        TIMES_THAT_UI_HAS_TO_UPDATE_FOR_SLIDER_WHILE_PLAYING: int = 100
+        LONGEST_TIME_BREAK_FOR_A_UI_UPDATE_IN_SECONDS: float = 0.25
+
+        interval: float = (
+            self.player.getCurrentSong().length
+            / TIMES_THAT_UI_HAS_TO_UPDATE_FOR_SLIDER_WHILE_PLAYING
+        )
+        if interval > LONGEST_TIME_BREAK_FOR_A_UI_UPDATE_IN_SECONDS:
+            interval = LONGEST_TIME_BREAK_FOR_A_UI_UPDATE_IN_SECONDS
+
+        timer.setInterval(interval)
 
         while threadNumber == self.currentThreadNumber and player.isPlaying():
-            sleep(0.25)
+            sleep(interval)
             self.__doWhilePlayingMusic(player, timer)
-            if player.isSongFinished():
-                self.doAfterSongFinished()
-                break
+            if not player.isSongFinished():
+                continue
+            self.__doAfterSongFinished()
+            break
 
     def __doWhilePlayingMusic(self, player: Player, timer: Timer):
         playingTime = player.getPlayingTime()
@@ -126,9 +126,14 @@ class MusicPlayer:
 
         if self.canRunTimeSlider:
             self.ui.runTimeSlider(playingTime, player.getCurrentSong().length)
-
         if timer.isEnabled():
             self.__runTimer(timer)
+
+    def __doAfterSongFinished(self):
+        if self.ui.isLooping():
+            self.rewind()
+        else:
+            self.nextSong()
 
     def __runTimer(self, timer: Timer):
         timer.count()
@@ -137,18 +142,12 @@ class MusicPlayer:
         timer.reset()
         self.pauseMusic()
 
-    def doAfterSongFinished(self):
-        if self.ui.isLooping():
-            self.rewind()
-        else:
-            self.nextSong()
-
     def loveSong(self):
         self.player.getCurrentSong().reverseLoveState()
 
     def rewind(self):
         self.player.stop()
-        self.clickedPlayButton()
+        self.threadPlaySong()
 
     def nextSong(self):
         self.player.next()
@@ -163,35 +162,27 @@ class MusicPlayer:
         self.threadPlaySong()
 
     def showCurrentSongInfo(self):
-        song: Song = self.player.getCurrentSong()
-
         coverAsPixmap = self.defaultSongCoverAsPixmap
+        song: Song = self.player.getCurrentSong()
         if song.cover is not None:
-            coverAsPixmap = self.getDisplayCoverFromBytes(
-                song.cover,
-                self.ui.song_cover.width(),
-            )
+            coverAsPixmap = self.ui.getPixmapForSongCover(song.cover)
 
-        self.ui.song_cover.setPixmap(coverAsPixmap)
-        self.ui.song_title.setText(song.title)
-        self.ui.song_artist.setText(song.artist)
+        self.ui.displaySongInfo(coverAsPixmap, song.title, song.artist)
         self.ui.displayPlayingTime(0)
         self.ui.displayTotalTime(song.length)
 
-    def getDisplayCoverFromBytes(
-        self, byteImage: bytes, width: int, radius: int = 12
-    ) -> QPixmap:
-        pixmap = PixmapUtils.getPixmapFromBytes(byteImage)
-        pixmap = PixmapUtils.cropPixmap(pixmap, width)
-        pixmap = PixmapUtils.squarePixmap(pixmap)
-        pixmap = PixmapUtils.roundPixmap(pixmap, radius=radius)
-        return pixmap
+
+def main():
+    start = perf_counter()
+    app = QApplication(argv)
+    form = QWidget()
+    form.setGeometry(276, 490, 1368, 100)
+    ui = MusicPlayer(form)
+    form.show()
+    end = perf_counter()
+    print(end - start)
+    exit(app.exec_())
 
 
 if __name__ == "__main__":
-    app = QApplication(argv)
-    form = QWidget()
-    form.setGeometry(QRect(276, 490, 1368, 100))
-    ui = MusicPlayer(form)
-    form.show()
-    exit(app.exec_())
+    main()

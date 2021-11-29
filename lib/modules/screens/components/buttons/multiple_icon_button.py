@@ -36,6 +36,7 @@ class MultiIconButton(Button):
         button = QMultipleIconButton(parent)
         button.setIconSize(iconSize)
         button.setIconList(iconList)
+        button.setCurrentIcon(0)
 
         if cursor is not None:
             button.setCursor(cursor)

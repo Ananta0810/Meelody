@@ -31,6 +31,12 @@ class MyAudio:
             pass
         return data
 
+    def getSampleRate(self) -> int:
+        try:
+            return self._data.info.sample_freq
+        except:
+            return 0
+
     def setArtist(self, artist: str) -> bool:
         try:
             self._data.tag.artist = artist

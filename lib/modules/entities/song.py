@@ -46,6 +46,9 @@ class Song:
             and self.loved == other.loved
         )
 
+    def getSampleRate(self) -> int:
+        return self._audio.getSampleRate()
+
     def loadInfo(self):
         """
         Load the information of the song when having the audio file

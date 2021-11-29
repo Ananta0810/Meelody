@@ -1,7 +1,7 @@
 from .button import Button
 from .factory import ButtonFactory
 from .icon_button import IconButton
-from .multi_icon_button import MultiIconButton
+from .multiple_icon_button import MultiIconButton
 from .toggle_icon_button import ToggleIconButton
 
 
