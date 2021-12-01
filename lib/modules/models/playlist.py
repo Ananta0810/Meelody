@@ -3,7 +3,7 @@ from sys import path
 from .playlist_songs import PlaylistSongs
 
 path.append(".lib/modules/")
-from entities.playlist_info import PlaylistInfo
+from modules.entities.playlist_info import PlaylistInfo
 
 
 class Playlist:

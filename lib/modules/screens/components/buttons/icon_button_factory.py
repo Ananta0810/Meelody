@@ -7,7 +7,7 @@ from .toggle_icon_button import ToggleIconButton
 
 class IconButtonFactory(ButtonFactory):
     def getButton(self, type: str = None) -> Button:
-        if type == "checkable":
+        if type == "toggle":
             return ToggleIconButton()
         if type == "multiple-icon":
             return MultiIconButton()

@@ -1,50 +1,24 @@
 from sys import path
 
-from PyQt5.QtGui import QCursor, QIcon
+from PyQt5.QtGui import QIcon
 from PyQt5.QtWidgets import QPushButton
 
 from .button import Button
 
 path.append("./lib")
-from modules.screens.background_color import BackgroundColor
+from modules.screens.qss.qss_elements import QSSBackground, QSSPadding
 from widgets.toggle_icon_button import QToggleButton
 
 
 class ToggleIconButton(Button):
-    def __init__(
+    def render(
         self,
-        roundness: float = 0.5,
-        padding: float = 0.5,
-        border: str = "none",
-        backgroundColor: BackgroundColor = None,
-        checkedBackgroundColor: BackgroundColor = None,
-    ):
-        Button.__init__(self, roundness, border, backgroundColor)
-        self.padding = padding
-        self.checkedBackgroundColor = (
-            checkedBackgroundColor
-            if checkedBackgroundColor is not None
-            else backgroundColor
-        )
-
-    def withBackground(
-        self,
-        backgroundColor: BackgroundColor,
-        checkedBackground: BackgroundColor = None,
-    ):
-        self.backgroundColor = backgroundColor
-        self.checkedBackgroundColor = (
-            checkedBackground if checkedBackground is not None else backgroundColor
-        )
-        return self
-
-    def export(
-        self,
-        padding: float,
         iconSize: int,
         icon: QIcon,
-        checkedIcon: QIcon = None,
-        cursor: QCursor = None,
+        checkedIcon: QIcon,
+        padding: QSSPadding,
+        background: QSSBackground,
+        checkedBackground: QSSBackground = None,
         parent=None,
     ) -> QPushButton:
         button = QToggleButton(parent)
@@ -54,37 +28,34 @@ class ToggleIconButton(Button):
         button.setNormalIcon(icon)
         button.setCheckedIcon(checkedIcon)
         button.setCheckable(True)
-        button.setChecked(False)
 
-        if cursor is not None:
-            button.setCursor(cursor)
-        if padding is not None:
-            self.padding = padding
+        iconWidth = iconSize.width()
+        buttonSize: int = iconWidth + padding.getWidth(iconWidth)
+        button.setFixedSize(buttonSize, buttonSize)
 
-        padding = self.padding if self.padding > 1 else iconSize.width() * self.padding
-        button.setFixedSize(iconSize.width() + padding, iconSize.width() + padding)
-
-        borderRadius = (
-            self.roundness
-            if self.roundness >= 1
-            else (iconSize.width() + padding) * self.roundness
-        )
-
-        button.setStyleSheet(
+        styleSheet = (
             "QPushButton{"
-            + f"padding: {padding}px;"
-            + f"border:{self.border};"
-            + f"border-radius:{borderRadius};"
-            + f"background-color:{str(self.backgroundColor.normal) if self.backgroundColor is not None else None};"
+            + f"padding: {padding.toStylesheet(size=buttonSize)};"
+            + f"border:{background.borderStyleSheet()};"
+            + f"border-radius:{background.borderRadiusStyleSheet(size=buttonSize)};"
+            + f"background-color:{background.colorStyleSheet()};"
             + "}"
             + "QPushButton:hover{"
-            + f"background-color:{str(self.backgroundColor.hover) if self.backgroundColor is not None else None};"
-            + "}"
-            + "QPushButton:checked{"
-            + f"background-color:{str(self.checkedBackgroundColor.normal) if self.checkedBackgroundColor is not None else None};"
-            + "}"
-            "QPushButton:hover:checked{"
-            + f"background-color:{str(self.checkedBackgroundColor.hover) if self.checkedBackgroundColor is not None else None};"
+            + f"border:{background.borderStyleSheet(active=True)};"
+            + f"background-color:{background.colorStyleSheet(active=True)};"
             + "}"
         )
+        if checkedBackground is not None:
+            styleSheet += (
+                "QPushButton:checked{"
+                + f"border:{checkedBackground.borderStyleSheet()};"
+                + f"border-radius:{checkedBackground.borderRadiusStyleSheet(size=buttonSize)};"
+                + f"background-color:{checkedBackground.colorStyleSheet()};"
+                + "}"
+                "QPushButton:hover:checked{"
+                + f"border:{checkedBackground.borderStyleSheet(active=True)};"
+                + f"background-color:{checkedBackground.colorStyleSheet(active=True)};"
+                + "}"
+            )
+        button.setStyleSheet(styleSheet)
         return button

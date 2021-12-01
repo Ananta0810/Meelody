@@ -3,7 +3,7 @@ from sys import path
 from .my_string import UnicodeString
 
 path.append("./lib")
-from entities.song import Song
+from modules.entities.song import Song
 
 
 class MyList:

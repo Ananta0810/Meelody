@@ -29,7 +29,7 @@ class PlaylistSongs:
         return self._isSorted
 
     def hasSong(self) -> bool:
-        return self._songs.length > 0
+        return len(self._songs) > 0
 
     def moveSong(self, index: int, newIndex: int):
         MyList.moveElement(self._songs, index, newIndex)

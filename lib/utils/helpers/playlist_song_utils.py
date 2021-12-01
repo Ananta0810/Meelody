@@ -5,7 +5,7 @@ from .my_file import MyFile
 path.append("./lib")
 from logging import getLogger
 
-from entities.song import Song
+from modules.entities.song import Song
 from modules.models.playlist_songs import PlaylistSongs
 
 

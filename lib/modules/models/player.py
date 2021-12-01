@@ -5,7 +5,8 @@ from pygame import mixer
 from .playlist_songs import PlaylistSongs
 
 path.append(".lib/modules/")
-from entities.song import Song
+from modules.entities.song import Song
+from modules.models.timer import Timer
 
 #! Known issues from the library:
 # * 1: The function that calculates the playing time of the song will return the time since you start the song.
@@ -20,22 +21,25 @@ from entities.song import Song
 class Player:
     _playlist: PlaylistSongs
     _currentSongIndex: int
-    _volume: int
-    _loadedSong: bool
     _currentSong: Song
     _timeStartInSec: float
     _sampleRateOffset: float
+    _loadedSong: bool
+    timer: Timer
 
     def __init__(self):
         self._playlist = None
         self._currentSongIndex = 0
         self._currentSong = None
-        self._volume = 100
-        self._loadedSong = False
         self._timeStartInSec = 0
         self._sampleRateOffset = 1
-        mixer.pre_init()
+        self._loadedSong = False
+        self.timer = Timer()
+        # mixer.pre_init()
         mixer.init()
+
+    def hasSong(self):
+        return self._playlist is not None and self._playlist.hasSong()
 
     def loadPlaylist(self, playlist: PlaylistSongs):
         self._playlist = playlist
@@ -50,8 +54,9 @@ class Player:
         """
         set volume of the song, volume from 0 to 100
         """
-        self._volume = volume
-        mixer.music.set_volume(volume / 100)
+        MAX_VOLUME = 100
+        volumeAsFloat = volume / MAX_VOLUME
+        mixer.music.set_volume(volumeAsFloat)
 
     def loadSongToPlay(self):
         if self._loadedSong:
@@ -65,12 +70,7 @@ class Player:
         mixer.music.load(self._currentSong.location)
 
     def play(self):
-        TIMES_PLAY_THE_SONG_ALLOWED_TO_PREVENT_THE_BUG_OF_THE_LIBRARY = 1
-        mixer.music.play(
-            TIMES_PLAY_THE_SONG_ALLOWED_TO_PREVENT_THE_BUG_OF_THE_LIBRARY,
-            start=self._timeStartInSec,
-        )
-        self.setVolume(self._volume)
+        mixer.music.play(start=self._timeStartInSec)
 
     def next(self):
         self.resetTime()
@@ -92,20 +92,18 @@ class Player:
         )
 
     def pause(self):
-        try:
-            self.fixSampleRateOffsetWhenSongIsPaused()
-            self._timeStartInSec = self.getPlayingTime()
-            mixer.music.stop()
-        except:
-            pass
+        if not self.isPlaying():
+            return
+        self.fixSampleRateOffsetWhenSongIsPaused()
+        self.setTimeStart(self.getPlayingTime())
+        mixer.music.stop()
 
     def stop(self):
-        try:
-            self.fixSampleRateOffsetWhenSongIsPaused()
-            mixer.music.stop()
-            self.resetTime()
-        except:
-            pass
+        if not self.isPlaying():
+            return
+        self.fixSampleRateOffsetWhenSongIsPaused()
+        self.resetTime()
+        mixer.music.stop()
 
     def resetTime(self):
         self._timeStartInSec = 0
@@ -120,14 +118,6 @@ class Player:
         return (
             self._timeStartInSec + mixer.music.get_pos() / 1000
         ) * self._sampleRateOffset
-
-    def isSongFinished(self):
-        OFFSET_FOR_THE_CASE_WHEN_COMPARE_BETWEEN_FLOATING_POINT_IS_INCORRECT = 0.1
-        return (
-            self.getPlayingTime()
-            + OFFSET_FOR_THE_CASE_WHEN_COMPARE_BETWEEN_FLOATING_POINT_IS_INCORRECT
-            >= self._currentSong.length
-        )
 
     def isPlaying(self):
         if mixer.get_init() is None:

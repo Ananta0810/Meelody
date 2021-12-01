@@ -1,66 +1,52 @@
 from sys import path
 
-from PyQt5.QtGui import QCursor, QIcon
+from PyQt5.QtGui import QIcon
 from PyQt5.QtWidgets import QPushButton
 
 from .button import Button
 
 path.append("./lib")
-from modules.screens.background_color import BackgroundColor
+from modules.screens.qss.qss_elements import QSSBackground, QSSPadding
 from widgets.multiple_icon_button import QMultipleIconButton
 
 
 class MultiIconButton(Button):
-    def __init__(
+    def render(
         self,
-        roundness: float = 0.5,
-        padding: float = 0.5,
-        border: str = "none",
-        backgroundColor: BackgroundColor = None,
-    ):
-        Button.__init__(self, roundness, border, backgroundColor)
-        self.padding = padding
-
-    def withBackground(self, backgroundColor: BackgroundColor):
-        self.backgroundColor = backgroundColor
-        return self
-
-    def export(
-        self,
-        padding: float,
+        icons: list[QIcon],
         iconSize: int,
-        iconList: list[QIcon],
-        cursor: QCursor = None,
+        padding: QSSPadding = None,
+        background: QSSBackground = None,
         parent=None,
     ) -> QPushButton:
         button = QMultipleIconButton(parent)
         button.setIconSize(iconSize)
-        button.setIconList(iconList)
+        button.setIconList(icons)
         button.setCurrentIcon(0)
 
-        if cursor is not None:
-            button.setCursor(cursor)
+        iconWidth = iconSize.width()
+        buttonSize: int = iconWidth
         if padding is not None:
-            self.padding = padding
+            buttonSize += padding.getWidth(iconWidth)
+        button.setFixedSize(buttonSize, buttonSize)
 
-        padding = self.padding if self.padding > 1 else iconSize.width() * self.padding
-        button.setFixedSize(iconSize.width() + padding, iconSize.width() + padding)
-
-        borderRadius = (
-            self.roundness
-            if self.roundness >= 1
-            else (iconSize.width() + padding) * self.roundness
-        )
-
-        button.setStyleSheet(
+        styleSheet: str = (
             "QPushButton{"
-            + f"padding: {padding}px;"
-            + f"border:{self.border};"
-            + f"border-radius:{borderRadius};"
-            + f"background-color:{str(self.backgroundColor.normal) if self.backgroundColor is not None else None};"
-            + "}"
-            + "QPushButton:hover{"
-            + f"background-color:{str(self.backgroundColor.hover) if self.backgroundColor is not None else None};"
-            + "}"
+            + f"padding:{padding.toStylesheet(size=buttonSize) if padding is not None else None};"
         )
+        styleSheet += (
+            "border:None}"
+            if background is None
+            else (
+                f"border:{background.borderStyleSheet()};"
+                + f"border-radius:{background.borderRadiusStyleSheet(size=buttonSize)};"
+                + f"background-color:{background.colorStyleSheet()};"
+                + "}"
+                + "QPushButton:hover{"
+                + f"border:{background.borderStyleSheet(active=True)};"
+                + f"background-color:{background.colorStyleSheet(active=True)};"
+                + "}"
+            )
+        )
+        button.setStyleSheet(styleSheet)
         return button
