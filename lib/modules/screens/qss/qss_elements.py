@@ -79,17 +79,3 @@ class QSSBackground:
             self.borderRadius if self.borderRadius >= 1 else self.borderRadius * size
         )
         return f"{radius}px"
-
-
-class QSSFont:
-    def __init__(self, font: QFont, color: QSSColor=None):
-        self.font = font
-        self.color = color
-
-    def getFontData(self) -> QFont:
-        return self.font
-
-    def colorStyleSheet(self, active: bool = False) -> str:
-        if self.color is None:
-            return None
-        return self.color.toStylesheet(active)

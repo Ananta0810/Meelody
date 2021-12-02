@@ -2,6 +2,7 @@ from sys import path
 
 path.append("./lib")
 from modules.models.color import Color
+from utils.helpers.my_bytes import MyBytes
 
 
 class Colors:
@@ -20,3 +21,13 @@ class Colors:
     WHITE = Color(255, 255, 255)
     BLACK = Color(0, 0, 0)
     TRANSPARENT = Color(255, 255, 255, 0)
+
+
+class ApplicationImage:
+    errorPlaylist = MyBytes.get_bytes_from_file("assets\images\defaults\oops.png")
+    defaultSongCover = MyBytes.get_bytes_from_file(
+        "assets\images\defaults\song_cover.jpg"
+    )
+    defaultPlaylistCover = MyBytes.get_bytes_from_file(
+        "assets\images\defaults\playlist_cover.jpg"
+    )

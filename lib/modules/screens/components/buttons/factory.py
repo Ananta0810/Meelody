@@ -5,5 +5,5 @@ from PyQt5.QtWidgets import QPushButton
 
 class ButtonFactory(ABC):
     @abstractmethod
-    def getButton(self) -> QPushButton:
+    def getButtonByType(self) -> QPushButton:
         pass

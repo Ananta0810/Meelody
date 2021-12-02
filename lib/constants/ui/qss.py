@@ -1,6 +1,6 @@
 from sys import path
 
-from .colors import Colors
+from .base import Colors
 
 path.append(".")
 from lib.modules.screens.qss.qss_elements import *
@@ -16,10 +16,15 @@ class QSSPaddings:
 
 
 class QSSColors:
-    FLAT_PRIMARY = QSSColor(normal=Colors.PRIMARY)
+    FLAT_PRIMARY = QSSColor(Colors.PRIMARY)
+    FLAT_GRAY = QSSColor(Colors.BLACK.withAlpha(0.5))
     BLACK = QSSColor(
         normal=Colors.BLACK.withAlpha(0.08),
         active=Colors.BLACK.withAlpha(0.12),
+    )
+    GRAY = QSSColor(
+        normal=Colors.BLACK.withAlpha(0.4),
+        active=Colors.BLACK.withAlpha(0.6),
     )
     PRIMARY = QSSColor(
         normal=Colors.PRIMARY.withAlpha(0.15),
@@ -37,6 +42,7 @@ class QSSColors:
         normal=Colors.WARNING.withAlpha(0.15),
         active=Colors.WARNING.withAlpha(0.25),
     )
+
     DISABLED = QSSColor(
         normal=Colors.DISABLED.withAlpha(0.15),
         active=Colors.DISABLED.withAlpha(0.25),

@@ -1,16 +1,16 @@
-from PyQt5.QtCore import QSize
-from PyQt5.QtGui import QIcon
+from PyQt5.QtCore import QSize, Qt
+from PyQt5.QtGui import QColor, QCursor, QIcon
+from PyQt5.QtWidgets import QGraphicsDropShadowEffect
 
 
 class IconSize:
     SMALL = QSize(24, 24)
     MEDIUM = QSize(32, 32)
-    # LARGE = QSize(40, 40)
     LARGE = QSize(48, 48)
     XLARGE = QSize(64, 64)
 
 
-class Icons:
+class AppIcons:
     def __init__(self):
         self.SIZES = IconSize
         self.APP_ICON = QIcon("assets/images/Music.ico")
@@ -55,3 +55,21 @@ class Icons:
         self.VOLUME_DOWN = QIcon("assets/images/icons/volume-down.png")
         self.VOLUME_SILENT = QIcon("assets/images/icons/volume-silent.png")
         self.TIMER = QIcon("assets/images/icons/timer.png")
+
+
+class AppAlignment:
+    def __init__(self):
+        self.CENTER = Qt.AlignCenter
+        self.LEFT = Qt.AlignLeft
+        self.RIGHT = Qt.AlignRight
+
+
+class AppCursors:
+    def __init__(self):
+        self.HAND = QCursor(Qt.PointingHandCursor)
+
+
+class AppEffect:
+    shadow = QGraphicsDropShadowEffect(
+        blurRadius=50, color=QColor(128, 64, 255, 100), xOffset=0, yOffset=3
+    )

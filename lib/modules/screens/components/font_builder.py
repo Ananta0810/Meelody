@@ -1,4 +1,4 @@
-from PyQt5.QtGui import QFont, QPalette
+from PyQt5.QtGui import QFont, QFontDatabase
 
 
 class FontBuilder:
@@ -26,14 +26,9 @@ class FontBuilder:
         return self
 
     def build(self):
-        font = QFont()
-        font.setFamily(self.family)
+        font = QFont(self.family)
         font.setPointSize(self.size)
         font.setItalic(self.style == "italic")
         font.setBold(self.weight == "bold")
-        self.size = -1
-        self.weight = -1
-        self.style = None
-        self.color = None
-        self.family = "Segoe UI"
+        self.__init__()
         return font

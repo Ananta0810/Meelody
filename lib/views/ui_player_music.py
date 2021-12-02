@@ -1,38 +1,37 @@
 from sys import path
 
-from PyQt5.QtCore import QMetaObject, Qt
-from PyQt5.QtGui import QCursor, QIntValidator
-from PyQt5.QtWidgets import QHBoxLayout, QLabel, QLineEdit, QVBoxLayout, QWidget
+from PyQt5.QtCore import QMetaObject
+from PyQt5.QtGui import QIntValidator, QPixmap
+from PyQt5.QtWidgets import QHBoxLayout, QVBoxLayout, QWidget
 
 path.append("./lib")
-from constants.ui import alignment, colors, icons, images
+from constants.ui.base import ApplicationImage, Colors
 from constants.ui.qss import *
-from modules.screens.components.buttons.icon_button_factory import IconButtonFactory
+from constants.ui.qt import AppAlignment, AppCursors, AppIcons
+from modules.screens.components.factories import *
 from modules.screens.components.font_builder import FontBuilder
-from modules.screens.components.label_factory import LabelFactory
-from modules.screens.components.slider_factory import SliderFactory
 from modules.screens.qss.qss_elements import *
 from utils.helpers.my_string import Stringify
-from utils.ui.application_ui_utils import ApplicationUIUtils as AppUI
-from widgets.image_label import ImageLabel
+from utils.ui.application_utils import ApplicationUIUtils as AppUI
+from widgets.image_displayer import ImageDisplayer
 
 
 class UIPlayerMusic(QWidget):
-    def setupUi(self):
-        ICONS = icons.Icons()
-        ALIGNMENT = alignment.Alignment()
+    def setupUi(self, controller):
+        self.controller = controller
+        Icons = AppIcons()
+        Alignment = AppAlignment()
+        Cursors = AppCursors()
+
         buttonFactory = IconButtonFactory()
         fontBuilder = FontBuilder()
-        COLORS = colors.Colors
-        HAND_CURSOR = QCursor(Qt.PointingHandCursor)
-        APP_IMGS = images.ApplicationImage
 
-        standardIconButtonRenderer = buttonFactory.getButton("")
-        toggleButtonRenderer = buttonFactory.getButton("toggle")
-        multipleIconButtonRenderer = buttonFactory.getButton("multiple-icon")
-        horizontalSlider = SliderFactory().get(type="horizontal")
+        standardIconButtonRenderer = buttonFactory.getButtonByType("")
+        toggleButtonRenderer = buttonFactory.getButtonByType("toggle")
+        multipleIconButtonRenderer = buttonFactory.getButtonByType("multiple-icon")
+        horizontalSlider = SliderFactory().getSliderByType("horizontal")
         labelFactory = LabelFactory()
-        standardLabelRenderer = labelFactory.getLabel("")
+        standardLabelRenderer = labelFactory.getLabelByType("default")
 
         normalIconButtonBackground = QSSBackground(
             borderRadius=0.5,
@@ -42,11 +41,13 @@ class UIPlayerMusic(QWidget):
             borderRadius=0.5,
             color=QSSColors.HIDDEN_DANGER,
         )
+        normalFont = fontBuilder.withSize(9).build()
+        emphasizedFont = fontBuilder.withSize(10).withWeight("bold").build()
 
         # =================UI=================
         self.main_layout = QHBoxLayout(self)
         self.main_layout.setContentsMargins(40, 0, 40, 0)
-        self.main_layout.setSpacing(40)
+        self.main_layout.setSpacing(0)
 
         # =================LEFT=================
         self.left = QHBoxLayout()
@@ -54,29 +55,20 @@ class UIPlayerMusic(QWidget):
         self.left.setSpacing(12)
         self.main_layout.addLayout(self.left)
 
-        self.song_cover = ImageLabel()
+        self.song_cover = ImageDisplayer()
         self.song_cover.setFixedSize(64, 64)
         self.song_cover.setDefaultPixmap(
-            self.getPixmapForSongCover(APP_IMGS.defaultSongCover)
+            self.__getPixmapForSongCover(ApplicationImage.defaultSongCover)
         )
-        self.song_cover.setPixmap(None)
         self.left.addWidget(self.song_cover)
+
+        self.song_title = standardLabelRenderer.render(font=emphasizedFont)
+        self.song_artist = standardLabelRenderer.render(normalFont, QSSColors.FLAT_GRAY)
 
         self.song_info_layout = QVBoxLayout()
         self.song_info_layout.setContentsMargins(0, 0, 0, 0)
         self.song_info_layout.setSpacing(0)
         self.left.addLayout(self.song_info_layout, stretch=1)
-
-        self.song_title = standardLabelRenderer.render(
-            font=QSSFont(fontBuilder.withSize(10).withWeight("bold").build()),
-        )
-        self.song_title.setText("Song's artist")
-
-        self.song_artist = standardLabelRenderer.render(
-            font=QSSFont(fontBuilder.withSize(10).build())
-        )
-        self.song_artist.setText("Song's artist")
-
         self.song_info_layout.addStretch(0)
         self.song_info_layout.addWidget(self.song_title)
         self.song_info_layout.addWidget(self.song_artist)
@@ -90,46 +82,46 @@ class UIPlayerMusic(QWidget):
 
         self.previous_song_btn = standardIconButtonRenderer.render(
             padding=QSSPaddings.RELATIVE_50,
-            iconSize=ICONS.SIZES.SMALL,
-            icon=AppUI.paintIcon(ICONS.PREVIOUS, COLORS.PRIMARY),
+            iconSize=Icons.SIZES.SMALL,
+            icon=AppUI.paintIcon(Icons.PREVIOUS, Colors.PRIMARY),
             background=normalIconButtonBackground,
         )
-        self.previous_song_btn.setCursor(HAND_CURSOR)
+        self.previous_song_btn.setCursor(Cursors.HAND)
         self.play_buttons.addWidget(self.previous_song_btn)
 
         self.play_song_btn = toggleButtonRenderer.render(
             padding=QSSPaddings.RELATIVE_75,
-            iconSize=ICONS.SIZES.MEDIUM,
-            icon=AppUI.paintIcon(ICONS.PLAY, COLORS.PRIMARY),
-            checkedIcon=AppUI.paintIcon(ICONS.PAUSE, COLORS.PRIMARY),
+            iconSize=Icons.SIZES.MEDIUM,
+            icon=AppUI.paintIcon(Icons.PLAY, Colors.PRIMARY),
+            checkedIcon=AppUI.paintIcon(Icons.PAUSE, Colors.PRIMARY),
             background=QSSBackground(
                 borderRadius=0.5,
                 color=QSSColors.PRIMARY,
             ),
         )
         self.play_song_btn.setChecked(False)
-        self.play_song_btn.setCursor(HAND_CURSOR)
+        self.play_song_btn.setCursor(Cursors.HAND)
         self.play_buttons.addWidget(self.play_song_btn)
 
         self.next_song_btn = standardIconButtonRenderer.render(
             padding=QSSPaddings.RELATIVE_50,
-            iconSize=ICONS.SIZES.SMALL,
-            icon=AppUI.paintIcon(ICONS.NEXT, COLORS.PRIMARY),
+            iconSize=Icons.SIZES.SMALL,
+            icon=AppUI.paintIcon(Icons.NEXT, Colors.PRIMARY),
             background=normalIconButtonBackground,
         )
-        self.next_song_btn.setCursor(HAND_CURSOR)
+        self.next_song_btn.setCursor(Cursors.HAND)
         self.play_buttons.addWidget(self.next_song_btn)
 
         # =================CENTER=================
-        self.center = QWidget()
+        self.center = QHBoxLayout()
+        self.center.setContentsMargins(0, 0, 0, 0)
+        self.center.setSpacing(4)
+        self.main_layout.addLayout(self.center)
 
-        self.main_layout.addWidget(self.center, 0, ALIGNMENT.CENTER)
-        self.center_layout = QHBoxLayout(self.center)
-        self.center_layout.setContentsMargins(0, 0, 0, 0)
-
-        self.playing_time = QLabel()
-        self.center_layout.addWidget(self.playing_time)
-        self.displayPlayingTime(0)
+        self.playing_time = standardLabelRenderer.render(font=normalFont)
+        self.playing_time.setFixedWidth(60)
+        self.playing_time.setAlignment(Alignment.RIGHT)
+        self.center.addWidget(self.playing_time)
 
         self.time_slider = horizontalSlider.render(
             height=12,
@@ -138,10 +130,13 @@ class UIPlayerMusic(QWidget):
         )
         self.time_slider.setFixedSize(250, 12)
         self.time_slider.setProperty("value", 0)
-        self.center_layout.addWidget(self.time_slider)
+        self.center.addWidget(self.time_slider)
 
-        self.total_time = QLabel()
-        self.center_layout.addWidget(self.total_time)
+        self.total_time = standardLabelRenderer.render(font=normalFont)
+        self.total_time.setFixedWidth(60)
+        self.total_time.setAlignment(Alignment.LEFT)
+        self.center.addWidget(self.total_time)
+        self.displayPlayingTime(0)
         self.displayTotalTime(0)
 
         # =================RIGHT=================
@@ -152,55 +147,55 @@ class UIPlayerMusic(QWidget):
 
         self.loop_btn = toggleButtonRenderer.render(
             padding=QSSPaddings.RELATIVE_100,
-            iconSize=ICONS.SIZES.SMALL,
-            icon=AppUI.paintIcon(ICONS.LOOP, COLORS.PRIMARY),
-            checkedIcon=AppUI.paintIcon(ICONS.LOOP, COLORS.DANGER),
+            iconSize=Icons.SIZES.SMALL,
+            icon=AppUI.paintIcon(Icons.LOOP, Colors.PRIMARY),
+            checkedIcon=AppUI.paintIcon(Icons.LOOP, Colors.DANGER),
             background=normalIconButtonBackground,
             checkedBackground=checkedIconButtonBackground,
         )
-        self.loop_btn.setCursor(HAND_CURSOR)
+        self.loop_btn.setCursor(Cursors.HAND)
         self.right.addWidget(self.loop_btn)
 
         self.shuffle_btn = toggleButtonRenderer.render(
             padding=QSSPaddings.RELATIVE_100,
-            iconSize=ICONS.SIZES.SMALL,
-            icon=AppUI.paintIcon(ICONS.SHUFFLE, COLORS.PRIMARY),
-            checkedIcon=AppUI.paintIcon(ICONS.SHUFFLE, COLORS.DANGER),
+            iconSize=Icons.SIZES.SMALL,
+            icon=AppUI.paintIcon(Icons.SHUFFLE, Colors.PRIMARY),
+            checkedIcon=AppUI.paintIcon(Icons.SHUFFLE, Colors.DANGER),
             background=normalIconButtonBackground,
             checkedBackground=checkedIconButtonBackground,
         )
-        self.shuffle_btn.setCursor(HAND_CURSOR)
+        self.shuffle_btn.setCursor(Cursors.HAND)
         self.right.addWidget(self.shuffle_btn)
 
         self.love_btn = toggleButtonRenderer.render(
             padding=QSSPaddings.RELATIVE_100,
-            iconSize=ICONS.SIZES.SMALL,
-            icon=AppUI.paintIcon(ICONS.LOVE, COLORS.PRIMARY),
-            checkedIcon=AppUI.paintIcon(ICONS.LOVE, COLORS.DANGER),
+            iconSize=Icons.SIZES.SMALL,
+            icon=AppUI.paintIcon(Icons.LOVE, Colors.PRIMARY),
+            checkedIcon=AppUI.paintIcon(Icons.LOVE, Colors.DANGER),
             background=normalIconButtonBackground,
             checkedBackground=checkedIconButtonBackground,
         )
-        self.love_btn.setCursor(HAND_CURSOR)
+        self.love_btn.setCursor(Cursors.HAND)
         self.right.addWidget(self.love_btn)
 
         self.volume_btn = multipleIconButtonRenderer.render(
             padding=QSSPaddings.RELATIVE_100,
-            iconSize=ICONS.SIZES.SMALL,
+            iconSize=Icons.SIZES.SMALL,
             icons=[
-                AppUI.paintIcon(ICONS.VOLUME_UP, COLORS.PRIMARY),
-                AppUI.paintIcon(ICONS.VOLUME_DOWN, COLORS.PRIMARY),
-                AppUI.paintIcon(ICONS.VOLUME_SILENT, COLORS.PRIMARY),
+                AppUI.paintIcon(Icons.VOLUME_UP, Colors.PRIMARY),
+                AppUI.paintIcon(Icons.VOLUME_DOWN, Colors.PRIMARY),
+                AppUI.paintIcon(Icons.VOLUME_SILENT, Colors.PRIMARY),
             ],
             background=normalIconButtonBackground,
         )
-        self.volume_btn.setCursor(HAND_CURSOR)
-        self.volume_btn.clicked.connect(self.showVolumeSlider)
+        self.volume_btn.setCursor(Cursors.HAND)
+        self.volume_btn.clicked.connect(self.__showVolumeSlider)
         self.right.addWidget(self.volume_btn)
 
-        self.timer_boxs = QWidget()
-        self.timer_boxs_layout = QHBoxLayout(self.timer_boxs)
-        self.timer_boxs_layout.setContentsMargins(0, 0, 0, 0)
-        self.right.addWidget(self.timer_boxs, 1)
+        self.timer_inputs = QWidget()
+        self.right_boxes = QHBoxLayout(self.timer_inputs)
+        self.right_boxes.setContentsMargins(0, 0, 0, 0)
+        self.right.addWidget(self.timer_inputs, 1)
 
         self.volume_slider = horizontalSlider.render(
             height=48,
@@ -208,82 +203,59 @@ class UIPlayerMusic(QWidget):
             handleColor=QSSColors.FLAT_PRIMARY,
             background=QSSBackground(
                 borderRadius=12,
-                color=QSSColors.BLACK,
+                color=QSSColors.PRIMARY,
             ),
         )
         self.volume_slider.setSliderPosition(100)
         self.volume_slider.setVisible(False)
-        self.volume_slider.valueChanged.connect(self.changeVolumeIcon)
-        self.timer_boxs_layout.addWidget(self.volume_slider)
+        self.volume_slider.valueChanged.connect(self.__changeVolumeIcon)
+        self.right_boxes.addWidget(self.volume_slider)
 
-        self.timer_box = labelFactory.getLabel("editable").render(
-            font=QSSFont(fontBuilder.withSize(10).withWeight("bold").build()),
-            alignment=ALIGNMENT.CENTER,
+        self.timer_input = labelFactory.getLabelByType("editable").render(
+            font=emphasizedFont,
+            color=QSSColors.FLAT_PRIMARY,
+            alignment=Alignment.CENTER,
             background=QSSBackground(
                 borderRadius=12,
-                color=QSSColors.BLACK,
+                color=QSSColors.PRIMARY,
             ),
         )
-        self.timer_box.setFixedHeight(48)
-        self.timer_box.setPlaceholderText("Enter Minute")
-        self.timer_box.setValidator(QIntValidator())
-        self.timer_box.setVisible(False)
-        self.timer_boxs_layout.addWidget(self.timer_box)
+        self.timer_input.setFixedHeight(48)
+        self.timer_input.setPlaceholderText("Enter Minute")
+        self.timer_input.setValidator(QIntValidator())
+        self.timer_input.setVisible(False)
+        self.right_boxes.addWidget(self.timer_input)
 
         self.timer_btn = standardIconButtonRenderer.render(
             padding=QSSPaddings.RELATIVE_100,
-            iconSize=ICONS.SIZES.SMALL,
-            icon=AppUI.paintIcon(ICONS.TIMER, COLORS.PRIMARY),
+            iconSize=Icons.SIZES.SMALL,
+            icon=AppUI.paintIcon(Icons.TIMER, Colors.PRIMARY),
             background=normalIconButtonBackground,
         )
-        self.timer_btn.setCursor(HAND_CURSOR)
-        self.timer_btn.clicked.connect(self.showTimerBox)
+        self.timer_btn.setCursor(Cursors.HAND)
+        self.timer_btn.clicked.connect(self.__showTimerInput)
         self.right.addWidget(self.timer_btn)
 
+        self.__connectSignals()
         QMetaObject.connectSlotsByName(self)
 
-    def displaySongInfo(self, cover, title, artist):
+    def displaySongInfo(self, cover: bytes, title: str, artist: str) -> None:
         coverAsPixmap = None
+        title = title if title is not None else "song's title"
+        artist = artist if artist is not None else "song's artist"
         if cover is not None:
-            coverAsPixmap = self.getPixmapForSongCover(cover)
+            coverAsPixmap = self.__getPixmapForSongCover(cover)
         self.song_cover.setPixmap(coverAsPixmap)
         self.song_title.setText(title)
         self.song_artist.setText(artist)
 
-    def changeVolumeIcon(self):
-        volume: int = self.volume_slider.value()
-        VOLUME_UP_ICON = 0
-        VOLUME_DOWN_ICON = 1
-        SILENT_ICON = 2
-        icon = SILENT_ICON
-
-        if 0 < volume <= 50:
-            icon = VOLUME_DOWN_ICON
-        if 50 < volume <= 100:
-            icon = VOLUME_UP_ICON
-        self.volume_btn.setCurrentIcon(icon)
-
-    def getPixmapForSongCover(self, coverAsByte):
-        return AppUI.getSquaredPixmapFromBytes(
-            coverAsByte, self.song_cover.width(), radius=12
-        )
-
-    def showVolumeSlider(self):
-        self.volume_slider.setVisible(not self.volume_slider.isVisible())
-        self.timer_box.setVisible(False)
-
-    def showTimerBox(self):
-        self.timer_box.setVisible(not self.timer_box.isVisible())
-        self.timer_box.clear()
-        self.volume_slider.setVisible(False)
-
-    def displayPlayingTime(self, time: float):
+    def displayPlayingTime(self, time: float) -> None:
         self.playing_time.setText(Stringify.floatToClockTime(time))
 
-    def displayTotalTime(self, time: float):
+    def displayTotalTime(self, time: float) -> None:
         self.total_time.setText(Stringify.floatToClockTime(time))
 
-    def runTimeSlider(self, currentTime: float, totalTime: float):
+    def runTimeSlider(self, currentTime: float, totalTime: float) -> None:
         position = int(currentTime * 100 / totalTime)
         self.time_slider.setSliderPosition(position)
 
@@ -297,8 +269,56 @@ class UIPlayerMusic(QWidget):
         return self.play_song_btn.isChecked()
 
     def getTimerValue(self) -> int:
-        return int(self.timer_box.text())
+        return int(self.timer_input.text())
 
-    def closeTimerBox(self):
-        self.timer_box.clear()
-        self.timer_box.hide()
+    def getCurrentTimeSliderPosition(self) -> int:
+        return self.time_slider.sliderPosition()
+
+    def getCurrentVolumeValue(self) -> int:
+        return self.volume_slider.value()
+
+    def closeTimerBox(self) -> None:
+        self.timer_input.clear()
+        self.timer_input.hide()
+
+    def setPlayingState(self, state: bool) -> None:
+        self.play_song_btn.setChecked(state)
+
+    def __connectSignals(self) -> None:
+        self.previous_song_btn.clicked.connect(self.controller.handlePreviousSong)
+        self.play_song_btn.clicked.connect(self.controller.handlePlaySong)
+        self.next_song_btn.clicked.connect(self.controller.handleNextSong)
+        self.time_slider.sliderPressed.connect(self.controller.handlePausedTimeSlider)
+        self.time_slider.sliderReleased.connect(
+            self.controller.handleUnpausedTimeSlider
+        )
+        self.shuffle_btn.clicked.connect(self.controller.handleClickedShuffle)
+        self.love_btn.clicked.connect(self.controller.handleLoveSong)
+        self.volume_slider.valueChanged.connect(self.controller.handleChangVolume)
+        self.timer_input.returnPressed.connect(self.controller.handleEnteredTimer)
+
+    def __getPixmapForSongCover(self, coverAsByte) -> QPixmap:
+        return AppUI.getSquaredPixmapFromBytes(
+            coverAsByte, self.song_cover.width(), radius=12
+        )
+
+    def __changeVolumeIcon(self) -> None:
+        volume: int = self.volume_slider.value()
+        VOLUME_UP_ICON = 0
+        VOLUME_DOWN_ICON = 1
+        SILENT_ICON = 2
+        icon = SILENT_ICON
+
+        if 0 < volume <= 50:
+            icon = VOLUME_DOWN_ICON
+        if 50 < volume <= 100:
+            icon = VOLUME_UP_ICON
+        self.volume_btn.setCurrentIcon(icon)
+
+    def __showVolumeSlider(self) -> None:
+        self.volume_slider.setVisible(not self.volume_slider.isVisible())
+        self.timer_input.setVisible(False)
+
+    def __showTimerInput(self) -> None:
+        self.timer_input.setVisible(not self.timer_input.isVisible())
+        self.volume_slider.setVisible(False)
