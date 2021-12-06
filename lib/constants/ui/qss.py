@@ -1,12 +1,12 @@
 from sys import path
 
-from .base import Colors
+from .metaclass import MetaConst
 
 path.append(".")
 from lib.modules.screens.qss.qss_elements import *
 
 
-class QSSPaddings:
+class Paddings(metaclass=MetaConst):
     RELATIVE_25 = QSSPadding(0.25)
     RELATIVE_50 = QSSPadding(0.5)
     RELATIVE_75 = QSSPadding(0.75)
@@ -15,51 +15,69 @@ class QSSPaddings:
     ABSOLUTE_MEDIUM = QSSPadding(12)
 
 
-class QSSColors:
-    FLAT_PRIMARY = QSSColor(Colors.PRIMARY)
-    FLAT_GRAY = QSSColor(Colors.BLACK.withAlpha(0.5))
-    BLACK = QSSColor(
+class Colors(metaclass=MetaConst):
+    PRIMARY = Color(128, 64, 255)
+    PRIMARY_DARK = Color(0, 0, 255)
+    PRIMARY_LIGHT = Color(160, 160, 255)
+
+    SUCCESS = Color(50, 216, 100)
+    SUCCESS_DARK = Color(0, 192, 100)
+    DANGER = Color(255, 80, 80)
+    DANGER_DARK = Color(255, 0, 0)
+    WARNING = Color(255, 170, 28)
+    WARNING_DARK = Color(255, 128, 0)
+
+    DISABLED = Color(128, 128, 128)
+    WHITE = Color(255, 255, 255)
+    BLACK = Color(0, 0, 0)
+    TRANSPARENT = Color(255, 255, 255, 0)
+
+
+class ColorBoxes(metaclass=MetaConst):
+    FLAT_PRIMARY = ColorBox(Colors.PRIMARY)
+    FLAT_GRAY = ColorBox(Colors.BLACK.withAlpha(0.5))
+    BLACK = ColorBox(
         normal=Colors.BLACK.withAlpha(0.08),
         active=Colors.BLACK.withAlpha(0.12),
     )
-    GRAY = QSSColor(
+    GRAY = ColorBox(
         normal=Colors.BLACK.withAlpha(0.4),
         active=Colors.BLACK.withAlpha(0.6),
     )
-    PRIMARY = QSSColor(
+    PRIMARY = ColorBox(
         normal=Colors.PRIMARY.withAlpha(0.15),
         active=Colors.PRIMARY.withAlpha(0.25),
     )
-    SUCCESS = QSSColor(
+    SUCCESS = ColorBox(
         normal=Colors.SUCCESS.withAlpha(0.15),
         active=Colors.SUCCESS.withAlpha(0.25),
     )
-    DANGER = QSSColor(
+    DANGER = ColorBox(
         normal=Colors.DANGER.withAlpha(0.15),
         active=Colors.DANGER.withAlpha(0.25),
     )
-    WARNING = QSSColor(
+    WARNING = ColorBox(
         normal=Colors.WARNING.withAlpha(0.15),
         active=Colors.WARNING.withAlpha(0.25),
     )
 
-    DISABLED = QSSColor(
+    DISABLED = ColorBox(
         normal=Colors.DISABLED.withAlpha(0.15),
         active=Colors.DISABLED.withAlpha(0.25),
     )
-    HIDDEN_PRIMARY = QSSColor(
+    HIDDEN_PRIMARY = ColorBox(
         normal=Colors.TRANSPARENT,
         active=Colors.PRIMARY.withAlpha(0.15),
     )
-    HIDDEN_SUCCESS = QSSColor(
+    HIDDEN_SUCCESS = ColorBox(
         normal=Colors.TRANSPARENT,
         active=Colors.SUCCESS.withAlpha(0.15),
     )
-    HIDDEN_DANGER = QSSColor(
+    HIDDEN_DANGER = ColorBox(
         normal=Colors.TRANSPARENT,
         active=Colors.DANGER.withAlpha(0.15),
     )
-    HIDDEN_WARNING = QSSColor(
+    HIDDEN_WARNING = ColorBox(
         normal=Colors.TRANSPARENT,
         active=Colors.WARNING.withAlpha(0.15),
     )

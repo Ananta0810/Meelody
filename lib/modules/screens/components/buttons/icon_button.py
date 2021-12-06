@@ -1,43 +1,29 @@
 from sys import path
 
+from PyQt5.QtCore import QSize
 from PyQt5.QtGui import QIcon
 from PyQt5.QtWidgets import QPushButton
 
 from .button import Button
 
 path.append(".lib/modules/")
-from modules.screens.qss.qss_elements import QSSBackground, QSSPadding
+from modules.screens.qss.qss_elements import QSSPadding
+from modules.screens.themes.button_theme_builder import StandardIconButtonThemeBuilder
 
 
 class IconButton(Button):
     def render(
         self,
         icon: QIcon,
-        iconSize: int,
+        size: QSize,
         padding: QSSPadding,
-        background: QSSBackground,
         parent=None,
     ) -> QPushButton:
         button = QPushButton(parent)
         button.setIcon(icon)
-        button.setIconSize(iconSize)
-
-        iconWidth = iconSize.width()
-        buttonSize: int = iconWidth
-        if padding is not None:
-            buttonSize += padding.getWidth(iconWidth)
-        button.setFixedSize(buttonSize, buttonSize)
-
-        button.setStyleSheet(
-            "QPushButton{"
-            + f"padding: {padding.toStylesheet(size=buttonSize) if padding is not None else None};"
-            + f"border:{background.borderStyleSheet()};"
-            + f"border-radius:{background.borderRadiusStyleSheet(size=buttonSize)};"
-            + f"background-color:{background.colorStyleSheet()};"
-            + "}"
-            + "QPushButton:hover{"
-            + f"border:{background.borderStyleSheet(active=True)};"
-            + f"background-color:{background.colorStyleSheet(active=True)};"
-            + "}"
-        )
+        button.setIconSize(size - padding.getWidth(size))
+        button.setFixedSize(size)
         return button
+
+    def getThemeBuilder(self):
+        return StandardIconButtonThemeBuilder()

@@ -11,21 +11,36 @@ from .text.standard_label import StandardLabel
 
 
 class LabelFactory:
+    _types = {
+        "default": StandardLabel,
+        "editable": EditableLabel,
+    }
+
     def getLabelByType(self, type: str) -> AbstractLabel:
-        if type == "editable":
-            return EditableLabel()
-        return StandardLabel()
+        if type in self._types:
+            return self._types.get(type)()
+        raise ValueError("Factory doesn't support this type of label")
 
 
 class SliderFactory:
+    _types = {
+        "horizontal": HorizontalSlider,
+    }
+
     def getSliderByType(self, type: str) -> Slider:
-        return HorizontalSlider()
+        if type in self._types:
+            return self._types.get(type)()
+        raise ValueError("Factory doesn't support this type of slider")
 
 
 class IconButtonFactory(ButtonFactory):
+    _types = {
+        "default": IconButton,
+        "toggle": ToggleIconButton,
+        "multiple-icon": MultiIconButton,
+    }
+
     def getButtonByType(self, type: str = None) -> Button:
-        if type == "toggle":
-            return ToggleIconButton()
-        if type == "multiple-icon":
-            return MultiIconButton()
-        return IconButton()
+        if type in self._types:
+            return self._types.get(type)()
+        raise ValueError("Factory doesn't support this type of button")

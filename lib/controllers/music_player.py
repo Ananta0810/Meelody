@@ -13,10 +13,11 @@ from views.ui_player_music import UIPlayerMusic
 
 
 class MusicPlayer:
-    def __init__(self, form: QWidget, player):
+    def __init__(self, form: QWidget, player: Player):
         self.player = player
         self.ui = UIPlayerMusic(form)
         self.ui.setupUi(controller=self)
+        self.ui.darkMode()
         self.displayCurrentSongInfo()
         self.currentThreadNumber = 0
         self.canRunTimeSlider = True

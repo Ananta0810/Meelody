@@ -2,6 +2,8 @@ from PyQt5.QtCore import QSize, Qt
 from PyQt5.QtGui import QColor, QCursor, QIcon
 from PyQt5.QtWidgets import QGraphicsDropShadowEffect
 
+from .metaclass import MetaConst
+
 
 class IconSize:
     SMALL = QSize(24, 24)
@@ -10,7 +12,7 @@ class IconSize:
     XLARGE = QSize(64, 64)
 
 
-class AppIcons:
+class AppIcons(metaclass=MetaConst):
     def __init__(self):
         self.SIZES = IconSize
         self.APP_ICON = QIcon("assets/images/Music.ico")
@@ -57,19 +59,19 @@ class AppIcons:
         self.TIMER = QIcon("assets/images/icons/timer.png")
 
 
-class AppAlignment:
+class AppAlignment(metaclass=MetaConst):
     def __init__(self):
         self.CENTER = Qt.AlignCenter
         self.LEFT = Qt.AlignLeft
         self.RIGHT = Qt.AlignRight
 
 
-class AppCursors:
+class AppCursors(metaclass=MetaConst):
     def __init__(self):
         self.HAND = QCursor(Qt.PointingHandCursor)
 
 
-class AppEffect:
+class AppEffect(metaclass=MetaConst):
     shadow = QGraphicsDropShadowEffect(
         blurRadius=50, color=QColor(128, 64, 255, 100), xOffset=0, yOffset=3
     )

@@ -6,14 +6,14 @@ from PyQt5.QtWidgets import QLineEdit
 from .abstract_text import AbstractLabel
 
 path.append("./lib")
-from modules.screens.qss.qss_elements import QSSBackground, QSSColor, QSSPadding
+from modules.screens.qss.qss_elements import QSSBackground, ColorBox, QSSPadding
 
 
 class StandardLabel(AbstractLabel):
     def render(
         self,
         font: QFont,
-        color: QSSColor = None,
+        color: ColorBox = None,
         padding: QSSPadding = None,
         background: QSSBackground = None,
         parent=None,

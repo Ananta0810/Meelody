@@ -5,7 +5,7 @@ from PyQt5.QtGui import QIntValidator, QPixmap
 from PyQt5.QtWidgets import QHBoxLayout, QVBoxLayout, QWidget
 
 path.append("./lib")
-from constants.ui.base import ApplicationImage, Colors
+from constants.ui.base import ApplicationImage
 from constants.ui.qss import *
 from constants.ui.qt import AppAlignment, AppCursors, AppIcons
 from modules.screens.components.factories import *
@@ -19,28 +19,41 @@ from widgets.image_displayer import ImageDisplayer
 class UIPlayerMusic(QWidget):
     def setupUi(self, controller):
         self.controller = controller
+        self.themeItems = {}
         Icons = AppIcons()
         Alignment = AppAlignment()
         Cursors = AppCursors()
 
+        # Button constructors
         buttonFactory = IconButtonFactory()
-        fontBuilder = FontBuilder()
-
-        standardIconButtonRenderer = buttonFactory.getButtonByType("")
+        standardIconButtonRenderer = buttonFactory.getButtonByType("default")
         toggleButtonRenderer = buttonFactory.getButtonByType("toggle")
-        multipleIconButtonRenderer = buttonFactory.getButtonByType("multiple-icon")
+        defaultButtonBackground = QSSBackground(
+            borderRadius=0.5,
+            color=ColorBoxes.HIDDEN_PRIMARY,
+        )
+        normalButtonThemeStyle = (
+            standardIconButtonRenderer.getThemeBuilder()
+            .addLightModeBackground(defaultButtonBackground)
+            .build(itemSize=Icons.SIZES.LARGE.height())
+        )
+        toggleButtonThemeStyle = (
+            toggleButtonRenderer.getThemeBuilder()
+            .addLightModeBackground(defaultButtonBackground)
+            .addLightModeActiveBackground(
+                QSSBackground(
+                    borderRadius=0.5,
+                    color=ColorBoxes.HIDDEN_DANGER,
+                )
+            )
+            .build(itemSize=Icons.SIZES.LARGE.height())
+        )
         horizontalSlider = SliderFactory().getSliderByType("horizontal")
         labelFactory = LabelFactory()
-        standardLabelRenderer = labelFactory.getLabelByType("default")
+        labelRenderer = labelFactory.getLabelByType("default")
 
-        normalIconButtonBackground = QSSBackground(
-            borderRadius=0.5,
-            color=QSSColors.HIDDEN_PRIMARY,
-        )
-        checkedIconButtonBackground = QSSBackground(
-            borderRadius=0.5,
-            color=QSSColors.HIDDEN_DANGER,
-        )
+        # Font constructors
+        fontBuilder = FontBuilder()
         normalFont = fontBuilder.withSize(9).build()
         emphasizedFont = fontBuilder.withSize(10).withWeight("bold").build()
 
@@ -62,8 +75,11 @@ class UIPlayerMusic(QWidget):
         )
         self.left.addWidget(self.song_cover)
 
-        self.song_title = standardLabelRenderer.render(font=emphasizedFont)
-        self.song_artist = standardLabelRenderer.render(normalFont, QSSColors.FLAT_GRAY)
+        self.song_title = labelRenderer.render(font=emphasizedFont)
+        self.song_artist = labelRenderer.render(
+            normalFont,
+            ColorBoxes.FLAT_GRAY,
+        )
 
         self.song_info_layout = QVBoxLayout()
         self.song_info_layout.setContentsMargins(0, 0, 0, 0)
@@ -81,36 +97,42 @@ class UIPlayerMusic(QWidget):
         self.left.addLayout(self.play_buttons)
 
         self.previous_song_btn = standardIconButtonRenderer.render(
-            padding=QSSPaddings.RELATIVE_50,
-            iconSize=Icons.SIZES.SMALL,
+            padding=Paddings.RELATIVE_50,
+            size=Icons.SIZES.LARGE,
             icon=AppUI.paintIcon(Icons.PREVIOUS, Colors.PRIMARY),
-            background=normalIconButtonBackground,
         )
         self.previous_song_btn.setCursor(Cursors.HAND)
         self.play_buttons.addWidget(self.previous_song_btn)
+        self.themeItems[self.previous_song_btn] = normalButtonThemeStyle
 
         self.play_song_btn = toggleButtonRenderer.render(
-            padding=QSSPaddings.RELATIVE_75,
-            iconSize=Icons.SIZES.MEDIUM,
+            padding=Paddings.RELATIVE_50,
+            size=Icons.SIZES.XLARGE,
             icon=AppUI.paintIcon(Icons.PLAY, Colors.PRIMARY),
             checkedIcon=AppUI.paintIcon(Icons.PAUSE, Colors.PRIMARY),
-            background=QSSBackground(
-                borderRadius=0.5,
-                color=QSSColors.PRIMARY,
-            ),
         )
         self.play_song_btn.setChecked(False)
         self.play_song_btn.setCursor(Cursors.HAND)
         self.play_buttons.addWidget(self.play_song_btn)
+        self.themeItems[self.play_song_btn] = (
+            toggleButtonRenderer.getThemeBuilder()
+            .addLightModeBackground(
+                QSSBackground(
+                    borderRadius=0.5,
+                    color=ColorBoxes.PRIMARY,
+                )
+            )
+            .build(itemSize=Icons.SIZES.XLARGE.height())
+        )
 
         self.next_song_btn = standardIconButtonRenderer.render(
-            padding=QSSPaddings.RELATIVE_50,
-            iconSize=Icons.SIZES.SMALL,
+            padding=Paddings.RELATIVE_50,
+            size=Icons.SIZES.LARGE,
             icon=AppUI.paintIcon(Icons.NEXT, Colors.PRIMARY),
-            background=normalIconButtonBackground,
         )
         self.next_song_btn.setCursor(Cursors.HAND)
         self.play_buttons.addWidget(self.next_song_btn)
+        self.themeItems[self.next_song_btn] = normalButtonThemeStyle
 
         # =================CENTER=================
         self.center = QHBoxLayout()
@@ -118,21 +140,21 @@ class UIPlayerMusic(QWidget):
         self.center.setSpacing(4)
         self.main_layout.addLayout(self.center)
 
-        self.playing_time = standardLabelRenderer.render(font=normalFont)
+        self.playing_time = labelRenderer.render(font=normalFont)
         self.playing_time.setFixedWidth(60)
         self.playing_time.setAlignment(Alignment.RIGHT)
         self.center.addWidget(self.playing_time)
 
         self.time_slider = horizontalSlider.render(
             height=12,
-            lineColor=QSSColors.PRIMARY,
-            handleColor=QSSColors.FLAT_PRIMARY,
+            lineColor=ColorBoxes.PRIMARY,
+            handleColor=ColorBoxes.FLAT_PRIMARY,
         )
         self.time_slider.setFixedSize(250, 12)
         self.time_slider.setProperty("value", 0)
         self.center.addWidget(self.time_slider)
 
-        self.total_time = standardLabelRenderer.render(font=normalFont)
+        self.total_time = labelRenderer.render(font=normalFont)
         self.total_time.setFixedWidth(60)
         self.total_time.setAlignment(Alignment.LEFT)
         self.center.addWidget(self.total_time)
@@ -146,51 +168,48 @@ class UIPlayerMusic(QWidget):
         self.main_layout.addLayout(self.right)
 
         self.loop_btn = toggleButtonRenderer.render(
-            padding=QSSPaddings.RELATIVE_100,
-            iconSize=Icons.SIZES.SMALL,
+            size=Icons.SIZES.LARGE,
+            padding=Paddings.RELATIVE_50,
             icon=AppUI.paintIcon(Icons.LOOP, Colors.PRIMARY),
             checkedIcon=AppUI.paintIcon(Icons.LOOP, Colors.DANGER),
-            background=normalIconButtonBackground,
-            checkedBackground=checkedIconButtonBackground,
         )
         self.loop_btn.setCursor(Cursors.HAND)
         self.right.addWidget(self.loop_btn)
+        self.themeItems[self.loop_btn] = toggleButtonThemeStyle
 
         self.shuffle_btn = toggleButtonRenderer.render(
-            padding=QSSPaddings.RELATIVE_100,
-            iconSize=Icons.SIZES.SMALL,
+            size=Icons.SIZES.LARGE,
+            padding=Paddings.RELATIVE_50,
             icon=AppUI.paintIcon(Icons.SHUFFLE, Colors.PRIMARY),
             checkedIcon=AppUI.paintIcon(Icons.SHUFFLE, Colors.DANGER),
-            background=normalIconButtonBackground,
-            checkedBackground=checkedIconButtonBackground,
         )
         self.shuffle_btn.setCursor(Cursors.HAND)
         self.right.addWidget(self.shuffle_btn)
+        self.themeItems[self.shuffle_btn] = toggleButtonThemeStyle
 
         self.love_btn = toggleButtonRenderer.render(
-            padding=QSSPaddings.RELATIVE_100,
-            iconSize=Icons.SIZES.SMALL,
+            size=Icons.SIZES.LARGE,
+            padding=Paddings.RELATIVE_50,
             icon=AppUI.paintIcon(Icons.LOVE, Colors.PRIMARY),
             checkedIcon=AppUI.paintIcon(Icons.LOVE, Colors.DANGER),
-            background=normalIconButtonBackground,
-            checkedBackground=checkedIconButtonBackground,
         )
         self.love_btn.setCursor(Cursors.HAND)
         self.right.addWidget(self.love_btn)
+        self.themeItems[self.love_btn] = toggleButtonThemeStyle
 
-        self.volume_btn = multipleIconButtonRenderer.render(
-            padding=QSSPaddings.RELATIVE_100,
-            iconSize=Icons.SIZES.SMALL,
+        self.volume_btn = buttonFactory.getButtonByType("multiple-icon").render(
+            size=Icons.SIZES.LARGE,
+            padding=Paddings.RELATIVE_50,
             icons=[
                 AppUI.paintIcon(Icons.VOLUME_UP, Colors.PRIMARY),
                 AppUI.paintIcon(Icons.VOLUME_DOWN, Colors.PRIMARY),
                 AppUI.paintIcon(Icons.VOLUME_SILENT, Colors.PRIMARY),
             ],
-            background=normalIconButtonBackground,
         )
         self.volume_btn.setCursor(Cursors.HAND)
         self.volume_btn.clicked.connect(self.__showVolumeSlider)
         self.right.addWidget(self.volume_btn)
+        self.themeItems[self.volume_btn] = normalButtonThemeStyle
 
         self.timer_inputs = QWidget()
         self.right_boxes = QHBoxLayout(self.timer_inputs)
@@ -199,11 +218,11 @@ class UIPlayerMusic(QWidget):
 
         self.volume_slider = horizontalSlider.render(
             height=48,
-            lineColor=QSSColors.PRIMARY,
-            handleColor=QSSColors.FLAT_PRIMARY,
+            lineColor=ColorBoxes.PRIMARY,
+            handleColor=ColorBoxes.FLAT_PRIMARY,
             background=QSSBackground(
                 borderRadius=12,
-                color=QSSColors.PRIMARY,
+                color=ColorBoxes.PRIMARY,
             ),
         )
         self.volume_slider.setSliderPosition(100)
@@ -213,11 +232,11 @@ class UIPlayerMusic(QWidget):
 
         self.timer_input = labelFactory.getLabelByType("editable").render(
             font=emphasizedFont,
-            color=QSSColors.FLAT_PRIMARY,
+            color=ColorBoxes.FLAT_PRIMARY,
             alignment=Alignment.CENTER,
             background=QSSBackground(
                 borderRadius=12,
-                color=QSSColors.PRIMARY,
+                color=ColorBoxes.PRIMARY,
             ),
         )
         self.timer_input.setFixedHeight(48)
@@ -227,17 +246,31 @@ class UIPlayerMusic(QWidget):
         self.right_boxes.addWidget(self.timer_input)
 
         self.timer_btn = standardIconButtonRenderer.render(
-            padding=QSSPaddings.RELATIVE_100,
-            iconSize=Icons.SIZES.SMALL,
+            padding=Paddings.RELATIVE_50,
+            size=Icons.SIZES.LARGE,
             icon=AppUI.paintIcon(Icons.TIMER, Colors.PRIMARY),
-            background=normalIconButtonBackground,
         )
         self.timer_btn.setCursor(Cursors.HAND)
         self.timer_btn.clicked.connect(self.__showTimerInput)
         self.right.addWidget(self.timer_btn)
+        self.themeItems[self.timer_btn] = normalButtonThemeStyle
 
         self.__connectSignals()
         QMetaObject.connectSlotsByName(self)
+
+    def darkMode(self):
+        for item in self.themeItems:
+            itemDarkModeStyle = self.themeItems.get(item).darkMode
+            if itemDarkModeStyle is None or itemDarkModeStyle.strip() == "":
+                continue
+            item.setStyleSheet(itemDarkModeStyle)
+
+    def lightMode(self):
+        for item in self.themeItems:
+            itemLightModeStyle = self.themeItems.get(item).lightMode
+            if itemLightModeStyle is None or itemLightModeStyle.strip() == "":
+                continue
+            item.setStyleSheet(itemLightModeStyle)
 
     def displaySongInfo(self, cover: bytes, title: str, artist: str) -> None:
         coverAsPixmap = None
@@ -285,17 +318,25 @@ class UIPlayerMusic(QWidget):
         self.play_song_btn.setChecked(state)
 
     def __connectSignals(self) -> None:
-        self.previous_song_btn.clicked.connect(self.controller.handlePreviousSong)
+        self.previous_song_btn.clicked.connect(
+            self.controller.handlePreviousSong
+        )
         self.play_song_btn.clicked.connect(self.controller.handlePlaySong)
         self.next_song_btn.clicked.connect(self.controller.handleNextSong)
-        self.time_slider.sliderPressed.connect(self.controller.handlePausedTimeSlider)
+        self.time_slider.sliderPressed.connect(
+            self.controller.handlePausedTimeSlider
+        )
         self.time_slider.sliderReleased.connect(
             self.controller.handleUnpausedTimeSlider
         )
         self.shuffle_btn.clicked.connect(self.controller.handleClickedShuffle)
         self.love_btn.clicked.connect(self.controller.handleLoveSong)
-        self.volume_slider.valueChanged.connect(self.controller.handleChangVolume)
-        self.timer_input.returnPressed.connect(self.controller.handleEnteredTimer)
+        self.volume_slider.valueChanged.connect(
+            self.controller.handleChangVolume
+        )
+        self.timer_input.returnPressed.connect(
+            self.controller.handleEnteredTimer
+        )
 
     def __getPixmapForSongCover(self, coverAsByte) -> QPixmap:
         return AppUI.getSquaredPixmapFromBytes(

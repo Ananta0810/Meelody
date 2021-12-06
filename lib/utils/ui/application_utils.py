@@ -7,7 +7,7 @@ from .icon_utils import IconUtils
 from .pixmap_utils import PixmapUtils
 
 path.append("./lib")
-from modules.models.color import Color
+from modules.screens.qss.qss_elements import Color
 
 
 class ApplicationUIUtils:
@@ -16,7 +16,9 @@ class ApplicationUIUtils:
         return IconUtils.colorize(icon, ColorUtils.getQColorFromColor(color))
 
     @staticmethod
-    def getSquaredPixmapFromBytes(byteImage: bytes, edge: int, radius: int) -> QPixmap:
+    def getSquaredPixmapFromBytes(
+        byteImage: bytes, edge: int, radius: int
+    ) -> QPixmap:
         pixmap = PixmapUtils.getPixmapFromBytes(byteImage)
         pixmap = PixmapUtils.cropPixmap(pixmap, edge)
         pixmap = PixmapUtils.squarePixmap(pixmap)

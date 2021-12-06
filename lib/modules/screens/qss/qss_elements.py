@@ -1,10 +1,5 @@
 from abc import ABC, abstractmethod
-from sys import path
-
-from PyQt5.QtGui import QFont
-
-path.append("./lib")
-from modules.models.color import Color
+from dataclasses import dataclass
 
 
 class StylesheetElement(ABC):
@@ -13,7 +8,21 @@ class StylesheetElement(ABC):
         pass
 
 
-class QSSColor(StylesheetElement):
+@dataclass(frozen=True)
+class Color(StylesheetElement):
+    red: int
+    green: int
+    blue: int
+    alpha: float = 1.0
+
+    def toStylesheet(self) -> str:
+        return f"rgba({self.red}, {self.green}, {self.blue}, {self.alpha})"
+
+    def withAlpha(self, alpha: float):
+        return Color(self.red, self.green, self.blue, alpha)
+
+
+class ColorBox(StylesheetElement):
     def __init__(self, normal: Color, active: Color = None):
         self.normal = normal
         self.active = active
@@ -22,7 +31,7 @@ class QSSColor(StylesheetElement):
         state = self.normal
         if active and self.active is not None:
             state = self.active
-        return f"{state}"
+        return f"{state.toStylesheet()}"
 
 
 class QSSPadding:
@@ -47,7 +56,7 @@ class QSSPadding:
 
 
 class QSSBorder(StylesheetElement):
-    def __init__(self, size: int, style: str, color: QSSColor):
+    def __init__(self, size: int, style: str, color: ColorBox):
         self.size = size
         self.style = style
         self.color = color
@@ -58,7 +67,7 @@ class QSSBorder(StylesheetElement):
 
 class QSSBackground:
     def __init__(
-        self, border: QSSBorder = None, borderRadius=0, color: QSSColor = None
+        self, border: QSSBorder = None, borderRadius=0, color: ColorBox = None
     ):
         self.border = border
         self.borderRadius = borderRadius
@@ -76,6 +85,8 @@ class QSSBackground:
 
     def borderRadiusStyleSheet(self, size: int = 0) -> str:
         radius = (
-            self.borderRadius if self.borderRadius >= 1 else self.borderRadius * size
+            self.borderRadius
+            if self.borderRadius >= 1
+            else self.borderRadius * size
         )
         return f"{radius}px"

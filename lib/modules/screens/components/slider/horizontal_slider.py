@@ -6,15 +6,15 @@ from PyQt5.QtWidgets import QSlider
 from .slider import Slider
 
 path.append("./lib")
-from modules.screens.qss.qss_elements import QSSBackground, QSSColor
+from modules.screens.qss.qss_elements import QSSBackground, ColorBox
 
 
 class HorizontalSlider(Slider):
     def render(
         self,
         height: int,
-        handleColor: QSSColor,
-        lineColor: QSSColor,
+        handleColor: ColorBox,
+        lineColor: ColorBox,
         background: QSSBackground = None,
         handleSize: int = 10,
         lineSize: int = 2,

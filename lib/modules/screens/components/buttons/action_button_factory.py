@@ -8,7 +8,6 @@ from .factory import ButtonFactory
 path.append("./lib")
 
 from constants.ui.colors import Colors
-from modules.screens.background_color import BackgroundColor
 
 
 class ActionButtonFactory(ButtonFactory):

@@ -3,7 +3,7 @@ from sys import path
 from PyQt5.QtGui import QColor
 
 path.append(".lib/modules/")
-from modules.models.color import Color
+from modules.screens.qss.qss_elements import Color
 
 
 class ColorUtils:
