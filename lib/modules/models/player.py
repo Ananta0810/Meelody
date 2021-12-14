@@ -75,7 +75,9 @@ class Player:
     def next(self):
         self.resetTime()
         self._loadedSong = False
-        self._currentSongIndex = (self._currentSongIndex + 1) % self._playlist.size()
+        self._currentSongIndex = (
+            self._currentSongIndex + 1
+        ) % self._playlist.size()
 
     def getCurrentSong(self):
         return self._currentSong
@@ -83,12 +85,15 @@ class Player:
     def previous(self):
         self.resetTime()
         self._loadedSong = False
-        self._currentSongIndex = (self._currentSongIndex - 1) % self._playlist.size()
+        self._currentSongIndex = (
+            self._currentSongIndex - 1
+        ) % self._playlist.size()
 
     def fixSampleRateOffsetWhenSongIsPaused(self):
         STANDARD_AUDIO_SAMPLE_RATE = 48000
         self._sampleRateOffset = (
-            STANDARD_AUDIO_SAMPLE_RATE / self._currentSong._audio.getSampleRate()
+            STANDARD_AUDIO_SAMPLE_RATE
+            / self._currentSong._audio.getSampleRate()
         )
 
     def pause(self):

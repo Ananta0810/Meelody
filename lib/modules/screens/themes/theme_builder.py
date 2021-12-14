@@ -1,7 +1,7 @@
 from abc import ABC, abstractmethod
 
 
-class ThemeHolder:
+class ThemeData:
     def __init__(self, lightMode, darkMode):
         self.lightMode = lightMode
         self.darkMode = lightMode if darkMode is None else darkMode
@@ -9,5 +9,5 @@ class ThemeHolder:
 
 class ThemeBuilder(ABC):
     @abstractmethod
-    def build(self) -> ThemeHolder:
+    def build(self) -> ThemeData:
         pass

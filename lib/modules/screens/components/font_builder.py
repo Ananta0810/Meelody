@@ -30,5 +30,4 @@ class FontBuilder:
         font.setPointSize(self.size)
         font.setItalic(self.style == "italic")
         font.setBold(self.weight == "bold")
-        self.__init__()
         return font

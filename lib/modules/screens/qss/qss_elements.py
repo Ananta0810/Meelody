@@ -34,7 +34,7 @@ class ColorBox(StylesheetElement):
         return f"{state.toStylesheet()}"
 
 
-class QSSPadding:
+class Padding:
     def __init__(self, width, height=None):
         self.width = width
         self.height = height if height is not None else width
@@ -55,7 +55,7 @@ class QSSPadding:
         return f"{self.getWidth(size)}px {self.getHeight(size)}px"
 
 
-class QSSBorder(StylesheetElement):
+class Border(StylesheetElement):
     def __init__(self, size: int, style: str, color: ColorBox):
         self.size = size
         self.style = style
@@ -65,9 +65,9 @@ class QSSBorder(StylesheetElement):
         return f"{self.size}px {self.style} {None if self.color is None else self.color.toStylesheet(active)}"
 
 
-class QSSBackground:
+class Background:
     def __init__(
-        self, border: QSSBorder = None, borderRadius=0, color: ColorBox = None
+        self, border: Border = None, borderRadius=0, color: ColorBox = None
     ):
         self.border = border
         self.borderRadius = borderRadius

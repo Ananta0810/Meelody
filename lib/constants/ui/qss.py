@@ -7,12 +7,12 @@ from lib.modules.screens.qss.qss_elements import *
 
 
 class Paddings(metaclass=MetaConst):
-    RELATIVE_25 = QSSPadding(0.25)
-    RELATIVE_50 = QSSPadding(0.5)
-    RELATIVE_75 = QSSPadding(0.75)
-    RELATIVE_100 = QSSPadding(1)
+    RELATIVE_25 = Padding(0.25)
+    RELATIVE_50 = Padding(0.5)
+    RELATIVE_75 = Padding(0.75)
+    RELATIVE_100 = Padding(1)
 
-    ABSOLUTE_MEDIUM = QSSPadding(12)
+    ABSOLUTE_MEDIUM = Padding(12)
 
 
 class Colors(metaclass=MetaConst):
@@ -34,17 +34,20 @@ class Colors(metaclass=MetaConst):
 
 
 class ColorBoxes(metaclass=MetaConst):
-    FLAT_PRIMARY = ColorBox(Colors.PRIMARY)
-    FLAT_GRAY = ColorBox(Colors.BLACK.withAlpha(0.5))
-    BLACK = ColorBox(
+    PRIMARY = ColorBox(Colors.PRIMARY)
+    BLACK = ColorBox(Colors.BLACK)
+    WHITE = ColorBox(Colors.WHITE)
+    WHITE_LIGHTEN = ColorBox(Colors.WHITE.withAlpha(0.25))
+    GRAY = ColorBox(Colors.BLACK.withAlpha(0.5))
+    BLACK_LIGHTEN = ColorBox(
         normal=Colors.BLACK.withAlpha(0.08),
         active=Colors.BLACK.withAlpha(0.12),
     )
-    GRAY = ColorBox(
+    GRAY_LIGHTEN = ColorBox(
         normal=Colors.BLACK.withAlpha(0.4),
         active=Colors.BLACK.withAlpha(0.6),
     )
-    PRIMARY = ColorBox(
+    PRIMARY_LIGHTEN = ColorBox(
         normal=Colors.PRIMARY.withAlpha(0.15),
         active=Colors.PRIMARY.withAlpha(0.25),
     )
@@ -60,7 +63,6 @@ class ColorBoxes(metaclass=MetaConst):
         normal=Colors.WARNING.withAlpha(0.15),
         active=Colors.WARNING.withAlpha(0.25),
     )
-
     DISABLED = ColorBox(
         normal=Colors.DISABLED.withAlpha(0.15),
         active=Colors.DISABLED.withAlpha(0.25),

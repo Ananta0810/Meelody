@@ -1,46 +1,51 @@
-from .buttons.button import Button
-from .buttons.factory import ButtonFactory
-from .buttons.icon_button import IconButton
-from .buttons.multiple_icon_button import MultiIconButton
-from .buttons.toggle_icon_button import ToggleIconButton
-from .slider.horizontal_slider import HorizontalSlider
-from .slider.slider import Slider
-from .text.abstract_text import AbstractLabel
-from .text.editable_label import EditableLabel
-from .text.standard_label import StandardLabel
+from abc import ABC, abstractmethod
+from sys import path
+
+from .icon_buttons import IconButton, MultiIconButton, ToggleIconButton
+from .labels import EditableLabel, StandardLabel
+from .sliders import HorizontalSlider
+
+path.append(".\lib")
+from modules.screens.components.view_item import ViewItem
 
 
-class LabelFactory:
+class Factory(ABC):
+    @abstractmethod
+    def getByType(self, type: str) -> ViewItem:
+        pass
+
+
+class LabelFactory(Factory):
     _types = {
         "default": StandardLabel,
         "editable": EditableLabel,
     }
 
-    def getLabelByType(self, type: str) -> AbstractLabel:
+    def getByType(self, type: str) -> ViewItem:
         if type in self._types:
             return self._types.get(type)()
         raise ValueError("Factory doesn't support this type of label")
 
 
-class SliderFactory:
+class SliderFactory(Factory):
     _types = {
         "horizontal": HorizontalSlider,
     }
 
-    def getSliderByType(self, type: str) -> Slider:
+    def getByType(self, type: str) -> ViewItem:
         if type in self._types:
             return self._types.get(type)()
         raise ValueError("Factory doesn't support this type of slider")
 
 
-class IconButtonFactory(ButtonFactory):
+class IconButtonFactory(Factory):
     _types = {
         "default": IconButton,
         "toggle": ToggleIconButton,
         "multiple-icon": MultiIconButton,
     }
 
-    def getButtonByType(self, type: str = None) -> Button:
+    def getByType(self, type: str = None) -> ViewItem:
         if type in self._types:
             return self._types.get(type)()
         raise ValueError("Factory doesn't support this type of button")

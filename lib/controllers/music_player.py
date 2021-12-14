@@ -6,7 +6,6 @@ path.append("./lib")
 from threading import Thread
 from time import perf_counter, sleep
 
-from modules.entities.song import Song
 from modules.models.player import Player
 from utils.helpers.playlist_song_utils import getPlaylistFromDir
 from views.ui_player_music import UIPlayerMusic
@@ -17,7 +16,6 @@ class MusicPlayer:
         self.player = player
         self.ui = UIPlayerMusic(form)
         self.ui.setupUi(controller=self)
-        self.ui.darkMode()
         self.displayCurrentSongInfo()
         self.currentThreadNumber = 0
         self.canRunTimeSlider = True
@@ -25,7 +23,9 @@ class MusicPlayer:
     def handleEnteredTimer(self):
         SECONDS_PER_MINUTE = 60
         timeToActiveTimerInMinute: int = self.ui.getTimerValue()
-        timeToActiveTimerInSeconds: int = timeToActiveTimerInMinute * SECONDS_PER_MINUTE
+        timeToActiveTimerInSeconds: int = (
+            timeToActiveTimerInMinute * SECONDS_PER_MINUTE
+        )
         self.player.timer.setTime(timeToActiveTimerInSeconds)
         self.ui.closeTimerBox()
 
@@ -93,7 +93,7 @@ class MusicPlayer:
         title = None
         artist = None
         length = 0
-        song: Song = None
+        song = None
         if self.player.hasSong():
             song = self.player.getCurrentSong()
         if song is not None:
@@ -177,9 +177,10 @@ def main():
     library = getPlaylistFromDir("Library", withExtension=".mp3")
     player.loadPlaylist(library)
     player.loadSongToPlay()
-
+    form.setStyleSheet("background: black")
     appController = MusicPlayer(form, player)
     appController.ui.setFixedSize(1368, 100)
+    appController.ui.darkMode()
     form.show()
 
     end = perf_counter()
