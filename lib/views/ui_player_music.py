@@ -11,15 +11,20 @@ from constants.ui.qt import AppAlignment, AppCursors, AppIcons
 from modules.screens.components.factories import *
 from modules.screens.components.font_builder import FontBuilder
 from modules.screens.qss.qss_elements import *
+from utils.data.config_utils import getLanguagePackFromConfig
 from utils.helpers.my_string import Stringify
 from utils.ui.application_utils import ApplicationUIUtils as AppUI
 from widgets.image_displayer import ImageDisplayer
 
 
 class UIPlayerMusic(QWidget):
-    def setupUi(self, controller):
-        self.controller = controller
+    def __init__(self, parent=None):
+        super().__init__(parent)
+        self.setupUi()
+
+    def setupUi(self):
         self.themeItems = {}
+        self.buttonsWithDarkMode = []
         Icons = AppIcons()
         Alignment = AppAlignment()
         Cursors = AppCursors()
@@ -79,13 +84,13 @@ class UIPlayerMusic(QWidget):
         self.left.addWidget(self.song_cover)
 
         self.song_title = labelRenderer.render(font=emphasizedFont)
+        self.song_artist = labelRenderer.render(normalFont)
         self.__addThemeForItem(
             self.song_title,
             labelThemeBuilder.addLightModeTextColor(ColorBoxes.BLACK)
             .addDarkModeTextColor(ColorBoxes.WHITE)
-            .build(itemSize=self.song_title.width()),
+            .build(),
         )
-        self.song_artist = labelRenderer.render(normalFont)
         self.__addThemeForItem(
             self.song_artist,
             labelThemeBuilder.addLightModeTextColor(ColorBoxes.GRAY)
@@ -110,27 +115,29 @@ class UIPlayerMusic(QWidget):
         self.previous_song_btn = standardIconButtonRenderer.render(
             padding=Paddings.RELATIVE_50,
             size=Icons.SIZES.LARGE,
-            icon=AppUI.paintIcon(Icons.PREVIOUS, Colors.PRIMARY),
+            lightModeIcon=AppUI.paintIcon(Icons.PREVIOUS, Colors.PRIMARY),
         )
         self.previous_song_btn.setCursor(Cursors.HAND)
         self.play_buttons.addWidget(self.previous_song_btn)
         self.__addThemeForItem(
             item=self.previous_song_btn, theme=normalButtonThemeStyle
         )
-        self.play_song_btn = toggleButtonRenderer.render(
+        self.play_btn = toggleButtonRenderer.render(
             padding=Paddings.RELATIVE_50,
             size=Icons.SIZES.XLARGE,
-            icon=AppUI.paintIcon(Icons.PLAY, Colors.WHITE),
-            checkedIcon=AppUI.paintIcon(Icons.PAUSE, Colors.WHITE),
+            lightModeIcon=AppUI.paintIcon(Icons.PLAY, Colors.PRIMARY),
+            lightModeCheckedIcon=AppUI.paintIcon(Icons.PAUSE, Colors.PRIMARY),
+            darkModeIcon=AppUI.paintIcon(Icons.PLAY, Colors.WHITE),
+            darkModeCheckedIcon=AppUI.paintIcon(Icons.PAUSE, Colors.WHITE),
         )
         self.__addThemeForItem(
-            item=self.play_song_btn,
+            item=self.play_btn,
             theme=(
                 toggleButtonRenderer.getThemeBuilder()
                 .addLightModeBackground(
                     Background(
                         borderRadius=0.5,
-                        color=ColorBoxes.PRIMARY_LIGHTEN,
+                        color=ColorBoxes.PRIMARY_LIGHTEN_HOVERABLE_25,
                     )
                 )
                 .addDarkModeBackground(
@@ -142,14 +149,15 @@ class UIPlayerMusic(QWidget):
                 .build(itemSize=Icons.SIZES.XLARGE.height())
             ),
         )
-        self.play_song_btn.setChecked(False)
-        self.play_song_btn.setCursor(Cursors.HAND)
-        self.play_buttons.addWidget(self.play_song_btn)
+        self.play_btn.setChecked(False)
+        self.play_btn.setCursor(Cursors.HAND)
+        self.play_buttons.addWidget(self.play_btn)
+        self.__addButtonToList(self.play_btn)
 
         self.next_song_btn = standardIconButtonRenderer.render(
             padding=Paddings.RELATIVE_50,
             size=Icons.SIZES.LARGE,
-            icon=AppUI.paintIcon(Icons.NEXT, Colors.PRIMARY),
+            lightModeIcon=AppUI.paintIcon(Icons.NEXT, Colors.PRIMARY),
         )
         self.next_song_btn.setCursor(Cursors.HAND)
         self.play_buttons.addWidget(self.next_song_btn)
@@ -173,8 +181,8 @@ class UIPlayerMusic(QWidget):
         self.__addThemeForItem(
             self.time_slider,
             theme=sliderThemeBuilder.addLightHandleColor(ColorBoxes.PRIMARY)
-            .addLightLineColor(ColorBoxes.PRIMARY_LIGHTEN)
-            .addDarkLineColor(ColorBoxes.WHITE_LIGHTEN)
+            .addLightLineColor(ColorBoxes.PRIMARY_LIGHTEN_HOVERABLE_25)
+            .addDarkLineColor(ColorBoxes.WHITE_LIGHTEN_HOVERABLE_25)
             .build(itemSize=self.time_slider.height()),
         )
         self.time_slider.setFixedSize(250, 12)
@@ -201,8 +209,8 @@ class UIPlayerMusic(QWidget):
         self.loop_btn = toggleButtonRenderer.render(
             size=Icons.SIZES.LARGE,
             padding=Paddings.RELATIVE_50,
-            icon=AppUI.paintIcon(Icons.LOOP, Colors.PRIMARY),
-            checkedIcon=AppUI.paintIcon(Icons.LOOP, Colors.DANGER),
+            lightModeIcon=AppUI.paintIcon(Icons.LOOP, Colors.PRIMARY),
+            lightModeCheckedIcon=AppUI.paintIcon(Icons.LOOP, Colors.DANGER),
         )
         self.loop_btn.setCursor(Cursors.HAND)
         self.right.addWidget(self.loop_btn)
@@ -211,8 +219,8 @@ class UIPlayerMusic(QWidget):
         self.shuffle_btn = toggleButtonRenderer.render(
             size=Icons.SIZES.LARGE,
             padding=Paddings.RELATIVE_50,
-            icon=AppUI.paintIcon(Icons.SHUFFLE, Colors.PRIMARY),
-            checkedIcon=AppUI.paintIcon(Icons.SHUFFLE, Colors.DANGER),
+            lightModeIcon=AppUI.paintIcon(Icons.SHUFFLE, Colors.PRIMARY),
+            lightModeCheckedIcon=AppUI.paintIcon(Icons.SHUFFLE, Colors.DANGER),
         )
         self.shuffle_btn.setCursor(Cursors.HAND)
         self.right.addWidget(self.shuffle_btn)
@@ -221,8 +229,8 @@ class UIPlayerMusic(QWidget):
         self.love_btn = toggleButtonRenderer.render(
             size=Icons.SIZES.LARGE,
             padding=Paddings.RELATIVE_50,
-            icon=AppUI.paintIcon(Icons.LOVE, Colors.PRIMARY),
-            checkedIcon=AppUI.paintIcon(Icons.LOVE, Colors.DANGER),
+            lightModeIcon=AppUI.paintIcon(Icons.LOVE, Colors.PRIMARY),
+            lightModeCheckedIcon=AppUI.paintIcon(Icons.LOVE, Colors.DANGER),
         )
         self.love_btn.setCursor(Cursors.HAND)
         self.right.addWidget(self.love_btn)
@@ -254,13 +262,13 @@ class UIPlayerMusic(QWidget):
                 sliderThemeBuilder.addLightModeBackground(
                     Background(
                         borderRadius=12,
-                        color=ColorBoxes.PRIMARY_LIGHTEN,
+                        color=ColorBoxes.PRIMARY_LIGHTEN_HOVERABLE_25,
                     )
                 )
                 .addDarkModeBackground(
                     Background(
                         borderRadius=12,
-                        color=ColorBoxes.WHITE_LIGHTEN,
+                        color=ColorBoxes.WHITE_LIGHTEN_HOVERABLE_25,
                     )
                 )
                 .build(itemSize=48)
@@ -276,7 +284,6 @@ class UIPlayerMusic(QWidget):
             alignment=Alignment.CENTER,
         )
         self.timer_input.setFixedHeight(48)
-        self.timer_input.setPlaceholderText("Enter Minute")
         self.timer_input.setValidator(QIntValidator())
         self.timer_input.setVisible(False)
         self.right_boxes.addWidget(self.timer_input)
@@ -295,7 +302,7 @@ class UIPlayerMusic(QWidget):
                 .addDarkModeBackground(
                     Background(
                         borderRadius=12,
-                        color=ColorBoxes.WHITE_LIGHTEN,
+                        color=ColorBoxes.WHITE_LIGHTEN_HOVERABLE_25,
                     )
                 )
                 .build(itemSize=self.timer_input.width())
@@ -304,37 +311,54 @@ class UIPlayerMusic(QWidget):
         self.timer_btn = standardIconButtonRenderer.render(
             padding=Paddings.RELATIVE_50,
             size=Icons.SIZES.LARGE,
-            icon=AppUI.paintIcon(Icons.TIMER, Colors.PRIMARY),
+            lightModeIcon=AppUI.paintIcon(Icons.TIMER, Colors.PRIMARY),
         )
         self.timer_btn.setCursor(Cursors.HAND)
         self.timer_btn.clicked.connect(self.__showTimerInput)
         self.right.addWidget(self.timer_btn)
         self.__addThemeForItem(self.timer_btn, normalButtonThemeStyle)
 
-        self.__connectSignals()
+        # self.__connectSignals()
         QMetaObject.connectSlotsByName(self)
 
-    def darkMode(self):
+    def darkMode(self) -> None:
         for item in self.themeItems:
             darkModeStyleSheet = self.themeItems.get(item).darkMode
             if darkModeStyleSheet is None or darkModeStyleSheet.strip() == "":
                 continue
             item.setStyleSheet(darkModeStyleSheet)
 
-    def lightMode(self):
+        for button in self.buttonsWithDarkMode:
+            button.setDarkMode(True)
+
+    def lightMode(self) -> None:
         for item in self.themeItems:
             lightModeStyleSheet = self.themeItems.get(item).lightMode
             if lightModeStyleSheet is None or lightModeStyleSheet.strip() == "":
                 continue
             item.setStyleSheet(lightModeStyleSheet)
 
-    def displaySongInfo(self, cover: bytes, title: str, artist: str) -> None:
+        for button in self.buttonsWithDarkMode:
+            button.setDarkMode(False)
+
+    def translate(self, language: dict) -> None:
+        languageTextForSongTitle = language.get("song_title")
+        languageTextForSongArtist = language.get("song_artist")
+
+        self.song_title.setDefaultText(languageTextForSongTitle)
+        self.song_artist.setDefaultText(languageTextForSongArtist)
+        self.timer_input.setPlaceholderText(language.get("enter_timer_minute"))
+
+    def displaySongInfo(
+        self, cover: bytes = None, title: str = None, artist: str = ""
+    ) -> None:
         coverAsPixmap = (
-            self.__getPixmapForSongCover(cover) if cover is not None else None
+            None if cover is None else self.__getPixmapForSongCover(cover)
         )
+        artist = "" if artist is None else artist
         self.song_cover.setPixmap(coverAsPixmap)
-        self.song_title.setText(title or "song's title")
-        self.song_artist.setText(artist or "song's artist")
+        self.song_title.setText(title)
+        self.song_artist.setText(artist)
 
     def displayPlayingTime(self, time: float) -> None:
         self.playing_time.setText(Stringify.floatToClockTime(time))
@@ -346,6 +370,16 @@ class UIPlayerMusic(QWidget):
         position = int(currentTime * 100 / totalTime)
         self.time_slider.setSliderPosition(position)
 
+    def setLoopState(self, state: bool) -> None:
+        self.loop_btn.setChecked(state)
+
+    def setShuffleState(self, state: bool) -> None:
+        self.shuffle_btn.setChecked(state)
+
+    def setVolume(self, volume: int) -> None:
+        self.volume_slider.setValue(volume)
+        self.__changeVolumeIcon()
+
     def isLooping(self) -> bool:
         return self.loop_btn.isChecked()
 
@@ -353,7 +387,7 @@ class UIPlayerMusic(QWidget):
         return self.shuffle_btn.isChecked()
 
     def isPlaying(self) -> bool:
-        return self.play_song_btn.isChecked()
+        return self.play_btn.isChecked()
 
     def getTimerValue(self) -> int:
         return int(self.timer_input.text())
@@ -369,28 +403,23 @@ class UIPlayerMusic(QWidget):
         self.timer_input.hide()
 
     def setPlayingState(self, state: bool) -> None:
-        self.play_song_btn.setChecked(state)
+        self.play_btn.setChecked(state)
 
-    def __connectSignals(self) -> None:
-        self.previous_song_btn.clicked.connect(
-            self.controller.handlePreviousSong
-        )
-        self.play_song_btn.clicked.connect(self.controller.handlePlaySong)
-        self.next_song_btn.clicked.connect(self.controller.handleNextSong)
+    def connectSignals(self, controller) -> None:
+        self.previous_song_btn.clicked.connect(controller.handlePreviousSong)
+        self.play_btn.clicked.connect(controller.handlePlaySong)
+        self.next_song_btn.clicked.connect(controller.handleNextSong)
         self.time_slider.sliderPressed.connect(
-            self.controller.handlePausedTimeSlider
+            controller.handlePausedTimeSlider
         )
         self.time_slider.sliderReleased.connect(
-            self.controller.handleUnpausedTimeSlider
+            controller.handleUnpausedTimeSlider
         )
-        self.shuffle_btn.clicked.connect(self.controller.handleClickedShuffle)
-        self.love_btn.clicked.connect(self.controller.handleLoveSong)
-        self.volume_slider.valueChanged.connect(
-            self.controller.handleChangVolume
-        )
-        self.timer_input.returnPressed.connect(
-            self.controller.handleEnteredTimer
-        )
+        self.loop_btn.clicked.connect(controller.handleClickedLoop)
+        self.shuffle_btn.clicked.connect(controller.handleClickedShuffle)
+        self.love_btn.clicked.connect(controller.handleLoveSong)
+        self.volume_slider.valueChanged.connect(controller.handleChangVolume)
+        self.timer_input.returnPressed.connect(controller.handleEnteredTimer)
 
     def __getPixmapForSongCover(self, coverAsByte: bytes) -> QPixmap:
         return AppUI.getSquaredPixmapFromBytes(
@@ -417,5 +446,8 @@ class UIPlayerMusic(QWidget):
         self.timer_input.setVisible(not self.timer_input.isVisible())
         self.volume_slider.setVisible(False)
 
-    def __addThemeForItem(self, item, theme: str):
+    def __addThemeForItem(self, item, theme: str) -> None:
         self.themeItems[item] = theme
+
+    def __addButtonToList(self, item) -> None:
+        self.buttonsWithDarkMode.append(item)

@@ -1,0 +1,141 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>MainWindow</class>
+ <widget class="QMainWindow" name="MainWindow">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>800</width>
+    <height>600</height>
+   </rect>
+  </property>
+  <property name="windowTitle">
+   <string>MainWindow</string>
+  </property>
+  <widget class="QWidget" name="centralwidget">
+   <widget class="QComboBox" name="comboBox">
+    <property name="geometry">
+     <rect>
+      <x>190</x>
+      <y>160</y>
+      <width>256</width>
+      <height>48</height>
+     </rect>
+    </property>
+    <property name="autoFillBackground">
+     <bool>false</bool>
+    </property>
+    <property name="styleSheet">
+     <string notr="true">QComboBox {
+    padding: 0 12px;
+    color: black;
+    border: 2px solid #8064ea;
+    border-radius: 8px;
+	background-color: white
+}
+
+
+QComboBox:hover, QPushButton:hover {
+    border-color: #4032ff
+}
+
+QComboBox:editable {
+	background-color:white;
+	border:none;
+    color: pink;
+}
+
+QComboBox:!on {
+
+}
+
+QComboBox:on {
+
+}
+
+QComboBox QAbstractItemView
+{
+	padding: 4px;
+	border-radius: 8px;
+    border: 2px solid #8064ea;
+	background-color:white;
+}
+
+QComboBox::drop-down {
+	border:none;
+	background-color:transparent;
+	min-width: 32px;
+	color: white
+ }
+
+QComboBox::down-arrow{
+	right: 4px;
+	width: 10px;
+	height: 10px;
+	image: url(:/newPrefix/assets/images/icons/chevron-down.png);
+}
+
+
+ /* Menu */
+
+QComboBox QAbstractItemView::item{
+    min-height: 16px;
+	background-color:black
+}
+QComboBox:item {
+    padding: 20px;
+	border: none;
+}
+QComboBox:item:hover {
+	border: none;
+	background:red;
+}
+QComboBox:item:selected {
+    border:none;
+	background-color:black;
+}
+QComboBox:item:checked {
+    padding-left: 20px;  /* move text right to make room for tick mark */
+    font-weight: bold;
+}
+
+
+QComboBox::indicator{
+    background-color:transparent;
+    selection-background-color:transparent;
+    color:transparent;
+    selection-color:transparent;
+}
+
+</string>
+    </property>
+    <item>
+     <property name="text">
+      <string>Vietnamese</string>
+     </property>
+    </item>
+    <item>
+     <property name="text">
+      <string>English</string>
+     </property>
+    </item>
+   </widget>
+  </widget>
+  <widget class="QMenuBar" name="menubar">
+   <property name="geometry">
+    <rect>
+     <x>0</x>
+     <y>0</y>
+     <width>800</width>
+     <height>19</height>
+    </rect>
+   </property>
+  </widget>
+  <widget class="QStatusBar" name="statusbar"/>
+ </widget>
+ <resources>
+  <include location="imgs.qrc"/>
+ </resources>
+ <connections/>
+</ui>

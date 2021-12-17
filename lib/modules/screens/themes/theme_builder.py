@@ -4,7 +4,10 @@ from abc import ABC, abstractmethod
 class ThemeData:
     def __init__(self, lightMode, darkMode):
         self.lightMode = lightMode
-        self.darkMode = lightMode if darkMode is None else darkMode
+        self.darkMode = darkMode or lightMode
+
+    def __str__(self):
+        return f"Light: {self.lightMode}, Dark: {self.darkMode}"
 
 
 class ThemeBuilder(ABC):

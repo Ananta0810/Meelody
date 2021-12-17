@@ -15,6 +15,9 @@ class Color(StylesheetElement):
     blue: int
     alpha: float = 1.0
 
+    def __str__(self):
+        return self.toStylesheet()
+
     def toStylesheet(self) -> str:
         return f"rgba({self.red}, {self.green}, {self.blue}, {self.alpha})"
 
@@ -32,6 +35,9 @@ class ColorBox(StylesheetElement):
         if active and self.active is not None:
             state = self.active
         return f"{state.toStylesheet()}"
+
+    def __str__(self):
+        return f"Color-1: {self.normal.toStylesheet()}, Color-2: {self.active.toStylesheet() if self.active is not None else 'None'}"
 
 
 class Padding:
@@ -90,3 +96,6 @@ class Background:
             else self.borderRadius * size
         )
         return f"{radius}px"
+
+    def __str__(self):
+        return f"border:{self.border};border-radius:{self.borderRadius};color:{self.color}"

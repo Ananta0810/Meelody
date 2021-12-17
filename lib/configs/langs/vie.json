@@ -1,0 +1,14 @@
+{
+    "song_title": "Tên bài hát",
+    "song_artist": "Tên tác giả",
+    "settings": "Cài đặt",
+    "language": "Ngôn ngữ",
+    "dark_mode": "Chế độ ban đêm",
+    "folder": "Thư mục",
+    "folder_empty": "Chưa có thư mục",
+    "supported_languages": [
+        "Tiếng anh",
+        "Tiếng việt"
+    ],
+    "enter_timer_minute": "Nhập số phút"
+}

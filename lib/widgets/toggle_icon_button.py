@@ -6,13 +6,28 @@ class QToggleButton(QPushButton):
     def __init__(self, parent=None):
         super().__init__(parent)
         self.normalIcon = None
+        self.darkModeNormalIcon = None
         self.checkedIcon = None
+        self.darkModeCheckedIcon = None
+        self.isDarkMode = False
+        self.currentNormalIcon = None
+        self.currentCheckedIcon = None
 
-    def setNormalIcon(self, icon: QIcon):
+    def setLightModeNormalIcon(self, icon: QIcon):
         self.normalIcon = icon
 
-    def setCheckedIcon(self, icon: QIcon):
+    def setLightModeCheckedIcon(self, icon: QIcon):
         self.checkedIcon = icon
+
+    def setDarkModeNormalIcon(self, icon: QIcon):
+        self.darkModeNormalIcon = icon
+
+    def setDarkModeCheckedIcon(self, icon: QIcon):
+        self.darkModeCheckedIcon = icon
+
+    def setDarkMode(self, a0: bool):
+        self.isDarkMode = a0
+        self.__changeIconBaseOnState(self.isChecked())
 
     def setChecked(self, a0: bool):
         super().setChecked(a0)
@@ -26,6 +41,20 @@ class QToggleButton(QPushButton):
         if not self.isCheckable():
             return
         if checked:
-            self.setIcon(self.checkedIcon)
+            self.setIcon(self.__getCurrentCheckedIcon())
         else:
-            self.setIcon(self.normalIcon)
+            self.setIcon(self.__getCurrentNormalIcon())
+
+    def __getCurrentNormalIcon(self):
+        return (
+            self.darkModeNormalIcon
+            if self.isDarkMode and self.darkModeNormalIcon is not None
+            else self.normalIcon
+        )
+
+    def __getCurrentCheckedIcon(self):
+        return (
+            self.darkModeCheckedIcon
+            if self.isDarkMode and self.darkModeCheckedIcon is not None
+            else self.checkedIcon
+        )

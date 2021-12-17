@@ -27,23 +27,16 @@ class AppIcons(metaclass=MetaConst):
 
         self.LOVE = QIcon("assets/images/icons/love.png")
 
-        self.LIGHT_MINIMIZE = QIcon("assets/images/icons/minimize-light.png")
-        self.DARK_MINIMIZE = QIcon("assets/images/icons/minimize-dark.png")
+        self.MINIMIZE = QIcon("assets/images/icons/minimize.png")
         self.CLOSE_2 = QIcon("assets/images/icons/close-window.png")
-        self.LIGHT_BACKWARD = QIcon("assets/images/icons/chevron-backward-light.png")
-        self.DARK_BACKWARD = QIcon("assets/images/icons/chevron-backward-dark.png")
+        self.BACKWARD = QIcon("assets/images/icons/chevron-backward.png")
 
-        self.LIGHT_FORWARD = QIcon("assets/images/icons/chevron-forward-light.png")
-        self.DARK_FORWARD = QIcon("assets/images/icons/chevron-forward-dark.png")
+        self.FORWARD = QIcon("assets/images/icons/chevron-forward.png")
 
-        self.DARK_SETTINGS = QIcon("assets/images/icons/settings-dark.png")
-        self.LIGHT_SETTINGS = QIcon("assets/images/icons/settings-light.png")
-        self.LIGHT_LANGUAGE = QIcon("assets/images/icons/language-light.png")
-        self.DARK_LANGUAGE = QIcon("assets/images/icons/language-dark.png")
-        self.LIGHT_FOLDER = QIcon("assets/images/icons/folder-light.png")
-        self.DARK_FOLDER = QIcon("assets/images/icons/folder-dark.png")
-        self.LIGHT_DARKMODE = QIcon("assets/images/icons/dark-mode-light.png")
-        self.DARK_DARKMODE = QIcon("assets/images/icons/dark-mode-dark.png")
+        self.SETTINGS = QIcon("assets/images/icons/settings.png")
+        self.LANGUAGES = QIcon("assets/images/icons/language.png")
+        self.FOLDER = QIcon("assets/images/icons/folder.png")
+        self.DARKMODE = QIcon("assets/images/icons/dark-mode.png")
 
         # Icon on Player Bar
         self.APPLY = QIcon("assets/images/icons/apply.png")

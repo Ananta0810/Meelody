@@ -1,0 +1,14 @@
+{
+    "song_title": "Songs' title",
+    "song_artist": "Song's artist",
+    "settings": "Settings",
+    "language": "Language",
+    "dark_mode": "Dark mode",
+    "folder": "Folder",
+    "folder_empty": "No folder",
+    "supported_languages": [
+        "English",
+        "Vietnamese"
+    ],
+    "enter_timer_minute": "Enter minute"
+}

@@ -1,0 +1,6 @@
+<RCC>
+  <qresource prefix="newPrefix">
+    <file>assets/images/icons/chevron-down.png</file>
+    <file>assets/images/icons/chevron-backward.png</file>
+  </qresource>
+</RCC>

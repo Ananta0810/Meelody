@@ -1,0 +1,1 @@
+supportedLanguages = ["eng", "vie"]

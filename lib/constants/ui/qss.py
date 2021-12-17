@@ -8,7 +8,9 @@ from lib.modules.screens.qss.qss_elements import *
 
 class Paddings(metaclass=MetaConst):
     RELATIVE_25 = Padding(0.25)
+    RELATIVE_33 = Padding(0.33)
     RELATIVE_50 = Padding(0.5)
+    RELATIVE_67 = Padding(0.67)
     RELATIVE_75 = Padding(0.75)
     RELATIVE_100 = Padding(1)
 
@@ -37,27 +39,50 @@ class ColorBoxes(metaclass=MetaConst):
     PRIMARY = ColorBox(Colors.PRIMARY)
     BLACK = ColorBox(Colors.BLACK)
     WHITE = ColorBox(Colors.WHITE)
-    WHITE_LIGHTEN = ColorBox(Colors.WHITE.withAlpha(0.25))
     GRAY = ColorBox(Colors.BLACK.withAlpha(0.5))
     BLACK_LIGHTEN = ColorBox(
         normal=Colors.BLACK.withAlpha(0.08),
         active=Colors.BLACK.withAlpha(0.12),
     )
+    BLACK_LIGHTEN_50 = ColorBox(
+        normal=Colors.BLACK.withAlpha(0.15),
+        active=Colors.BLACK.withAlpha(0.25),
+    )
+    WHITE_LIGHTEN_25 = ColorBox(normal=Colors.WHITE.withAlpha(0.15))
+    WHITE_LIGHTEN_50 = ColorBox(normal=Colors.WHITE.withAlpha(0.33))
+    WHITE_LIGHTEN_HOVERABLE_25 = ColorBox(
+        normal=Colors.WHITE.withAlpha(0.15),
+        active=Colors.WHITE.withAlpha(0.25),
+    )
+    WHITE_LIGHTEN_HOVERABLE_50 = ColorBox(
+        normal=Colors.WHITE.withAlpha(0.33),
+        active=Colors.WHITE.withAlpha(0.5),
+    )
     GRAY_LIGHTEN = ColorBox(
         normal=Colors.BLACK.withAlpha(0.4),
         active=Colors.BLACK.withAlpha(0.6),
     )
-    PRIMARY_LIGHTEN = ColorBox(
+    PRIMARY_LIGHTEN_25 = ColorBox(normal=Colors.PRIMARY.withAlpha(0.15))
+    PRIMARY_LIGHTEN_50 = ColorBox(normal=Colors.PRIMARY.withAlpha(0.33))
+    PRIMARY_LIGHTEN_HOVERABLE_25 = ColorBox(
         normal=Colors.PRIMARY.withAlpha(0.15),
         active=Colors.PRIMARY.withAlpha(0.25),
+    )
+    PRIMARY_LIGHTEN_HOVERABLE_50 = ColorBox(
+        normal=Colors.PRIMARY.withAlpha(0.33),
+        active=Colors.PRIMARY.withAlpha(0.50),
     )
     SUCCESS = ColorBox(
         normal=Colors.SUCCESS.withAlpha(0.15),
         active=Colors.SUCCESS.withAlpha(0.25),
     )
-    DANGER = ColorBox(
+    DANGER_LIGHTEN = ColorBox(
         normal=Colors.DANGER.withAlpha(0.15),
         active=Colors.DANGER.withAlpha(0.25),
+    )
+    DANGER_LIGHTEN_50 = ColorBox(
+        normal=Colors.DANGER.withAlpha(0.33),
+        active=Colors.DANGER.withAlpha(0.50),
     )
     WARNING = ColorBox(
         normal=Colors.WARNING.withAlpha(0.15),

@@ -9,19 +9,23 @@ from modules.screens.components.view_item import ViewItem
 from modules.screens.qss.qss_elements import Padding
 from modules.screens.themes.theme_builders import ButtonThemeBuilder
 from widgets.multiple_icon_button import QMultipleIconButton
+from widgets.standard_icon_button import QIconButton
 from widgets.toggle_icon_button import QToggleButton
 
 
 class IconButton(ViewItem):
     def render(
         self,
-        icon: QIcon,
+        lightModeIcon: QIcon,
         size: QSize,
         padding: Padding,
+        darkModeIcon: QIcon = None,
         parent=None,
     ) -> QPushButton:
-        button = QPushButton(parent)
-        button.setIcon(icon)
+        button = QIconButton(parent)
+        button.setLightModeIcon(lightModeIcon)
+        button.setDarkModeIcon(darkModeIcon)
+        button.setIcon(lightModeIcon)
         button.setIconSize(size - padding.getWidth(size))
         button.setFixedSize(size)
         return button
@@ -34,15 +38,19 @@ class ToggleIconButton(ViewItem):
     def render(
         self,
         size: QSize,
-        icon: QIcon,
-        checkedIcon: QIcon,
+        lightModeIcon: QIcon,
+        lightModeCheckedIcon: QIcon,
         padding: Padding,
+        darkModeIcon: QIcon = None,
+        darkModeCheckedIcon: QIcon = None,
         parent=None,
     ) -> QPushButton:
         button = QToggleButton(parent)
-        button.setIcon(icon)
-        button.setNormalIcon(icon)
-        button.setCheckedIcon(checkedIcon)
+        button.setIcon(lightModeIcon)
+        button.setLightModeNormalIcon(lightModeIcon)
+        button.setLightModeCheckedIcon(lightModeCheckedIcon)
+        button.setDarkModeNormalIcon(darkModeIcon)
+        button.setDarkModeCheckedIcon(darkModeCheckedIcon)
         button.setCheckable(True)
         button.setIconSize(size - padding.getWidth(size))
         button.setFixedSize(size)
