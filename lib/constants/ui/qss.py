@@ -14,6 +14,7 @@ class Paddings(metaclass=MetaConst):
     RELATIVE_75 = Padding(0.75)
     RELATIVE_100 = Padding(1)
 
+    ABSOLUTE_SMALL = Padding(4)
     ABSOLUTE_MEDIUM = Padding(12)
 
 
@@ -36,6 +37,7 @@ class Colors(metaclass=MetaConst):
 
 
 class ColorBoxes(metaclass=MetaConst):
+    TRANSPARENT = ColorBox(Colors.TRANSPARENT)
     PRIMARY = ColorBox(Colors.PRIMARY)
     BLACK = ColorBox(Colors.BLACK)
     WHITE = ColorBox(Colors.WHITE)
@@ -107,4 +109,8 @@ class ColorBoxes(metaclass=MetaConst):
     HIDDEN_WARNING = ColorBox(
         normal=Colors.TRANSPARENT,
         active=Colors.WARNING.withAlpha(0.15),
+    )
+    HIDDEN_WHITE = ColorBox(
+        normal=Colors.TRANSPARENT,
+        active=Colors.WHITE.withAlpha(0.15),
     )

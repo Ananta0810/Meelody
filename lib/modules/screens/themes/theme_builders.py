@@ -1,6 +1,217 @@
-from modules.screens.qss.qss_elements import Background, Color, ColorBox
+from abc import ABC, abstractmethod
 
-from .theme_builder import ThemeBuilder, ThemeData
+from modules.screens.qss.qss_elements import (
+    Background,
+    Color,
+    ColorBox,
+    Padding,
+)
+
+
+class ThemeData:
+    def __init__(self, lightMode, darkMode):
+        self.lightMode = lightMode
+        self.darkMode = darkMode or lightMode
+
+    def __str__(self):
+        return f"Light: {self.lightMode}, Dark: {self.darkMode}"
+
+
+class ThemeBuilder(ABC):
+    @abstractmethod
+    def addLightModeBackground(self, background: Background):
+        pass
+
+    @abstractmethod
+    def addDarkModeBackground(self, background: Background):
+        pass
+
+    @abstractmethod
+    def build(self, itemSize: int) -> ThemeData:
+        pass
+
+
+class DropdownMenuThemeBuilder(ThemeBuilder):
+    padding: Padding = None
+    lightModeTextColor: ColorBox = None
+    darkModeTextColor: ColorBox = None
+    lightModeMenuTextColor: ColorBox = None
+    darkModeMenuTextColor: ColorBox = None
+    lightModeBackground: Background = None
+    darkModeBackground: Background = None
+    lightModeMenuBackground = None
+    darkModeMenuBackground = None
+    lightModeItemBackground = None
+    darkModeItemBackground = None
+
+    def addPadding(self, padding: Padding):
+        self.padding = padding
+        return self
+
+    def addLightModeTextColor(self, color: ColorBox):
+        self.lightModeTextColor = color
+        return self
+
+    def addDarkModeTextColor(self, color: ColorBox):
+        self.darkModeTextColor = color
+        return self
+
+    def addLightModeBackground(self, background: Background):
+        self.lightModeBackground = background
+        return self
+
+    def addDarkModeBackground(self, background: Background):
+        self.darkModeBackground = background
+        return self
+
+    def addLightModeMenuTextColor(self, color: ColorBox):
+        self.lightModeMenuTextColor = color
+        return self
+
+    def addDarkModeMenuTextColor(self, color: ColorBox):
+        self.darkModeMenuTextColor = color
+        return self
+
+    def addLightModeMenuBackground(self, background: Background):
+        self.lightModeMenuBackground = background
+        return self
+
+    def addDarkModeMenuBackground(self, background: Background):
+        self.darkModeMenuBackground = background
+        return self
+
+    def addLightModeItemBackground(self, background: Background):
+        self.lightModeItemBackground = background
+        return self
+
+    def addDarkModeItemBackground(self, background: Background):
+        self.darkModeItemBackground = background
+        return self
+
+    def build(self, itemSize: int = 0) -> ThemeData:
+        lightMode = self.__buildStyle(
+            self.padding,
+            self.lightModeTextColor,
+            self.lightModeMenuTextColor,
+            self.lightModeBackground,
+            self.lightModeMenuBackground,
+            self.lightModeItemBackground,
+            itemSize,
+        )
+
+        darkMode = (
+            lightMode
+            if (
+                self.darkModeTextColor is None
+                and self.darkModeMenuTextColor is None
+                and self.darkModeBackground is None
+                and self.darkModeMenuBackground is None
+                and self.darkModeItemBackground is None
+            )
+            else self.__buildStyle(
+                self.padding,
+                self.darkModeTextColor,
+                self.darkModeMenuTextColor,
+                self.darkModeBackground,
+                self.darkModeMenuBackground,
+                self.darkModeItemBackground,
+                itemSize,
+                dropDownArrowImage="assets/images/icons/chevron-down-light.png",
+            )
+        )
+        return ThemeData(lightMode, darkMode)
+
+    def __buildStyle(
+        self,
+        padding: Padding,
+        color: ColorBox,
+        menuTextColor: ColorBox,
+        background: Background,
+        menuBackground: Background,
+        itemBackground: Background,
+        elementSize: int,
+        dropDownArrowSize: int = 8,
+        dropDownArrowImage: str = "assets/images/icons/chevron-down.png",
+    ):
+        arrowBackgroundWidth = 20 + padding.getWidth()
+        mainPadding = 0
+        menuPadding = 0
+        itemPadding = 0
+        if padding is not None:
+            mainPadding = padding.toStylesheet(elementSize)
+            menuPadding = padding.toStylesheetWithRatio(elementSize, 0.333)
+            itemPadding = padding.toStylesheetWithRatio(elementSize, 0.677)
+
+        styleSheet = (
+            "QComboBox {"
+            + f"    padding:{mainPadding};"
+            + f"    color:{'black' if color is None else color.toStylesheet()};"
+            + f"    border:{background.borderStyleSheet()};"
+            + f"    border-radius:{background.borderRadiusStyleSheet(elementSize)};"
+            + f"    background-color:{background.colorStyleSheet()};"
+            + "}"
+            + "QComboBox:hover, QPushButton:hover{"
+            + f"    border-color: {'#4032ff' if background.border is None or background.border.color is None else background.border.color.toStylesheet(True)}"
+            + "}"
+            + "QComboBox QAbstractItemView"
+            + "{"
+            + "    margin-top: 4px;"
+            + f"    padding: {menuPadding};"
+            + (
+                f"    border: {menuBackground.borderStyleSheet()};"
+                + f"    border-radius: {menuBackground.borderRadiusStyleSheet(elementSize)};"
+                + f"    background-color: {menuBackground.colorStyleSheet()};"
+                if menuBackground is not None
+                else ""
+            )
+            + "}"
+            + "QComboBox::drop-down {"
+            + "    border:none;"
+            + "    background-color:transparent;"
+            + f"    min-width: {arrowBackgroundWidth}px;"
+            + " }"
+            + "QComboBox::down-arrow{"
+            + f"    right: {menuPadding};"
+            + f"    width: {dropDownArrowSize};"
+            + f"    height: {dropDownArrowSize};"
+            + f"    image: url('{dropDownArrowImage}');"
+            + "}"
+            + " /* Menu */"
+            + "QComboBox QAbstractItemView::item{"
+            + "    min-height: 32px;"
+            + f"    padding: {itemPadding};"
+            + (
+                f"    border-radius: {itemBackground.borderRadiusStyleSheet(elementSize)};"
+                + f"    border: {itemBackground.borderStyleSheet()};"
+                + f"    background-color: {itemBackground.colorStyleSheet()};"
+                if itemBackground is not None
+                else ""
+            )
+            + f"    color:{'black' if menuTextColor is None else menuTextColor.toStylesheet()};"
+            "}"
+            + "QComboBox QAbstractItemView::item:hover,QComboBox QAbstractItemView::item:focus{"
+            + (
+                f"    border: {itemBackground.borderStyleSheet(True)};"
+                + f"    border-radius: {itemBackground.borderRadiusStyleSheet(elementSize)};"
+                + f"    background-color: {itemBackground.colorStyleSheet(True)};"
+                if itemBackground is not None
+                else ""
+            )
+            + f"    color:{'black' if menuTextColor is None else menuTextColor.toStylesheet(True)};"
+            "}"
+            + "QComboBox:editable {"
+            + "    background-color:transparent;"
+            + "    border:none;"
+            + "}"
+            + "QComboBox QAbstractItemView{outline:0px;}"
+            + "QComboBox::indicator{"
+            + "    background-color:transparent;"
+            + "    selection-background-color:transparent;"
+            + "    color:transparent;"
+            + "    selection-color:transparent;"
+            + "}"
+        )
+        return styleSheet
 
 
 class ButtonThemeBuilder(ThemeBuilder):

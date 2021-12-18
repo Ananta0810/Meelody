@@ -43,15 +43,15 @@ class ColorBox(StylesheetElement):
 class Padding:
     def __init__(self, width, height=None):
         self.width = width
-        self.height = height if height is not None else width
+        self.height = width if height is None else height
 
-    def getWidth(self, size: int):
+    def getWidth(self, size: int = 0):
         width = self.width
         if width <= 1:
             width *= size
         return width
 
-    def getHeight(self, size: int):
+    def getHeight(self, size: int = 0):
         height = self.height
         if height <= 1:
             height *= size
@@ -59,6 +59,11 @@ class Padding:
 
     def toStylesheet(self, size: int = 0) -> str:
         return f"{self.getWidth(size)}px {self.getHeight(size)}px"
+
+    def toStylesheetWithRatio(self, size: int = 0, ratio: float = 1.0) -> str:
+        return (
+            f"{self.getWidth(size) * ratio}px {self.getHeight(size) * ratio}px"
+        )
 
 
 class Border(StylesheetElement):
@@ -89,13 +94,13 @@ class Background:
             return None
         return self.border.toStylesheet(active)
 
-    def borderRadiusStyleSheet(self, size: int = 0) -> str:
+    def borderRadiusStyleSheet(self, size: int = 0) -> int:
         radius = (
             self.borderRadius
             if self.borderRadius >= 1
             else self.borderRadius * size
         )
-        return f"{radius}px"
+        return radius
 
     def __str__(self):
         return f"border:{self.border};border-radius:{self.borderRadius};color:{self.color}"

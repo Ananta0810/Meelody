@@ -12,15 +12,18 @@ from constants.application import supportedLanguages
 from constants.ui.qss import Background, ColorBoxes, Colors, Paddings
 from constants.ui.qt import AppCursors, AppIcons
 from modules.screens.components.factories import *
-from utils.data.config_utils import getLanguagePack, getLanguagePackFromConfig
+from modules.screens.themes.theme_builders import ThemeData
+from utils.data.config_utils import getLanguagePackage
 from utils.ui.application_utils import ApplicationUIUtils as AppUI
+from utils.ui.application_utils import ColorUtils
 from widgets.framless_window import FramelessWindow
 
 
 class ApplicationInterface(object):
-    def setupUi(self, MainWindow):
-        MainWindow.resize(1368, 768)
-        MainWindow.setTitleBarHeight(80)
+    def setupUi(self):
+        self.MainWindow = FramelessWindow()
+        self.MainWindow.resize(1368, 768)
+        self.MainWindow.setTitleBarHeight(80)
 
         self.isDarkMode = True
         buttonFactory = IconButtonFactory()
@@ -31,11 +34,17 @@ class ApplicationInterface(object):
         self.themeItems = {}
         self.buttonsWithDarkMode = []
 
-        self.app_background = QLabel(MainWindow)
-        self.app_background.resize(MainWindow.size())
+        backgroundTheme = ThemeData(
+            lightMode="background:white;border-radius:24px",
+            darkMode="background:black;border-radius:24px",
+        )
 
-        self.home_screen = QWidget(MainWindow)
-        MainWindow.setCentralWidget(self.home_screen)
+        self.app_background = QLabel(self.MainWindow)
+        self.app_background.resize(self.MainWindow.size())
+        self.__addThemeForItem(self.app_background, theme=backgroundTheme)
+
+        self.home_screen = QWidget(self.MainWindow)
+        self.MainWindow.setCentralWidget(self.home_screen)
 
         self.main_layout = QVBoxLayout(self.home_screen)
         self.main_layout.setContentsMargins(0, 0, 0, 0)
@@ -83,7 +92,7 @@ class ApplicationInterface(object):
             ),
         )
         self.minimize_btn.setCursor(cursors.HAND)
-        self.minimize_btn.clicked.connect(MainWindow.showMinimized)
+        self.minimize_btn.clicked.connect(self.MainWindow.showMinimized)
 
         self.close_btn = iconButtonFormer.render(
             padding=Paddings.RELATIVE_50,
@@ -102,7 +111,7 @@ class ApplicationInterface(object):
             ),
         )
         self.close_btn.setCursor(cursors.HAND)
-        self.close_btn.clicked.connect(MainWindow.close)
+        self.close_btn.clicked.connect(self.MainWindow.close)
 
         self.title_bar.addStretch()
         self.title_bar.addWidget(self.minimize_btn)
@@ -135,66 +144,63 @@ class ApplicationInterface(object):
         self.music_player = QWidget()
         self.music_player.setFixedHeight(96)
         self.music_player.setObjectName("music_player")
-
-        self.main_layout.addWidget(self.music_player)
-        self.player_layout = QHBoxLayout(self.music_player)
-        self.player = UIPlayerMusic()
-        self.player.displaySongInfo()
-        self.player_layout.addWidget(self.player)
-
-        self.settings_window = SettingsWindow(MainWindow)
-        self.settings_window.setGeometry(QRect(434, 184, 500, 400))
-        # self.settings_window.setGraphicsEffect(
-        #     QGraphicsDropShadowEffect(
-        #         blurRadius=50,
-        #         color=QColor(128, 64, 255, 100),
-        #         xOffset=0,
-        #         yOffset=3,
-        #     )
-        # )
-        self.settings_window.switch_dark_mode_btn.clicked.connect(
-            self.switchDarkMode
+        self.__addThemeForItem(
+            self.music_player,
+            theme=ThemeData(
+                lightMode="QWidget#music_player{border-top: 1px solid #eaeaea}",
+                darkMode="QWidget#music_player{border-top: 1px solid #202020}",
+            ),
         )
-        QMetaObject.connectSlotsByName(MainWindow)
+        self.main_layout.addWidget(self.music_player)
+        self.music_player_layout = QHBoxLayout(self.music_player)
+        self.music_player_inner = UIPlayerMusic(self.music_player)
+        self.music_player_layout.addWidget(self.music_player_inner)
 
-    def connectSignals(self, controllers: dict) -> None:
-        self.player.connectSignals(controllers.get("music_player"))
-        self.settings_window.connectSignals(controllers.get("application"))
+        self.settings_panel = QWidget(self.MainWindow)
+        self.settings_panel.setGeometry(QRect(434, 184, 500, 400))
+        self.settings_panel.setGraphicsEffect(
+            QGraphicsDropShadowEffect(
+                blurRadius=50,
+                color=ColorUtils.getQColorFromColor(
+                    Colors.PRIMARY.withAlpha(0.25)
+                ),
+                xOffset=0,
+                yOffset=3,
+            )
+        )
+        self.__addThemeForItem(self.settings_panel, theme=backgroundTheme)
+        self.settings_panel.hide()
 
-    def switchDarkMode(self) -> None:
-        self.isDarkMode = not self.isDarkMode
+        self.settings_panel_inner = SettingsWindow(self.settings_panel)
+        self.settings_panel_inner.close_settings_window_btn.clicked.connect(
+            self.clickedOpenSettingBtn
+        )
+
+        QMetaObject.connectSlotsByName(self.MainWindow)
+
+    def connectSignalsToControllers(self, controllers: dict) -> None:
+        self.music_player_inner.connectSignalsToController(
+            controllers.get("musicPlayer")
+        )
+        self.settings_panel_inner.connectSignalsToController(
+            controllers.get("application")
+        )
+
+    def switchDarkMode(self, mode) -> None:
+        self.isDarkMode = mode
         if self.isDarkMode:
             self.darkMode()
         else:
             self.lightMode()
 
     def clickedOpenSettingBtn(self) -> None:
-        self.settings_window.open()
-
-    def darkMode(self) -> None:
-        self.isDarkMode = True
-        self.app_background.setStyleSheet("background:black;border-radius:24px")
-        self.settings_window.darkMode()
-        self.music_player.setStyleSheet(
-            "QWidget#music_player{border-top: 1px solid #202020}"
-        )
-        self.player.darkMode()
-        for button in self.buttonsWithDarkMode:
-            button.setDarkMode(True)
-        for item in self.themeItems:
-            darkModeStyleSheet = self.themeItems.get(item).darkMode
-            if darkModeStyleSheet is None or darkModeStyleSheet.strip() == "":
-                continue
-            item.setStyleSheet(darkModeStyleSheet)
+        self.settings_panel.setVisible(not self.settings_panel.isVisible())
 
     def lightMode(self) -> None:
         self.isDarkMode = False
-        self.app_background.setStyleSheet("background:white;border-radius:24px")
-        self.settings_window.lightMode()
-        self.music_player.setStyleSheet(
-            "QWidget#music_player{border-top: 1px solid #eaeaea}"
-        )
-        self.player.lightMode()
+        self.settings_panel_inner.lightMode()
+        self.music_player_inner.lightMode()
+
         for button in self.buttonsWithDarkMode:
             button.setDarkMode(False)
         for item in self.themeItems:
@@ -203,12 +209,41 @@ class ApplicationInterface(object):
                 continue
             item.setStyleSheet(lightModeStyleSheet)
 
-    def __addThemeForItem(self, item, theme: str) -> None:
+    def darkMode(self) -> None:
+        self.isDarkMode = True
+        self.settings_panel_inner.darkMode()
+        self.music_player_inner.darkMode()
+
+        for button in self.buttonsWithDarkMode:
+            button.setDarkMode(True)
+        for item in self.themeItems:
+            darkModeStyleSheet = self.themeItems.get(item).darkMode
+            if darkModeStyleSheet is None or darkModeStyleSheet.strip() == "":
+                continue
+            item.setStyleSheet(darkModeStyleSheet)
+
+    def __addThemeForItem(self, item, theme: ThemeData) -> None:
         self.themeItems[item] = theme
 
     def __addButtonToList(self, item) -> None:
         self.buttonsWithDarkMode.append(item)
 
     def translate(self, language: dict) -> None:
-        self.settings_window.translate(language)
-        self.player.translate(language)
+        self.settings_panel_inner.translate(language)
+        self.music_player_inner.translate(language)
+
+    def show(self):
+        self.MainWindow.show()
+
+    def displayDataRetrievedFrom(self, settingsData: dict) -> None:
+        isDarkMode = settingsData.get("darkMode")
+        language = settingsData.get("language")
+        self.settings_panel_inner.change_language_dropdown.setCurrentIndex(
+            supportedLanguages.index(language)
+        )
+        self.translate(getLanguagePackage(language))
+        self.settings_panel_inner.switch_dark_mode_btn.setChecked(isDarkMode)
+        self.settings_panel_inner.current_folder.setText(
+            settingsData.get("path")
+        )
+        self.switchDarkMode(isDarkMode)

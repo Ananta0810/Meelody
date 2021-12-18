@@ -26,11 +26,12 @@ class MyList:
         mid: int = 0
         song: Song = None
         result: int = 0
+        comparation = UnicodeString.compare
 
         while low <= high:
             mid = (high + low) // 2
             song = _list[mid]
-            result = UnicodeString.compare(song.title, title)
+            result = comparation(song.title, title)
             if result == 1:
                 low = mid + 1
                 continue
@@ -60,6 +61,20 @@ class MyList:
                 continue
             return mid
         # Not found
+        return -1
+
+    @staticmethod
+    def linearSearch(_list: list, song) -> int:
+        for index, item in enumerate(_list):
+            if item == song:
+                return index
+        return -1
+
+    @staticmethod
+    def linearSearchByTitle(_list: list, title: str) -> int:
+        for index, item in enumerate(_list):
+            if item.title == title:
+                return index
         return -1
 
     @staticmethod

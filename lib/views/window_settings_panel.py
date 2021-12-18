@@ -8,8 +8,11 @@ path.append(".\lib")
 from constants.application import supportedLanguages
 from constants.ui.qss import Background, ColorBoxes, Colors, Paddings
 from constants.ui.qt import AppAlignment, AppCursors, AppIcons
+from modules.screens.components.dropdowns import DropdownMenu
 from modules.screens.components.factories import *
 from modules.screens.components.font_builder import FontBuilder
+from modules.screens.qss.qss_elements import *
+from modules.screens.themes.theme_builders import ThemeData
 from utils.ui.application_utils import ApplicationUIUtils as AppUI
 from widgets.toggle import Toggle
 
@@ -28,7 +31,6 @@ class SettingsWindow(QWidget):
         iconButtonThemeBuilder = iconButtonFormer.getThemeBuilder()
         icons = AppIcons()
         cursors = AppCursors()
-        aligments = AppAlignment()
         fontBuilder = FontBuilder()
         labelFormer = LabelFactory().getByType("default")
         labelThemeBuilder = labelFormer.getThemeBuilder()
@@ -75,8 +77,6 @@ class SettingsWindow(QWidget):
 
         # UI
         self.setAutoFillBackground(True)
-        self.setObjectName("window_settings_panel")
-        # self.setGraphicsEffect(AppEffect.shadow)
         self.main_layout = QVBoxLayout(self)
 
         self.header = QHBoxLayout()
@@ -114,7 +114,6 @@ class SettingsWindow(QWidget):
         )
         self.__addButtonToList(self.close_settings_window_btn)
         self.close_settings_window_btn.setCursor(cursors.HAND)
-        self.close_settings_window_btn.clicked.connect(self.hide)
         self.header.addWidget(self.close_settings_window_btn)
         self.header.addStretch()
 
@@ -137,7 +136,7 @@ class SettingsWindow(QWidget):
         self.settings_items.addLayout(self.settings_item_dark_mode)
         self.settings_items.addLayout(self.settings_item_folder)
 
-        # Change language button
+        # ===================Langauges===================
         self.language_icon = iconButtonFormer.render(
             padding=Paddings.RELATIVE_50,
             size=icons.SIZES.LARGE,
@@ -151,84 +150,50 @@ class SettingsWindow(QWidget):
         self.language_label = labelFormer.render(font=itemFont, parent=self)
         self.__addThemeForItem(self.language_label, itemTextStyle)
 
-        self.change_language_dropdown = QComboBox()
+        dropdownMenuFormer = DropdownMenu()
+        self.change_language_dropdown = dropdownMenuFormer.render()
         self.change_language_dropdown.setFixedHeight(48)
-        self.change_language_dropdown.setMinimumWidth(160)
         self.change_language_dropdown.addItems(supportedLanguages)
 
-        self.change_language_dropdown.setStyleSheet(
-            "QComboBox {"
-            + "    padding: 0 12px;"
-            + "    color: black;"
-            + "    border: 2px solid #8064ea;"
-            + "    border-radius: 8px;"
-            + "    background-color: white"
-            + "}"
-            + "QComboBox:hover, QPushButton:hover {"
-            + "    border-color: #4032ff"
-            + "}"
-            + "QComboBox:editable {"
-            + "    background-color:transparent;"
-            + "    border:none;"
-            + "    color: pink;"
-            + "}"
-            + "QComboBox:!on {"
-            + "}"
-            + "QComboBox:on {"
-            + "}"
-            + "QComboBox QAbstractItemView"
-            + "{"
-            + "    margin-top: 4px;"
-            + "    padding: 4px;"
-            + "    border-radius: 8px;"
-            + "    border: 2px solid #8064ea;"
-            + "    background-color: white;"
-            + "}"
-            + "QComboBox::drop-down {"
-            + "    border:none;"
-            + "    background-color:transparent;"
-            + "    min-width: 32px;"
-            + "    color: white"
-            + " }"
-            + "QComboBox::down-arrow{"
-            + "    right: 4px;"
-            + "    width: 10px;"
-            + "    height: 10px;"
-            + "    image: url('assets/images/icons/chevron-down.png');"
-            + "}"
-            + " /* Menu */"
-            + "QComboBox::indicator{"
-            + "    background-color:transparent;"
-            + "    selection-background-color:transparent;"
-            + "    color:transparent;"
-            + "    selection-color:transparent;"
-            + "}"
-            + "QComboBox QAbstractItemView { outline: 0px;}"
-            + "QComboBox QAbstractItemView::item{"
-            + "    min-height: 32px;"
-            + "    padding: 4px;"
-            + "    border:none;"
-            + "    border-radius: 4px;"
-            + "    background-color:transparent;"
-            + "    color:black;"
-            "}"
-            + "QComboBox QAbstractItemView::item:hover{"
-            + "    color:rgba(128, 100, 234, 1);"
-            + "    border:0px solid transparent;"
-            + "    background-color:rgba(128, 100, 234, 0.15);"
-            "}"
-            + "QComboBox QAbstractItemView::item:focus{"
-            + "    color:rgba(128, 100, 234, 1);"
-            + "    border:none;"
-            + "    background-color:rgba(128, 100, 234, 0.15);"
-            + "}"
+        dropDownBorder = Border(2, "solid", ColorBoxes.PRIMARY)
+        lightModeDropDownBackground = Background(
+            dropDownBorder, borderRadius=8, color=ColorBoxes.WHITE
         )
-        self.change_language_dropdown.setItemDelegate(QStyledItemDelegate())
-        self.change_language_dropdown.view().window().setWindowFlags(
-            Qt.Popup | Qt.FramelessWindowHint | Qt.NoDropShadowWindowHint
+        darkModeDropDownBackground = Background(
+            dropDownBorder, borderRadius=8, color=ColorBoxes.BLACK
         )
-        self.change_language_dropdown.view().window().setAttribute(
-            Qt.WA_TranslucentBackground
+        self.__addThemeForItem(
+            self.change_language_dropdown,
+            theme=(
+                dropdownMenuFormer.getThemeBuilder()
+                .addPadding(Paddings.ABSOLUTE_MEDIUM)
+                .addLightModeTextColor(ColorBoxes.BLACK)
+                .addDarkModeTextColor(ColorBoxes.WHITE)
+                .addLightModeBackground(lightModeDropDownBackground)
+                .addLightModeMenuBackground(lightModeDropDownBackground)
+                .addDarkModeBackground(darkModeDropDownBackground)
+                .addDarkModeMenuBackground(darkModeDropDownBackground)
+                .addLightModeItemBackground(
+                    Background(
+                        borderRadius=4,
+                        color=ColorBoxes.HIDDEN_PRIMARY,
+                    )
+                )
+                .addDarkModeItemBackground(
+                    Background(
+                        borderRadius=4,
+                        color=ColorBoxes.HIDDEN_WHITE,
+                    )
+                )
+                .addLightModeMenuTextColor(
+                    ColorBox(
+                        normal=Colors.BLACK,
+                        active=Colors.PRIMARY,
+                    )
+                )
+                .addDarkModeMenuTextColor(ColorBoxes.WHITE)
+                .build()
+            ),
         )
         self.settings_item_language.addWidget(self.language_icon)
         self.settings_item_language.addWidget(self.language_label)
@@ -236,7 +201,7 @@ class SettingsWindow(QWidget):
             self.change_language_dropdown, stretch=1
         )
 
-        # Change dark mode button
+        # ===================Dark mode===================
         self.dark_mode_icon = iconButtonFormer.render(
             padding=Paddings.RELATIVE_33,
             size=icons.SIZES.LARGE,
@@ -261,7 +226,7 @@ class SettingsWindow(QWidget):
         self.settings_item_dark_mode.addStretch()
         self.settings_item_dark_mode.addWidget(self.switch_dark_mode_btn)
 
-        # Change folder button
+        # ===================Folder===================
         self.folder_icon = iconButtonFormer.render(
             padding=Paddings.RELATIVE_50,
             size=icons.SIZES.LARGE,
@@ -314,12 +279,27 @@ class SettingsWindow(QWidget):
         self.settings_item_folder.addWidget(self.current_folder, stretch=1)
         self.settings_item_folder.addWidget(self.change_folder_btn)
 
-    def connectSignals(self, controller):
+    def openFolderChoosingDialogThenSendDataTo(self, controller):
+        path = QFileDialog.getExistingDirectory()
+        controller.handleChangedFolder(path)
+
+    def connectSignalsToController(self, controller):
         self.change_language_dropdown.currentIndexChanged.connect(
             controller.handleChangedLanguage
         )
+        self.switch_dark_mode_btn.clicked.connect(
+            controller.handleChangedDarkMode
+        )
+        self.change_folder_btn.clicked.connect(
+            lambda: self.openFolderChoosingDialogThenSendDataTo(controller)
+        )
 
     def lightMode(self):
+        # Due to some error, the light mode will not work properly the first time
+        # Therefore, we need to take a warm settup before apply dark-light mode
+        self.change_language_dropdown.setStyleSheet(
+            self.themeItems.get(self.change_language_dropdown).lightMode
+        )
         self.setStyleSheet("background:white;border-radius:16px")
         for item in self.themeItems:
             lightModeStyleSheet = self.themeItems.get(item).lightMode
@@ -332,6 +312,9 @@ class SettingsWindow(QWidget):
 
     def darkMode(self):
         self.setStyleSheet("background:black;border-radius:16px")
+        self.change_language_dropdown.setStyleSheet(
+            self.themeItems.get(self.change_language_dropdown).darkMode
+        )
         for item in self.themeItems:
             darkModeStyleSheet = self.themeItems.get(item).darkMode
             if darkModeStyleSheet is None or darkModeStyleSheet.strip() == "":
@@ -350,17 +333,13 @@ class SettingsWindow(QWidget):
             self.change_language_dropdown.setItemText(index, supporetLanguage)
         self.dark_mode_label.setText(language.get("dark_mode"))
         self.folder_label.setText(language.get("folder"))
-        self.current_folder.setText(language.get("folder_empty"))
+        self.current_folder.setDefaultText(language.get("folder_empty"))
 
-    def __addThemeForItem(self, item, theme: str):
+    def __addThemeForItem(self, item, theme: ThemeData) -> None:
         self.themeItems[item] = theme
 
-    def __addButtonToList(self, item):
+    def __addButtonToList(self, item) -> None:
         self.buttonsWithDarkMode.append(item)
 
-    def open(self):
-        if self.isVisible():
-            self.hide()
-        else:
-            self.show()
-        # self.setVisible(not self.isVisible())
+    def changeCurrentFolder(self, dir) -> None:
+        self.current_folder.setText(dir)

@@ -69,6 +69,11 @@ class PlaylistSongs:
         self._isSorted = True
         self._backupSongs.clear()
 
+    def findSongByTitle(self, title):
+        # if self._isSorted:
+            # return MyList.binarySearchByTitle(self._songs, title)
+        return MyList.linearSearchByTitle(self._songs, title)
+
     def find(self, song: Song) -> int:
         """
         Find the index Of song in the list

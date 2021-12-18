@@ -1,27 +1,23 @@
-from sys import argv, exit, path
-
-# from PyQt5.QtWidgets import QApplication, QWidget
+from sys import path
 
 path.append("./lib")
 from threading import Thread
-from time import perf_counter, sleep
+from time import sleep
 
 from modules.models.player import Player
-from utils.data.config_utils import retrievePlayerData, updatePlayerData
-
-# from utils.helpers.playlist_song_utils import getPlaylistFromDir
-# from views.ui_player_music import UIPlayerMusic
+from utils.data.config_utils import updatePlayerData
 
 
 class MusicPlayer:
-    def __init__(self, player: Player, ui):
-        self.player = player
+    def __init__(self, ui, player: Player):
         self.ui = ui
-
+        self.player = player
         self.currentThreadNumber: int = 0
         self.canRunTimeSlider: bool = True
-        data = retrievePlayerData()
 
+    def displayDataRetrievedFrom(self, data: dict) -> None:
+        self.player.setCurrentSong(data.get("currentSong"))
+        self.player.loadSongToPlay()
         self.displayCurrentSongInfo()
         self.ui.setLoopState(data.get("isLooping"))
         self.ui.setShuffleState(data.get("isShuffling"))

@@ -58,8 +58,8 @@ class Toggle(QPushButton):
         self._height = self.size().height()
 
     # Override
-    def setChecked(self, *args, **kwargs):
-        QPushButton.setChecked(self, *args, **kwargs)
+    def setChecked(self, a0: bool):
+        QPushButton.setChecked(self, a0)
         self.setTogglePosition()
 
     def setTogglePosition(self):

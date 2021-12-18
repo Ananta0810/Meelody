@@ -25,16 +25,24 @@ def updateJsonData(jsonFile, property, value) -> None:
         jsonFile.truncate()
 
 
+def retrieveSettingsData() -> dict:
+    return getJsonData("lib/configs/settings.json")
+
+
+def updateSettingsData(property, value) -> None:
+    updateJsonData("lib/configs/settings.json", property, value)
+
+
 def retrievePlayerData() -> dict:
-    return getJsonData("lib\configs\music_player.json")
+    return getJsonData("lib/configs/music_player.json")
 
 
 def updatePlayerData(property, value) -> None:
-    updateJsonData("lib\configs\music_player.json", property, value)
+    updateJsonData("lib/configs/music_player.json", property, value)
 
 
-def getLanguagePackFromConfig() -> dict:
-    data = getJsonData("lib\configs\settings.json")
+def getLanguagePackageFromConfig() -> dict:
+    data = getJsonData("lib/configs/settings.json")
     languages = {
         "eng": "lib/configs/langs/eng.json",
         "vie": "lib/configs/langs/vie.json",
@@ -44,7 +52,7 @@ def getLanguagePackFromConfig() -> dict:
     return getJsonData(languages.get(currentLanguage))
 
 
-def getLanguagePack(language: str = "eng"):
+def getLanguagePackage(language: str = "eng"):
     languages = {
         "eng": "lib/configs/langs/eng.json",
         "vie": "lib/configs/langs/vie.json",

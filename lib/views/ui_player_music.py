@@ -11,7 +11,7 @@ from constants.ui.qt import AppAlignment, AppCursors, AppIcons
 from modules.screens.components.factories import *
 from modules.screens.components.font_builder import FontBuilder
 from modules.screens.qss.qss_elements import *
-from utils.data.config_utils import getLanguagePackFromConfig
+from modules.screens.themes.theme_builders import ThemeData
 from utils.helpers.my_string import Stringify
 from utils.ui.application_utils import ApplicationUIUtils as AppUI
 from widgets.image_displayer import ImageDisplayer
@@ -318,7 +318,7 @@ class UIPlayerMusic(QWidget):
         self.right.addWidget(self.timer_btn)
         self.__addThemeForItem(self.timer_btn, normalButtonThemeStyle)
 
-        # self.__connectSignals()
+        # self.__connectSignalsToController()
         QMetaObject.connectSlotsByName(self)
 
     def darkMode(self) -> None:
@@ -405,7 +405,7 @@ class UIPlayerMusic(QWidget):
     def setPlayingState(self, state: bool) -> None:
         self.play_btn.setChecked(state)
 
-    def connectSignals(self, controller) -> None:
+    def connectSignalsToController(self, controller) -> None:
         self.previous_song_btn.clicked.connect(controller.handlePreviousSong)
         self.play_btn.clicked.connect(controller.handlePlaySong)
         self.next_song_btn.clicked.connect(controller.handleNextSong)
@@ -446,7 +446,7 @@ class UIPlayerMusic(QWidget):
         self.timer_input.setVisible(not self.timer_input.isVisible())
         self.volume_slider.setVisible(False)
 
-    def __addThemeForItem(self, item, theme: str) -> None:
+    def __addThemeForItem(self, item, theme: ThemeData) -> None:
         self.themeItems[item] = theme
 
     def __addButtonToList(self, item) -> None:

@@ -79,6 +79,15 @@ class Player:
             self._currentSongIndex + 1
         ) % self._playlist.size()
 
+    def getPlaylist(self) -> list[Song]:
+        return self._playlist
+
+    def setCurrentSongIndex(self, index: int) -> None:
+        self._currentSongIndex = index
+
+    def setCurrentSong(self, title: str) -> None:
+        self._currentSongIndex = self._playlist.findSongByTitle(title)
+
     def getCurrentSong(self):
         return self._currentSong
 
