@@ -19,19 +19,17 @@ from views.ui_application import ApplicationInterface
 
 class Appication:
     def __init__(self):
+        # =================UI=================
         self.ui = ApplicationInterface()
-        self.ui.setupUi()
 
         # =================Controllers=================
-        player = Player()
-        library = getPlaylistFromDir("Library", withExtension=".mp3")
-        player.loadPlaylist(library)
-        self.musicPlayer = MusicPlayer(self.ui.music_player_inner, player)
+        self.musicPlayer = MusicPlayer(self.ui.music_player_inner)
 
         settingsData = retrieveSettingsData()
         musicPlayerData = retrievePlayerData()
 
         self.ui.displayDataRetrievedFrom(settingsData)
+        self.loadPlaylistFromDirForPlayer(settingsData.get("path"))
         self.musicPlayer.displayDataRetrievedFrom(musicPlayerData)
 
         controllers = {
@@ -44,7 +42,8 @@ class Appication:
         self.ui.show()
 
     def handleChangedLanguage(self, index: int) -> None:
-        language = supportedLanguages[index]
+        supportedLanguagesAsList = [key for key in supportedLanguages.keys()]
+        language = supportedLanguagesAsList[index]
         languagePackage = getLanguagePackage(language)
         self.ui.translate(languagePackage)
         updateSettingsData("language", language)
@@ -56,8 +55,19 @@ class Appication:
     def handleChangedFolder(self, folderDir: str) -> None:
         if len(folderDir) == 0:
             return
-        self.ui.settings_window.changeCurrentFolder(folderDir)
+        self.ui.settings_panel_inner.changeCurrentFolder(folderDir)
         updateSettingsData("path", folderDir)
+        self.loadPlaylistFromDirForPlayer(folderDir)
+
+    def loadPlaylistFromDirForPlayer(self, dir: str) -> None:
+        self.musicPlayer.stopPlayingMusic()
+
+        player = Player()
+        self.musicPlayer.setPlayer(player)
+        library = getPlaylistFromDir(dir, withExtension=".mp3")
+        player.loadPlaylist(library)
+        player.loadSongToPlay()
+        self.musicPlayer.displayCurrentSongInfo()
 
 
 def main():

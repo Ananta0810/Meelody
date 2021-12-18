@@ -20,6 +20,9 @@ from widgets.framless_window import FramelessWindow
 
 
 class ApplicationInterface(object):
+    def __init__(self):
+        self.setupUi()
+
     def setupUi(self):
         self.MainWindow = FramelessWindow()
         self.MainWindow.resize(1368, 768)
@@ -238,12 +241,14 @@ class ApplicationInterface(object):
     def displayDataRetrievedFrom(self, settingsData: dict) -> None:
         isDarkMode = settingsData.get("darkMode")
         language = settingsData.get("language")
+        languages = [key for key in supportedLanguages.keys()]
+
         self.settings_panel_inner.change_language_dropdown.setCurrentIndex(
-            supportedLanguages.index(language)
+            languages.index(language)
         )
         self.translate(getLanguagePackage(language))
-        self.settings_panel_inner.switch_dark_mode_btn.setChecked(isDarkMode)
         self.settings_panel_inner.current_folder.setText(
             settingsData.get("path")
         )
+        self.settings_panel_inner.switch_dark_mode_btn.setChecked(isDarkMode)
         self.switchDarkMode(isDarkMode)

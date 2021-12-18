@@ -350,12 +350,13 @@ class UIPlayerMusic(QWidget):
         self.timer_input.setPlaceholderText(language.get("enter_timer_minute"))
 
     def displaySongInfo(
-        self, cover: bytes = None, title: str = None, artist: str = ""
+        self, cover: bytes = None, title: str = None, artist: str = None
     ) -> None:
         coverAsPixmap = (
             None if cover is None else self.__getPixmapForSongCover(cover)
         )
-        artist = "" if artist is None else artist
+        if artist is None and title is not None:
+            artist = ""
         self.song_cover.setPixmap(coverAsPixmap)
         self.song_title.setText(title)
         self.song_artist.setText(artist)
@@ -367,6 +368,9 @@ class UIPlayerMusic(QWidget):
         self.total_time.setText(Stringify.floatToClockTime(time))
 
     def runTimeSlider(self, currentTime: float, totalTime: float) -> None:
+        TIME_FIX_FOR_CASE_WHEN_DEVIDING_FOR_ZERO: float = 999999.0
+        if totalTime == 0:
+            totalTime = TIME_FIX_FOR_CASE_WHEN_DEVIDING_FOR_ZERO
         position = int(currentTime * 100 / totalTime)
         self.time_slider.setSliderPosition(position)
 
@@ -379,6 +383,9 @@ class UIPlayerMusic(QWidget):
     def setVolume(self, volume: int) -> None:
         self.volume_slider.setValue(volume)
         self.__changeVolumeIcon()
+
+    def setPlayingState(self, state: bool) -> None:
+        self.play_btn.setChecked(state)
 
     def isLooping(self) -> bool:
         return self.loop_btn.isChecked()
@@ -401,9 +408,6 @@ class UIPlayerMusic(QWidget):
     def closeTimerBox(self) -> None:
         self.timer_input.clear()
         self.timer_input.hide()
-
-    def setPlayingState(self, state: bool) -> None:
-        self.play_btn.setChecked(state)
 
     def connectSignalsToController(self, controller) -> None:
         self.previous_song_btn.clicked.connect(controller.handlePreviousSong)
@@ -432,9 +436,9 @@ class UIPlayerMusic(QWidget):
         VOLUME_DOWN_ICON = 1
         SILENT_ICON = 2
         icon = SILENT_ICON
-        if 0 < volume <= 50:
+        if 0 < volume <= 33:
             icon = VOLUME_DOWN_ICON
-        if 50 < volume <= 100:
+        if 33 < volume <= 100:
             icon = VOLUME_UP_ICON
         self.volume_btn.setCurrentIcon(icon)
 

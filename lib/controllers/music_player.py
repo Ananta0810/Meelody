@@ -6,14 +6,18 @@ from time import sleep
 
 from modules.models.player import Player
 from utils.data.config_utils import updatePlayerData
+from views.ui_player_music import UIPlayerMusic
 
 
 class MusicPlayer:
-    def __init__(self, ui, player: Player):
+    def __init__(self, ui: UIPlayerMusic):
         self.ui = ui
-        self.player = player
+        self.player: Player = None
         self.currentThreadNumber: int = 0
         self.canRunTimeSlider: bool = True
+
+    def setPlayer(self, player: Player) -> None:
+        self.player = player
 
     def displayDataRetrievedFrom(self, data: dict) -> None:
         self.player.setCurrentSong(data.get("currentSong"))
@@ -23,7 +27,7 @@ class MusicPlayer:
         self.ui.setShuffleState(data.get("isShuffling"))
         self.ui.setVolume(data.get("volume"))
 
-    def handleEnteredTimer(self):
+    def handleEnteredTimer(self) -> None:
         SECONDS_PER_MINUTE = 60
         timeToActiveTimerInMinute: int = self.ui.getTimerValue()
         timeToActiveTimerInSeconds: int = (
@@ -32,11 +36,11 @@ class MusicPlayer:
         self.player.timer.setTime(timeToActiveTimerInSeconds)
         self.ui.closeTimerBox()
 
-    def handleClickedLoop(self):
+    def handleClickedLoop(self) -> None:
         isLooping = self.ui.isLooping()
         updatePlayerData("isLooping", isLooping)
 
-    def handleClickedShuffle(self):
+    def handleClickedShuffle(self) -> None:
         isShuffling = self.ui.isShuffling()
         updatePlayerData("isShuffling", isShuffling)
         if isShuffling:
@@ -44,29 +48,30 @@ class MusicPlayer:
         else:
             self.player.unshuffle()
 
-    def handlePausedTimeSlider(self):
+    def handlePausedTimeSlider(self) -> None:
         self.canRunTimeSlider = False
 
-    def handleUnpausedTimeSlider(self):
+    def handleUnpausedTimeSlider(self) -> None:
         self.canRunTimeSlider = True
         if not self.player.hasSong():
             return
+        currentSong = self.player.getCurrentSong()
+        if currentSong is None:
+            return
         timeStart: float = (
-            self.ui.getCurrentTimeSliderPosition()
-            / 100
-            * self.player.getCurrentSong().length
+            self.ui.getCurrentTimeSliderPosition() / 100 * currentSong.length
         )
         self.player.stop()
         self.player.setTimeStart(timeStart)
         self.ui.displayPlayingTime(timeStart)
         self.handlePlaySong()
 
-    def handleChangVolume(self):
+    def handleChangVolume(self) -> None:
         volume: int = self.ui.getCurrentVolumeValue()
         self.player.setVolume(volume)
         updatePlayerData("volume", volume)
 
-    def handlePlaySong(self):
+    def handlePlaySong(self) -> None:
         if self.player.getCurrentSong() is None:
             return
         if not self.ui.isPlaying():
@@ -76,12 +81,12 @@ class MusicPlayer:
         updatePlayerData("currentSong", self.player.getCurrentSong().title)
         self.__threadPlaySong()
 
-    def handleLoveSong(self):
+    def handleLoveSong(self) -> None:
         if not self.player.hasSong():
             return
         self.player.getCurrentSong().reverseLoveState()
 
-    def handleNextSong(self):
+    def handleNextSong(self) -> None:
         if not self.player.hasSong():
             return
         self.player.next()
@@ -90,7 +95,7 @@ class MusicPlayer:
         updatePlayerData("currentSong", self.player.getCurrentSong().title)
         self.__threadPlaySong()
 
-    def handlePreviousSong(self):
+    def handlePreviousSong(self) -> None:
         if not self.player.hasSong():
             return
         self.player.previous()
@@ -99,32 +104,44 @@ class MusicPlayer:
         updatePlayerData("currentSong", self.player.getCurrentSong().title)
         self.__threadPlaySong()
 
-    def displayCurrentSongInfo(self):
+    def displayCurrentSongInfo(self) -> None:
         if self.player is None:
             return
-        cover = None
-        title = None
-        artist = ""
-        length = 0
+
         song = None
         if self.player.hasSong():
             song = self.player.getCurrentSong()
-        if song is not None:
-            cover = song.cover
-            title = song.title
-            artist = song.artist
-            length = song.length
-        self.ui.displaySongInfo(cover, title, artist)
-        self.ui.displayPlayingTime(0)
-        self.ui.displayTotalTime(length)
 
-    def pauseMusic(self):
+        if song is None:
+            self.ui.displaySongInfo()
+            self.ui.displayPlayingTime(0)
+            self.ui.displayTotalTime(0)
+            self.ui.runTimeSlider(0, 1)
+            return
+
+        self.ui.displaySongInfo(song.cover, song.title, song.artist)
+        self.ui.displayPlayingTime(0)
+        self.ui.runTimeSlider(0, song.length)
+        self.ui.displayTotalTime(song.length)
+
+    def pauseMusic(self) -> None:
+        if self.player is None:
+            return
         self.player.pause()
         self.ui.setPlayingState(False)
 
-    def playMusic(self):
-        self.ui.setPlayingState(True)
+    def stopPlayingMusic(self) -> None:
+        if self.player is None:
+            return
+        self.player.stop()
+        self.ui.setPlayingState(False)
+
+    def playMusic(self) -> None:
+
         player = self.player
+        if player is None:
+            return
+        self.ui.setPlayingState(True)
         player.play()
 
         threadNumber: int = self.currentThreadNumber
@@ -149,12 +166,14 @@ class MusicPlayer:
         if songIsFinished:
             self.__doAfterSongFinished()
 
-    def __threadPlaySong(self):
+    def __threadPlaySong(self) -> None:
         thread: Thread = Thread(target=self.playMusic)
         self.currentThreadNumber += 1
         thread.start()
 
-    def __doWhilePlayingMusic(self, player: Player):
+    def __doWhilePlayingMusic(self, player: Player) -> None:
+        if player is None:
+            return
         playingTime = player.getPlayingTime()
         self.ui.displayPlayingTime(playingTime)
 
@@ -163,7 +182,9 @@ class MusicPlayer:
         if player.timer.isEnabled():
             self.__runTimer()
 
-    def __doAfterSongFinished(self):
+    def __doAfterSongFinished(self) -> None:
+        if self.player is None:
+            return
         self.player.resetTime()
         self.ui.setPlayingState(False)
         if self.ui.isLooping():
@@ -171,7 +192,9 @@ class MusicPlayer:
         else:
             self.handleNextSong()
 
-    def __runTimer(self):
+    def __runTimer(self) -> None:
+        if self.player is None:
+            return
         timer = self.player.timer
         timer.count()
         if not timer.isActive():

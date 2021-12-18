@@ -47,6 +47,8 @@ class PlaylistSongs:
         """
         Get the song at the given index
         """
+        if len(self._songs) == 0:
+            return None
         return self._songs[index]
 
     def insert(self, song: Song):
@@ -71,7 +73,7 @@ class PlaylistSongs:
 
     def findSongByTitle(self, title):
         # if self._isSorted:
-            # return MyList.binarySearchByTitle(self._songs, title)
+        # return MyList.binarySearchByTitle(self._songs, title)
         return MyList.linearSearchByTitle(self._songs, title)
 
     def find(self, song: Song) -> int:

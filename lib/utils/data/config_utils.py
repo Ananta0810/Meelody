@@ -1,5 +1,7 @@
 import json
 
+from constants.application import supportedLanguages
+
 
 def getJsonData(jsonFile) -> dict:
     # Opening JSON file
@@ -43,20 +45,14 @@ def updatePlayerData(property, value) -> None:
 
 def getLanguagePackageFromConfig() -> dict:
     data = getJsonData("lib/configs/settings.json")
-    languages = {
-        "eng": "lib/configs/langs/eng.json",
-        "vie": "lib/configs/langs/vie.json",
-    }
     currentLanguage = data.get("language")
-    currentLanguage = currentLanguage if currentLanguage in languages else "eng"
-    return getJsonData(languages.get(currentLanguage))
+    currentLanguage = (
+        currentLanguage if currentLanguage in supportedLanguages else "eng"
+    )
+    return getJsonData(supportedLanguages.get(currentLanguage))
 
 
 def getLanguagePackage(language: str = "eng"):
-    languages = {
-        "eng": "lib/configs/langs/eng.json",
-        "vie": "lib/configs/langs/vie.json",
-    }
-    if language not in languages:
+    if language not in supportedLanguages:
         raise ValueError("Language is not supported")
-    return getJsonData(languages.get(language))
+    return getJsonData(supportedLanguages.get(language))

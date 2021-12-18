@@ -67,6 +67,8 @@ class Player:
         self._sampleRateOffset = 1
 
         mixer.music.unload()
+        if self._currentSong is None:
+            return
         mixer.music.load(self._currentSong.location)
 
     def play(self):
@@ -99,6 +101,8 @@ class Player:
         ) % self._playlist.size()
 
     def fixSampleRateOffsetWhenSongIsPaused(self):
+        if self._currentSong is None:
+            return
         STANDARD_AUDIO_SAMPLE_RATE = 48000
         self._sampleRateOffset = (
             STANDARD_AUDIO_SAMPLE_RATE
