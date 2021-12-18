@@ -55,8 +55,14 @@ class PlaylistSongs:
         """
         Add song to the list of songs
         """
-        if self._sortMethod == "title":
-            position: int = MyList.binarySearchByTitle(self._songs, song.title)
+        if (
+            len(self._songs) != 0
+            and self._isSorted
+            and self._sortMethod == "title"
+        ):
+            position: int = MyList.binaryInsertSearchByTitle(
+                self._songs, song.title
+            )
             self._songs.insert(position, song)
             return
         self._songs.append(song)

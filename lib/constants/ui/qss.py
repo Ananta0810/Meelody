@@ -42,6 +42,8 @@ class ColorBoxes(metaclass=MetaConst):
     BLACK = ColorBox(Colors.BLACK)
     WHITE = ColorBox(Colors.WHITE)
     GRAY = ColorBox(Colors.BLACK.withAlpha(0.5))
+    DANGER = ColorBox(Colors.DANGER)
+
     BLACK_LIGHTEN = ColorBox(
         normal=Colors.BLACK.withAlpha(0.08),
         active=Colors.BLACK.withAlpha(0.12),

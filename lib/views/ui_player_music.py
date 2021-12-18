@@ -350,16 +350,20 @@ class UIPlayerMusic(QWidget):
         self.timer_input.setPlaceholderText(language.get("enter_timer_minute"))
 
     def displaySongInfo(
-        self, cover: bytes = None, title: str = None, artist: str = None
+        self,
+        cover: bytes = None,
+        title: str = None,
+        artist: str = None,
+        loveState: bool = False,
     ) -> None:
-        coverAsPixmap = (
-            None if cover is None else self.__getPixmapForSongCover(cover)
-        )
         if artist is None and title is not None:
             artist = ""
-        self.song_cover.setPixmap(coverAsPixmap)
+        self.song_cover.setPixmap(self.__getPixmapForSongCover(cover))
         self.song_title.setText(title)
+        self.song_title.setCursorPosition(0)
         self.song_artist.setText(artist)
+        self.song_artist.setCursorPosition(0)
+        self.love_btn.setChecked(loveState)
 
     def displayPlayingTime(self, time: float) -> None:
         self.playing_time.setText(Stringify.floatToClockTime(time))
@@ -426,9 +430,12 @@ class UIPlayerMusic(QWidget):
         self.timer_input.returnPressed.connect(controller.handleEnteredTimer)
 
     def __getPixmapForSongCover(self, coverAsByte: bytes) -> QPixmap:
-        return AppUI.getSquaredPixmapFromBytes(
+        if coverAsByte is None:
+            return None
+        pixmap = AppUI.getSquaredPixmapFromBytes(
             coverAsByte, edge=self.song_cover.width(), radius=12
         )
+        return pixmap
 
     def __changeVolumeIcon(self) -> None:
         volume: int = self.volume_slider.value()

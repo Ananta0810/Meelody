@@ -75,7 +75,9 @@ class ApplicationInterface(object):
             padding=Paddings.RELATIVE_50,
             size=icons.SIZES.MEDIUM,
             lightModeIcon=AppUI.paintIcon(icons.MINIMIZE, Colors.PRIMARY),
+            darkModeIcon=AppUI.paintIcon(icons.MINIMIZE, Colors.WHITE),
         )
+        self.__addButtonToList(self.minimize_btn)
         self.__addThemeForItem(
             self.minimize_btn,
             theme=(
@@ -102,15 +104,16 @@ class ApplicationInterface(object):
             size=icons.SIZES.MEDIUM,
             lightModeIcon=AppUI.paintIcon(icons.CLOSE, Colors.DANGER),
         )
+        closeBackground = Background(
+            borderRadius=0.33,
+            color=ColorBoxes.DANGER_LIGHTEN_50,
+        )
         self.__addThemeForItem(
             self.close_btn,
             theme=(
-                iconButtonThemeBuilder.addLightModeBackground(
-                    Background(
-                        borderRadius=0.33,
-                        color=ColorBoxes.DANGER_LIGHTEN_50,
-                    )
-                ).build(self.close_btn.height())
+                iconButtonThemeBuilder.addLightModeBackground(closeBackground)
+                .addDarkModeBackground(closeBackground)
+                .build(self.close_btn.height())
             ),
         )
         self.close_btn.setCursor(cursors.HAND)

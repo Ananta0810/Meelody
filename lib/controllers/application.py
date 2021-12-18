@@ -58,16 +58,17 @@ class Appication:
         self.ui.settings_panel_inner.changeCurrentFolder(folderDir)
         updateSettingsData("path", folderDir)
         self.loadPlaylistFromDirForPlayer(folderDir)
+        self.musicPlayer.player.setCurrentSongIndex(0)
+        self.musicPlayer.player.loadSongToPlay()
+        self.musicPlayer.displayCurrentSongInfo()
 
     def loadPlaylistFromDirForPlayer(self, dir: str) -> None:
         self.musicPlayer.stopPlayingMusic()
 
         player = Player()
-        self.musicPlayer.setPlayer(player)
         library = getPlaylistFromDir(dir, withExtension=".mp3")
         player.loadPlaylist(library)
-        player.loadSongToPlay()
-        self.musicPlayer.displayCurrentSongInfo()
+        self.musicPlayer.setPlayer(player)
 
 
 def main():

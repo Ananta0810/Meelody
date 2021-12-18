@@ -8,33 +8,33 @@ class MyFile:
         return "".join([dir, "/", name, extension])
 
     @staticmethod
-    def getFilename(your_path: str):
-        return your_path.split("/")[-1]
+    def getFilename(yourPath: str):
+        return yourPath.split("/")[-1]
 
     @staticmethod
-    def getDirFrom(your_path: str) -> str:
-        return your_path.replace(path.basename(your_path), "")
+    def getDirFrom(yourPath: str) -> str:
+        return yourPath.replace(path.basename(yourPath), "")
 
     @staticmethod
-    def getFileBasename(your_path: str) -> str:
-        return path.basename(your_path).split(".")[0]
+    def getFileBasename(yourPath: str) -> str:
+        return path.basename(yourPath).split(".")[0]
 
     @staticmethod
-    def getFileExtension(your_path: str) -> str:
-        return path.splitext(your_path)[1]
+    def getFileExtension(yourPath: str) -> str:
+        return path.splitext(yourPath)[1]
 
     @staticmethod
-    def getFilesFrom(dir: str, withExtension: str) -> list[str]:
+    def getFilesFrom(dir: str, withExtension: str) -> set():
         while dir.endswith("/"):
             dir = dir[:-1]
-        files = scandir(dir)
+        scannedFiles = scandir(dir)
+        files = set()
 
-        your_files = [
-            "/".join([dir, file.name])
-            for file in files
-            if file.name.endswith(withExtension)
-        ]
-        return your_files
+        for file in scannedFiles:
+            if not file.name.endswith(withExtension):
+                continue
+            files.add("/".join([dir, file.name]))
+        return files
 
     @staticmethod
     def moveFile(file: str, destiny_dir: str) -> str:

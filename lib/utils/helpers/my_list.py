@@ -26,12 +26,11 @@ class MyList:
         mid: int = 0
         song: Song = None
         result: int = 0
-        comparation = UnicodeString.compare
 
         while low <= high:
             mid = (high + low) // 2
             song = _list[mid]
-            result = comparation(song.title, title)
+            result = UnicodeString.compare(song.title, title)
             if result == 1:
                 low = mid + 1
                 continue
@@ -94,7 +93,7 @@ class MyList:
         while low <= high:
             mid = (high + low) // 2
             song = _list[mid]
-            result = UnicodeString.compare(song.artist, title)
+            result = UnicodeString.compare(title, song.title)
             if result == 1:
                 low = mid + 1
                 continue
@@ -104,26 +103,3 @@ class MyList:
             return mid
         # Not found
         return low
-
-    @staticmethod
-    def binaryInsertSearchByTitle(_list: list, artist) -> int:
-        low, high = 0, len(_list) - 1
-        mid: int = 0
-        song: Song = None
-        result: int = 0
-
-        while low <= high:
-            mid = (high + low) // 2
-            song = _list[mid]
-            result = UnicodeString.compare(song.artist, artist)
-            if result == 1:
-                low = mid + 1
-                continue
-            if result == -1:
-                high = mid - 1
-                continue
-            return mid
-        # Not found
-        return low
-
-    # def sortByTitle(self):

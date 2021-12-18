@@ -119,7 +119,7 @@ class MusicPlayer:
             self.ui.runTimeSlider(0, 1)
             return
 
-        self.ui.displaySongInfo(song.cover, song.title, song.artist)
+        self.ui.displaySongInfo(song.cover, song.title, song.artist, song.loved)
         self.ui.displayPlayingTime(0)
         self.ui.runTimeSlider(0, song.length)
         self.ui.displayTotalTime(song.length)

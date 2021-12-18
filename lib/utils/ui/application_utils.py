@@ -20,6 +20,8 @@ class ApplicationUIUtils:
         byteImage: bytes, edge: int, radius: int
     ) -> QPixmap:
         pixmap = PixmapUtils.getPixmapFromBytes(byteImage)
+        if pixmap.isNull():
+            return None
         pixmap = PixmapUtils.cropPixmap(pixmap, edge)
         pixmap = PixmapUtils.squarePixmap(pixmap)
         pixmap = PixmapUtils.roundPixmap(pixmap, radius=radius)

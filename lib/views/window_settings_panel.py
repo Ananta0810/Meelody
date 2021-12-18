@@ -80,7 +80,7 @@ class SettingsWindow(QWidget):
         self.main_layout = QVBoxLayout(self)
 
         self.header = QHBoxLayout()
-        self.header.setContentsMargins(16, 8, 16, 8)
+        self.header.setContentsMargins(8, 8, 8, 8)
         self.body = QVBoxLayout()
         self.body.setContentsMargins(48, 8, 48, 8)
         self.body.setSpacing(16)
