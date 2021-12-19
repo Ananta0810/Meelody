@@ -1,9 +1,8 @@
 from sys import path
 
-from PyQt5.QtGui import QColor
-
 path.append(".lib/modules/")
 from modules.screens.qss.qss_elements import Color
+from PyQt5.QtGui import QColor
 
 
 class ColorUtils:

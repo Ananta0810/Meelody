@@ -30,7 +30,7 @@ class MyList:
         while low <= high:
             mid = (high + low) // 2
             song = _list[mid]
-            result = UnicodeString.compare(song.title, title)
+            result = UnicodeString.compare(title, song.title)
             if result == 1:
                 low = mid + 1
                 continue

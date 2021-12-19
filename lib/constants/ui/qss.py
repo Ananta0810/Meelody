@@ -1,9 +1,6 @@
-from sys import path
+from modules.screens.qss.qss_elements import Color, ColorBox, Padding
 
 from .metaclass import MetaConst
-
-path.append(".")
-from lib.modules.screens.qss.qss_elements import *
 
 
 class Paddings(metaclass=MetaConst):

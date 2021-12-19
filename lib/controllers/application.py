@@ -28,7 +28,7 @@ class Appication:
         settingsData = retrieveSettingsData()
         musicPlayerData = retrievePlayerData()
 
-        self.ui.displayDataRetrievedFrom(settingsData)
+        self.displaySettingsDataRetrievedFrom(settingsData)
         self.loadPlaylistFromDirForPlayer(settingsData.get("path"))
         self.musicPlayer.displayDataRetrievedFrom(musicPlayerData)
 
@@ -39,7 +39,7 @@ class Appication:
         self.ui.connectSignalsToControllers(controllers)
 
     def run(self):
-        self.ui.show()
+        self.ui.MainWindow.show()
 
     def handleChangedLanguage(self, index: int) -> None:
         supportedLanguagesAsList = [key for key in supportedLanguages.keys()]
@@ -64,11 +64,25 @@ class Appication:
 
     def loadPlaylistFromDirForPlayer(self, dir: str) -> None:
         self.musicPlayer.stopPlayingMusic()
-
         player = Player()
         library = getPlaylistFromDir(dir, withExtension=".mp3")
         player.loadPlaylist(library)
         self.musicPlayer.setPlayer(player)
+
+    def displaySettingsDataRetrievedFrom(self, settingsData: dict) -> None:
+        isDarkMode = settingsData.get("darkMode")
+        language = settingsData.get("language")
+        languages = [key for key in supportedLanguages.keys()]
+
+        self.ui.settings_panel_inner.change_language_dropdown.setCurrentIndex(
+            languages.index(language)
+        )
+        self.ui.translate(getLanguagePackage(language))
+        self.ui.settings_panel_inner.current_folder.setText(
+            settingsData.get("path")
+        )
+        self.ui.settings_panel_inner.switch_dark_mode_btn.setChecked(isDarkMode)
+        self.ui.switchDarkMode(isDarkMode)
 
 
 def main():

@@ -78,8 +78,8 @@ class PlaylistSongs:
         self._backupSongs.clear()
 
     def findSongByTitle(self, title):
-        # if self._isSorted:
-        # return MyList.binarySearchByTitle(self._songs, title)
+        if self._isSorted:
+            return MyList.binarySearchByTitle(self._songs, title)
         return MyList.linearSearchByTitle(self._songs, title)
 
     def find(self, song: Song) -> int:

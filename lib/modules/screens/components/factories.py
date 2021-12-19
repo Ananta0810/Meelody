@@ -1,12 +1,14 @@
 from abc import ABC, abstractmethod
 from sys import path
 
+path.append(".\lib")
+from sys import path
+
+from modules.screens.components.view_item import ViewItem
+
 from .icon_buttons import IconButton, MultiIconButton, ToggleIconButton
 from .labels import EditableLabel, StandardLabel
 from .sliders import HorizontalSlider
-
-path.append(".\lib")
-from modules.screens.components.view_item import ViewItem
 
 
 class Factory(ABC):

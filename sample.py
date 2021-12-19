@@ -1,2 +1,2 @@
-a = "6"
-print(a + ("abc" + "abc" if a == "5" else "10"))
+list = [1, 2, 3, 4, 5, 6, 7, 8, 9]
+print(list.index(0))

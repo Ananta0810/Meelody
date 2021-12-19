@@ -1,6 +1,5 @@
-from PyQt5.QtCore import *
-from PyQt5.QtGui import *
-from PyQt5.QtWidgets import *
+from PyQt5.QtCore import QRect, Qt
+from PyQt5.QtGui import QPainter, QPainterPath, QPixmap
 
 
 class PixmapUtils:
@@ -44,7 +43,9 @@ class PixmapUtils:
         painter.setRenderHint(QPainter.Antialiasing, True)
 
         path = QPainterPath()
-        path.addRoundedRect(0, 0, pixmap.width(), pixmap.height(), radius, radius)
+        path.addRoundedRect(
+            0, 0, pixmap.width(), pixmap.height(), radius, radius
+        )
 
         painter.setClipPath(path)
         painter.drawPixmap(0, 0, pixmap)

@@ -1,18 +1,12 @@
-from sys import path
-
-from PyQt5.QtCore import *
-from PyQt5.QtGui import *
-from PyQt5.QtWidgets import *
-
-path.append(".\lib")
 from constants.application import supportedLanguages
-from constants.ui.qss import Background, ColorBoxes, Colors, Paddings
-from constants.ui.qt import AppAlignment, AppCursors, AppIcons
+from constants.ui.qss import ColorBoxes, Colors, Paddings
+from constants.ui.qt import AppCursors, AppIcons
 from modules.screens.components.dropdowns import DropdownMenu
-from modules.screens.components.factories import *
+from modules.screens.components.factories import IconButtonFactory, LabelFactory
 from modules.screens.components.font_builder import FontBuilder
-from modules.screens.qss.qss_elements import *
+from modules.screens.qss.qss_elements import Background, Border, ColorBox
 from modules.screens.themes.theme_builders import ThemeData
+from PyQt5.QtWidgets import QFileDialog, QHBoxLayout, QVBoxLayout, QWidget
 from utils.ui.application_utils import ApplicationUIUtils as AppUI
 from widgets.toggle import Toggle
 

@@ -1,12 +1,11 @@
 from sys import path
 
-from pygame import mixer
-
-from .playlist_songs import PlaylistSongs
-
 path.append(".lib/modules/")
 from modules.entities.song import Song
 from modules.models.timer import Timer
+from pygame import mixer
+
+from .playlist_songs import PlaylistSongs
 
 #! Known issues from the library:
 # * 1: The function that calculates the playing time of the song will return the time since you start the song.
@@ -88,7 +87,10 @@ class Player:
         self._currentSongIndex = index
 
     def setCurrentSong(self, title: str) -> None:
-        self._currentSongIndex = self._playlist.findSongByTitle(title)
+        songIndex = self._playlist.findSongByTitle(title)
+        if songIndex < 0 or songIndex >= len(self._playlist._songs):
+            songIndex = 0
+        self._currentSongIndex = songIndex
 
     def getCurrentSong(self):
         return self._currentSong

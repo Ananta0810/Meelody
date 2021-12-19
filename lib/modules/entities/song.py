@@ -1,9 +1,10 @@
 from os import remove
+
+from modules.models.audio import MyAudio
+
 from sys import path
 
 path.append(".lib/modules/")
-
-from modules.models.audio import MyAudio
 
 
 class Song:

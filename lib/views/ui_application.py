@@ -1,22 +1,17 @@
-from sys import argv, exit, path
-
-from PyQt5.QtCore import *
-from PyQt5.QtGui import *
-from PyQt5.QtWidgets import *
+from constants.ui.qss import ColorBoxes, Colors, Paddings
+from constants.ui.qt import AppCursors, AppIcons
+from modules.screens.components.factories import IconButtonFactory
+from modules.screens.qss.qss_elements import Background
+from modules.screens.themes.theme_builders import ThemeData
+from PyQt5.QtCore import QMetaObject, QRect
+from PyQt5.QtWidgets import (QGraphicsDropShadowEffect, QHBoxLayout,
+                             QVBoxLayout, QWidget)
+from utils.ui.application_utils import ApplicationUIUtils as AppUI
+from utils.ui.color_utils import ColorUtils
+from widgets.framless_window import FramelessWindow
 
 from .ui_player_music import UIPlayerMusic
 from .window_settings_panel import SettingsWindow
-
-path.append("./lib")
-from constants.application import supportedLanguages
-from constants.ui.qss import Background, ColorBoxes, Colors, Paddings
-from constants.ui.qt import AppCursors, AppIcons
-from modules.screens.components.factories import *
-from modules.screens.themes.theme_builders import ThemeData
-from utils.data.config_utils import getLanguagePackage
-from utils.ui.application_utils import ApplicationUIUtils as AppUI
-from utils.ui.application_utils import ColorUtils
-from widgets.framless_window import FramelessWindow
 
 
 class ApplicationInterface(object):
@@ -42,7 +37,7 @@ class ApplicationInterface(object):
             darkMode="background:black;border-radius:24px",
         )
 
-        self.app_background = QLabel(self.MainWindow)
+        self.app_background = QWidget(self.MainWindow)
         self.app_background.resize(self.MainWindow.size())
         self.__addThemeForItem(self.app_background, theme=backgroundTheme)
 
@@ -237,21 +232,3 @@ class ApplicationInterface(object):
     def translate(self, language: dict) -> None:
         self.settings_panel_inner.translate(language)
         self.music_player_inner.translate(language)
-
-    def show(self):
-        self.MainWindow.show()
-
-    def displayDataRetrievedFrom(self, settingsData: dict) -> None:
-        isDarkMode = settingsData.get("darkMode")
-        language = settingsData.get("language")
-        languages = [key for key in supportedLanguages.keys()]
-
-        self.settings_panel_inner.change_language_dropdown.setCurrentIndex(
-            languages.index(language)
-        )
-        self.translate(getLanguagePackage(language))
-        self.settings_panel_inner.current_folder.setText(
-            settingsData.get("path")
-        )
-        self.settings_panel_inner.switch_dark_mode_btn.setChecked(isDarkMode)
-        self.switchDarkMode(isDarkMode)

@@ -61,6 +61,8 @@ class ActionButton(Button):
         )
         if cursor is not None:
             button.setCursor(cursor)
-        button.setFixedSize(button.sizeHint().width(), button.sizeHint().height())
+        button.setFixedSize(
+            button.sizeHint().width(), button.sizeHint().height()
+        )
         button.setObjectName(name)
         return button
