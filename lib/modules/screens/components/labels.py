@@ -1,3 +1,4 @@
+from abc import ABC, abstractmethod
 from sys import path
 
 from modules.screens.qss.qss_elements import Padding
@@ -12,7 +13,19 @@ from widgets.label_with_default_text import LabelWithDefaultText
 from widgets.placeholder_label import LabelWithPlaceholder
 
 
-class StandardLabel(ViewItem):
+class ViewLabel(ViewItem):
+    @abstractmethod
+    def render(
+        self,
+        font: QFont,
+        padding: Padding,
+        alignment,
+        parent,
+    ):
+        pass
+
+
+class StandardLabel(ViewLabel):
     def render(
         self,
         font: QFont,
@@ -38,7 +51,7 @@ class StandardLabel(ViewItem):
         return LabelThemeBuilder()
 
 
-class EditableLabel(ViewItem):
+class EditableLabel(ViewLabel):
     def render(
         self,
         font: QFont,

@@ -22,7 +22,23 @@ class ApplicationUIUtils:
         pixmap = PixmapUtils.getPixmapFromBytes(byteImage)
         if pixmap.isNull():
             return None
-        pixmap = PixmapUtils.cropPixmap(pixmap, edge)
+        pixmap = PixmapUtils.scalePixmapKeepingRatio(pixmap, edge)
         pixmap = PixmapUtils.squarePixmap(pixmap)
-        pixmap = PixmapUtils.roundPixmap(pixmap, radius=radius)
+        pixmap = PixmapUtils.roundPixmap(pixmap, radius)
+        return pixmap
+
+    @staticmethod
+    def getEditedPixmapFromBytes(
+        byteImage: bytes,
+        width: int,
+        height,
+        cropCenter: bool = False,
+        radius: int = 0,
+    ) -> QPixmap:
+        pixmap = PixmapUtils.getPixmapFromBytes(byteImage)
+        if pixmap.isNull():
+            return None
+        pixmap = PixmapUtils.scalePixmapKeepingRatio(pixmap, max(width, height))
+        pixmap = PixmapUtils.cropPixmap(pixmap, width, height, cropCenter)
+        pixmap = PixmapUtils.roundPixmap(pixmap, radius)
         return pixmap

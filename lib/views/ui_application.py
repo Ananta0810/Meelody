@@ -3,14 +3,19 @@ from constants.ui.qt import AppCursors, AppIcons
 from modules.screens.components.factories import IconButtonFactory
 from modules.screens.qss.qss_elements import Background
 from modules.screens.themes.theme_builders import ThemeData
-from PyQt5.QtCore import QMetaObject, QRect
-from PyQt5.QtWidgets import (QGraphicsDropShadowEffect, QHBoxLayout,
-                             QVBoxLayout, QWidget)
+from PyQt5.QtCore import QMetaObject, QRect, Qt
+from PyQt5.QtWidgets import (
+    QGraphicsDropShadowEffect,
+    QHBoxLayout,
+    QVBoxLayout,
+    QWidget,
+)
 from utils.ui.application_utils import ApplicationUIUtils as AppUI
 from utils.ui.color_utils import ColorUtils
 from widgets.framless_window import FramelessWindow
 
 from .ui_player_music import UIPlayerMusic
+from .ui_playlist_carousel import UiPlaylistCarousel
 from .window_settings_panel import SettingsWindow
 
 
@@ -57,7 +62,6 @@ class ApplicationInterface(object):
 
         self.main_layout.addLayout(self.title_bar)
         self.main_layout.addLayout(self.body)
-        self.main_layout.addStretch()
 
         self.open_settings_btn = iconButtonFormer.render(
             padding=Paddings.RELATIVE_25,
@@ -136,8 +140,12 @@ class ApplicationInterface(object):
         self.menu_bar.addWidget(self.open_settings_btn)
         self.menu_bar.addStretch()
 
-        self.playlist_carousel = QWidget()
+        self.playlist_carousel = UiPlaylistCarousel()
         self.playlist_carousel.setFixedHeight(360)
+        self.playlist_carousel.setStyleSheet(
+            "background:transparent;border:none"
+        )
+        self.playlist_carousel.main_layout.setContentsMargins(93, 10, 70, 0)
 
         self.body.addLayout(self.menu_bar)
         self.body.addWidget(self.playlist_carousel)
@@ -152,13 +160,17 @@ class ApplicationInterface(object):
                 darkMode="QWidget#music_player{border-top: 1px solid #202020}",
             ),
         )
-        self.main_layout.addWidget(self.music_player)
+        self.main_layout.addWidget(self.music_player, alignment=Qt.AlignBottom)
         self.music_player_layout = QHBoxLayout(self.music_player)
         self.music_player_inner = UIPlayerMusic(self.music_player)
         self.music_player_layout.addWidget(self.music_player_inner)
 
         self.settings_panel = QWidget(self.MainWindow)
-        self.settings_panel.setGeometry(QRect(434, 184, 500, 400))
+        self.settings_panel.setFixedSize(500, 400)
+        self.settings_panel.move(
+            self.MainWindow.rect().center()
+            - self.settings_panel.rect().center()
+        )
         self.settings_panel.setGraphicsEffect(
             QGraphicsDropShadowEffect(
                 blurRadius=50,
@@ -201,6 +213,7 @@ class ApplicationInterface(object):
         self.isDarkMode = False
         self.settings_panel_inner.lightMode()
         self.music_player_inner.lightMode()
+        self.playlist_carousel.lightMode()
 
         for button in self.buttonsWithDarkMode:
             button.setDarkMode(False)
@@ -214,6 +227,7 @@ class ApplicationInterface(object):
         self.isDarkMode = True
         self.settings_panel_inner.darkMode()
         self.music_player_inner.darkMode()
+        self.playlist_carousel.darkMode()
 
         for button in self.buttonsWithDarkMode:
             button.setDarkMode(True)

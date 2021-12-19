@@ -18,3 +18,6 @@ class ApplicationImage(metaclass=MetaConst):
     defaultPlaylistCover: Final = MyBytes.get_bytes_from_file(
         "assets\images\defaults\playlist_cover.jpg"
     )
+    favouritesCover: Final = MyBytes.get_bytes_from_file(
+        "assets\images\defaults\playlist_favourite_cover.jpg"
+    )

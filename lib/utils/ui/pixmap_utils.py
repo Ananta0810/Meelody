@@ -11,11 +11,23 @@ class PixmapUtils:
         pixmap.loadFromData(byteImage)
         return pixmap
 
-    def cropPixmap(pixmap, size: int):
+    def cropPixmap(pixmap, width: int, height: int, cropCenter: bool = True):
+        w = pixmap.width()
+        h = pixmap.height()
+        if width > w:
+            width = w
+        if height > h:
+            height = h
+
+        left = (w - width) // 2 if cropCenter else 0
+        top = (h - height) // 2 if cropCenter else 0
+        return pixmap.copy(QRect(left, top, width, height))
+
+    def scalePixmapKeepingRatio(pixmap, smallerEdgeSize: int):
         temp: QPixmap = pixmap.copy()
         if pixmap.height() <= pixmap.width():
-            return temp.scaledToHeight(size, Qt.SmoothTransformation)
-        return temp.scaledToWidth(size, Qt.SmoothTransformation)
+            return temp.scaledToHeight(smallerEdgeSize, Qt.SmoothTransformation)
+        return temp.scaledToWidth(smallerEdgeSize, Qt.SmoothTransformation)
 
     def squarePixmap(pixmap):
         w = pixmap.width()
