@@ -62,9 +62,7 @@ class SettingsWindow(QWidget):
         )
         itemFont = fontBuilder.withSize(9).build()
         itemTextStyle = (
-            labelThemeBuilder.addLightModeTextColor(ColorBoxes.BLACK)
-            .addDarkModeTextColor(ColorBoxes.WHITE)
-            .build()
+            labelThemeBuilder.addLightModeTextColor(ColorBoxes.BLACK).addDarkModeTextColor(ColorBoxes.WHITE).build()
         )
         lightForwardBtn = AppUI.paintIcon(icons.FORWARD, Colors.PRIMARY)
         darkForwardBtn = AppUI.paintIcon(icons.FORWARD, Colors.WHITE)
@@ -111,9 +109,7 @@ class SettingsWindow(QWidget):
         self.header.addWidget(self.close_settings_window_btn)
         self.header.addStretch()
 
-        self.settings_label = labelFormer.render(
-            fontBuilder.withSize(24).withWeight("bold").build()
-        )
+        self.settings_label = labelFormer.render(fontBuilder.withSize(24).withWeight("bold").build())
         self.settings_label.setFixedWidth(200)
         self.__addThemeForItem(self.settings_label, itemTextStyle)
         self.body.addWidget(self.settings_label)
@@ -150,12 +146,8 @@ class SettingsWindow(QWidget):
         self.change_language_dropdown.addItems(supportedLanguages)
 
         dropDownBorder = Border(2, "solid", ColorBoxes.PRIMARY)
-        lightModeDropDownBackground = Background(
-            dropDownBorder, borderRadius=8, color=ColorBoxes.WHITE
-        )
-        darkModeDropDownBackground = Background(
-            dropDownBorder, borderRadius=8, color=ColorBoxes.BLACK
-        )
+        lightModeDropDownBackground = Background(dropDownBorder, borderRadius=8, color=ColorBoxes.WHITE)
+        darkModeDropDownBackground = Background(dropDownBorder, borderRadius=8, color=ColorBoxes.BLACK)
         self.__addThemeForItem(
             self.change_language_dropdown,
             theme=(
@@ -191,9 +183,7 @@ class SettingsWindow(QWidget):
         )
         self.settings_item_language.addWidget(self.language_icon)
         self.settings_item_language.addWidget(self.language_label)
-        self.settings_item_language.addWidget(
-            self.change_language_dropdown, stretch=1
-        )
+        self.settings_item_language.addWidget(self.change_language_dropdown, stretch=1)
 
         # ===================Dark mode===================
         self.dark_mode_icon = iconButtonFormer.render(
@@ -210,9 +200,7 @@ class SettingsWindow(QWidget):
         self.__addThemeForItem(self.dark_mode_label, itemTextStyle)
 
         self.switch_dark_mode_btn = Toggle(self)
-        self.switch_dark_mode_btn.stylize(
-            activeBackColor=Colors.PRIMARY.toStylesheet()
-        )
+        self.switch_dark_mode_btn.stylize(activeBackColor=Colors.PRIMARY.toStylesheet())
         self.switch_dark_mode_btn.setCheckable(True)
 
         self.settings_item_dark_mode.addWidget(self.dark_mode_icon)
@@ -278,23 +266,14 @@ class SettingsWindow(QWidget):
         controller.handleChangedFolder(path)
 
     def connectSignalsToController(self, controller):
-        self.change_language_dropdown.currentIndexChanged.connect(
-            controller.handleChangedLanguage
-        )
-        self.switch_dark_mode_btn.clicked.connect(
-            controller.handleChangedDarkMode
-        )
-        self.change_folder_btn.clicked.connect(
-            lambda: self.openFolderChoosingDialogThenSendDataTo(controller)
-        )
+        self.change_language_dropdown.currentIndexChanged.connect(controller.handleChangedLanguage)
+        self.switch_dark_mode_btn.clicked.connect(controller.handleChangedDarkMode)
+        self.change_folder_btn.clicked.connect(lambda: self.openFolderChoosingDialogThenSendDataTo(controller))
 
     def lightMode(self):
         # Due to some error, the light mode will not work properly the first time
         # Therefore, we need to take a warm settup before apply dark-light mode
-        self.change_language_dropdown.setStyleSheet(
-            self.themeItems.get(self.change_language_dropdown).lightMode
-        )
-        self.setStyleSheet("background:white;border-radius:16px")
+        self.change_language_dropdown.setStyleSheet(self.themeItems.get(self.change_language_dropdown).lightMode)
         for item in self.themeItems:
             lightModeStyleSheet = self.themeItems.get(item).lightMode
             if lightModeStyleSheet is None or lightModeStyleSheet.strip() == "":
@@ -305,10 +284,7 @@ class SettingsWindow(QWidget):
             button.setDarkMode(False)
 
     def darkMode(self):
-        self.setStyleSheet("background:black;border-radius:16px")
-        self.change_language_dropdown.setStyleSheet(
-            self.themeItems.get(self.change_language_dropdown).darkMode
-        )
+        self.change_language_dropdown.setStyleSheet(self.themeItems.get(self.change_language_dropdown).darkMode)
         for item in self.themeItems:
             darkModeStyleSheet = self.themeItems.get(item).darkMode
             if darkModeStyleSheet is None or darkModeStyleSheet.strip() == "":
@@ -317,12 +293,10 @@ class SettingsWindow(QWidget):
         for button in self.buttonsWithDarkMode:
             button.setDarkMode(True)
 
-    def translate(self, language: dict) -> None:
+    def translate(self, language: dict[str, str]) -> None:
         self.settings_label.setText(language.get("settings"))
         self.language_label.setText(language.get("language"))
-        supportedLanguagesBySystem: list[str] = language.get(
-            "supported_languages"
-        )
+        supportedLanguagesBySystem: list[str] = language.get("supported_languages")
         for index, supporetLanguage in enumerate(supportedLanguagesBySystem):
             self.change_language_dropdown.setItemText(index, supporetLanguage)
         self.dark_mode_label.setText(language.get("dark_mode"))

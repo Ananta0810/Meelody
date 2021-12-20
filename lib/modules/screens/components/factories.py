@@ -7,7 +7,7 @@ from sys import path
 from modules.screens.components.view_item import ViewItem
 
 from .icon_buttons import IconButton, MultiIconButton, ToggleIconButton
-from .labels import EditableLabel, StandardLabel
+from .labels import DoubleClickedEditableLabel, EditableLabel, StandardLabel
 from .sliders import HorizontalSlider
 
 
@@ -21,6 +21,7 @@ class LabelFactory(Factory):
     _types = {
         "default": StandardLabel,
         "editable": EditableLabel,
+        "doubleClickedEditable": DoubleClickedEditableLabel,
     }
 
     def getByType(self, type: str) -> ViewItem:

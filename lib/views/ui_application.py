@@ -3,13 +3,8 @@ from constants.ui.qt import AppCursors, AppIcons
 from modules.screens.components.factories import IconButtonFactory
 from modules.screens.qss.qss_elements import Background
 from modules.screens.themes.theme_builders import ThemeData
-from PyQt5.QtCore import QMetaObject, QRect, Qt
-from PyQt5.QtWidgets import (
-    QGraphicsDropShadowEffect,
-    QHBoxLayout,
-    QVBoxLayout,
-    QWidget,
-)
+from PyQt5.QtCore import QMetaObject, Qt
+from PyQt5.QtWidgets import QGraphicsDropShadowEffect, QHBoxLayout, QVBoxLayout, QWidget
 from utils.ui.application_utils import ApplicationUIUtils as AppUI
 from utils.ui.color_utils import ColorUtils
 from widgets.framless_window import FramelessWindow
@@ -142,9 +137,7 @@ class ApplicationInterface(object):
 
         self.playlist_carousel = UiPlaylistCarousel()
         self.playlist_carousel.setFixedHeight(360)
-        self.playlist_carousel.setStyleSheet(
-            "background:transparent;border:none"
-        )
+        self.playlist_carousel.setStyleSheet("background:transparent;border:none")
         self.playlist_carousel.main_layout.setContentsMargins(93, 10, 70, 0)
 
         self.body.addLayout(self.menu_bar)
@@ -167,16 +160,11 @@ class ApplicationInterface(object):
 
         self.settings_panel = QWidget(self.MainWindow)
         self.settings_panel.setFixedSize(500, 400)
-        self.settings_panel.move(
-            self.MainWindow.rect().center()
-            - self.settings_panel.rect().center()
-        )
+        self.settings_panel.move(self.MainWindow.rect().center() - self.settings_panel.rect().center())
         self.settings_panel.setGraphicsEffect(
             QGraphicsDropShadowEffect(
                 blurRadius=50,
-                color=ColorUtils.getQColorFromColor(
-                    Colors.PRIMARY.withAlpha(0.25)
-                ),
+                color=ColorUtils.getQColorFromColor(Colors.PRIMARY.withAlpha(0.25)),
                 xOffset=0,
                 yOffset=3,
             )
@@ -185,19 +173,14 @@ class ApplicationInterface(object):
         self.settings_panel.hide()
 
         self.settings_panel_inner = SettingsWindow(self.settings_panel)
-        self.settings_panel_inner.close_settings_window_btn.clicked.connect(
-            self.clickedOpenSettingBtn
-        )
+        self.settings_panel_inner.close_settings_window_btn.clicked.connect(self.clickedOpenSettingBtn)
 
         QMetaObject.connectSlotsByName(self.MainWindow)
 
     def connectSignalsToControllers(self, controllers: dict) -> None:
-        self.music_player_inner.connectSignalsToController(
-            controllers.get("musicPlayer")
-        )
-        self.settings_panel_inner.connectSignalsToController(
-            controllers.get("application")
-        )
+        self.settings_panel_inner.connectSignalsToController(controllers.get("application"))
+        self.music_player_inner.connectSignalsToController(controllers.get("musicPlayer"))
+        self.playlist_carousel.connectSignalsToController(controllers.get("playlistCarousel"))
 
     def switchDarkMode(self, mode) -> None:
         self.isDarkMode = mode
@@ -243,6 +226,6 @@ class ApplicationInterface(object):
     def __addButtonToList(self, item) -> None:
         self.buttonsWithDarkMode.append(item)
 
-    def translate(self, language: dict) -> None:
+    def translate(self, language: dict[str, str]) -> None:
         self.settings_panel_inner.translate(language)
         self.music_player_inner.translate(language)

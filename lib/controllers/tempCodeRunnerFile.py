@@ -1,1 +1,1 @@
-getPlaylistFromDir
+handleDeletePlaylistAtIndex

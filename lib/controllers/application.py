@@ -2,17 +2,14 @@ from sys import argv, exit, path
 from time import perf_counter
 
 from music_player import MusicPlayer
+from playlist_carousel import PlaylistCarousel
 
 path.append("./lib")
 from constants.application import supportedLanguages
+from modules.entities.playlist_info import PlaylistInfo
 from modules.models.player import Player
 from PyQt5.QtWidgets import QApplication
-from utils.data.config_utils import (
-    getLanguagePackage,
-    retrievePlayerData,
-    retrieveSettingsData,
-    updateSettingsData,
-)
+from utils.data.config_utils import getLanguagePackage, retrievePlayerData, retrieveSettingsData, updateSettingsData
 from utils.helpers.playlist_song_utils import getPlaylistFromDir
 from views.ui_application import ApplicationInterface
 
@@ -23,20 +20,30 @@ class Appication:
         self.ui = ApplicationInterface()
 
         # =================Controllers=================
+        self.playlistCarousel = PlaylistCarousel(self.ui.playlist_carousel)
         self.musicPlayer = MusicPlayer(self.ui.music_player_inner)
+        self.controllers = {
+            "application": self,
+            "playlistCarousel": self.playlistCarousel,
+            "musicPlayer": self.musicPlayer,
+        }
 
-        settingsData = retrieveSettingsData()
-        musicPlayerData = retrievePlayerData()
+        settingsData: dict[str, str] = retrieveSettingsData()
+        musicPlayerData: dict[str, str] = retrievePlayerData()
+
+        playlists: list[PlaylistInfo] = [
+            PlaylistInfo(0, "ABC", None),
+            PlaylistInfo(1, "BCD", None),
+            PlaylistInfo(2, "EFG", None),
+            PlaylistInfo(3, "HIB", None),
+        ]
 
         self.displaySettingsDataRetrievedFrom(settingsData)
         self.loadPlaylistFromDirForPlayer(settingsData.get("path"))
+        self.loadPlaylists(playlists)
         self.musicPlayer.displayDataRetrievedFrom(musicPlayerData)
 
-        controllers = {
-            "application": self,
-            "musicPlayer": self.musicPlayer,
-        }
-        self.ui.connectSignalsToControllers(controllers)
+        self.ui.connectSignalsToControllers(self.controllers)
 
     def run(self):
         self.ui.MainWindow.show()
@@ -62,6 +69,10 @@ class Appication:
         self.musicPlayer.player.loadSongToPlay()
         self.musicPlayer.displayCurrentSongInfo()
 
+    def loadPlaylists(self, playlists: list[PlaylistInfo]):
+        self.playlistCarousel.setPlaylists(playlists)
+        self.playlistCarousel.addPlaylistsToUi()
+
     def loadPlaylistFromDirForPlayer(self, dir: str) -> None:
         self.musicPlayer.stopPlayingMusic()
         player = Player()
@@ -69,18 +80,14 @@ class Appication:
         player.loadPlaylist(library)
         self.musicPlayer.setPlayer(player)
 
-    def displaySettingsDataRetrievedFrom(self, settingsData: dict) -> None:
-        isDarkMode = settingsData.get("darkMode")
-        language = settingsData.get("language")
-        languages = [key for key in supportedLanguages.keys()]
+    def displaySettingsDataRetrievedFrom(self, settingsData: dict[str, str]) -> None:
+        isDarkMode: bool = settingsData.get("darkMode")
+        language: str = settingsData.get("language")
+        languages: list[str] = [key for key in supportedLanguages.keys()]
 
-        self.ui.settings_panel_inner.change_language_dropdown.setCurrentIndex(
-            languages.index(language)
-        )
+        self.ui.settings_panel_inner.change_language_dropdown.setCurrentIndex(languages.index(language))
         self.ui.translate(getLanguagePackage(language))
-        self.ui.settings_panel_inner.current_folder.setText(
-            settingsData.get("path")
-        )
+        self.ui.settings_panel_inner.current_folder.setText(settingsData.get("path"))
         self.ui.settings_panel_inner.switch_dark_mode_btn.setChecked(isDarkMode)
         self.ui.switchDarkMode(isDarkMode)
 

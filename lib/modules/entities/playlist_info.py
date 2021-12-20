@@ -1,5 +1,5 @@
 class PlaylistInfo:
-    def __init__(self, id: int, title: str, cover: bytes):
+    def __init__(self, id: int, name: str, cover: bytes):
         self.id = id
-        self.title = title
+        self.name = name
         self.cover = cover

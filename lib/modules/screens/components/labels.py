@@ -9,6 +9,7 @@ path.append("./lib")
 from modules.screens.components.view_item import ViewItem
 from modules.screens.themes.theme_builder import ThemeBuilder
 from modules.screens.themes.theme_builders import LabelThemeBuilder
+from widgets.double_clicked_editable_label import QDoubleClickedEditableLabel
 from widgets.label_with_default_text import LabelWithDefaultText
 from widgets.placeholder_label import LabelWithPlaceholder
 
@@ -60,6 +61,33 @@ class EditableLabel(ViewLabel):
         parent=None,
     ) -> QLineEdit:
         label = LabelWithPlaceholder(parent)
+        if alignment is not None:
+            label.setAlignment(alignment)
+        label.setFont(font)
+
+        width = label.sizeHint().width()
+        height = label.sizeHint().height()
+        if padding is not None:
+            width += padding.getWidth(width)
+            height += padding.getHeight(height)
+        # self.lineEdit.selectionChanged.connect(lambda: self.lineEdit.setSelection(0, 0))
+        # label.setSizePolicy(QSizePolicy.Ignored, QSizePolicy.Ignored)
+        label.setStyleSheet("background:transparent;border:none")
+        return label
+
+    def getThemeBuilder(self) -> ThemeBuilder:
+        return LabelThemeBuilder()
+
+
+class DoubleClickedEditableLabel(ViewLabel):
+    def render(
+        self,
+        font: QFont,
+        padding: Padding = None,
+        alignment=None,
+        parent=None,
+    ) -> QLineEdit:
+        label = QDoubleClickedEditableLabel(parent)
         if alignment is not None:
             label.setAlignment(alignment)
         label.setFont(font)
