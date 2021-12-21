@@ -17,7 +17,7 @@ class AppIcons(metaclass=MetaConst):
         self.SIZES = IconSize
         self.APP_ICON = QIcon("assets/images/Music.ico")
 
-        self.DELETE = QIcon("assets/images/icons/playlist-delete.png")
+        self.DELETE = QIcon("assets/images/icons/delete.png")
         self.PLAY_SONG = QIcon("assets/images/icons/play-menu.png")
         self.MORE = QIcon("assets/images/icons/more.png")
         self.SUBSTRACT = QIcon("assets/images/icons/substract.png")
@@ -65,6 +65,4 @@ class AppCursors(metaclass=MetaConst):
 
 
 class AppEffect(metaclass=MetaConst):
-    shadow = QGraphicsDropShadowEffect(
-        blurRadius=50, color=QColor(128, 64, 255, 100), xOffset=0, yOffset=3
-    )
+    shadow = QGraphicsDropShadowEffect(blurRadius=50, color=QColor(128, 64, 255, 100), xOffset=0, yOffset=3)

@@ -3,6 +3,7 @@ from sys import path
 path.append("./lib")
 
 from modules.entities.playlist_info import PlaylistInfo
+from utils.helpers.my_bytes import MyBytes
 from utils.helpers.my_string import UnicodeString
 from views.ui_playlist_carousel import UiPlaylistCarousel
 
@@ -27,25 +28,37 @@ class PlaylistCarousel:
             self.ui.displayPlaylistInfoAtIndex(index, playlist.name, playlist.cover)
 
     def __refreshLayoutSoThatUiDisplayingEnoughNumberOfPlaylists(self):
-        totalOfPlaylistsDisplayingOnUi = self.ui.getTotalPlaylistInLayout()
-        currentTotalOfPlaylis = len(self.playlists)
+        numberOfPlaylistDisplaying = self.ui.getTotalPlaylistInLayout()
+        totalOfPlaylists = len(self.playlists)
 
-        if currentTotalOfPlaylis < totalOfPlaylistsDisplayingOnUi:
-            for index in range(currentTotalOfPlaylis, totalOfPlaylistsDisplayingOnUi):
-                self.ui.hidePlaylistAtIndex(index)
-                self.ui.displayPlaylistInfoAtIndex(index, name="Unknown", cover=None)
+        numberOfLackingPlaylists = totalOfPlaylists - numberOfPlaylistDisplaying
+        if numberOfLackingPlaylists == 0:
+            return
 
-        if totalOfPlaylistsDisplayingOnUi < currentTotalOfPlaylis:
-            for index in range(totalOfPlaylistsDisplayingOnUi, currentTotalOfPlaylis + 1):
-                self.ui.addNewEmptyPlaylist(controller=self)
+        isDisplayingMoreThanNumberOfPlaylists = numberOfLackingPlaylists < 0
+        if isDisplayingMoreThanNumberOfPlaylists:
+            self.ui.hidePlaylistInRange(totalOfPlaylists - 1, numberOfPlaylistDisplaying)
+            return
+
+        isDisplayingLessThanNumberOfPlaylists = numberOfLackingPlaylists > 0
+        if isDisplayingLessThanNumberOfPlaylists:
+            self.ui.addPlaylists(numberOfLackingPlaylists)
 
     def handleAddNewPlaylist(self):
-        countOfPlaylistsDisplayingOnUi = self.ui.getTotalPlaylistDisplayingInLayout()
-        currentTotalOfPlaylis = len(self.playlists)
-        if countOfPlaylistsDisplayingOnUi < self.ui.getTotalPlaylistInLayout():
-            self.ui.showPlaylistAtIndex(countOfPlaylistsDisplayingOnUi + 1)
-            print(countOfPlaylistsDisplayingOnUi)
+        lastPlaylist = self.playlists[len(self.playlists) - 1]
+        if lastPlaylist.isNull():
             return
+
+        self.playlists.append(PlaylistInfo())
+        countOfPlaylistsDisplaying = self.ui.getNumberOfPlaylistDisplaying()
+        totalPlaylistAvailable = self.ui.getTotalPlaylistInLayout()
+
+        isHiddingPlaylist: bool = countOfPlaylistsDisplaying < totalPlaylistAvailable
+        if isHiddingPlaylist:
+            newPlaylistIndex = countOfPlaylistsDisplaying
+            self.ui.showPlaylistAtIndex(newPlaylistIndex)
+            return
+
         self.ui.addNewEmptyPlaylist(self)
 
     def handleSelectedLibrary(self):
@@ -57,15 +70,20 @@ class PlaylistCarousel:
     def handleSelectedPlaylist(self, playlistIndex: int):
         print(playlistIndex)
 
-    def handleChangedPlaylistName(selfm, playlistIndex: int, playlistLabel):
-        lastInput: str = playlistLabel.lastInput
-        recentlyInput: str = playlistLabel.text()
-
-        userHasChangedPlaylistName: bool = UnicodeString.compare(lastInput, recentlyInput) != 0
+    def handleChangedPlaylistName(self, playlistIndex: int, newName: str):
+        currentName = self.playlists[playlistIndex].name
+        userHasChangedPlaylistName: bool = UnicodeString.compare(currentName, newName) != 0
         if not userHasChangedPlaylistName:
-            playlistLabel.setText(lastInput)
+            self.ui.changePlaylistNameAtIndex(playlistIndex, currentName)
             return
-        print("Change playlist name successfully")
+        self.playlists[playlistIndex].name = newName
+
+    def handleChangedPlaylistCover(self, playlistIndex: int, coverPath: str):
+        if len(coverPath) == 0:
+            return
+        cover: bytes = MyBytes.getBytesFromFile(coverPath)
+        self.playlists[playlistIndex].cover = cover
+        self.ui.changePlaylistCoverAtIndex(playlistIndex, cover)
 
     def handleDeletePlaylistAtIndex(self, index: int):
         if not (0 <= index < len(self.playlists)):

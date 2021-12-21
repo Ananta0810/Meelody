@@ -86,9 +86,9 @@ class Appication:
         languages: list[str] = [key for key in supportedLanguages.keys()]
 
         self.ui.settings_panel_inner.change_language_dropdown.setCurrentIndex(languages.index(language))
-        self.ui.translate(getLanguagePackage(language))
         self.ui.settings_panel_inner.current_folder.setText(settingsData.get("path"))
         self.ui.settings_panel_inner.switch_dark_mode_btn.setChecked(isDarkMode)
+        self.ui.translate(getLanguagePackage(language))
         self.ui.switchDarkMode(isDarkMode)
 
 

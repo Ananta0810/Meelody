@@ -4,7 +4,8 @@ from modules.screens.components.factories import IconButtonFactory
 from modules.screens.qss.qss_elements import Background
 from modules.screens.themes.theme_builders import ThemeData
 from PyQt5.QtCore import QMetaObject, Qt
-from PyQt5.QtWidgets import QGraphicsDropShadowEffect, QHBoxLayout, QVBoxLayout, QWidget
+from PyQt5.QtWidgets import (QGraphicsDropShadowEffect, QHBoxLayout,
+                             QVBoxLayout, QWidget)
 from utils.ui.application_utils import ApplicationUIUtils as AppUI
 from utils.ui.color_utils import ColorUtils
 from widgets.framless_window import FramelessWindow

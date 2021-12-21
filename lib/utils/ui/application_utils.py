@@ -8,6 +8,7 @@ from .pixmap_utils import PixmapUtils
 
 path.append("./lib")
 from modules.screens.qss.qss_elements import Color
+from widgets.scaleable_qpixmap import ScaleAblePixmap
 
 
 class ApplicationUIUtils:
@@ -16,9 +17,7 @@ class ApplicationUIUtils:
         return IconUtils.colorize(icon, ColorUtils.getQColorFromColor(color))
 
     @staticmethod
-    def getSquaredPixmapFromBytes(
-        byteImage: bytes, edge: int, radius: int
-    ) -> QPixmap:
+    def getSquaredPixmapFromBytes(byteImage: bytes, edge: int, radius: int) -> QPixmap:
         pixmap = PixmapUtils.getPixmapFromBytes(byteImage)
         if pixmap.isNull():
             return None
@@ -34,7 +33,7 @@ class ApplicationUIUtils:
         height,
         cropCenter: bool = False,
         radius: int = 0,
-    ) -> QPixmap:
+    ) -> ScaleAblePixmap:
         pixmap = PixmapUtils.getPixmapFromBytes(byteImage)
         if pixmap.isNull():
             return None

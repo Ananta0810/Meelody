@@ -55,9 +55,7 @@ class PixmapUtils:
         painter.setRenderHint(QPainter.Antialiasing, True)
 
         path = QPainterPath()
-        path.addRoundedRect(
-            0, 0, pixmap.width(), pixmap.height(), radius, radius
-        )
+        path.addRoundedRect(0, 0, pixmap.width(), pixmap.height(), radius, radius)
 
         painter.setClipPath(path)
         painter.drawPixmap(0, 0, pixmap)

@@ -7,6 +7,7 @@ class QDoubleClickedEditableLabel(QLineEdit):
         super().__init__(parent)
         super().setReadOnly(True)
         self.lastInput: str = None
+        self.defaultText = ""
 
     def mouseDoubleClickEvent(self, event):
         super().mouseDoubleClickEvent(event)
@@ -18,3 +19,15 @@ class QDoubleClickedEditableLabel(QLineEdit):
         if a0.key() != Qt.Key_Return:
             return
         self.setReadOnly(True)
+
+    def setDefaultText(self, text: str) -> None:
+        if self.text() == self.defaultText:
+            self.setText(text)
+        self.defaultText = text
+
+    def setText(self, text: str) -> None:
+        text = self.defaultText if text is None else text
+        super().setText(text)
+
+    def isDisplayingDefaultText(self):
+        return self.text() == self.defaultText

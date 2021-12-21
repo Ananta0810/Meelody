@@ -2,6 +2,7 @@ from abc import ABC, abstractmethod
 from sys import path
 
 from modules.screens.qss.qss_elements import Padding
+from PyQt5.QtCore import Qt
 from PyQt5.QtGui import QFont
 from PyQt5.QtWidgets import QLineEdit
 
@@ -37,6 +38,7 @@ class StandardLabel(ViewLabel):
         label = LabelWithDefaultText(parent)
         label.setFont(font)
         label.setReadOnly(True)
+        label.setFocusPolicy(Qt.NoFocus)
         if alignment is not None:
             label.setAlignment(alignment)
         width = label.sizeHint().width()
