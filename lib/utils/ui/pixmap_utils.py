@@ -1,4 +1,5 @@
-from PyQt5.QtCore import QRect, Qt
+from modules.models.image import MyByteImage
+from PyQt5.QtCore import QBuffer, QByteArray, QIODevice, QRect, Qt
 from PyQt5.QtGui import QPainter, QPainterPath, QPixmap
 
 
@@ -11,7 +12,17 @@ class PixmapUtils:
         pixmap.loadFromData(byteImage)
         return pixmap
 
-    def cropPixmap(pixmap, width: int, height: int, cropCenter: bool = True):
+    @staticmethod
+    def getBytesFromPixmap(pixmap: QPixmap) -> bytes:
+        bytearray = QByteArray()
+        buff = QBuffer(bytearray)
+        buff.open(QIODevice.WriteOnly)
+        ok = pixmap.save(buff, "JPG")
+        assert ok
+        return bytearray.data()
+
+    @staticmethod
+    def cropPixmap(pixmap, width: int, height: int, cropCenter: bool = True) -> QPixmap:
         w = pixmap.width()
         h = pixmap.height()
         if width > w:
@@ -23,13 +34,15 @@ class PixmapUtils:
         top = (h - height) // 2 if cropCenter else 0
         return pixmap.copy(QRect(left, top, width, height))
 
-    def scalePixmapKeepingRatio(pixmap, smallerEdgeSize: int):
+    @staticmethod
+    def scalePixmapKeepingRatio(pixmap: QPixmap, smallerEdgeSize: int) -> QPixmap:
         temp: QPixmap = pixmap.copy()
         if pixmap.height() <= pixmap.width():
             return temp.scaledToHeight(smallerEdgeSize, Qt.SmoothTransformation)
         return temp.scaledToWidth(smallerEdgeSize, Qt.SmoothTransformation)
 
-    def squarePixmap(pixmap):
+    @staticmethod
+    def squarePixmap(pixmap: QPixmap) -> QPixmap:
         w = pixmap.width()
         h = pixmap.height()
 
@@ -47,6 +60,7 @@ class PixmapUtils:
             top = (h - edge) // 2
         return pixmap.copy(QRect(left, top, edge, edge))
 
+    @staticmethod
     def roundPixmap(pixmap: QPixmap, radius: float = 0) -> QPixmap:
         target = QPixmap(pixmap.size())
         target.fill(Qt.transparent)
@@ -61,3 +75,8 @@ class PixmapUtils:
         painter.drawPixmap(0, 0, pixmap)
         painter.end()
         return target
+
+    @staticmethod
+    def getPixmapBrightness(pixmap: QPixmap):
+        pixmapBytes: bytes = PixmapUtils.getBytesFromPixmap(pixmap)
+        return MyByteImage(pixmapBytes).getContrastLevel()

@@ -63,14 +63,14 @@ class ApplicationInterface(object):
             padding=Paddings.RELATIVE_25,
             size=icons.SIZES.LARGE,
             lightModeIcon=AppUI.paintIcon(icons.SETTINGS, Colors.PRIMARY),
-            darkModeIcon=AppUI.paintIcon(icons.SETTINGS, Colors.WHITE),
+            darkModeIcon=AppUI.paintIcon(icons.SETTINGS, Colors.white),
         )
         self.__addButtonToList(self.open_settings_btn)
         self.minimize_btn = iconButtonFormer.render(
             padding=Paddings.RELATIVE_50,
             size=icons.SIZES.MEDIUM,
             lightModeIcon=AppUI.paintIcon(icons.MINIMIZE, Colors.PRIMARY),
-            darkModeIcon=AppUI.paintIcon(icons.MINIMIZE, Colors.WHITE),
+            darkModeIcon=AppUI.paintIcon(icons.MINIMIZE, Colors.white),
         )
         self.__addButtonToList(self.minimize_btn)
         self.__addThemeForItem(

@@ -2,8 +2,6 @@ from io import BytesIO
 
 import PIL.Image
 
-from .color import Color
-
 
 class MyByteImage:
     _data: PIL.Image
@@ -62,7 +60,7 @@ class MyByteImage:
         image = self._data.resize((width, height), PIL.Image.ANTIALIAS)
         return image
 
-    def getMainColor(self) -> Color:
+    def getMainColor(self) -> list[int]:
         if self.isBroken():
             return None
         image: PIL.Image = self._data.copy()
@@ -73,21 +71,16 @@ class MyByteImage:
         paletted = image.convert("P", palette=PIL.Image.ADAPTIVE, colors=16)
 
         palette = paletted.getpalette()
-        color_counts = sorted(paletted.getcolors(), reverse=True)
-        palette_index = color_counts[0][1]
-        dominant_color = palette[palette_index * 3 : palette_index * 3 + 3]
-        return Color(
-            red=dominant_color[0], green=dominant_color[1], blue=dominant_color[2]
-        )
+        colorCount = sorted(paletted.getcolors(), reverse=True)
+        palette_index = colorCount[0][1]
+        mainColor = palette[palette_index * 3 : palette_index * 3 + 3]
+        return mainColor
 
     def getContrastLevel(self) -> float:
-        mainColor: Color = self.getMainColor()
+        mainColor = self.getMainColor()
         if mainColor is None:
             return None
-        imageBrightness = (
-            85 * mainColor.red + 280 * mainColor.green + 26 * mainColor.blue
-        ) / 100000
-
+        imageBrightness = (85 * mainColor[0] + 280 * mainColor[1] + 26 * mainColor[2]) / 100000
         return imageBrightness
 
     @staticmethod

@@ -14,7 +14,7 @@ class ActionButtonFactory(ButtonFactory):
     def __init__(self):
         self.buttons: dict = {
             "primary": ActionButton(
-                textColor=Colors.WHITE,
+                textColor=Colors.white,
                 backgroundColor=BackgroundColor(
                     normal=Colors.PRIMARY,
                     hover=Colors.PRIMARY_DARK,
@@ -35,21 +35,21 @@ class ActionButtonFactory(ButtonFactory):
                 ),
             ),
             "success": ActionButton(
-                textColor=Colors.WHITE,
+                textColor=Colors.white,
                 backgroundColor=BackgroundColor(
                     normal=Colors.SUCCESS,
                     hover=Colors.SUCCESS_DARK,
                 ),
             ),
             "danger": ActionButton(
-                textColor=Colors.WHITE,
+                textColor=Colors.white,
                 backgroundColor=BackgroundColor(
                     normal=Colors.DANGER,
                     hover=Colors.DANGER_DARK,
                 ),
             ),
             "warning": ActionButton(
-                textColor=Colors.WHITE,
+                textColor=Colors.white,
                 backgroundColor=BackgroundColor(
                     normal=Colors.WARNING,
                     hover=Colors.WARNING_DARK,
@@ -62,7 +62,7 @@ class ActionButtonFactory(ButtonFactory):
                 ),
                 border=f"2px solid {Colors.PRIMARY}",
                 textColor=Colors.PRIMARY,
-                textHoverColor=Colors.WHITE,
+                textHoverColor=Colors.white,
             ),
         }
 

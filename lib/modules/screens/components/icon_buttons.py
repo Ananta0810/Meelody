@@ -1,3 +1,4 @@
+from abc import ABC, abstractstaticmethod
 from sys import path
 
 from PyQt5.QtCore import QSize
@@ -11,6 +12,12 @@ from modules.screens.themes.theme_builders import ButtonThemeBuilder
 from widgets.multiple_icon_button import QMultipleIconButton
 from widgets.standard_icon_button import QIconButton
 from widgets.toggle_icon_button import QToggleButton
+
+
+class ViewIconButton(ABC):
+    @abstractstaticmethod
+    def render():
+        pass
 
 
 class IconButton(ViewItem):

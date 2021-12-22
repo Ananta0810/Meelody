@@ -28,7 +28,7 @@ class Colors(metaclass=MetaConst):
     WARNING_DARK = Color(255, 128, 0)
 
     DISABLED = Color(128, 128, 128)
-    WHITE = Color(255, 255, 255)
+    white = Color(255, 255, 255)
     BLACK = Color(0, 0, 0)
     TRANSPARENT = Color(255, 255, 255, 0)
 
@@ -37,7 +37,7 @@ class ColorBoxes(metaclass=MetaConst):
     TRANSPARENT = ColorBox(Colors.TRANSPARENT)
     PRIMARY = ColorBox(Colors.PRIMARY)
     BLACK = ColorBox(Colors.BLACK)
-    WHITE = ColorBox(Colors.WHITE)
+    WHITE = ColorBox(Colors.white)
     GRAY = ColorBox(Colors.BLACK.withAlpha(0.5))
     DANGER = ColorBox(Colors.DANGER)
 
@@ -49,15 +49,15 @@ class ColorBoxes(metaclass=MetaConst):
         normal=Colors.BLACK.withAlpha(0.15),
         active=Colors.BLACK.withAlpha(0.25),
     )
-    WHITE_LIGHTEN_25 = ColorBox(normal=Colors.WHITE.withAlpha(0.15))
-    WHITE_LIGHTEN_50 = ColorBox(normal=Colors.WHITE.withAlpha(0.33))
+    WHITE_LIGHTEN_25 = ColorBox(normal=Colors.white.withAlpha(0.15))
+    WHITE_LIGHTEN_50 = ColorBox(normal=Colors.white.withAlpha(0.33))
     WHITE_LIGHTEN_HOVERABLE_25 = ColorBox(
-        normal=Colors.WHITE.withAlpha(0.15),
-        active=Colors.WHITE.withAlpha(0.25),
+        normal=Colors.white.withAlpha(0.15),
+        active=Colors.white.withAlpha(0.25),
     )
     WHITE_LIGHTEN_HOVERABLE_50 = ColorBox(
-        normal=Colors.WHITE.withAlpha(0.33),
-        active=Colors.WHITE.withAlpha(0.5),
+        normal=Colors.white.withAlpha(0.33),
+        active=Colors.white.withAlpha(0.5),
     )
     GRAY_LIGHTEN = ColorBox(
         normal=Colors.BLACK.withAlpha(0.4),
@@ -111,5 +111,5 @@ class ColorBoxes(metaclass=MetaConst):
     )
     HIDDEN_WHITE = ColorBox(
         normal=Colors.TRANSPARENT,
-        active=Colors.WHITE.withAlpha(0.15),
+        active=Colors.white.withAlpha(0.15),
     )

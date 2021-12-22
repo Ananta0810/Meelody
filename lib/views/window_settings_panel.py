@@ -65,7 +65,7 @@ class SettingsWindow(QWidget):
             labelThemeBuilder.addLightModeTextColor(ColorBoxes.BLACK).addDarkModeTextColor(ColorBoxes.WHITE).build()
         )
         lightForwardBtn = AppUI.paintIcon(icons.FORWARD, Colors.PRIMARY)
-        darkForwardBtn = AppUI.paintIcon(icons.FORWARD, Colors.WHITE)
+        darkForwardBtn = AppUI.paintIcon(icons.FORWARD, Colors.white)
 
         # UI
         self.setAutoFillBackground(True)
@@ -84,7 +84,7 @@ class SettingsWindow(QWidget):
             padding=Paddings.RELATIVE_75,
             size=icons.SIZES.LARGE,
             lightModeIcon=AppUI.paintIcon(icons.BACKWARD, Colors.PRIMARY),
-            darkModeIcon=AppUI.paintIcon(icons.BACKWARD, Colors.WHITE),
+            darkModeIcon=AppUI.paintIcon(icons.BACKWARD, Colors.white),
         )
         self.__addThemeForItem(
             self.close_settings_window_btn,
@@ -131,7 +131,7 @@ class SettingsWindow(QWidget):
             padding=Paddings.RELATIVE_50,
             size=icons.SIZES.LARGE,
             lightModeIcon=AppUI.paintIcon(icons.LANGUAGES, Colors.PRIMARY),
-            darkModeIcon=AppUI.paintIcon(icons.LANGUAGES, Colors.WHITE),
+            darkModeIcon=AppUI.paintIcon(icons.LANGUAGES, Colors.white),
             parent=self,
         )
         self.__addButtonToList(self.language_icon)
@@ -190,7 +190,7 @@ class SettingsWindow(QWidget):
             padding=Paddings.RELATIVE_33,
             size=icons.SIZES.LARGE,
             lightModeIcon=AppUI.paintIcon(icons.DARKMODE, Colors.PRIMARY),
-            darkModeIcon=AppUI.paintIcon(icons.DARKMODE, Colors.WHITE),
+            darkModeIcon=AppUI.paintIcon(icons.DARKMODE, Colors.white),
             parent=self,
         )
         self.__addButtonToList(self.dark_mode_icon)
@@ -213,7 +213,7 @@ class SettingsWindow(QWidget):
             padding=Paddings.RELATIVE_50,
             size=icons.SIZES.LARGE,
             lightModeIcon=AppUI.paintIcon(icons.FOLDER, Colors.PRIMARY),
-            darkModeIcon=AppUI.paintIcon(icons.FOLDER, Colors.WHITE),
+            darkModeIcon=AppUI.paintIcon(icons.FOLDER, Colors.white),
             parent=self,
         )
         self.__addButtonToList(self.folder_icon)

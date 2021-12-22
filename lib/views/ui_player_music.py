@@ -81,18 +81,14 @@ class UIPlayerMusic(QWidget):
 
         self.song_cover = ImageDisplayer()
         self.song_cover.setFixedSize(64, 64)
-        self.song_cover.setDefaultPixmap(
-            self.__getPixmapForSongCover(ApplicationImage.defaultSongCover)
-        )
+        self.song_cover.setDefaultPixmap(self.__getPixmapForSongCover(ApplicationImage.defaultSongCover))
         self.left.addWidget(self.song_cover)
 
         self.song_title = labelRenderer.render(font=emphasizedFont)
         self.song_artist = labelRenderer.render(normalFont)
         self.__addThemeForItem(
             self.song_title,
-            labelThemeBuilder.addLightModeTextColor(ColorBoxes.BLACK)
-            .addDarkModeTextColor(ColorBoxes.WHITE)
-            .build(),
+            labelThemeBuilder.addLightModeTextColor(ColorBoxes.BLACK).addDarkModeTextColor(ColorBoxes.WHITE).build(),
         )
         self.__addThemeForItem(
             self.song_artist,
@@ -122,16 +118,14 @@ class UIPlayerMusic(QWidget):
         )
         self.previous_song_btn.setCursor(cursors.HAND)
         self.play_buttons.addWidget(self.previous_song_btn)
-        self.__addThemeForItem(
-            item=self.previous_song_btn, theme=normalButtonThemeStyle
-        )
+        self.__addThemeForItem(item=self.previous_song_btn, theme=normalButtonThemeStyle)
         self.play_btn = toggleButtonRenderer.render(
             padding=Paddings.RELATIVE_50,
             size=icons.SIZES.XLARGE,
             lightModeIcon=AppUI.paintIcon(icons.PLAY, Colors.PRIMARY),
             lightModeCheckedIcon=AppUI.paintIcon(icons.PAUSE, Colors.PRIMARY),
-            darkModeIcon=AppUI.paintIcon(icons.PLAY, Colors.WHITE),
-            darkModeCheckedIcon=AppUI.paintIcon(icons.PAUSE, Colors.WHITE),
+            darkModeIcon=AppUI.paintIcon(icons.PLAY, Colors.white),
+            darkModeCheckedIcon=AppUI.paintIcon(icons.PAUSE, Colors.white),
         )
         self.__addThemeForItem(
             item=self.play_btn,
@@ -419,12 +413,8 @@ class UIPlayerMusic(QWidget):
         self.previous_song_btn.clicked.connect(controller.handlePreviousSong)
         self.play_btn.clicked.connect(controller.handlePlaySong)
         self.next_song_btn.clicked.connect(controller.handleNextSong)
-        self.time_slider.sliderPressed.connect(
-            controller.handlePausedTimeSlider
-        )
-        self.time_slider.sliderReleased.connect(
-            controller.handleUnpausedTimeSlider
-        )
+        self.time_slider.sliderPressed.connect(controller.handlePausedTimeSlider)
+        self.time_slider.sliderReleased.connect(controller.handleUnpausedTimeSlider)
         self.loop_btn.clicked.connect(controller.handleClickedLoop)
         self.shuffle_btn.clicked.connect(controller.handleClickedShuffle)
         self.love_btn.clicked.connect(controller.handleLoveSong)
@@ -434,9 +424,7 @@ class UIPlayerMusic(QWidget):
     def __getPixmapForSongCover(self, coverAsByte: bytes) -> QPixmap:
         if coverAsByte is None:
             return None
-        pixmap = AppUI.getSquaredPixmapFromBytes(
-            coverAsByte, edge=self.song_cover.width(), radius=12
-        )
+        pixmap = AppUI.getSquaredPixmapFromBytes(coverAsByte, edge=self.song_cover.width(), radius=12)
         return pixmap
 
     def __changeVolumeIcon(self) -> None:
