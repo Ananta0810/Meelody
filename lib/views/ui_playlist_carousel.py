@@ -9,9 +9,9 @@ from constants.ui.base import ApplicationImage
 from constants.ui.qss import ColorBoxes, Colors, Paddings
 from constants.ui.qt import AppCursors, AppIcons
 from modules.screens.components.editable_playlist_card import EditablePlaylistCard
-from modules.screens.components.factories import IconButtonFactory, LabelFactory
 from modules.screens.components.font_builder import FontBuilder
-from modules.screens.components.labels import StandardLabel
+from modules.screens.components.icon_buttons import IconButton
+from modules.screens.components.labels import DoubleClickedEditableLabel, StandardLabel
 from modules.screens.components.playlist_card import PlaylistCard
 from modules.screens.others.animation import Animation
 from modules.screens.qss.qss_elements import Background
@@ -31,13 +31,10 @@ class UiPlaylistCarousel(QScrollArea):
     def setupUi(self):
         self.icons = AppIcons()
         self.cursors = AppCursors()
-        self.labelFormer = StandardLabel()
 
-        self.iconButtonFormer = IconButtonFactory().getByType("default")
-        self.doubleClickedEditableLabel = LabelFactory().getByType("doubleClickedEditable")
         self.emphasizedFont = FontBuilder().withSize(16).withWeight("bold").build()
         self.buttonTheme = (
-            self.iconButtonFormer.getThemeBuilder()
+            IconButton.getThemeBuilder()
             .addLightModeBackground(
                 Background(
                     borderRadius=0.5,
@@ -73,14 +70,14 @@ class UiPlaylistCarousel(QScrollArea):
         # =================Library=================
         self.defaultPlaylistCover = self.__getPixmapForPlaylistCover(ApplicationImage.defaultPlaylistCover)
 
-        self.library = PlaylistCard(self.labelFormer, self.emphasizedFont)
+        self.library = PlaylistCard(self.emphasizedFont)
         self.library.setAnimation(self.hoverAnimation)
         self.library.setFixedSize(256, 320)
         self.library.setCursor(self.cursors.HAND)
         self.library.setCover(self.defaultPlaylistCover)
         self.library.setLabelText("Library")
 
-        self.favourites = PlaylistCard(self.labelFormer, self.emphasizedFont)
+        self.favourites = PlaylistCard(self.emphasizedFont)
         self.library.setAnimation(self.hoverAnimation)
         self.favourites.setFixedSize(256, 320)
         self.favourites.setCursor(self.cursors.HAND)
@@ -101,7 +98,7 @@ class UiPlaylistCarousel(QScrollArea):
                 darkMode="#add_playlist_card{background:rgba(255,255,255,0.25);border-radius:24px}",
             ),
         )
-        self.add_playlist_btn = self.iconButtonFormer.render(
+        self.add_playlist_btn = IconButton.render(
             padding=Paddings.RELATIVE_67,
             size=self.icons.SIZES.LARGE,
             lightModeIcon=AppUI.paintIcon(self.icons.ADD, Colors.PRIMARY),
@@ -114,7 +111,7 @@ class UiPlaylistCarousel(QScrollArea):
         self.__addThemeForItem(
             self.add_playlist_btn,
             theme=(
-                self.iconButtonFormer.getThemeBuilder()
+                IconButton.getThemeBuilder()
                 .addLightModeBackground(
                     Background(
                         borderRadius=0.5,
@@ -157,11 +154,9 @@ class UiPlaylistCarousel(QScrollArea):
                 continue
             item.setStyleSheet(darkModeStyleSheet)
 
-    def addNewPlaylistAtIndex(self, index, controller):
+    def addNewPlaylistAtIndex(self, index: int, controller):
         playlist = EditablePlaylistCard(
-            labelFormer=self.doubleClickedEditableLabel,
             labelFont=self.emphasizedFont,
-            buttonFormer=self.iconButtonFormer,
             buttonTheme=self.buttonTheme,
             icons=self.buttonIcons,
             iconSize=self.icons.SIZES.MEDIUM,
@@ -213,11 +208,6 @@ class UiPlaylistCarousel(QScrollArea):
         )[0]
         controller.handleChangedPlaylistCover(index, path)
 
-    def getPlaylistByIndex(self, index: int):
-        NUMBER_OF_DEFAULT_PLAYLIST_BEFORE_THIS_PLAYLIST_IN_LAYOUT = 2
-        playlistPosition = index + NUMBER_OF_DEFAULT_PLAYLIST_BEFORE_THIS_PLAYLIST_IN_LAYOUT
-        return self.main_layout.itemAt(playlistPosition)
-
     def displayPlaylistInRange(self, start: int, end: int) -> None:
         for index in range(start, end):
             self.getPlaylistFromLayoutAtIndex(index).show()
@@ -228,10 +218,6 @@ class UiPlaylistCarousel(QScrollArea):
     def getTotalPlaylistInLayout(self) -> int:
         return self.main_layout.count() - 3
 
-    def isPlaylistEmpty(self, index: int) -> bool:
-        print(index)
-        return self.getAttribute("playlist_label", index).isDisplayingDefaultText()
-
     def getNumberOfPlaylistDisplaying(self) -> int:
         count: int = 0
         while True:
@@ -240,10 +226,9 @@ class UiPlaylistCarousel(QScrollArea):
                 return count
             if not playlist.isVisible():
                 return count
-            label = self.getAttribute("playlist_label", count)
-            if label is None:
+            if not hasattr(playlist, "cover"):
                 return count
-            playlistIsEmpty = label.isDisplayingDefaultText()
+            playlistIsEmpty = playlist.label.isDisplayingDefaultText()
             if playlistIsEmpty:
                 return count
             count += 1
@@ -265,7 +250,7 @@ class UiPlaylistCarousel(QScrollArea):
         countOfItemsBeforeTheDisiredPlaylist = 2
         return index + countOfItemsBeforeTheDisiredPlaylist
 
-    def getPlaylistFromLayoutAtIndex(self, index: int):
+    def getPlaylistFromLayoutAtIndex(self, index: int) -> EditablePlaylistCard:
         item = self.main_layout.itemAt(self.getPlaylistPositionInLayout(index))
         if item is None:
             return None

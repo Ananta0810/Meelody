@@ -31,7 +31,7 @@ class ApplicationUIUtils:
         byteImage: bytes,
         width: int,
         height,
-        cropCenter: bool = False,
+        cropCenter: bool = True,
         radius: int = 0,
     ) -> ScaleAblePixmap:
         pixmap = PixmapUtils.getPixmapFromBytes(byteImage)

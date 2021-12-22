@@ -22,7 +22,6 @@ class ViewIconButton(ABC):
 
 class IconButton(ViewItem):
     def render(
-        self,
         lightModeIcon: QIcon,
         size: QSize,
         padding: Padding,
@@ -37,13 +36,12 @@ class IconButton(ViewItem):
         button.setFixedSize(size)
         return button
 
-    def getThemeBuilder(self):
+    def getThemeBuilder():
         return ButtonThemeBuilder()
 
 
 class ToggleIconButton(ViewItem):
     def render(
-        self,
         size: QSize,
         lightModeIcon: QIcon,
         lightModeCheckedIcon: QIcon,
@@ -63,13 +61,12 @@ class ToggleIconButton(ViewItem):
         button.setFixedSize(size)
         return button
 
-    def getThemeBuilder(self):
+    def getThemeBuilder():
         return ButtonThemeBuilder()
 
 
 class MultiIconButton(ViewItem):
     def render(
-        self,
         icons: list[QIcon],
         size: QSize,
         padding: Padding = None,
@@ -83,5 +80,5 @@ class MultiIconButton(ViewItem):
         button.setFixedSize(size)
         return button
 
-    def getThemeBuilder(self):
+    def getThemeBuilder():
         return ButtonThemeBuilder()

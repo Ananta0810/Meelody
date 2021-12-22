@@ -11,7 +11,6 @@ from modules.screens.themes.theme_builders import HorizontalSliderThemeBuilder
 
 class HorizontalSlider(ViewItem):
     def render(
-        self,
         height: int,
         parent=None,
     ) -> QSlider:
@@ -20,5 +19,5 @@ class HorizontalSlider(ViewItem):
         slider.setMaximumHeight(height)
         return slider
 
-    def getThemeBuilder(self) -> ThemeBuilder:
+    def getThemeBuilder() -> ThemeBuilder:
         return HorizontalSliderThemeBuilder()

@@ -1,8 +1,8 @@
-from abc import ABC, abstractmethod
+from abc import ABC, abstractstaticmethod
 from sys import path
 
-from modules.screens.qss.qss_elements import Padding
-from PyQt5.QtCore import Qt
+# from modules.screens.qss.qss_elements import Padding
+from PyQt5.QtCore import QObject, Qt
 from PyQt5.QtGui import QFont
 from PyQt5.QtWidgets import QLineEdit
 
@@ -15,94 +15,58 @@ from widgets.label_with_default_text import LabelWithDefaultText
 from widgets.placeholder_label import LabelWithPlaceholder
 
 
-class ViewLabel(ViewItem):
-    @abstractmethod
+class ViewLabel(ViewItem, ABC):
+    @abstractstaticmethod
     def render(
-        self,
         font: QFont,
-        padding: Padding,
-        alignment,
-        parent,
+        parent: QObject,
     ):
         pass
+
+    @abstractstaticmethod
+    def getThemeBuilder() -> ThemeBuilder:
+        return LabelThemeBuilder()
 
 
 class StandardLabel(ViewLabel):
     def render(
-        self,
         font: QFont,
-        padding: Padding = None,
-        alignment=None,
-        parent=None,
+        parent: QObject = None,
     ) -> QLineEdit:
         label = LabelWithDefaultText(parent)
         label.setFont(font)
         label.setReadOnly(True)
         label.setFocusPolicy(Qt.NoFocus)
-        if alignment is not None:
-            label.setAlignment(alignment)
-        width = label.sizeHint().width()
-        height = label.sizeHint().height()
-        if padding is not None:
-            width += padding.getWidth(width)
-            height += padding.getHeight(height)
-        label.setBaseSize(width, height)
         label.setStyleSheet("background:transparent;border:none")
         return label
 
-    def getThemeBuilder(self) -> ThemeBuilder:
+    def getThemeBuilder() -> ThemeBuilder:
         return LabelThemeBuilder()
 
 
 class EditableLabel(ViewLabel):
     def render(
-        self,
         font: QFont,
-        padding: Padding = None,
-        alignment=None,
-        parent=None,
+        parent: QObject = None,
     ) -> QLineEdit:
         label = LabelWithPlaceholder(parent)
-        if alignment is not None:
-            label.setAlignment(alignment)
         label.setFont(font)
-
-        width = label.sizeHint().width()
-        height = label.sizeHint().height()
-        if padding is not None:
-            width += padding.getWidth(width)
-            height += padding.getHeight(height)
-        # self.lineEdit.selectionChanged.connect(lambda: self.lineEdit.setSelection(0, 0))
-        # label.setSizePolicy(QSizePolicy.Ignored, QSizePolicy.Ignored)
         label.setStyleSheet("background:transparent;border:none")
         return label
 
-    def getThemeBuilder(self) -> ThemeBuilder:
+    def getThemeBuilder() -> ThemeBuilder:
         return LabelThemeBuilder()
 
 
 class DoubleClickedEditableLabel(ViewLabel):
     def render(
-        self,
         font: QFont,
-        padding: Padding = None,
-        alignment=None,
-        parent=None,
+        parent: QObject = None,
     ) -> QLineEdit:
         label = QDoubleClickedEditableLabel(parent)
-        if alignment is not None:
-            label.setAlignment(alignment)
         label.setFont(font)
-
-        width = label.sizeHint().width()
-        height = label.sizeHint().height()
-        if padding is not None:
-            width += padding.getWidth(width)
-            height += padding.getHeight(height)
-        # self.lineEdit.selectionChanged.connect(lambda: self.lineEdit.setSelection(0, 0))
-        # label.setSizePolicy(QSizePolicy.Ignored, QSizePolicy.Ignored)
         label.setStyleSheet("background:transparent;border:none")
         return label
 
-    def getThemeBuilder(self) -> ThemeBuilder:
+    def getThemeBuilder() -> ThemeBuilder:
         return LabelThemeBuilder()

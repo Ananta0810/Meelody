@@ -1,6 +1,6 @@
 from constants.ui.qss import Paddings
-from modules.screens.components.icon_buttons import ViewIconButton
-from modules.screens.components.labels import ViewLabel
+from modules.screens.components.icon_buttons import IconButton
+from modules.screens.components.labels import DoubleClickedEditableLabel
 from modules.screens.others.animation import Animation
 from modules.screens.themes.theme_builders import ThemeData
 from PyQt5.QtCore import QEvent, QRect, Qt, pyqtSignal
@@ -15,9 +15,7 @@ class EditablePlaylistCard(QWidget):
 
     def __init__(
         self,
-        labelFormer: ViewLabel,
         labelFont: QFont,
-        buttonFormer: ViewIconButton,
         buttonTheme: ThemeData,
         icons: dict[str, QIcon],
         iconSize: int,
@@ -26,21 +24,24 @@ class EditablePlaylistCard(QWidget):
         super().__init__(parent)
         self._defaultText = None
         self._buttonTheme = buttonTheme
-        self.setupUi(labelFormer, labelFont, buttonFormer, icons, iconSize)
+        self.setupUi(labelFont, icons, iconSize)
 
     def setupUi(
-        self, labelFormer: ViewLabel, labelFont: QFont, buttonFormer, icons: dict[str, QIcon], iconSize: int
+        self,
+        labelFont: QFont,
+        icons: dict[str, QIcon],
+        iconSize: int,
     ) -> None:
         self.main_layout = QVBoxLayout(self)
         self.main_layout.setContentsMargins(20, 10, 10, 20)
 
-        self.editBtn = buttonFormer.render(
+        self.editBtn = IconButton.render(
             padding=Paddings.RELATIVE_50,
             size=iconSize,
             lightModeIcon=icons.get("lightModeEditBtn"),
             darkModeIcon=icons.get("darkModeEditBtn"),
         )
-        self.deleteBtn = buttonFormer.render(
+        self.deleteBtn = IconButton.render(
             padding=Paddings.RELATIVE_50,
             size=iconSize,
             lightModeIcon=icons.get("lightModeDeleteBtn"),
@@ -53,7 +54,7 @@ class EditablePlaylistCard(QWidget):
         self.btns.addWidget(self.deleteBtn)
 
         self.cover = ImageDisplayer(self)
-        self.label = labelFormer.render(labelFont, parent=self)
+        self.label = DoubleClickedEditableLabel.render(labelFont, parent=self)
 
         self.main_layout.addLayout(self.btns)
         self.main_layout.addStretch()
@@ -117,7 +118,7 @@ class EditablePlaylistCard(QWidget):
         self.__adaptButtonsBaseOnCover(pixmap)
         self.__adaptLabelBaseOnCover(pixmap)
 
-    def __adaptButtonsBaseOnCover(self, coverPixmap) -> None:
+    def __adaptButtonsBaseOnCover(self, coverPixmap: QPixmap) -> None:
         brightness = PixmapUtils.getPixmapBrightness(coverPixmap.copy(self.__getButtonsRect()))
         if brightness < 0.5:
             self.editBtn.setStyleSheet(self._buttonTheme.darkMode)
@@ -130,7 +131,7 @@ class EditablePlaylistCard(QWidget):
             self.editBtn.setDarkMode(False)
             self.deleteBtn.setDarkMode(False)
 
-    def __adaptLabelBaseOnCover(self, coverPixmap) -> None:
+    def __adaptLabelBaseOnCover(self, coverPixmap: QPixmap) -> None:
         brightness = PixmapUtils.getPixmapBrightness(coverPixmap.copy(self.label.rect()))
         if brightness < 0.5:
             self.label.setStyleSheet("color:white")

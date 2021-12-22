@@ -1,6 +1,6 @@
-from typing import AnyStr, Callable
+from typing import Callable
 
-from PyQt5.QtCore import QEasingCurve, Qt, QVariantAnimation, pyqtSignal
+from PyQt5.QtCore import QEasingCurve, Qt, QVariantAnimation
 from PyQt5.QtGui import QPixmap
 from PyQt5.QtWidgets import QLabel
 from utils.ui.pixmap_utils import PixmapUtils

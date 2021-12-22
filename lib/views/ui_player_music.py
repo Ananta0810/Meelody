@@ -8,12 +8,10 @@ path.append("./lib")
 from constants.ui.base import ApplicationImage
 from constants.ui.qss import ColorBoxes, Colors, Paddings
 from constants.ui.qt import AppCursors, AppIcons
-from modules.screens.components.factories import (
-    IconButtonFactory,
-    LabelFactory,
-    SliderFactory,
-)
 from modules.screens.components.font_builder import FontBuilder
+from modules.screens.components.icon_buttons import IconButton, MultiIconButton, ToggleIconButton
+from modules.screens.components.labels import EditableLabel, StandardLabel
+from modules.screens.components.sliders import HorizontalSlider
 from modules.screens.qss.qss_elements import Background
 from modules.screens.themes.theme_builders import ThemeData
 from utils.helpers.my_string import Stringify
@@ -33,20 +31,17 @@ class UIPlayerMusic(QWidget):
         cursors = AppCursors()
 
         # Button constructors
-        buttonFactory = IconButtonFactory()
-        standardIconButtonRenderer = buttonFactory.getByType("default")
-        toggleButtonRenderer = buttonFactory.getByType("toggle")
         primaryButtonBackground = Background(
             borderRadius=0.5,
             color=ColorBoxes.HIDDEN_PRIMARY,
         )
         normalButtonThemeStyle = (
-            standardIconButtonRenderer.getThemeBuilder()
+            IconButton.getThemeBuilder()
             .addLightModeBackground(primaryButtonBackground)
             .build(itemSize=icons.SIZES.LARGE.height())
         )
         toggleButtonThemeStyle = (
-            toggleButtonRenderer.getThemeBuilder()
+            ToggleIconButton.getThemeBuilder()
             .addLightModeBackground(primaryButtonBackground)
             .addLightModeActiveBackground(
                 Background(
@@ -56,12 +51,8 @@ class UIPlayerMusic(QWidget):
             )
             .build(itemSize=icons.SIZES.LARGE.height())
         )
-        horizontalSlider = SliderFactory().getByType("horizontal")
-        sliderThemeBuilder = horizontalSlider.getThemeBuilder()
-        labelFactory = LabelFactory()
-        labelRenderer = labelFactory.getByType("default")
-        editableLabel = labelFactory.getByType("editable")
-        labelThemeBuilder = labelRenderer.getThemeBuilder()
+        sliderThemeBuilder = HorizontalSlider.getThemeBuilder()
+        labelThemeBuilder = StandardLabel.getThemeBuilder()
 
         # Font constructors
         fontBuilder = FontBuilder()
@@ -84,8 +75,8 @@ class UIPlayerMusic(QWidget):
         self.song_cover.setDefaultPixmap(self.__getPixmapForSongCover(ApplicationImage.defaultSongCover))
         self.left.addWidget(self.song_cover)
 
-        self.song_title = labelRenderer.render(font=emphasizedFont)
-        self.song_artist = labelRenderer.render(normalFont)
+        self.song_title = StandardLabel.render(font=emphasizedFont)
+        self.song_artist = StandardLabel.render(normalFont)
         self.__addThemeForItem(
             self.song_title,
             labelThemeBuilder.addLightModeTextColor(ColorBoxes.BLACK).addDarkModeTextColor(ColorBoxes.WHITE).build(),
@@ -111,7 +102,7 @@ class UIPlayerMusic(QWidget):
         self.play_buttons.setSpacing(8)
         self.left.addLayout(self.play_buttons)
 
-        self.previous_song_btn = standardIconButtonRenderer.render(
+        self.previous_song_btn = IconButton.render(
             padding=Paddings.RELATIVE_50,
             size=icons.SIZES.LARGE,
             lightModeIcon=AppUI.paintIcon(icons.PREVIOUS, Colors.PRIMARY),
@@ -119,7 +110,7 @@ class UIPlayerMusic(QWidget):
         self.previous_song_btn.setCursor(cursors.HAND)
         self.play_buttons.addWidget(self.previous_song_btn)
         self.__addThemeForItem(item=self.previous_song_btn, theme=normalButtonThemeStyle)
-        self.play_btn = toggleButtonRenderer.render(
+        self.play_btn = ToggleIconButton.render(
             padding=Paddings.RELATIVE_50,
             size=icons.SIZES.XLARGE,
             lightModeIcon=AppUI.paintIcon(icons.PLAY, Colors.PRIMARY),
@@ -130,7 +121,7 @@ class UIPlayerMusic(QWidget):
         self.__addThemeForItem(
             item=self.play_btn,
             theme=(
-                toggleButtonRenderer.getThemeBuilder()
+                ToggleIconButton.getThemeBuilder()
                 .addLightModeBackground(
                     Background(
                         borderRadius=0.5,
@@ -151,7 +142,7 @@ class UIPlayerMusic(QWidget):
         self.play_buttons.addWidget(self.play_btn)
         self.__addButtonToList(self.play_btn)
 
-        self.next_song_btn = standardIconButtonRenderer.render(
+        self.next_song_btn = IconButton.render(
             padding=Paddings.RELATIVE_50,
             size=icons.SIZES.LARGE,
             lightModeIcon=AppUI.paintIcon(icons.NEXT, Colors.PRIMARY),
@@ -165,7 +156,7 @@ class UIPlayerMusic(QWidget):
         self.center.setSpacing(4)
         self.main_layout.addLayout(self.center)
 
-        self.playing_time = labelRenderer.render(font=normalFont)
+        self.playing_time = StandardLabel.render(font=normalFont)
         self.__addThemeForItem(
             self.playing_time,
             labelThemeBuilder.build(itemSize=self.playing_time.width()),
@@ -174,7 +165,7 @@ class UIPlayerMusic(QWidget):
         self.playing_time.setAlignment(Qt.AlignRight)
         self.center.addWidget(self.playing_time)
 
-        self.time_slider = horizontalSlider.render(height=12)
+        self.time_slider = HorizontalSlider.render(height=12)
         self.__addThemeForItem(
             self.time_slider,
             theme=sliderThemeBuilder.addLightHandleColor(ColorBoxes.PRIMARY)
@@ -186,7 +177,7 @@ class UIPlayerMusic(QWidget):
         self.time_slider.setProperty("value", 0)
         self.center.addWidget(self.time_slider)
 
-        self.total_time = labelRenderer.render(font=normalFont)
+        self.total_time = StandardLabel.render(font=normalFont)
         self.__addThemeForItem(
             self.total_time,
             labelThemeBuilder.build(itemSize=self.total_time.width()),
@@ -203,7 +194,7 @@ class UIPlayerMusic(QWidget):
         self.right.setSpacing(8)
         self.main_layout.addLayout(self.right)
 
-        self.loop_btn = toggleButtonRenderer.render(
+        self.loop_btn = ToggleIconButton.render(
             size=icons.SIZES.LARGE,
             padding=Paddings.RELATIVE_50,
             lightModeIcon=AppUI.paintIcon(icons.LOOP, Colors.PRIMARY),
@@ -213,7 +204,7 @@ class UIPlayerMusic(QWidget):
         self.right.addWidget(self.loop_btn)
         self.__addThemeForItem(self.loop_btn, toggleButtonThemeStyle)
 
-        self.shuffle_btn = toggleButtonRenderer.render(
+        self.shuffle_btn = ToggleIconButton.render(
             size=icons.SIZES.LARGE,
             padding=Paddings.RELATIVE_50,
             lightModeIcon=AppUI.paintIcon(icons.SHUFFLE, Colors.PRIMARY),
@@ -223,7 +214,7 @@ class UIPlayerMusic(QWidget):
         self.right.addWidget(self.shuffle_btn)
         self.__addThemeForItem(self.shuffle_btn, toggleButtonThemeStyle)
 
-        self.love_btn = toggleButtonRenderer.render(
+        self.love_btn = ToggleIconButton.render(
             size=icons.SIZES.LARGE,
             padding=Paddings.RELATIVE_50,
             lightModeIcon=AppUI.paintIcon(icons.LOVE, Colors.PRIMARY),
@@ -233,7 +224,7 @@ class UIPlayerMusic(QWidget):
         self.right.addWidget(self.love_btn)
         self.__addThemeForItem(self.love_btn, toggleButtonThemeStyle)
 
-        self.volume_btn = buttonFactory.getByType("multiple-icon").render(
+        self.volume_btn = MultiIconButton.render(
             size=icons.SIZES.LARGE,
             padding=Paddings.RELATIVE_50,
             icons=[
@@ -252,7 +243,7 @@ class UIPlayerMusic(QWidget):
         self.right_boxes.setContentsMargins(0, 0, 0, 0)
         self.right.addWidget(self.timer_inputs, 1)
 
-        self.volume_slider = horizontalSlider.render(height=48)
+        self.volume_slider = HorizontalSlider.render(height=48)
         self.__addThemeForItem(
             self.volume_slider,
             theme=(
@@ -276,10 +267,8 @@ class UIPlayerMusic(QWidget):
         self.volume_slider.valueChanged.connect(self.__changeVolumeIcon)
         self.right_boxes.addWidget(self.volume_slider)
 
-        self.timer_input = editableLabel.render(
-            font=emphasizedFont,
-            alignment=Qt.AlignCenter,
-        )
+        self.timer_input = EditableLabel.render(font=emphasizedFont)
+        self.timer_input.setAlignment(Qt.AlignCenter)
         self.timer_input.setFixedHeight(48)
         self.timer_input.setValidator(QIntValidator())
         self.timer_input.setVisible(False)
@@ -287,7 +276,7 @@ class UIPlayerMusic(QWidget):
         self.__addThemeForItem(
             self.timer_input,
             theme=(
-                editableLabel.getThemeBuilder()
+                EditableLabel.getThemeBuilder()
                 .addLightModeTextColor(ColorBoxes.PRIMARY)
                 .addLightModeBackground(
                     Background(
@@ -305,7 +294,7 @@ class UIPlayerMusic(QWidget):
                 .build(itemSize=self.timer_input.width())
             ),
         )
-        self.timer_btn = standardIconButtonRenderer.render(
+        self.timer_btn = IconButton.render(
             padding=Paddings.RELATIVE_50,
             size=icons.SIZES.LARGE,
             lightModeIcon=AppUI.paintIcon(icons.TIMER, Colors.PRIMARY),

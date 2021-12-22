@@ -1,11 +1,11 @@
-from PyQt5.QtGui import QFont, QFontDatabase
+from PyQt5.QtGui import QFont
 
 
 class FontBuilder:
     def __init__(self):
         self.family = "Segoe UI"
         self.size = 9
-        self.weight = -1
+        self.weight = "normal"
         self.style = None
         self.color = None
 

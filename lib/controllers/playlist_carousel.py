@@ -58,7 +58,6 @@ class PlaylistCarousel:
             newPlaylistIndex = countOfPlaylistsDisplaying
             self.ui.showPlaylistAtIndex(newPlaylistIndex)
             return
-
         self.ui.addNewEmptyPlaylist(self)
 
     def handleSelectedLibrary(self):
@@ -72,8 +71,12 @@ class PlaylistCarousel:
 
     def handleChangedPlaylistName(self, playlistIndex: int, newName: str):
         currentName = self.playlists[playlistIndex].name
-        userHasChangedPlaylistName: bool = UnicodeString.compare(currentName, newName) != 0
-        if not userHasChangedPlaylistName:
+        userHasChangedPlaylistName: bool = (
+            True if currentName is None else UnicodeString.compare(currentName, newName) != 0
+        )
+        userTypedCorrectName: bool = userHasChangedPlaylistName and len(newName) != 0
+
+        if not userTypedCorrectName:
             self.ui.changePlaylistNameAtIndex(playlistIndex, currentName)
             return
         self.playlists[playlistIndex].name = newName

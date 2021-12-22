@@ -1,4 +1,4 @@
-from modules.screens.components.labels import ViewLabel
+from modules.screens.components.labels import StandardLabel
 from modules.screens.others.animation import Animation
 from PyQt5.QtCore import Qt, pyqtSignal
 from PyQt5.QtGui import QCursor, QFont, QPixmap
@@ -9,15 +9,15 @@ from widgets.image_displayer import ImageDisplayer
 class PlaylistCard(QWidget):
     clicked = pyqtSignal()
 
-    def __init__(self, labelFormer: ViewLabel, font: QFont, parent=None):
+    def __init__(self, font: QFont, parent=None):
         super().__init__(parent)
-        self.setupUi(labelFormer, font)
+        self.setupUi(font)
 
-    def setupUi(self, labelFormer: ViewLabel, font: QFont) -> None:
+    def setupUi(self, font: QFont) -> None:
         self.layout = QVBoxLayout(self)
         self.layout.setContentsMargins(20, 20, 20, 20)
         self.cover = ImageDisplayer(self)
-        self.label = labelFormer.render(font, parent=self)
+        self.label = StandardLabel.render(font, parent=self)
         self.label.setFixedSize(160, 32)
         self.layout.addStretch()
         self.layout.addWidget(self.label)
