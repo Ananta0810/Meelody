@@ -1,6 +1,7 @@
+from functools import lru_cache
+
 from PyQt5.QtCore import QSize, Qt
-from PyQt5.QtGui import QColor, QCursor, QIcon
-from PyQt5.QtWidgets import QGraphicsDropShadowEffect
+from PyQt5.QtGui import QCursor, QIcon
 
 from .metaclass import MetaConst
 
@@ -52,17 +53,12 @@ class AppIcons(metaclass=MetaConst):
         self.TIMER = QIcon("assets/images/icons/timer.png")
 
 
-class AppAlignment(metaclass=MetaConst):
-    def __init__(self):
-        self.CENTER = Qt.AlignCenter
-        self.LEFT = Qt.AlignLeft
-        self.RIGHT = Qt.AlignRight
+class AppCursors:
+    hands: QCursor = None
 
-
-class AppCursors(metaclass=MetaConst):
     def __init__(self):
         self.HAND = QCursor(Qt.PointingHandCursor)
 
-
-class AppEffect(metaclass=MetaConst):
-    shadow = QGraphicsDropShadowEffect(blurRadius=50, color=QColor(128, 64, 255, 100), xOffset=0, yOffset=3)
+    # @property
+    def hand() -> QCursor:
+        return QCursor(Qt.PointingHandCursor)

@@ -1,22 +1,18 @@
-from sys import path
-
-from PyQt5.QtCore import *
-from PyQt5.QtGui import *
-from PyQt5.QtWidgets import *
-
-path.append("./lib")
 from constants.ui.base import ApplicationImage
 from constants.ui.qss import ColorBoxes, Colors, Paddings
 from constants.ui.qt import AppCursors, AppIcons
 from modules.screens.components.editable_playlist_card import EditablePlaylistCard
 from modules.screens.components.font_builder import FontBuilder
 from modules.screens.components.icon_buttons import IconButton
-from modules.screens.components.labels import DoubleClickedEditableLabel, StandardLabel
 from modules.screens.components.playlist_card import PlaylistCard
 from modules.screens.others.animation import Animation
 from modules.screens.qss.qss_elements import Background
 from modules.screens.themes.theme_builders import ThemeData
-from utils.ui.application_utils import ApplicationUIUtils as AppUI
+from PyQt5.QtCore import Qt
+from PyQt5.QtGui import QIcon, QPixmap
+from PyQt5.QtWidgets import QFileDialog, QHBoxLayout, QScrollArea, QWidget
+from utils.ui.application_utils import UiUtils
+from utils.ui.application_utils import UiUtils as AppUtils
 
 
 class UiPlaylistCarousel(QScrollArea):
@@ -32,7 +28,7 @@ class UiPlaylistCarousel(QScrollArea):
         self.icons = AppIcons()
         self.cursors = AppCursors()
 
-        self.emphasizedFont = FontBuilder().withSize(16).withWeight("bold").build()
+        self.playlistLabelFont = FontBuilder().withSize(16).withWeight("bold").build()
         self.buttonTheme = (
             IconButton.getThemeBuilder()
             .addLightModeBackground(
@@ -45,22 +41,19 @@ class UiPlaylistCarousel(QScrollArea):
             .build(itemSize=self.icons.SIZES.MEDIUM.height())
         )
         self.buttonIcons: dict[str, QIcon] = {
-            "lightModeEditBtn": AppUI.paintIcon(self.icons.EDIT, Colors.white),
-            "lightModeDeleteBtn": AppUI.paintIcon(self.icons.DELETE, Colors.white),
+            "lightModeEditBtn": AppUtils.paintIcon(self.icons.EDIT, Colors.white),
+            "lightModeDeleteBtn": AppUtils.paintIcon(self.icons.DELETE, Colors.white),
             "darkModeEditBtn": None,
             "darkModeDeleteBtn": None,
         }
         self.hoverAnimation = Animation(1.0, 1.1, 250)
 
         # =================UI=================
-        self.setMinimumSize(QSize(1368, 608))
         self.setVerticalScrollBarPolicy(Qt.ScrollBarAlwaysOff)
         self.setHorizontalScrollBarPolicy(Qt.ScrollBarAlwaysOff)
         self.setWidgetResizable(True)
 
         self.inner = QWidget()
-        self.inner.setGeometry(QRect(0, 0, 1359, 340))
-        self.inner.setStyleSheet("border:none")
         self.setWidget(self.inner)
 
         self.main_layout = QHBoxLayout(self.inner)
@@ -70,15 +63,15 @@ class UiPlaylistCarousel(QScrollArea):
         # =================Library=================
         self.defaultPlaylistCover = self.__getPixmapForPlaylistCover(ApplicationImage.defaultPlaylistCover)
 
-        self.library = PlaylistCard(self.emphasizedFont)
+        self.library = PlaylistCard(self.playlistLabelFont)
         self.library.setAnimation(self.hoverAnimation)
         self.library.setFixedSize(256, 320)
         self.library.setCursor(self.cursors.HAND)
         self.library.setCover(self.defaultPlaylistCover)
         self.library.setLabelText("Library")
 
-        self.favourites = PlaylistCard(self.emphasizedFont)
-        self.library.setAnimation(self.hoverAnimation)
+        self.favourites = PlaylistCard(self.playlistLabelFont)
+        self.favourites.setAnimation(self.hoverAnimation)
         self.favourites.setFixedSize(256, 320)
         self.favourites.setCursor(self.cursors.HAND)
         self.favourites.setCover(self.__getPixmapForPlaylistCover(ApplicationImage.favouritesCover))
@@ -101,8 +94,8 @@ class UiPlaylistCarousel(QScrollArea):
         self.add_playlist_btn = IconButton.render(
             padding=Paddings.RELATIVE_67,
             size=self.icons.SIZES.LARGE,
-            lightModeIcon=AppUI.paintIcon(self.icons.ADD, Colors.PRIMARY),
-            darkModeIcon=AppUI.paintIcon(self.icons.ADD, Colors.white),
+            lightModeIcon=AppUtils.paintIcon(self.icons.ADD, Colors.PRIMARY),
+            darkModeIcon=AppUtils.paintIcon(self.icons.ADD, Colors.white),
             parent=self.add_playlist_card,
         )
         self.add_playlist_btn.setCursor(self.cursors.HAND)
@@ -154,9 +147,13 @@ class UiPlaylistCarousel(QScrollArea):
                 continue
             item.setStyleSheet(darkModeStyleSheet)
 
+    def openChoosingPlaylistCoverDialog(self, index: int, controller) -> None:
+        path = QFileDialog.getOpenFileName(self, filter="JPEG, PNG (*.JPEG *.jpeg *.JPG *.jpg *.JPE *.jpe)")[0]
+        controller.handleChangedPlaylistCover(index, path)
+
     def addNewPlaylistAtIndex(self, index: int, controller):
         playlist = EditablePlaylistCard(
-            labelFont=self.emphasizedFont,
+            labelFont=self.playlistLabelFont,
             buttonTheme=self.buttonTheme,
             icons=self.buttonIcons,
             iconSize=self.icons.SIZES.MEDIUM,
@@ -165,10 +162,10 @@ class UiPlaylistCarousel(QScrollArea):
         playlist.setFixedSize(256, 320)
         playlist.setDefaultCover(self.defaultPlaylistCover)
         playlist.setDefaultText("Unknown")
-        playlist.setCursor(self.cursors.HAND)
+        playlist.setCursor(AppCursors.hand())
 
-        playlistIndex = self.getPlaylistIndexUsingPositionInLayout(index)
-        self.setAttribute("playlist_card", playlistIndex, playlist)
+        playlistIndex = self.__getInsertPositionToLayoutForPlaylistWithIndex(index)
+        AppUtils.setAttribute(self, "playlist_card", playlistIndex, playlist)
         self.main_layout.insertWidget(index, playlist)
 
         playlist.clicked.connect(lambda: controller.handleSelectedPlaylist(playlistIndex))
@@ -184,36 +181,33 @@ class UiPlaylistCarousel(QScrollArea):
         return self.getTotalPlaylistInLayout() - 1
 
     def showPlaylistAtIndex(self, index: int) -> None:
-        self.getPlaylistFromLayoutAtIndex(index).show()
+        self.getPlaylistByIndex(index).show()
 
     def hidePlaylistAtIndex(self, index: int) -> None:
-        self.getPlaylistFromLayoutAtIndex(index).hide()
+        self.getPlaylistByIndex(index).hide()
 
     def displayPlaylistInfoAtIndex(self, index: int, name: str, cover: bytes) -> None:
         self.changePlaylistNameAtIndex(index, name)
         self.changePlaylistCoverAtIndex(index, cover)
 
+    def getPlaylistByIndex(self, index: int) -> EditablePlaylistCard:
+        return AppUtils.getAttribute(self, "playlist_card", index)
+
     def changePlaylistCoverAtIndex(self, index: int, cover: bytes) -> None:
-        self.getAttribute("playlist_card", index).setCover(self.__getPixmapForPlaylistCover(cover))
+        self.getPlaylistByIndex(index).setCover(self.__getPixmapForPlaylistCover(cover))
 
     def changePlaylistNameAtIndex(self, index: int, name: str) -> None:
-        self.getAttribute("playlist_card", index).setText(name)
+        self.getPlaylistByIndex(index).setText(name)
 
     def removePlaylistInfoAtIndex(self, index: int) -> None:
         self.displayPlaylistInfoAtIndex(index, name=None, cover=None)
 
-    def openChoosingPlaylistCoverDialog(self, index: int, controller) -> None:
-        path = QFileDialog.getOpenFileName(
-            self, filter="JPEG, PNG (*.JPEG *.jpeg *.JPG *.jpg *.JPE *.jpe *JFIF *.jfif, *.PNG *.png)"
-        )[0]
-        controller.handleChangedPlaylistCover(index, path)
-
     def displayPlaylistInRange(self, start: int, end: int) -> None:
         for index in range(start, end):
-            self.getPlaylistFromLayoutAtIndex(index).show()
+            self.getPlaylistByIndex(index).show()
         for index in range(end, self.getTotalPlaylistInLayout()):
-            self.getPlaylistFromLayoutAtIndex(index).hide()
-        self.getAttribute("playlist_card", end).setParent(None)
+            self.getPlaylistByIndex(index).hide()
+        AppUtils.getAttribute(self, "playlist_card", end).setParent(None)
 
     def getTotalPlaylistInLayout(self) -> int:
         return self.main_layout.count() - 3
@@ -221,12 +215,10 @@ class UiPlaylistCarousel(QScrollArea):
     def getNumberOfPlaylistDisplaying(self) -> int:
         count: int = 0
         while True:
-            playlist = self.getPlaylistFromLayoutAtIndex(count)
+            playlist = self.getPlaylistByIndex(count)
             if playlist is None:
                 return count
             if not playlist.isVisible():
-                return count
-            if not hasattr(playlist, "cover"):
                 return count
             playlistIsEmpty = playlist.label.isDisplayingDefaultText()
             if playlistIsEmpty:
@@ -242,32 +234,9 @@ class UiPlaylistCarousel(QScrollArea):
             self.hidePlaylistAtIndex(index)
             self.removePlaylistInfoAtIndex(index)
 
-    def getPlaylistIndexUsingPositionInLayout(self, index) -> int:
-        countOfItemsBeforeTheDisiredPlaylist = 2
-        return index - countOfItemsBeforeTheDisiredPlaylist
-
-    def getPlaylistPositionInLayout(self, index: int) -> int:
-        countOfItemsBeforeTheDisiredPlaylist = 2
-        return index + countOfItemsBeforeTheDisiredPlaylist
-
-    def getPlaylistFromLayoutAtIndex(self, index: int) -> EditablePlaylistCard:
-        item = self.main_layout.itemAt(self.getPlaylistPositionInLayout(index))
-        if item is None:
-            return None
-        return item.widget()
-
-    def removePlaylistAtIndex(self, index: int) -> None:
-        self.displayPlaylistInRange(0, index)
-        # self.getPlaylistFromLayoutAtIndex(index).setParent(None)
-
-    def setAttribute(self, object: str, index: int, value) -> None:
-        setattr(self, "_".join([object, str(index)]), value)
-
-    def getAttribute(self, object: str, index: int):
-        try:
-            return getattr(self, "_".join([object, str(index)]))
-        except AttributeError:
-            return None
+    def __getInsertPositionToLayoutForPlaylistWithIndex(self, index) -> int:
+        countOfItemsBeforePlaylist = 2
+        return index - countOfItemsBeforePlaylist
 
     def __addThemeForItem(self, item, theme: ThemeData) -> None:
         self.themeItems[item] = theme
@@ -275,17 +244,7 @@ class UiPlaylistCarousel(QScrollArea):
     def __addButtonToList(self, item) -> None:
         self.buttonsWithDarkMode.append(item)
 
-    def __getPaddingPositionBotton(self, padding, parentHeight, itemHeight):
-        return parentHeight - itemHeight - padding
-
     def __getPixmapForPlaylistCover(self, coverAsByte: bytes) -> QPixmap:
         if coverAsByte is None:
             return None
-        pixmap = AppUI.getEditedPixmapFromBytes(coverAsByte, width=256, height=320, radius=24)
-        return pixmap
-
-    def __applyThemeForItem(self, item):
-        styleSheet = self.themeItems.get(item).darkMode if self.isDarkMode else self.themeItems.get(item).lightMode
-        if styleSheet is None or styleSheet.strip() == "":
-            return
-        item.setStyleSheet(styleSheet)
+        return AppUtils.getEditedPixmapFromBytes(coverAsByte, width=256, height=320, radius=24)

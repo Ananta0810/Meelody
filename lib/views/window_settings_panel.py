@@ -8,7 +8,7 @@ from modules.screens.components.labels import StandardLabel
 from modules.screens.qss.qss_elements import Background, Border, ColorBox
 from modules.screens.themes.theme_builders import ThemeData
 from PyQt5.QtWidgets import QFileDialog, QHBoxLayout, QVBoxLayout, QWidget
-from utils.ui.application_utils import ApplicationUIUtils as AppUI
+from utils.ui.application_utils import UiUtils
 from widgets.toggle import Toggle
 
 
@@ -62,8 +62,8 @@ class SettingsWindow(QWidget):
         itemTextStyle = (
             labelThemeBuilder.addLightModeTextColor(ColorBoxes.BLACK).addDarkModeTextColor(ColorBoxes.WHITE).build()
         )
-        lightForwardBtn = AppUI.paintIcon(icons.FORWARD, Colors.PRIMARY)
-        darkForwardBtn = AppUI.paintIcon(icons.FORWARD, Colors.white)
+        lightForwardBtn = UiUtils.paintIcon(icons.FORWARD, Colors.PRIMARY)
+        darkForwardBtn = UiUtils.paintIcon(icons.FORWARD, Colors.white)
 
         # UI
         self.setAutoFillBackground(True)
@@ -81,8 +81,8 @@ class SettingsWindow(QWidget):
         self.close_settings_window_btn = IconButton.render(
             padding=Paddings.RELATIVE_75,
             size=icons.SIZES.LARGE,
-            lightModeIcon=AppUI.paintIcon(icons.BACKWARD, Colors.PRIMARY),
-            darkModeIcon=AppUI.paintIcon(icons.BACKWARD, Colors.white),
+            lightModeIcon=UiUtils.paintIcon(icons.BACKWARD, Colors.PRIMARY),
+            darkModeIcon=UiUtils.paintIcon(icons.BACKWARD, Colors.white),
         )
         self.__addThemeForItem(
             self.close_settings_window_btn,
@@ -128,8 +128,8 @@ class SettingsWindow(QWidget):
         self.language_icon = IconButton.render(
             padding=Paddings.RELATIVE_50,
             size=icons.SIZES.LARGE,
-            lightModeIcon=AppUI.paintIcon(icons.LANGUAGES, Colors.PRIMARY),
-            darkModeIcon=AppUI.paintIcon(icons.LANGUAGES, Colors.white),
+            lightModeIcon=UiUtils.paintIcon(icons.LANGUAGES, Colors.PRIMARY),
+            darkModeIcon=UiUtils.paintIcon(icons.LANGUAGES, Colors.white),
             parent=self,
         )
         self.__addButtonToList(self.language_icon)
@@ -187,8 +187,8 @@ class SettingsWindow(QWidget):
         self.dark_mode_icon = IconButton.render(
             padding=Paddings.RELATIVE_33,
             size=icons.SIZES.LARGE,
-            lightModeIcon=AppUI.paintIcon(icons.DARKMODE, Colors.PRIMARY),
-            darkModeIcon=AppUI.paintIcon(icons.DARKMODE, Colors.white),
+            lightModeIcon=UiUtils.paintIcon(icons.DARKMODE, Colors.PRIMARY),
+            darkModeIcon=UiUtils.paintIcon(icons.DARKMODE, Colors.white),
             parent=self,
         )
         self.__addButtonToList(self.dark_mode_icon)
@@ -210,8 +210,8 @@ class SettingsWindow(QWidget):
         self.folder_icon = IconButton.render(
             padding=Paddings.RELATIVE_50,
             size=icons.SIZES.LARGE,
-            lightModeIcon=AppUI.paintIcon(icons.FOLDER, Colors.PRIMARY),
-            darkModeIcon=AppUI.paintIcon(icons.FOLDER, Colors.white),
+            lightModeIcon=UiUtils.paintIcon(icons.FOLDER, Colors.PRIMARY),
+            darkModeIcon=UiUtils.paintIcon(icons.FOLDER, Colors.white),
             parent=self,
         )
         self.__addButtonToList(self.folder_icon)

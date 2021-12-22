@@ -5,7 +5,7 @@ from modules.screens.qss.qss_elements import Background
 from modules.screens.themes.theme_builders import ThemeData
 from PyQt5.QtCore import QMetaObject, Qt
 from PyQt5.QtWidgets import QGraphicsDropShadowEffect, QHBoxLayout, QVBoxLayout, QWidget
-from utils.ui.application_utils import ApplicationUIUtils as AppUI
+from utils.ui.application_utils import UiUtils
 from utils.ui.color_utils import ColorUtils
 from widgets.framless_window import FramelessWindow
 
@@ -26,7 +26,6 @@ class ApplicationInterface(object):
         self.isDarkMode = True
         iconButtonThemeBuilder = IconButton.getThemeBuilder()
         icons = AppIcons()
-        cursors = AppCursors()
         self.themeItems = {}
         self.buttonsWithDarkMode = []
 
@@ -59,15 +58,15 @@ class ApplicationInterface(object):
         self.open_settings_btn = IconButton.render(
             padding=Paddings.RELATIVE_25,
             size=icons.SIZES.LARGE,
-            lightModeIcon=AppUI.paintIcon(icons.SETTINGS, Colors.PRIMARY),
-            darkModeIcon=AppUI.paintIcon(icons.SETTINGS, Colors.white),
+            lightModeIcon=UiUtils.paintIcon(icons.SETTINGS, Colors.PRIMARY),
+            darkModeIcon=UiUtils.paintIcon(icons.SETTINGS, Colors.white),
         )
         self.__addButtonToList(self.open_settings_btn)
         self.minimize_btn = IconButton.render(
             padding=Paddings.RELATIVE_50,
             size=icons.SIZES.MEDIUM,
-            lightModeIcon=AppUI.paintIcon(icons.MINIMIZE, Colors.PRIMARY),
-            darkModeIcon=AppUI.paintIcon(icons.MINIMIZE, Colors.white),
+            lightModeIcon=UiUtils.paintIcon(icons.MINIMIZE, Colors.PRIMARY),
+            darkModeIcon=UiUtils.paintIcon(icons.MINIMIZE, Colors.white),
         )
         self.__addButtonToList(self.minimize_btn)
         self.__addThemeForItem(
@@ -88,13 +87,13 @@ class ApplicationInterface(object):
                 .build(self.minimize_btn.height())
             ),
         )
-        self.minimize_btn.setCursor(cursors.HAND)
+        self.minimize_btn.setCursor(AppCursors.hand())
         self.minimize_btn.clicked.connect(self.MainWindow.showMinimized)
 
         self.close_btn = IconButton.render(
             padding=Paddings.RELATIVE_50,
             size=icons.SIZES.MEDIUM,
-            lightModeIcon=AppUI.paintIcon(icons.CLOSE, Colors.DANGER),
+            lightModeIcon=UiUtils.paintIcon(icons.CLOSE, Colors.DANGER),
         )
         closeBackground = Background(
             borderRadius=0.33,
@@ -108,7 +107,7 @@ class ApplicationInterface(object):
                 .build(self.close_btn.height())
             ),
         )
-        self.close_btn.setCursor(cursors.HAND)
+        self.close_btn.setCursor(AppCursors.hand())
         self.close_btn.clicked.connect(self.MainWindow.close)
 
         self.title_bar.addStretch()
@@ -126,7 +125,7 @@ class ApplicationInterface(object):
                 .build(self.open_settings_btn.height())
             ),
         )
-        self.open_settings_btn.setCursor(cursors.HAND)
+        self.open_settings_btn.setCursor(AppCursors.hand())
         self.open_settings_btn.clicked.connect(self.clickedOpenSettingBtn)
 
         self.__addButtonToList(self.open_settings_btn)

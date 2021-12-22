@@ -16,9 +16,28 @@ from views.ui_application import ApplicationInterface
 
 class Appication:
     def __init__(self):
-        # =================UI=================
         self.ui = ApplicationInterface()
+        self.setupControllers()
+        self.setupData()
 
+    def setupData(self):
+        # =================Settings=================
+        settingsData: dict[str, str] = retrieveSettingsData()
+        self.displaySettingsDataRetrievedFrom(settingsData)
+        self.loadPlaylistFromDirForPlayer(settingsData.get("path"))
+
+        # =================Music Player=================
+        playlists: list[PlaylistInfo] = [
+            PlaylistInfo(0, "ABC", None),
+            PlaylistInfo(1, "BCD", None),
+            PlaylistInfo(2, "EFG", None),
+            PlaylistInfo(3, "HIB", None),
+        ]
+        self.loadPlaylists(playlists)
+        musicPlayerData: dict[str, str] = retrievePlayerData()
+        self.musicPlayer.displayDataRetrievedFrom(musicPlayerData)
+
+    def setupControllers(self):
         # =================Controllers=================
         self.playlistCarousel = PlaylistCarousel(self.ui.playlist_carousel)
         self.musicPlayer = MusicPlayer(self.ui.music_player_inner)
@@ -27,22 +46,6 @@ class Appication:
             "playlistCarousel": self.playlistCarousel,
             "musicPlayer": self.musicPlayer,
         }
-
-        settingsData: dict[str, str] = retrieveSettingsData()
-        musicPlayerData: dict[str, str] = retrievePlayerData()
-
-        playlists: list[PlaylistInfo] = [
-            PlaylistInfo(0, "ABC", None),
-            PlaylistInfo(1, "BCD", None),
-            PlaylistInfo(2, "EFG", None),
-            PlaylistInfo(3, "HIB", None),
-        ]
-
-        self.displaySettingsDataRetrievedFrom(settingsData)
-        self.loadPlaylistFromDirForPlayer(settingsData.get("path"))
-        self.loadPlaylists(playlists)
-        self.musicPlayer.displayDataRetrievedFrom(musicPlayerData)
-
         self.ui.connectSignalsToControllers(self.controllers)
 
     def run(self):

@@ -1,17 +1,15 @@
-from sys import path
+from typing import Any
 
+from modules.screens.qss.qss_elements import Color
 from PyQt5.QtGui import QIcon, QPixmap
+from widgets.scaleable_qpixmap import ScaleAblePixmap
 
 from .color_utils import ColorUtils
 from .icon_utils import IconUtils
 from .pixmap_utils import PixmapUtils
 
-path.append("./lib")
-from modules.screens.qss.qss_elements import Color
-from widgets.scaleable_qpixmap import ScaleAblePixmap
 
-
-class ApplicationUIUtils:
+class UiUtils:
     @staticmethod
     def paintIcon(icon: QIcon, color: Color):
         return IconUtils.colorize(icon, ColorUtils.getQColorFromColor(color))
@@ -41,3 +39,14 @@ class ApplicationUIUtils:
         pixmap = PixmapUtils.cropPixmap(pixmap, width, height, cropCenter)
         pixmap = PixmapUtils.roundPixmap(pixmap, radius)
         return pixmap
+
+    @staticmethod
+    def setAttribute(parent: Any, object: str, index: int, value: Any) -> None:
+        setattr(parent, "_".join([object, str(index)]), value)
+
+    @staticmethod
+    def getAttribute(parent: Any, object: str, index: int) -> Any:
+        try:
+            return getattr(parent, "_".join([object, str(index)]))
+        except AttributeError:
+            return None

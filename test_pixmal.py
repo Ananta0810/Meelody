@@ -16,7 +16,7 @@ class Window(QWidget):
         VBlayout.addWidget(self.viewer)
 
     # def getPixmap(self, coverAsByte: bytes) -> QPixmap:
-    #     pixmap = AppUI.getEditedPixmapFromBytes(
+    #     pixmap = UiUtils.getEditedPixmapFromBytes(
     #         coverAsByte,
     #         width=self.library_cover.width(),
     #         height=self.library_cover.height(),

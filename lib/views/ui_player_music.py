@@ -1,21 +1,19 @@
-from sys import path
-
-from PyQt5.QtCore import QMetaObject, Qt
-from PyQt5.QtGui import QIntValidator, QPixmap
-from PyQt5.QtWidgets import QHBoxLayout, QVBoxLayout, QWidget
-
-path.append("./lib")
 from constants.ui.base import ApplicationImage
 from constants.ui.qss import ColorBoxes, Colors, Paddings
 from constants.ui.qt import AppCursors, AppIcons
 from modules.screens.components.font_builder import FontBuilder
-from modules.screens.components.icon_buttons import IconButton, MultiIconButton, ToggleIconButton
+from modules.screens.components.icon_buttons import (IconButton,
+                                                     MultiIconButton,
+                                                     ToggleIconButton)
 from modules.screens.components.labels import EditableLabel, StandardLabel
 from modules.screens.components.sliders import HorizontalSlider
 from modules.screens.qss.qss_elements import Background
 from modules.screens.themes.theme_builders import ThemeData
+from PyQt5.QtCore import QMetaObject, Qt
+from PyQt5.QtGui import QIntValidator, QPixmap
+from PyQt5.QtWidgets import QHBoxLayout, QVBoxLayout, QWidget
 from utils.helpers.my_string import Stringify
-from utils.ui.application_utils import ApplicationUIUtils as AppUI
+from utils.ui.application_utils import UiUtils
 from widgets.image_displayer import ImageDisplayer
 
 
@@ -105,7 +103,7 @@ class UIPlayerMusic(QWidget):
         self.previous_song_btn = IconButton.render(
             padding=Paddings.RELATIVE_50,
             size=icons.SIZES.LARGE,
-            lightModeIcon=AppUI.paintIcon(icons.PREVIOUS, Colors.PRIMARY),
+            lightModeIcon=UiUtils.paintIcon(icons.PREVIOUS, Colors.PRIMARY),
         )
         self.previous_song_btn.setCursor(cursors.HAND)
         self.play_buttons.addWidget(self.previous_song_btn)
@@ -113,10 +111,10 @@ class UIPlayerMusic(QWidget):
         self.play_btn = ToggleIconButton.render(
             padding=Paddings.RELATIVE_50,
             size=icons.SIZES.XLARGE,
-            lightModeIcon=AppUI.paintIcon(icons.PLAY, Colors.PRIMARY),
-            lightModeCheckedIcon=AppUI.paintIcon(icons.PAUSE, Colors.PRIMARY),
-            darkModeIcon=AppUI.paintIcon(icons.PLAY, Colors.white),
-            darkModeCheckedIcon=AppUI.paintIcon(icons.PAUSE, Colors.white),
+            lightModeIcon=UiUtils.paintIcon(icons.PLAY, Colors.PRIMARY),
+            lightModeCheckedIcon=UiUtils.paintIcon(icons.PAUSE, Colors.PRIMARY),
+            darkModeIcon=UiUtils.paintIcon(icons.PLAY, Colors.white),
+            darkModeCheckedIcon=UiUtils.paintIcon(icons.PAUSE, Colors.white),
         )
         self.__addThemeForItem(
             item=self.play_btn,
@@ -145,7 +143,7 @@ class UIPlayerMusic(QWidget):
         self.next_song_btn = IconButton.render(
             padding=Paddings.RELATIVE_50,
             size=icons.SIZES.LARGE,
-            lightModeIcon=AppUI.paintIcon(icons.NEXT, Colors.PRIMARY),
+            lightModeIcon=UiUtils.paintIcon(icons.NEXT, Colors.PRIMARY),
         )
         self.next_song_btn.setCursor(cursors.HAND)
         self.play_buttons.addWidget(self.next_song_btn)
@@ -197,8 +195,8 @@ class UIPlayerMusic(QWidget):
         self.loop_btn = ToggleIconButton.render(
             size=icons.SIZES.LARGE,
             padding=Paddings.RELATIVE_50,
-            lightModeIcon=AppUI.paintIcon(icons.LOOP, Colors.PRIMARY),
-            lightModeCheckedIcon=AppUI.paintIcon(icons.LOOP, Colors.DANGER),
+            lightModeIcon=UiUtils.paintIcon(icons.LOOP, Colors.PRIMARY),
+            lightModeCheckedIcon=UiUtils.paintIcon(icons.LOOP, Colors.DANGER),
         )
         self.loop_btn.setCursor(cursors.HAND)
         self.right.addWidget(self.loop_btn)
@@ -207,8 +205,8 @@ class UIPlayerMusic(QWidget):
         self.shuffle_btn = ToggleIconButton.render(
             size=icons.SIZES.LARGE,
             padding=Paddings.RELATIVE_50,
-            lightModeIcon=AppUI.paintIcon(icons.SHUFFLE, Colors.PRIMARY),
-            lightModeCheckedIcon=AppUI.paintIcon(icons.SHUFFLE, Colors.DANGER),
+            lightModeIcon=UiUtils.paintIcon(icons.SHUFFLE, Colors.PRIMARY),
+            lightModeCheckedIcon=UiUtils.paintIcon(icons.SHUFFLE, Colors.DANGER),
         )
         self.shuffle_btn.setCursor(cursors.HAND)
         self.right.addWidget(self.shuffle_btn)
@@ -217,8 +215,8 @@ class UIPlayerMusic(QWidget):
         self.love_btn = ToggleIconButton.render(
             size=icons.SIZES.LARGE,
             padding=Paddings.RELATIVE_50,
-            lightModeIcon=AppUI.paintIcon(icons.LOVE, Colors.PRIMARY),
-            lightModeCheckedIcon=AppUI.paintIcon(icons.LOVE, Colors.DANGER),
+            lightModeIcon=UiUtils.paintIcon(icons.LOVE, Colors.PRIMARY),
+            lightModeCheckedIcon=UiUtils.paintIcon(icons.LOVE, Colors.DANGER),
         )
         self.love_btn.setCursor(cursors.HAND)
         self.right.addWidget(self.love_btn)
@@ -228,9 +226,9 @@ class UIPlayerMusic(QWidget):
             size=icons.SIZES.LARGE,
             padding=Paddings.RELATIVE_50,
             icons=[
-                AppUI.paintIcon(icons.VOLUME_UP, Colors.PRIMARY),
-                AppUI.paintIcon(icons.VOLUME_DOWN, Colors.PRIMARY),
-                AppUI.paintIcon(icons.VOLUME_SILENT, Colors.PRIMARY),
+                UiUtils.paintIcon(icons.VOLUME_UP, Colors.PRIMARY),
+                UiUtils.paintIcon(icons.VOLUME_DOWN, Colors.PRIMARY),
+                UiUtils.paintIcon(icons.VOLUME_SILENT, Colors.PRIMARY),
             ],
         )
         self.volume_btn.setCursor(cursors.HAND)
@@ -297,7 +295,7 @@ class UIPlayerMusic(QWidget):
         self.timer_btn = IconButton.render(
             padding=Paddings.RELATIVE_50,
             size=icons.SIZES.LARGE,
-            lightModeIcon=AppUI.paintIcon(icons.TIMER, Colors.PRIMARY),
+            lightModeIcon=UiUtils.paintIcon(icons.TIMER, Colors.PRIMARY),
         )
         self.timer_btn.setCursor(cursors.HAND)
         self.timer_btn.clicked.connect(self.__showTimerInput)
@@ -413,7 +411,7 @@ class UIPlayerMusic(QWidget):
     def __getPixmapForSongCover(self, coverAsByte: bytes) -> QPixmap:
         if coverAsByte is None:
             return None
-        pixmap = AppUI.getSquaredPixmapFromBytes(coverAsByte, edge=self.song_cover.width(), radius=12)
+        pixmap = UiUtils.getSquaredPixmapFromBytes(coverAsByte, edge=self.song_cover.width(), radius=12)
         return pixmap
 
     def __changeVolumeIcon(self) -> None:
@@ -436,8 +434,8 @@ class UIPlayerMusic(QWidget):
         self.timer_input.setVisible(not self.timer_input.isVisible())
         self.volume_slider.setVisible(False)
 
-    def __addThemeForItem(self, item, theme: ThemeData) -> None:
+    def __addThemeForItem(self, item: QWidget, theme: ThemeData) -> None:
         self.themeItems[item] = theme
 
-    def __addButtonToList(self, item) -> None:
+    def __addButtonToList(self, item: QWidget) -> None:
         self.buttonsWithDarkMode.append(item)

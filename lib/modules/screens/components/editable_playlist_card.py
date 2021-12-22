@@ -88,23 +88,19 @@ class EditablePlaylistCard(QWidget):
         self.cover.setPixmap(pixmap)
         self.__adaptItemColorsBaseOnCover()
 
+    def setDefaultCover(self, pixmap: QPixmap):
+        self.cover.setDefaultPixmap(pixmap)
+        self.__adaptItemColorsBaseOnCover()
+
     def setButtonsCursor(self, cursor: QCursor) -> None:
         self.editBtn.setCursros(cursor)
         self.deleteBtn.setCursros(cursor)
 
-    def setDefaultCover(self, pixmap: QPixmap):
-        self.cover.setDefaultPixmap(pixmap)
-
     def setText(self, text: str) -> None:
-        if text is None:
-            text = self._defaultText
         self.label.setText(text)
 
     def setDefaultText(self, text: str) -> None:
-        oldText: str = self._defaultText
-        self._defaultText = text
-        if self.label.text() == oldText:
-            self.label.setText(text)
+        self.label.setDefaultText(text)
 
     def setAnimation(self, animation: Animation) -> None:
         if animation is None:
@@ -112,6 +108,10 @@ class EditablePlaylistCard(QWidget):
         self.cover.setAnimation(
             duration=animation.durationInMs, start=animation.start, end=animation.end, type=self.cover.zoom
         )
+
+    def setDefaultCover(self, pixmap: QPixmap):
+        self.cover.setDefaultPixmap(pixmap)
+        self.__adaptItemColorsBaseOnCover()
 
     def __adaptItemColorsBaseOnCover(self) -> None:
         pixmap = self.getCover()

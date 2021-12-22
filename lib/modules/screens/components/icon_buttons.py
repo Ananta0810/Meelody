@@ -1,7 +1,7 @@
 from abc import ABC, abstractstaticmethod
 from sys import path
 
-from PyQt5.QtCore import QSize
+from PyQt5.QtCore import QObject, QSize
 from PyQt5.QtGui import QIcon
 from PyQt5.QtWidgets import QPushButton
 
@@ -26,7 +26,7 @@ class IconButton(ViewItem):
         size: QSize,
         padding: Padding,
         darkModeIcon: QIcon = None,
-        parent=None,
+        parent: QObject = None,
     ) -> QPushButton:
         button = QIconButton(parent)
         button.setLightModeIcon(lightModeIcon)
@@ -48,7 +48,7 @@ class ToggleIconButton(ViewItem):
         padding: Padding,
         darkModeIcon: QIcon = None,
         darkModeCheckedIcon: QIcon = None,
-        parent=None,
+        parent: QObject = None,
     ) -> QPushButton:
         button = QToggleButton(parent)
         button.setIcon(lightModeIcon)
@@ -70,7 +70,7 @@ class MultiIconButton(ViewItem):
         icons: list[QIcon],
         size: QSize,
         padding: Padding = None,
-        parent=None,
+        parent: QObject = None,
     ) -> QPushButton:
         button = QMultipleIconButton(parent)
         button.setIconList(icons)
