@@ -1,10 +1,12 @@
+from constants.ui.base import ApplicationImage
 from constants.ui.qss import ColorBoxes, Colors, Paddings
 from constants.ui.qt import AppCursors, AppIcons
 from modules.screens.components.icon_buttons import IconButton
+from modules.screens.components.playlist_info import PlaylistInfo
 from modules.screens.qss.qss_elements import Background
 from modules.screens.themes.theme_builders import ThemeData
 from PyQt5.QtCore import QMetaObject, Qt
-from PyQt5.QtWidgets import QGraphicsDropShadowEffect, QHBoxLayout, QVBoxLayout, QWidget
+from PyQt5.QtWidgets import QGraphicsDropShadowEffect, QHBoxLayout, QScrollArea, QVBoxLayout, QWidget
 from utils.ui.application_utils import UiUtils
 from utils.ui.color_utils import ColorUtils
 from widgets.framless_window import FramelessWindow
@@ -43,25 +45,26 @@ class ApplicationInterface(object):
 
         self.main_layout = QVBoxLayout(self.home_screen)
         self.main_layout.setContentsMargins(0, 0, 0, 0)
+        self.main_layout.setSpacing(0)
 
         self.title_bar = QHBoxLayout()
         self.title_bar.setContentsMargins(12, 12, 12, 12)
         self.title_bar.setSpacing(8)
 
-        self.body = QVBoxLayout()
-        self.body.setContentsMargins(0, 0, 0, 0)
-        self.body.setSpacing(0)
+        self.body = QScrollArea()
+        self.body.setVerticalScrollBarPolicy(Qt.ScrollBarAlwaysOff)
+        self.body.setHorizontalScrollBarPolicy(Qt.ScrollBarAlwaysOff)
+        self.body.setWidgetResizable(True)
+        self.body.setStyleSheet("background:transparent;border:none")
+        self.body_inner = QWidget()
+        self.body.setWidget(self.body_inner)
+        self.body_layout = QVBoxLayout(self.body_inner)
+        self.body_layout.setContentsMargins(0, 0, 0, 0)
+        self.body_layout.setSpacing(0)
 
         self.main_layout.addLayout(self.title_bar)
-        self.main_layout.addLayout(self.body)
+        self.main_layout.addWidget(self.body)
 
-        self.open_settings_btn = IconButton.render(
-            padding=Paddings.RELATIVE_25,
-            size=icons.SIZES.LARGE,
-            lightModeIcon=UiUtils.paintIcon(icons.SETTINGS, Colors.PRIMARY),
-            darkModeIcon=UiUtils.paintIcon(icons.SETTINGS, Colors.white),
-        )
-        self.__addButtonToList(self.open_settings_btn)
         self.minimize_btn = IconButton.render(
             padding=Paddings.RELATIVE_50,
             size=icons.SIZES.MEDIUM,
@@ -95,15 +98,16 @@ class ApplicationInterface(object):
             size=icons.SIZES.MEDIUM,
             lightModeIcon=UiUtils.paintIcon(icons.CLOSE, Colors.DANGER),
         )
-        closeBackground = Background(
-            borderRadius=0.33,
-            color=ColorBoxes.DANGER_LIGHTEN_50,
-        )
         self.__addThemeForItem(
             self.close_btn,
             theme=(
-                iconButtonThemeBuilder.addLightModeBackground(closeBackground)
-                .addDarkModeBackground(closeBackground)
+                iconButtonThemeBuilder.addLightModeBackground(
+                    Background(
+                        borderRadius=0.33,
+                        color=ColorBoxes.DANGER_LIGHTEN_50,
+                    )
+                )
+                .addDarkModeBackground(None)
                 .build(self.close_btn.height())
             ),
         )
@@ -117,13 +121,16 @@ class ApplicationInterface(object):
         self.menu_bar = QHBoxLayout()
         self.menu_bar.setContentsMargins(20, 0, 20, 0)
 
+        self.open_settings_btn = IconButton.render(
+            padding=Paddings.RELATIVE_25,
+            size=icons.SIZES.LARGE,
+            lightModeIcon=UiUtils.paintIcon(icons.SETTINGS, Colors.PRIMARY),
+            darkModeIcon=UiUtils.paintIcon(icons.SETTINGS, Colors.white),
+        )
+        self.__addButtonToList(self.open_settings_btn)
         self.__addThemeForItem(
             self.open_settings_btn,
-            theme=(
-                iconButtonThemeBuilder.addLightModeBackground(None)
-                .addDarkModeBackground(None)
-                .build(self.open_settings_btn.height())
-            ),
+            theme=(iconButtonThemeBuilder.addLightModeBackground(None).build(icons.SIZES.LARGE.height())),
         )
         self.open_settings_btn.setCursor(AppCursors.hand())
         self.open_settings_btn.clicked.connect(self.clickedOpenSettingBtn)
@@ -135,10 +142,22 @@ class ApplicationInterface(object):
         self.playlist_carousel = UiPlaylistCarousel()
         self.playlist_carousel.setFixedHeight(360)
         self.playlist_carousel.setStyleSheet("background:transparent;border:none")
-        self.playlist_carousel.main_layout.setContentsMargins(93, 10, 70, 0)
+        self.playlist_carousel.main_layout.setContentsMargins(100, 0, 50, 0)
 
-        self.body.addLayout(self.menu_bar)
-        self.body.addWidget(self.playlist_carousel)
+        self.currentPlaylist = QHBoxLayout()
+        self.currentPlaylist.setAlignment(Qt.AlignLeft)
+        self.currentPlaylist.setContentsMargins(100, 50, 50, 50)
+        self.playlist_info = QVBoxLayout()
+
+        self.playlist_info = PlaylistInfo()
+        self.playlist_info.setDefaultCover(ApplicationImage.defaultPlaylistCover)
+
+        self.currentPlaylist.addLayout(self.playlist_info)
+
+        self.body_layout.addLayout(self.menu_bar)
+        self.body_layout.addWidget(self.playlist_carousel)
+        self.body_layout.addLayout(self.currentPlaylist)
+        # self.body_layout.addStretch()
 
         self.music_player = QWidget()
         self.music_player.setFixedHeight(96)
@@ -178,6 +197,7 @@ class ApplicationInterface(object):
         self.settings_panel_inner.connectSignalsToController(controllers.get("application"))
         self.music_player_inner.connectSignalsToController(controllers.get("musicPlayer"))
         self.playlist_carousel.connectSignalsToController(controllers.get("playlistCarousel"))
+        # self.playlsit_carousel.connectSignalsToController(controllers.get("playlistSelector"))
 
     def switchDarkMode(self, mode) -> None:
         self.isDarkMode = mode
@@ -194,6 +214,7 @@ class ApplicationInterface(object):
         self.settings_panel_inner.lightMode()
         self.music_player_inner.lightMode()
         self.playlist_carousel.lightMode()
+        self.playlist_info.lightMode()
 
         for button in self.buttonsWithDarkMode:
             button.setDarkMode(False)
@@ -208,6 +229,7 @@ class ApplicationInterface(object):
         self.settings_panel_inner.darkMode()
         self.music_player_inner.darkMode()
         self.playlist_carousel.darkMode()
+        self.playlist_info.darkMode()
 
         for button in self.buttonsWithDarkMode:
             button.setDarkMode(True)

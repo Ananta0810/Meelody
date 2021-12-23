@@ -17,48 +17,23 @@ class PlaylistCarousel:
         self.playlists = playlists
 
     def addPlaylistsToUi(self):
-        for playlist in self.playlists:
-            position = self.ui.addNewEmptyPlaylist(controller=self)
-            self.ui.displayPlaylistInfoAtIndex(position, playlist.name, playlist.cover)
-
-    def updatePlaylistsToUi(self):
-        self.__refreshLayoutSoThatUiDisplayingEnoughNumberOfPlaylists()
         for index, playlist in enumerate(self.playlists):
-            self.ui.showPlaylistAtIndex(index)
+            self.ui.addNewEmptyPlaylist(controller=self)
             self.ui.displayPlaylistInfoAtIndex(index, playlist.name, playlist.cover)
 
-    def __refreshLayoutSoThatUiDisplayingEnoughNumberOfPlaylists(self):
-        numberOfPlaylistDisplaying = self.ui.getTotalPlaylistInLayout()
-        totalOfPlaylists = len(self.playlists)
-
-        numberOfLackingPlaylists = totalOfPlaylists - numberOfPlaylistDisplaying
-        if numberOfLackingPlaylists == 0:
-            return
-
-        isDisplayingMoreThanNumberOfPlaylists = numberOfLackingPlaylists < 0
-        if isDisplayingMoreThanNumberOfPlaylists:
-            self.ui.hidePlaylistInRange(totalOfPlaylists - 1, numberOfPlaylistDisplaying)
-            return
-
-        isDisplayingLessThanNumberOfPlaylists = numberOfLackingPlaylists > 0
-        if isDisplayingLessThanNumberOfPlaylists:
-            self.ui.addPlaylists(numberOfLackingPlaylists)
+    def updatePlaylistsToUi(self):
+        self.ui.updateLayout(len(self.playlists), controller=self)
+        for index, playlist in enumerate(self.playlists):
+            self.ui.displayPlaylistInfoAtIndex(index, playlist.name, playlist.cover)
 
     def handleAddNewPlaylist(self):
-        lastPlaylist = self.playlists[len(self.playlists) - 1]
-        if lastPlaylist.isNull():
-            return
-
+        playlistCount = len(self.playlists)
+        if playlistCount > 0:
+            lastPlaylist = self.playlists[playlistCount - 1]
+            if lastPlaylist.isNull():
+                return
         self.playlists.append(PlaylistInfo())
-        countOfPlaylistsDisplaying = self.ui.getNumberOfPlaylistDisplaying()
-        totalPlaylistAvailable = self.ui.getTotalPlaylistInLayout()
-
-        isHiddingPlaylist: bool = countOfPlaylistsDisplaying < totalPlaylistAvailable
-        if isHiddingPlaylist:
-            newPlaylistIndex = countOfPlaylistsDisplaying
-            self.ui.showPlaylistAtIndex(newPlaylistIndex)
-            return
-        self.ui.addNewEmptyPlaylist(self)
+        self.ui.updateLayout(len(self.playlists), controller=self)
 
     def handleSelectedLibrary(self):
         print("clicked library")
@@ -70,6 +45,8 @@ class PlaylistCarousel:
         print(playlistIndex)
 
     def handleChangedPlaylistName(self, playlistIndex: int, newName: str):
+        if not (0 <= playlistIndex < len(self.playlists)):
+            return
         currentName = self.playlists[playlistIndex].name
         userHasChangedPlaylistName: bool = (
             True if currentName is None else UnicodeString.compare(currentName, newName) != 0
@@ -82,6 +59,8 @@ class PlaylistCarousel:
         self.playlists[playlistIndex].name = newName
 
     def handleChangedPlaylistCover(self, playlistIndex: int, coverPath: str):
+        if not (0 <= playlistIndex < len(self.playlists)):
+            return
         if len(coverPath) == 0:
             return
         cover: bytes = MyBytes.getBytesFromFile(coverPath)

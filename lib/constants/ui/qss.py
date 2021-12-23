@@ -35,11 +35,27 @@ class Colors(metaclass=MetaConst):
 
 class ColorBoxes(metaclass=MetaConst):
     TRANSPARENT = ColorBox(Colors.TRANSPARENT)
-    PRIMARY = ColorBox(Colors.PRIMARY)
     BLACK = ColorBox(Colors.BLACK)
     WHITE = ColorBox(Colors.white)
     GRAY = ColorBox(Colors.BLACK.withAlpha(0.5))
     DANGER = ColorBox(Colors.DANGER)
+
+    PRIMARY = ColorBox(Colors.PRIMARY)
+    PRIMARY_HOVERABLE = ColorBox(
+        normal=Colors.PRIMARY.withAlpha(0.83),
+        active=Colors.PRIMARY,
+    )
+    PRIMARY_LIGHTEN_50 = ColorBox(normal=Colors.PRIMARY.withAlpha(0.33))
+    PRIMARY_LIGHTEN_HOVERABLE_50 = ColorBox(
+        normal=Colors.PRIMARY.withAlpha(0.33),
+        active=Colors.PRIMARY.withAlpha(0.50),
+    )
+
+    PRIMARY_LIGHTEN_HOVERABLE_25 = ColorBox(
+        normal=Colors.PRIMARY.withAlpha(0.15),
+        active=Colors.PRIMARY.withAlpha(0.25),
+    )
+    PRIMARY_LIGHTEN_25 = ColorBox(normal=Colors.PRIMARY.withAlpha(0.15))
 
     BLACK_LIGHTEN = ColorBox(
         normal=Colors.BLACK.withAlpha(0.08),
@@ -63,16 +79,7 @@ class ColorBoxes(metaclass=MetaConst):
         normal=Colors.BLACK.withAlpha(0.4),
         active=Colors.BLACK.withAlpha(0.6),
     )
-    PRIMARY_LIGHTEN_25 = ColorBox(normal=Colors.PRIMARY.withAlpha(0.15))
-    PRIMARY_LIGHTEN_50 = ColorBox(normal=Colors.PRIMARY.withAlpha(0.33))
-    PRIMARY_LIGHTEN_HOVERABLE_25 = ColorBox(
-        normal=Colors.PRIMARY.withAlpha(0.15),
-        active=Colors.PRIMARY.withAlpha(0.25),
-    )
-    PRIMARY_LIGHTEN_HOVERABLE_50 = ColorBox(
-        normal=Colors.PRIMARY.withAlpha(0.33),
-        active=Colors.PRIMARY.withAlpha(0.50),
-    )
+
     SUCCESS = ColorBox(
         normal=Colors.SUCCESS.withAlpha(0.15),
         active=Colors.SUCCESS.withAlpha(0.25),

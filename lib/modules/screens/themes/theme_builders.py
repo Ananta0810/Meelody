@@ -1,17 +1,12 @@
 from abc import ABC, abstractmethod
 
-from modules.screens.qss.qss_elements import (
-    Background,
-    Color,
-    ColorBox,
-    Padding,
-)
+from modules.screens.qss.qss_elements import Background, Color, ColorBox, Padding
 
 
 class ThemeData:
-    def __init__(self, lightMode, darkMode):
+    def __init__(self, lightMode, darkMode=None):
         self.lightMode = lightMode
-        self.darkMode = darkMode or lightMode
+        self.darkMode = lightMode if darkMode is None else darkMode
 
     def __str__(self):
         return f"Light: {self.lightMode}, Dark: {self.darkMode}"
@@ -283,13 +278,9 @@ class ButtonThemeBuilder(ThemeBuilder):
     ):
         styleSheet = ""
         if background is not None:
-            styleSheet += BackgroundBuilder().export(
-                "QPushButton", buttonSize, textColor, background
-            )
+            styleSheet += BackgroundBuilder().export("QPushButton", buttonSize, textColor, background)
         if checkedBackground is not None:
-            styleSheet += BackgroundBuilder().export(
-                "QPushButton:checked", buttonSize, textColor, checkedBackground
-            )
+            styleSheet += BackgroundBuilder().export("QPushButton:checked", buttonSize, textColor, checkedBackground)
         return styleSheet
 
 
@@ -322,9 +313,7 @@ class LabelThemeBuilder(ThemeBuilder):
         return self
 
     def build(self, itemSize: int = 0) -> ThemeData:
-        lightMode = self.__buildTheme(
-            itemSize, self.lightModeTextColor, self.lightModeBackground
-        )
+        lightMode = self.__buildTheme(itemSize, self.lightModeTextColor, self.lightModeBackground)
         darkMode = self.__buildTheme(
             itemSize,
             self.darkModeTextColor or self.lightModeTextColor,
@@ -332,12 +321,45 @@ class LabelThemeBuilder(ThemeBuilder):
         )
         return ThemeData(lightMode, darkMode)
 
-    def __buildTheme(
-        self, itemSize: int, textColor: ColorBox, background: Background
-    ) -> str:
-        return BackgroundBuilder().export(
-            "QLineEdit", itemSize, textColor, background, padding=self.padding
+    def __buildTheme(self, itemSize: int, textColor: ColorBox, background: Background) -> str:
+        return BackgroundBuilder().export("QLineEdit", itemSize, textColor, background, padding=self.padding)
+
+
+class ActionButtonThemeBuilder(ThemeBuilder):
+    def __init__(self):
+        self.lightModeTextColor = None
+        self.darkModeTextColor = None
+        self.lightModeBackground = None
+        self.darkModeBackground = None
+        self.padding = 0
+
+    def addLightModeTextColor(self, color: ColorBox):
+        self.lightModeTextColor = color
+        return self
+
+    def addDarkModeTextColor(self, color: ColorBox):
+        self.darkModeTextColor = color
+        return self
+
+    def addLightModeBackground(self, background: Background):
+        self.lightModeBackground = background
+        return self
+
+    def addDarkModeBackground(self, background: Background):
+        self.darkModeBackground = background
+        return self
+
+    def build(self, itemSize: int = 0) -> ThemeData:
+        lightMode = self.__buildTheme(itemSize, self.lightModeTextColor, self.lightModeBackground)
+        darkMode = self.__buildTheme(
+            itemSize,
+            self.darkModeTextColor or self.lightModeTextColor,
+            self.darkModeBackground or self.lightModeBackground,
         )
+        return ThemeData(lightMode, darkMode)
+
+    def __buildTheme(self, itemSize: int, textColor: ColorBox, background: Background) -> str:
+        return BackgroundBuilder().export("QPushButton", itemSize, textColor, background)
 
 
 class BackgroundBuilder:
@@ -349,26 +371,11 @@ class BackgroundBuilder:
         background: Background,
         padding: int = 0,
     ):
-        normalContent = self.buildContent(
-            padding, textColor, background, elementSize
-        )
-        hoverContent = self.buildContent(
-            padding, textColor, background, elementSize, isHover=True
-        )
-        return (
-            f"{element}"
-            + "{"
-            + f"{normalContent}"
-            + "}"
-            + f"{element}:hover"
-            + "{"
-            + f"{hoverContent}"
-            + "}"
-        )
+        normalContent = self.buildContent(padding, textColor, background, elementSize)
+        hoverContent = self.buildContent(padding, textColor, background, elementSize, isHover=True)
+        return f"{element}" + "{" + f"{normalContent}" + "}" + f"{element}:hover" + "{" + f"{hoverContent}" + "}"
 
-    def buildContent(
-        self, padding, color, background, elementSize, isHover=False
-    ):
+    def buildContent(self, padding, color, background, elementSize, isHover=False):
         content = ""
         if color is not None:
             content += f"color:{color.toStylesheet(isHover)};"
@@ -380,7 +387,7 @@ class BackgroundBuilder:
                 + f"background-color:{background.colorStyleSheet(isHover)};"
             )
             if background is not None
-            else "border:none;background:transparent;"
+            else "border:none;background-color:transparent;"
         )
         return content
 

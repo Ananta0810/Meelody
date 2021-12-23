@@ -108,7 +108,8 @@ class SettingsWindow(QWidget):
         self.header.addStretch()
 
         self.settings_label = StandardLabel.render(fontBuilder.withSize(24).withWeight("bold").build())
-        self.settings_label.setFixedWidth(200)
+        # self.settings_label.setFixedWidth(200)
+        self.settings_label.setStyleSheet("background:red")
         self.__addThemeForItem(self.settings_label, itemTextStyle)
         self.body.addWidget(self.settings_label)
 

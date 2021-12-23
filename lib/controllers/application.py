@@ -3,6 +3,7 @@ from time import perf_counter
 
 from music_player import MusicPlayer
 from playlist_carousel import PlaylistCarousel
+from playlist_chooser import PlaylistSelector
 
 path.append("./lib")
 from constants.application import supportedLanguages
@@ -38,13 +39,14 @@ class Appication:
         self.musicPlayer.displayDataRetrievedFrom(musicPlayerData)
 
     def setupControllers(self):
-        # =================Controllers=================
         self.playlistCarousel = PlaylistCarousel(self.ui.playlist_carousel)
         self.musicPlayer = MusicPlayer(self.ui.music_player_inner)
+        self.playlistSelector = PlaylistSelector(self.ui)
         self.controllers = {
             "application": self,
             "playlistCarousel": self.playlistCarousel,
             "musicPlayer": self.musicPlayer,
+            "playlistSelector": self.playlistSelector,
         }
         self.ui.connectSignalsToControllers(self.controllers)
 

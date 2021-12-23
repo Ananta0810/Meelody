@@ -2,9 +2,7 @@ from constants.ui.base import ApplicationImage
 from constants.ui.qss import ColorBoxes, Colors, Paddings
 from constants.ui.qt import AppCursors, AppIcons
 from modules.screens.components.font_builder import FontBuilder
-from modules.screens.components.icon_buttons import (IconButton,
-                                                     MultiIconButton,
-                                                     ToggleIconButton)
+from modules.screens.components.icon_buttons import IconButton, MultiIconButton, ToggleIconButton
 from modules.screens.components.labels import EditableLabel, StandardLabel
 from modules.screens.components.sliders import HorizontalSlider
 from modules.screens.qss.qss_elements import Background
