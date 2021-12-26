@@ -1,14 +1,13 @@
-from typing import Optional, Union
+from typing import Optional
 
 from constants.ui.qss import Backgrounds, ColorBoxes, Colors, Paddings
 from constants.ui.qt import AppCursors, AppIcons
 from modules.screens.components.font_builder import FontBuilder
 from modules.screens.components.icon_buttons import IconButton
 from modules.screens.components.labels import StandardLabel
-from modules.screens.themes.theme_builders import ButtonThemeBuilder, LabelThemeBuilder, ThemeData
+from modules.screens.themes.theme_builders import ButtonThemeBuilder, LabelThemeBuilder
 from PyQt5.QtCore import Qt
-from PyQt5.QtGui import *
-from PyQt5.QtWidgets import *
+from PyQt5.QtWidgets import QHBoxLayout, QWidget
 from utils.ui.application_utils import UiUtils
 
 from views.view import View
@@ -21,9 +20,9 @@ class PlaylistTableHeader(QWidget, View):
         self.setText()
 
     def setupUi(self) -> None:
-        # self.setAttribute(Qt.style)
+        SCROLLBAR_WIDTH = 4
         self.mainLayout = QHBoxLayout(self)
-        self.mainLayout.setContentsMargins(28, 0, 28, 0)
+        self.mainLayout.setContentsMargins(28, 0, 28 + SCROLLBAR_WIDTH, 0)
         self.mainLayout.setSpacing(0)
         self.setAttribute(Qt.WA_StyledBackground, True)
 
@@ -32,14 +31,15 @@ class PlaylistTableHeader(QWidget, View):
         self.info.setSpacing(24)
 
         self.buttons = QWidget()
-        self.buttons.setFixedWidth(178)
         self.buttonsLayout = QHBoxLayout(self.buttons)
         self.buttonsLayout.setAlignment(Qt.AlignRight)
+        self.buttonsLayout.setSpacing(8)
+        self.buttonsLayout.setContentsMargins(8, 0, 8, 0)
 
         self.mainLayout.addLayout(self.info)
         self.mainLayout.addWidget(self.buttons)
 
-        font: QFont = FontBuilder().withSize(9).build()
+        font = FontBuilder().withSize(9).build()
         labelTheme = (
             LabelThemeBuilder().addLightModeTextColor(ColorBoxes.BLACK).addDarkModeTextColor(ColorBoxes.WHITE).build()
         )
@@ -69,6 +69,9 @@ class PlaylistTableHeader(QWidget, View):
             .addDarkModeBackground(Backgrounds.CIRCLE_WHITE_25)
             .build(icons.SIZES.LARGE.height())
         )
+
+        self.buttonsLayout.addSpacing(48)
+        self.buttonsLayout.addSpacing(8)
 
         self.downloadSongsBtn = IconButton.render(
             size=icons.SIZES.LARGE,

@@ -2,11 +2,12 @@ from typing import Optional
 
 from constants.ui.qss import Colors, Paddings
 from constants.ui.qt import AppCursors, AppIcons, IconSizes
+from modules.screens.components.font_builder import FontBuilder
 from modules.screens.components.icon_buttons import IconButton, ToggleIconButton
 from modules.screens.components.labels import DoubleClickedEditableLabel, StandardLabel
 from modules.screens.themes.theme_builders import ThemeData
 from PyQt5.QtCore import Qt
-from PyQt5.QtGui import QFont, QPixmap
+from PyQt5.QtGui import QPixmap
 from PyQt5.QtWidgets import QHBoxLayout, QWidget
 from utils.helpers.my_string import Stringify
 from utils.ui.application_utils import UiUtils
@@ -19,26 +20,21 @@ class SongItem(QWidget, View):
     def __init__(
         self,
         theme: ThemeData,
-        font: QFont,
         labelThemes: dict[str, ThemeData],
         buttonThemes: dict[str, ThemeData],
         parent: Optional["QWidget"] = None,
     ):
         super(SongItem, self).__init__(parent)
-        self.defaultTitle = ""
         self.defaultArtist = ""
-        self.defaultLength = 0
-        self.setupUi(theme, font, labelThemes, buttonThemes)
+        self.setupUi(theme, labelThemes, buttonThemes)
 
     def setupUi(
         self,
         theme: ThemeData,
-        font: QFont,
         labelThemes: dict[str, ThemeData],
         buttonThemes: dict[str, ThemeData],
     ) -> None:
         self.setAttribute(Qt.WA_StyledBackground, True)
-        self.setStyleSheet("background:red")
         self._addThemeForItem(
             self,
             theme=ThemeData(
@@ -76,6 +72,7 @@ class SongItem(QWidget, View):
         self.info.addWidget(self.cover)
         self.coverObserver = ClickObserver(self.cover)
 
+        font = FontBuilder().withSize(10).build()
         self.title = DoubleClickedEditableLabel.render(font)
         self._addThemeForItem(self.title, labelThemes.get("PRIMARY"))
         self.info.addWidget(self.title, 1)
@@ -208,14 +205,8 @@ class SongItem(QWidget, View):
     def setDefaultCover(self, pixmap: QPixmap) -> None:
         self.cover.setDefaultPixmap(pixmap)
 
-    def setDefaultTitle(self, title: str) -> None:
-        self.defaultTitle = title
-
     def setDefaultArtist(self, artist: str) -> None:
         self.defaultArtist = artist
-
-    def setDefaultLength(self, length: float) -> None:
-        self.defaultLength = length
 
     def clearInfo(self):
         self.setCover(None)

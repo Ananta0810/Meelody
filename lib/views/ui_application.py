@@ -148,7 +148,6 @@ class ApplicationInterface(View):
         self.body_layout.addLayout(self.menu_bar)
         self.body_layout.addWidget(self.playlist_carousel)
         self.body_layout.addLayout(self.currentPlaylist)
-        # self.body_layout.addStretch()
 
         self.music_player = QWidget()
         self.music_player.setFixedHeight(96)

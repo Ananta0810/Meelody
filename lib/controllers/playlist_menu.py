@@ -34,6 +34,9 @@ class PlaylistMenu:
         for index, song in enumerate(songs):
             self.ui.displaySongInfoAtIndex(index, song.cover, song.title, song.artist, song.length)
 
+    def handleFindSongInsertIndexWithTitle(self, title) -> int:
+        return self.playlist.findSongInsertPosition(title)
+
     def handleChangedLoveStateOfSongAtIndex(self, index: int, isLoved: bool) -> None:
         if self.playlist is None:
             return

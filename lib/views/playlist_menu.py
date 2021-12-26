@@ -19,7 +19,7 @@ class PlaylistTable(QWidget):
         self.mainLayout.setContentsMargins(0, 0, 0, 0)
 
         self.header = PlaylistTableHeader()
-        self.header.setFixedHeight(64)
+        self.header.setFixedHeight(48)
         self.body = PlaylistTableBody()
 
         self.mainLayout.addWidget(self.header)

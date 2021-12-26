@@ -1,12 +1,11 @@
-from functools import cached_property
-
 from constants.ui.base import ApplicationImage
 from constants.ui.qss import Backgrounds, ColorBoxes
-from constants.ui.qt import AppCursors, AppIcons
+from constants.ui.qt import IconSizes
 from modules.screens.components.confirm_message import ConfirmMessage
-from modules.screens.components.font_builder import FontBuilder
 from modules.screens.components.song_item import SongItem
-from modules.screens.themes.theme_builders import ButtonThemeBuilder, LabelThemeBuilder, ThemeData
+from modules.screens.themes.theme_builders import (ButtonThemeBuilder,
+                                                   LabelThemeBuilder,
+                                                   ThemeData)
 from PyQt5.QtCore import QEvent, Qt, pyqtSignal
 from PyQt5.QtGui import QKeyEvent, QPixmap
 from PyQt5.QtWidgets import QFileDialog, QVBoxLayout, QWidget
@@ -29,18 +28,18 @@ class PlaylistTableBody(SmoothVerticalScrollArea, View):
         return super().keyPressEvent(event)
 
     def setupUi(self):
-        self.icons = AppIcons()
-        self.setStyleSheet(
-            "QScrollBar:vertical {border:none;background:TRANSPARENT;width:4px}\n"
-            "QScrollBar::handle:vertical {background:rgba(160,160,160, 0.5);border-radius:2px}\n"
-            "QScrollBar::handle:vertical:hover{background:#8040ff}\n"
-            "QScrollBar::sub-line:vertical{border:none}\n"
-            "QScrollBar::add-line:vertical{border:none}\n"
-            "QScrollBar::up-arrow:vertical,QScrollBar::down-arrow:vertical{background: none}\n"
-            "QScrollBar::add-page:vertical,QScrollBar::sub-page:vertical{background: none}"
-        )
+        self.setContentsMargins(0, 0, 0, 0)
         self.setHorizontalScrollBarPolicy(Qt.ScrollBarAlwaysOff)
         self.setWidgetResizable(True)
+        self.setStyleSheet(
+            "QScrollBar:vertical{border:none;background:TRANSPARENT;width:4px}"
+            "QScrollBar::handle:vertical{background:rgba(160,160,160,0.5);border-radius:2px}"
+            "QScrollBar::handle:vertical:hover{background:#8040ff}"
+            "QScrollBar::sub-line:vertical{border:none}"
+            "QScrollBar::add-line:vertical{border:none}"
+            "QScrollBar::add-page:vertical,QScrollBar::sub-page:vertical{background:none}"
+            "QScrollBar::up-arrow:vertical,QScrollBar::down-arrow:vertical{background:none}"
+        )
 
         self.inner = QWidget(self)
         self.setWidget(self.inner)
@@ -48,7 +47,7 @@ class PlaylistTableBody(SmoothVerticalScrollArea, View):
         self.menu = QVBoxLayout(self.inner)
         self.menu.setAlignment(Qt.AlignTop)
         self.menu.setSpacing(0)
-        self.menu.setContentsMargins(8, 8, 8, 8)
+        self.menu.setContentsMargins(8, 0, 8, 8)
         self.setItemHeight(104)
 
     def getKeyFromEvent(self, event: QKeyEvent, controller=None) -> None:
@@ -56,7 +55,8 @@ class PlaylistTableBody(SmoothVerticalScrollArea, View):
         if not isHoldingALT:
             return
         try:
-            index = controller.playlist.findSongInsertPosition(chr(event.key()))
+            key = chr(event.key())
+            index = controller.handleFindSongInsertIndexWithTitle(key)
             self.scrollToItem(index)
         except ValueError:
             pass
@@ -65,34 +65,32 @@ class PlaylistTableBody(SmoothVerticalScrollArea, View):
         self.keyPressed.connect(lambda event: self.getKeyFromEvent(event, controller))
 
     def lightMode(self) -> None:
-        self.isDarkMode = False
+        super().lightMode()
         songCount = self.getTotalSongAvailable()
         for index in range(0, songCount):
             self.__getSongByIndex(index).lightMode()
-        super().lightMode()
 
     def darkMode(self) -> None:
-        self.isDarkMode = True
+        super().darkMode()
         songCount = self.getTotalSongAvailable()
         for index in range(0, songCount):
             self.__getSongByIndex(index).darkMode()
-        super().darkMode()
 
-    def updateLayout(self, totalPlaylistAvailable: int, controller) -> None:
-        totalPlaylistDisplaying = self.getTotalSongAvailable()
+    def updateLayout(self, totalItem: int, controller) -> None:
+        itemsDisplaying = self.getTotalSongAvailable()
 
-        if totalPlaylistAvailable == 0:
+        if totalItem == 0:
             self.__showPlaylistEmptyNotification()
-            self.__removePlaylistsInRange(totalPlaylistAvailable, totalPlaylistDisplaying)
+            self.__removePlaylistsInRange(totalItem, itemsDisplaying)
             return
 
-        totalPlaylistLacking = totalPlaylistAvailable - totalPlaylistDisplaying
+        totalPlaylistLacking = totalItem - itemsDisplaying
         if totalPlaylistLacking == 0:
             return
 
         isDisplayingMoreThanNumberOfPlaylists = totalPlaylistLacking < 0
         if isDisplayingMoreThanNumberOfPlaylists:
-            self.__removePlaylistsInRange(totalPlaylistAvailable, totalPlaylistDisplaying)
+            self.__removePlaylistsInRange(totalItem, itemsDisplaying)
             return
 
         isDisplayingLessThanNumberOfPlaylists = totalPlaylistLacking > 0
@@ -137,50 +135,45 @@ class PlaylistTableBody(SmoothVerticalScrollArea, View):
     def __addLackingPlaylists(self, numberOfPlaylist: int, controller) -> None:
         defaultValues: dict = {
             "cover": self.__getPixmapForSongCover(ApplicationImage.defaultSongCover),
-            "title": "title",
-            "artist": "",
-            "length": 0,
             "theme": ThemeData(
                 lightMode="QWidget{background-color:rgba(0, 0, 0, 0.1);border-radius:16px}QWidget:hover{background-color:rgba(0, 0, 0, 0.15)}",
                 darkMode="QWidget{background-color:rgba(255, 255, 255, 0.1);border-radius:16px}QWidget:hover{background-color:rgba(255, 255, 255, 0.15)}",
             ),
             "labels": {
-                "font": FontBuilder().withSize(10).withWeight("normal").build(),
                 "themes": {
                     "PRIMARY": (
                         LabelThemeBuilder()
                         .addLightModeTextColor(ColorBoxes.BLACK)
                         .addDarkModeTextColor(ColorBoxes.WHITE)
-                        .build(itemSize=self.icons.SIZES.LARGE.height())
+                        .build(itemSize=IconSizes.LARGE.height())
                     ),
                     "secondary": (
                         LabelThemeBuilder()
                         .addLightModeTextColor(ColorBoxes.GRAY)
                         .addDarkModeTextColor(ColorBoxes.GRAY)
-                        .build(itemSize=self.icons.SIZES.LARGE.height())
+                        .build(itemSize=IconSizes.LARGE.height())
                     ),
                 },
             },
             "buttons": {
-                "cursors": AppCursors(),
                 "themes": {
                     "PRIMARY": (
                         ButtonThemeBuilder()
-                        .addLightModeBackground(Backgrounds.CIRCLE_HIDDEN_PRIMARY)
-                        .addDarkModeBackground(Backgrounds.CIRCLE_HIDDEN_WHITE)
-                        .build(itemSize=self.icons.SIZES.LARGE.height())
+                        .addLightModeBackground(Backgrounds.CIRCLE_HIDDEN_PRIMARY_25)
+                        .addDarkModeBackground(Backgrounds.CIRCLE_HIDDEN_WHITE_25)
+                        .build(itemSize=IconSizes.LARGE.height())
                     ),
                     "secondary": (
                         ButtonThemeBuilder()
                         .addLightModeBackground(Backgrounds.CIRCLE_PRIMARY_25)
                         .addDarkModeBackground(Backgrounds.CIRCLE_WHITE_25)
-                        .build(itemSize=self.icons.SIZES.LARGE.height())
+                        .build(itemSize=IconSizes.LARGE.height())
                     ),
                     "DANGER": (
                         ButtonThemeBuilder()
                         .addLightModeBackground(Backgrounds.CIRCLE_DANGER)
                         .addDarkModeBackground(None)
-                        .build(itemSize=self.icons.SIZES.MEDIUM.height())
+                        .build(itemSize=IconSizes.MEDIUM.height())
                     ),
                 },
             },
@@ -211,14 +204,11 @@ class PlaylistTableBody(SmoothVerticalScrollArea, View):
     def __addSong(self, index: int, values: dict):
         song = SongItem(
             theme=values.get("theme"),
-            font=values.get("labels").get("font"),
             labelThemes=values.get("labels").get("themes"),
             buttonThemes=values.get("buttons").get("themes"),
         )
         song.setDefaultCover(values.get("cover"))
-        song.setDefaultTitle(values.get("title"))
-        song.setDefaultArtist(values.get("artist"))
-        song.setDefaultLength(values.get("length"))
+        song.setDefaultArtist("")
         self.menu.addWidget(song)
         UiUtils.setAttribute(self, "song", index, song)
         return song
@@ -239,7 +229,6 @@ class PlaylistTableBody(SmoothVerticalScrollArea, View):
     def __getSongByIndex(self, index: int) -> SongItem:
         return UiUtils.getAttribute(self, "song", index)
 
-    # @cached_property
     def __getPixmapForSongCover(self, coverAsByte: bytes) -> QPixmap:
         if coverAsByte is None:
             return None

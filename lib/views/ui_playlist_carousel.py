@@ -81,14 +81,14 @@ class UiPlaylistCarousel(QScrollArea, View):
         self.main_layout.addLayout(self.user_playlists)
 
         # =================New playlist=================
-        self.add_playlist_card = QWidget()
-        self.add_playlist_card.setFixedSize(256, 320)
-        self.add_playlist_card.setObjectName("add_playlist_card")
+        self.addPlaylistCard = QWidget()
+        self.addPlaylistCard.setFixedSize(256, 320)
+        self.addPlaylistCard.setObjectName("addPlaylistCard")
         self._addThemeForItem(
-            self.add_playlist_card,
+            self.addPlaylistCard,
             theme=ThemeData(
-                lightMode="#add_playlist_card{background:rgba(0,0,0,0.1);border-radius:24px}",
-                darkMode="#add_playlist_card{background:rgba(255,255,255,0.25);border-radius:24px}",
+                lightMode="#addPlaylistCard{background:rgba(0,0,0,0.1);border-radius:24px}",
+                darkMode="#addPlaylistCard{background:rgba(255,255,255,0.25);border-radius:24px}",
             ),
         )
         self.add_playlist_btn = IconButton.render(
@@ -96,21 +96,21 @@ class UiPlaylistCarousel(QScrollArea, View):
             size=icons.SIZES.LARGE,
             lightModeIcon=UiUtils.paintIcon(icons.ADD, Colors.PRIMARY),
             darkModeIcon=UiUtils.paintIcon(icons.ADD, Colors.WHITE),
-            parent=self.add_playlist_card,
+            parent=self.addPlaylistCard,
         )
         self.add_playlist_btn.setCursor(self.cursors.HAND)
-        self.add_playlist_btn.move(self.add_playlist_card.rect().center() - self.add_playlist_btn.rect().center())
+        self.add_playlist_btn.move(self.addPlaylistCard.rect().center() - self.add_playlist_btn.rect().center())
         self._addButtonToList(self.add_playlist_btn)
         self._addThemeForItem(
             self.add_playlist_btn,
             theme=(
                 ButtonThemeBuilder()
-                .addLightModeBackground(Backgrounds.CIRCLE_HIDDEN_PRIMARY)
-                .addDarkModeBackground(Backgrounds.CIRCLE_HIDDEN_WHITE)
+                .addLightModeBackground(Backgrounds.CIRCLE_HIDDEN_PRIMARY_25)
+                .addDarkModeBackground(Backgrounds.CIRCLE_HIDDEN_WHITE_25)
                 .build(itemSize=icons.SIZES.LARGE.height())
             ),
         )
-        self.main_layout.addWidget(self.add_playlist_card)
+        self.main_layout.addWidget(self.addPlaylistCard)
         self.main_layout.addStretch()
 
     def connectSignalsToController(self, controller):
