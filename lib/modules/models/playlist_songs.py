@@ -25,6 +25,9 @@ class PlaylistSongs:
             string += f"{index}. {str(song)}\n"
         return string
 
+    def getSongs(self) -> list[Song]:
+        return self._songs
+
     def isSorted(self):
         return self._isSorted
 
@@ -51,21 +54,16 @@ class PlaylistSongs:
             return None
         return self._songs[index]
 
-    def insert(self, song: Song):
+    def insert(self, song: Song) -> int:
         """
-        Add song to the list of songs
+        Add song to the list of songs. If added SUCCESSfully, it will return the position of the song in the playlist
         """
-        if (
-            len(self._songs) != 0
-            and self._isSorted
-            and self._sortMethod == "title"
-        ):
-            position: int = MyList.binaryInsertSearchByTitle(
-                self._songs, song.title
-            )
+        if len(self._songs) != 0 and self._isSorted and self._sortMethod == "title":
+            position: int = MyList.binaryInsertSearchByTitle(self._songs, song.title)
             self._songs.insert(position, song)
-            return
+            return position
         self._songs.append(song)
+        return len(self._songs) - 1
 
     def shuffle(self):
         self._backupSongs = self._songs.copy()
@@ -81,6 +79,9 @@ class PlaylistSongs:
         if self._isSorted:
             return MyList.binarySearchByTitle(self._songs, title)
         return MyList.linearSearchByTitle(self._songs, title)
+
+    def findSongInsertPosition(self, title):
+        return MyList.binaryInsertSearchByTitle(self._songs, title)
 
     def find(self, song: Song) -> int:
         """

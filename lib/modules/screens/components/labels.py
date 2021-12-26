@@ -37,7 +37,7 @@ class StandardLabel(ViewLabel):
         label.setFont(font)
         label.setReadOnly(True)
         label.setFocusPolicy(Qt.NoFocus)
-        label.setStyleSheet("background:transparent;border:none")
+        label.setStyleSheet("background:TRANSPARENT;border:none")
         return label
 
     def getThemeBuilder() -> ThemeBuilder:
@@ -51,7 +51,7 @@ class EditableLabel(ViewLabel):
     ) -> QLineEdit:
         label = LabelWithPlaceholder(parent)
         label.setFont(font)
-        label.setStyleSheet("background:transparent;border:none")
+        label.setStyleSheet("background:TRANSPARENT;border:none")
         return label
 
     def getThemeBuilder() -> ThemeBuilder:
@@ -65,7 +65,7 @@ class DoubleClickedEditableLabel(ViewLabel):
     ) -> QLineEdit:
         label = QDoubleClickedEditableLabel(parent)
         label.setFont(font)
-        label.setStyleSheet("background:transparent;border:none")
+        label.setStyleSheet("background:TRANSPARENT;border:none")
         return label
 
     def getThemeBuilder() -> ThemeBuilder:

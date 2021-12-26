@@ -23,7 +23,6 @@ class Player:
     _currentSong: Song
     _timeStartInSec: float
     _sampleRateOffset: float
-    _loadedSong: bool
     timer: Timer
 
     def __init__(self):
@@ -32,7 +31,6 @@ class Player:
         self._currentSong = None
         self._timeStartInSec = 0
         self._sampleRateOffset = 1
-        self._loadedSong = False
         self.timer = Timer()
         # mixer.pre_init()
         mixer.init()
@@ -58,13 +56,13 @@ class Player:
         mixer.music.set_volume(volumeAsFloat)
 
     def loadSongToPlay(self):
-        if self._loadedSong:
+        newSong = self._playlist.getSong(self._currentSongIndex)
+        isTheSameSong: bool = newSong is not None and self._currentSong is newSong
+        if isTheSameSong:
             return
-
-        self._loadedSong = True
-        self._currentSong = self._playlist.getSong(self._currentSongIndex)
+        self._currentSong = newSong
         self._sampleRateOffset = 1
-
+        self.resetTime()
         mixer.music.unload()
         if self._currentSong is None:
             return
@@ -75,10 +73,7 @@ class Player:
 
     def next(self):
         self.resetTime()
-        self._loadedSong = False
-        self._currentSongIndex = (
-            self._currentSongIndex + 1
-        ) % self._playlist.size()
+        self._currentSongIndex = (self._currentSongIndex + 1) % self._playlist.size()
 
     def getPlaylist(self) -> list[Song]:
         return self._playlist
@@ -95,21 +90,18 @@ class Player:
     def getCurrentSong(self):
         return self._currentSong
 
+    def getCurrentSongIndex(self):
+        return self._currentSongIndex
+
     def previous(self):
         self.resetTime()
-        self._loadedSong = False
-        self._currentSongIndex = (
-            self._currentSongIndex - 1
-        ) % self._playlist.size()
+        self._currentSongIndex = (self._currentSongIndex - 1) % self._playlist.size()
 
     def fixSampleRateOffsetWhenSongIsPaused(self):
         if self._currentSong is None:
             return
         STANDARD_AUDIO_SAMPLE_RATE = 48000
-        self._sampleRateOffset = (
-            STANDARD_AUDIO_SAMPLE_RATE
-            / self._currentSong._audio.getSampleRate()
-        )
+        self._sampleRateOffset = STANDARD_AUDIO_SAMPLE_RATE / self._currentSong.getSampleRate()
 
     def pause(self):
         if not self.isPlaying():
@@ -135,9 +127,7 @@ class Player:
         self._playlist.unshuffle()
 
     def getPlayingTime(self) -> float:
-        return (
-            self._timeStartInSec + mixer.music.get_pos() / 1000
-        ) * self._sampleRateOffset
+        return (self._timeStartInSec + mixer.music.get_pos() / 1000) * self._sampleRateOffset
 
     def isPlaying(self):
         if mixer.get_init() is None:

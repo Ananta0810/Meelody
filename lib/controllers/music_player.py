@@ -20,19 +20,20 @@ class MusicPlayer:
         self.player = player
 
     def displayDataRetrievedFrom(self, data: dict) -> None:
+
+        self.ui.setLoopState(data.get("isLooping"))
+        self.ui.setShuffleState(data.get("isShuffling"))
+        self.handleClickedShuffle()
+        self.ui.setVolume(data.get("volume"))
+
         self.player.setCurrentSong(data.get("currentSong"))
         self.player.loadSongToPlay()
         self.displayCurrentSongInfo()
-        self.ui.setLoopState(data.get("isLooping"))
-        self.ui.setShuffleState(data.get("isShuffling"))
-        self.ui.setVolume(data.get("volume"))
 
     def handleEnteredTimer(self) -> None:
         SECONDS_PER_MINUTE = 60
         timeToActiveTimerInMinute: int = self.ui.getTimerValue()
-        timeToActiveTimerInSeconds: int = (
-            timeToActiveTimerInMinute * SECONDS_PER_MINUTE
-        )
+        timeToActiveTimerInSeconds: int = timeToActiveTimerInMinute * SECONDS_PER_MINUTE
         self.player.timer.setTime(timeToActiveTimerInSeconds)
         self.ui.closeTimerBox()
 
@@ -58,9 +59,7 @@ class MusicPlayer:
         currentSong = self.player.getCurrentSong()
         if currentSong is None:
             return
-        timeStart: float = (
-            self.ui.getCurrentTimeSliderPosition() / 100 * currentSong.length
-        )
+        timeStart: float = self.ui.getCurrentTimeSliderPosition() / 100 * currentSong.length
         self.player.stop()
         self.player.setTimeStart(timeStart)
         self.ui.displayPlayingTime(timeStart)
@@ -72,13 +71,15 @@ class MusicPlayer:
         updatePlayerData("volume", volume)
 
     def handlePlaySong(self) -> None:
-        if self.player.getCurrentSong() is None:
+        song = self.player.getCurrentSong()
+        if song is None:
             return
         if not self.ui.isPlaying():
             self.pauseMusic()
             return
         self.player.loadSongToPlay()
-        updatePlayerData("currentSong", self.player.getCurrentSong().title)
+        self.displayCurrentSongInfo()
+        updatePlayerData("currentSong", song.title)
         self.__threadPlaySong()
 
     def handleLoveSong(self) -> None:
@@ -90,15 +91,16 @@ class MusicPlayer:
         if not self.player.hasSong():
             return
         self.player.next()
-        self.player.loadSongToPlay()
-        self.displayCurrentSongInfo()
-        updatePlayerData("currentSong", self.player.getCurrentSong().title)
-        self.__threadPlaySong()
+        self.playSong()
 
     def handlePreviousSong(self) -> None:
         if not self.player.hasSong():
             return
         self.player.previous()
+        self.playSong()
+
+    # !==========================Fix this later==========================
+    def playSong(self) -> None:
         self.player.loadSongToPlay()
         self.displayCurrentSongInfo()
         updatePlayerData("currentSong", self.player.getCurrentSong().title)
@@ -137,7 +139,6 @@ class MusicPlayer:
         self.ui.setPlayingState(False)
 
     def playMusic(self) -> None:
-
         player = self.player
         if player is None:
             return
@@ -148,10 +149,7 @@ class MusicPlayer:
         TIMES_THAT_UI_HAS_TO_UPDATE_FOR_SLIDER_WHILE_PLAYING: int = 100
         LONGEST_TIME_BREAK_FOR_A_UI_UPDATE_IN_SECONDS: float = 0.25
 
-        interval: float = (
-            player.getCurrentSong().length
-            / TIMES_THAT_UI_HAS_TO_UPDATE_FOR_SLIDER_WHILE_PLAYING
-        )
+        interval: float = player.getCurrentSong().length / TIMES_THAT_UI_HAS_TO_UPDATE_FOR_SLIDER_WHILE_PLAYING
         if interval > LONGEST_TIME_BREAK_FOR_A_UI_UPDATE_IN_SECONDS:
             interval = LONGEST_TIME_BREAK_FOR_A_UI_UPDATE_IN_SECONDS
         player.timer.setInterval(interval)
@@ -201,28 +199,3 @@ class MusicPlayer:
             return
         timer.reset()
         self.pauseMusic()
-
-
-# def main():
-#     start = perf_counter()
-#     app = QApplication(argv)
-#     form = QWidget()
-#     form.setGeometry(276, 490, 1368, 100)
-#     form.setStyleSheet("background: white")
-#     player = Player()
-#     library = getPlaylistFromDir("Library", withExtension=".mp3")
-#     player.loadPlaylist(library)
-#     player.loadSongToPlay()
-#     form.setStyleSheet("background: black")
-#     appController = MusicPlayer(form, player)
-#     appController.ui.setFixedSize(1368, 100)
-#     appController.ui.darkMode()
-#     form.show()
-
-#     end = perf_counter()
-#     print(f"Time to start application: {end - start}")
-#     exit(app.exec_())
-
-
-# if __name__ == "__main__":
-#     main()

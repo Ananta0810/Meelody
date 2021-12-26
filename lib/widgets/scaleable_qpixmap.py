@@ -57,7 +57,7 @@ class ScaleAblePixmap(QPixmap):
 
     def round(self):
         target = QPixmap(self.size())
-        target.fill(Qt.transparent)
+        target.fill(Qt.TRANSPARENT)
 
         painter = QPainter(target)
         painter.setRenderHint(QPainter.Antialiasing, True)

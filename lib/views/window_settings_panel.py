@@ -1,3 +1,5 @@
+from typing import Optional
+
 from constants.application import supportedLanguages
 from constants.ui.qss import ColorBoxes, Colors, Paddings
 from constants.ui.qt import AppCursors, AppIcons
@@ -7,19 +9,20 @@ from modules.screens.components.icon_buttons import IconButton
 from modules.screens.components.labels import StandardLabel
 from modules.screens.qss.qss_elements import Background, Border, ColorBox
 from modules.screens.themes.theme_builders import ThemeData
+from PyQt5.QtCore import Qt
 from PyQt5.QtWidgets import QFileDialog, QHBoxLayout, QVBoxLayout, QWidget
 from utils.ui.application_utils import UiUtils
 from widgets.toggle import Toggle
 
 
-class SettingsWindow(QWidget):
-    def __init__(self, parent=None):
+class SettingsPanel(QWidget):
+    def __init__(self, parent: Optional["QWidget"] = None):
         super(QWidget, self).__init__(parent)
         self.setupUi()
 
     def setupUi(self):
-        self.themeItems = {}
-        self.buttonsWithDarkMode = []
+        self.themeItems: dict[Optional["QWidget"], ThemeData] = {}
+        self.buttonsWithDarkMode: list[Optional["QWidget"]] = []
         # Declaration
         iconButtonThemeBuilder = IconButton.getThemeBuilder()
         icons = AppIcons()
@@ -32,13 +35,13 @@ class SettingsWindow(QWidget):
             iconButtonThemeBuilder.addLightModeBackground(
                 Background(
                     borderRadius=0.5,
-                    color=ColorBoxes.PRIMARY_LIGHTEN_25,
+                    color=ColorBoxes.HOVERABLE_PRIMARY_25,
                 )
             )
             .addDarkModeBackground(
                 Background(
                     borderRadius=0.5,
-                    color=ColorBoxes.WHITE_LIGHTEN_25,
+                    color=ColorBoxes.WHITE_25,
                 )
             )
             .build(itemSize=48)
@@ -47,13 +50,13 @@ class SettingsWindow(QWidget):
             iconButtonThemeBuilder.addLightModeBackground(
                 Background(
                     borderRadius=0.33,
-                    color=ColorBoxes.PRIMARY_LIGHTEN_HOVERABLE_25,
+                    color=ColorBoxes.HOVERABLE_PRIMARY_25,
                 )
             )
             .addDarkModeBackground(
                 Background(
                     borderRadius=0.33,
-                    color=ColorBoxes.WHITE_LIGHTEN_HOVERABLE_25,
+                    color=ColorBoxes.HOVERABLE_WHITE_25,
                 )
             )
             .build(itemSize=48)
@@ -63,9 +66,10 @@ class SettingsWindow(QWidget):
             labelThemeBuilder.addLightModeTextColor(ColorBoxes.BLACK).addDarkModeTextColor(ColorBoxes.WHITE).build()
         )
         lightForwardBtn = UiUtils.paintIcon(icons.FORWARD, Colors.PRIMARY)
-        darkForwardBtn = UiUtils.paintIcon(icons.FORWARD, Colors.white)
+        darkForwardBtn = UiUtils.paintIcon(icons.FORWARD, Colors.WHITE)
 
         # UI
+        self.setAttribute(Qt.WA_StyledBackground, True)
         self.setAutoFillBackground(True)
         self.main_layout = QVBoxLayout(self)
 
@@ -82,7 +86,7 @@ class SettingsWindow(QWidget):
             padding=Paddings.RELATIVE_75,
             size=icons.SIZES.LARGE,
             lightModeIcon=UiUtils.paintIcon(icons.BACKWARD, Colors.PRIMARY),
-            darkModeIcon=UiUtils.paintIcon(icons.BACKWARD, Colors.white),
+            darkModeIcon=UiUtils.paintIcon(icons.BACKWARD, Colors.WHITE),
         )
         self.__addThemeForItem(
             self.close_settings_window_btn,
@@ -90,13 +94,13 @@ class SettingsWindow(QWidget):
                 iconButtonThemeBuilder.addLightModeBackground(
                     Background(
                         borderRadius=0.33,
-                        color=ColorBoxes.PRIMARY_LIGHTEN_HOVERABLE_25,
+                        color=ColorBoxes.HOVERABLE_PRIMARY_25,
                     )
                 )
                 .addDarkModeBackground(
                     Background(
                         borderRadius=0.33,
-                        color=ColorBoxes.WHITE_LIGHTEN_HOVERABLE_25,
+                        color=ColorBoxes.HOVERABLE_WHITE_25,
                     )
                 )
                 .build(self.close_settings_window_btn.height())
@@ -108,8 +112,6 @@ class SettingsWindow(QWidget):
         self.header.addStretch()
 
         self.settings_label = StandardLabel.render(fontBuilder.withSize(24).withWeight("bold").build())
-        # self.settings_label.setFixedWidth(200)
-        self.settings_label.setStyleSheet("background:red")
         self.__addThemeForItem(self.settings_label, itemTextStyle)
         self.body.addWidget(self.settings_label)
 
@@ -130,7 +132,7 @@ class SettingsWindow(QWidget):
             padding=Paddings.RELATIVE_50,
             size=icons.SIZES.LARGE,
             lightModeIcon=UiUtils.paintIcon(icons.LANGUAGES, Colors.PRIMARY),
-            darkModeIcon=UiUtils.paintIcon(icons.LANGUAGES, Colors.white),
+            darkModeIcon=UiUtils.paintIcon(icons.LANGUAGES, Colors.WHITE),
             parent=self,
         )
         self.__addButtonToList(self.language_icon)
@@ -161,13 +163,13 @@ class SettingsWindow(QWidget):
                 .addLightModeItemBackground(
                     Background(
                         borderRadius=4,
-                        color=ColorBoxes.HIDDEN_PRIMARY,
+                        color=ColorBoxes.HOVERABLE_HIDDEN_PRIMARY,
                     )
                 )
                 .addDarkModeItemBackground(
                     Background(
                         borderRadius=4,
-                        color=ColorBoxes.HIDDEN_WHITE,
+                        color=ColorBoxes.HOVERABLE_HIDDEN_WHITE,
                     )
                 )
                 .addLightModeMenuTextColor(
@@ -189,7 +191,7 @@ class SettingsWindow(QWidget):
             padding=Paddings.RELATIVE_33,
             size=icons.SIZES.LARGE,
             lightModeIcon=UiUtils.paintIcon(icons.DARKMODE, Colors.PRIMARY),
-            darkModeIcon=UiUtils.paintIcon(icons.DARKMODE, Colors.white),
+            darkModeIcon=UiUtils.paintIcon(icons.DARKMODE, Colors.WHITE),
             parent=self,
         )
         self.__addButtonToList(self.dark_mode_icon)
@@ -199,8 +201,10 @@ class SettingsWindow(QWidget):
         self.__addThemeForItem(self.dark_mode_label, itemTextStyle)
 
         self.switch_dark_mode_btn = Toggle(self)
-        self.switch_dark_mode_btn.stylize(activeBackColor=Colors.PRIMARY.toStylesheet())
-        self.switch_dark_mode_btn.setCheckable(True)
+        self.switch_dark_mode_btn.setFixedSize(56, 32)
+        self.switch_dark_mode_btn.setActiveBackgroundColor(Colors.PRIMARY.toStylesheet())
+        self.switch_dark_mode_btn.stylize()
+        self.switch_dark_mode_btn.setAnimationDuration(125)
 
         self.settings_item_dark_mode.addWidget(self.dark_mode_icon)
         self.settings_item_dark_mode.addWidget(self.dark_mode_label)
@@ -212,7 +216,7 @@ class SettingsWindow(QWidget):
             padding=Paddings.RELATIVE_50,
             size=icons.SIZES.LARGE,
             lightModeIcon=UiUtils.paintIcon(icons.FOLDER, Colors.PRIMARY),
-            darkModeIcon=UiUtils.paintIcon(icons.FOLDER, Colors.white),
+            darkModeIcon=UiUtils.paintIcon(icons.FOLDER, Colors.WHITE),
             parent=self,
         )
         self.__addButtonToList(self.folder_icon)
@@ -231,13 +235,13 @@ class SettingsWindow(QWidget):
                 .addLightModeBackground(
                     Background(
                         borderRadius=12,
-                        color=ColorBoxes.PRIMARY_LIGHTEN_HOVERABLE_25,
+                        color=ColorBoxes.HOVERABLE_PRIMARY_25,
                     )
                 )
                 .addDarkModeBackground(
                     Background(
                         borderRadius=12,
-                        color=ColorBoxes.WHITE_LIGHTEN_HOVERABLE_25,
+                        color=ColorBoxes.HOVERABLE_WHITE_25,
                     )
                 )
                 .build()
@@ -266,13 +270,10 @@ class SettingsWindow(QWidget):
 
     def connectSignalsToController(self, controller):
         self.change_language_dropdown.currentIndexChanged.connect(controller.handleChangedLanguage)
-        self.switch_dark_mode_btn.clicked.connect(controller.handleChangedDarkMode)
+        self.switch_dark_mode_btn.valueChanged.connect(controller.handleChangedDarkMode)
         self.change_folder_btn.clicked.connect(lambda: self.openFolderChoosingDialogThenSendDataTo(controller))
 
     def lightMode(self):
-        # Due to some error, the light mode will not work properly the first time
-        # Therefore, we need to take a warm settup before apply dark-light mode
-        self.change_language_dropdown.setStyleSheet(self.themeItems.get(self.change_language_dropdown).lightMode)
         for item in self.themeItems:
             lightModeStyleSheet = self.themeItems.get(item).lightMode
             if lightModeStyleSheet is None or lightModeStyleSheet.strip() == "":
@@ -283,7 +284,6 @@ class SettingsWindow(QWidget):
             button.setDarkMode(False)
 
     def darkMode(self):
-        self.change_language_dropdown.setStyleSheet(self.themeItems.get(self.change_language_dropdown).darkMode)
         for item in self.themeItems:
             darkModeStyleSheet = self.themeItems.get(item).darkMode
             if darkModeStyleSheet is None or darkModeStyleSheet.strip() == "":

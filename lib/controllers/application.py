@@ -4,6 +4,7 @@ from time import perf_counter
 from music_player import MusicPlayer
 from playlist_carousel import PlaylistCarousel
 from playlist_chooser import PlaylistSelector
+from playlist_menu import PlaylistMenu
 
 path.append("./lib")
 from constants.application import supportedLanguages
@@ -25,8 +26,6 @@ class Appication:
         # =================Settings=================
         settingsData: dict[str, str] = retrieveSettingsData()
         self.displaySettingsDataRetrievedFrom(settingsData)
-        self.loadPlaylistFromDirForPlayer(settingsData.get("path"))
-
         # =================Music Player=================
         playlists: list[PlaylistInfo] = [
             PlaylistInfo(0, "ABC", None),
@@ -42,13 +41,16 @@ class Appication:
         self.playlistCarousel = PlaylistCarousel(self.ui.playlist_carousel)
         self.musicPlayer = MusicPlayer(self.ui.music_player_inner)
         self.playlistSelector = PlaylistSelector(self.ui)
+        self.playlistMenu = PlaylistMenu(self.ui.playlistMenu.body)
         self.controllers = {
             "application": self,
             "playlistCarousel": self.playlistCarousel,
             "musicPlayer": self.musicPlayer,
             "playlistSelector": self.playlistSelector,
+            "playlistMenu": self.playlistMenu,
         }
         self.ui.connectSignalsToControllers(self.controllers)
+        self.playlistMenu.setControllers(self.controllers)
 
     def run(self):
         self.ui.MainWindow.show()
@@ -67,7 +69,7 @@ class Appication:
     def handleChangedFolder(self, folderDir: str) -> None:
         if len(folderDir) == 0:
             return
-        self.ui.settings_panel_inner.changeCurrentFolder(folderDir)
+        self.ui.settings_panel.changeCurrentFolder(folderDir)
         updateSettingsData("path", folderDir)
         self.loadPlaylistFromDirForPlayer(folderDir)
         self.musicPlayer.player.setCurrentSongIndex(0)
@@ -83,6 +85,8 @@ class Appication:
         player = Player()
         library = getPlaylistFromDir(dir, withExtension=".mp3")
         player.loadPlaylist(library)
+        self.playlistMenu.setPlaylist(library)
+        self.playlistMenu.updateUi(self.ui.isDarkMode)
         self.musicPlayer.setPlayer(player)
 
     def displaySettingsDataRetrievedFrom(self, settingsData: dict[str, str]) -> None:
@@ -90,11 +94,12 @@ class Appication:
         language: str = settingsData.get("language")
         languages: list[str] = [key for key in supportedLanguages.keys()]
 
-        self.ui.settings_panel_inner.change_language_dropdown.setCurrentIndex(languages.index(language))
-        self.ui.settings_panel_inner.current_folder.setText(settingsData.get("path"))
-        self.ui.settings_panel_inner.switch_dark_mode_btn.setChecked(isDarkMode)
+        self.ui.settings_panel.change_language_dropdown.setCurrentIndex(languages.index(language))
+        self.ui.settings_panel.current_folder.setText(settingsData.get("path"))
+        self.ui.settings_panel.switch_dark_mode_btn.setChecked(isDarkMode)
         self.ui.translate(getLanguagePackage(language))
         self.ui.switchDarkMode(isDarkMode)
+        self.loadPlaylistFromDirForPlayer(settingsData.get("path"))
 
 
 def main():

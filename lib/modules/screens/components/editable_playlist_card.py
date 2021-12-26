@@ -134,9 +134,9 @@ class EditablePlaylistCard(QWidget):
     def __adaptLabelBaseOnCover(self, coverPixmap: QPixmap) -> None:
         brightness = PixmapUtils.getPixmapBrightness(coverPixmap.copy(self.label.rect()))
         if brightness < 0.5:
-            self.label.setStyleSheet("color:white")
+            self.label.setStyleSheet("color:WHITE")
         else:
-            self.label.setStyleSheet("color:black")
+            self.label.setStyleSheet("color:BLACK")
 
     def __getButtonsRect(self) -> QRect:
         buttonsStartRect = self.editBtn.rect()

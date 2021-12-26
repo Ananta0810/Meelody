@@ -12,6 +12,10 @@ class QToggleButton(QPushButton):
         self.isDarkMode = False
         self.currentNormalIcon = None
         self.currentCheckedIcon = None
+        self._isChangeIconWhenClicked = True
+
+    def setChangeIconWhenClicked(self, state: bool) -> None:
+        self._isChangeIconWhenClicked = state
 
     def setLightModeNormalIcon(self, icon: QIcon):
         self.normalIcon = icon
@@ -35,7 +39,8 @@ class QToggleButton(QPushButton):
 
     def mousePressEvent(self, event):
         super().mousePressEvent(event)
-        self.__changeIconBaseOnState(not self.isChecked())
+        if self._isChangeIconWhenClicked:
+            self.__changeIconBaseOnState(not self.isChecked())
 
     def __changeIconBaseOnState(self, checked: bool):
         if not self.isCheckable():
@@ -46,15 +51,9 @@ class QToggleButton(QPushButton):
             self.setIcon(self.__getCurrentNormalIcon())
 
     def __getCurrentNormalIcon(self):
-        return (
-            self.darkModeNormalIcon
-            if self.isDarkMode and self.darkModeNormalIcon is not None
-            else self.normalIcon
-        )
+        return self.darkModeNormalIcon if self.isDarkMode and self.darkModeNormalIcon is not None else self.normalIcon
 
     def __getCurrentCheckedIcon(self):
         return (
-            self.darkModeCheckedIcon
-            if self.isDarkMode and self.darkModeCheckedIcon is not None
-            else self.checkedIcon
+            self.darkModeCheckedIcon if self.isDarkMode and self.darkModeCheckedIcon is not None else self.checkedIcon
         )

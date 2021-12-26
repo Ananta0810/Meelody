@@ -49,14 +49,12 @@ class ConfirmMessage(QDialog):
         self.themeItems: dict[str, ThemeData] = {}
 
         self.setWindowFlags(Qt.Window | Qt.FramelessWindowHint | Qt.WindowMinMaxButtonsHint)
+        self.setAttribute(Qt.WA_StyledBackground, True)
         self.setAttribute(Qt.WA_TranslucentBackground)
-        # self.setAutoFillBackground(True)
         self.__addThemeForItem(
             self,
-            ThemeData(lightMode="background:white;border-radius:24px", darkMode="background:black;border-radius:24px"),
+            ThemeData(lightMode="background:WHITE;border-radius:24px", darkMode="background:BLACK;border-radius:24px"),
         )
-        self.view = QWidget(self)
-        self.view.setContentsMargins(24, 24, 24, 16)
         # self.setGraphicsEffect(
         #     QGraphicsDropShadowEffect(
         #         blurRadius=50,
@@ -65,6 +63,9 @@ class ConfirmMessage(QDialog):
         #         yOffset=3,
         #     )
         # )
+
+        self.view = QWidget(self)
+        self.view.setContentsMargins(24, 24, 24, 16)
 
         self.buttonBox = QDialogButtonBox(QDialogButtonBox.Ok | QDialogButtonBox.Cancel)
         self.buttonBox.accepted.connect(self.accept)
@@ -75,7 +76,6 @@ class ConfirmMessage(QDialog):
         acceptBtn.setText(acceptText)
         acceptBtn.setFont(buttonFont)
         acceptBtn.setCursor(cursors.HAND)
-        acceptBtn.setStyleSheet("background:#0032ff;border-radius:12px;color:white")
         self.__addThemeForItem(
             acceptBtn,
             theme=(
@@ -89,14 +89,13 @@ class ConfirmMessage(QDialog):
         rejectBtn.setText(rejectText)
         rejectBtn.setFont(buttonFont)
         rejectBtn.setCursor(cursors.HAND)
-        rejectBtn.setStyleSheet("background:#f0f0ff;border-radius:12px;color:blue")
         self.__addThemeForItem(
             rejectBtn,
             theme=(
                 buttonThemeBuilder.addLightModeTextColor(ColorBoxes.PRIMARY)
                 .addDarkModeTextColor(ColorBoxes.WHITE)
-                .addLightModeBackground(Background(borderRadius=8, color=ColorBoxes.PRIMARY_LIGHTEN_HOVERABLE_25))
-                .addDarkModeBackground(Background(borderRadius=8, color=ColorBoxes.WHITE_LIGHTEN_HOVERABLE_25))
+                .addLightModeBackground(Background(borderRadius=8, color=ColorBoxes.HOVERABLE_PRIMARY_25))
+                .addDarkModeBackground(Background(borderRadius=8, color=ColorBoxes.HOVERABLE_WHITE_25))
                 .build(itemSize=40)
             ),
         )

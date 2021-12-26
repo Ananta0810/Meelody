@@ -34,15 +34,15 @@ class UiPlaylistCarousel(QScrollArea):
             .addLightModeBackground(
                 Background(
                     borderRadius=0.5,
-                    color=ColorBoxes.PRIMARY_LIGHTEN_HOVERABLE_25,
+                    color=ColorBoxes.HOVERABLE_PRIMARY_25,
                 )
             )
             .addDarkModeBackground(None)
             .build(itemSize=self.icons.SIZES.MEDIUM.height())
         )
         self.buttonIcons: dict[str, QIcon] = {
-            "lightModeEditBtn": UiUtils.paintIcon(self.icons.EDIT, Colors.white),
-            "lightModeDeleteBtn": UiUtils.paintIcon(self.icons.DELETE, Colors.white),
+            "lightModeEditBtn": UiUtils.paintIcon(self.icons.EDIT, Colors.WHITE),
+            "lightModeDeleteBtn": UiUtils.paintIcon(self.icons.DELETE, Colors.WHITE),
             "darkModeEditBtn": None,
             "darkModeDeleteBtn": None,
         }
@@ -103,7 +103,7 @@ class UiPlaylistCarousel(QScrollArea):
             padding=Paddings.RELATIVE_67,
             size=self.icons.SIZES.LARGE,
             lightModeIcon=UiUtils.paintIcon(self.icons.ADD, Colors.PRIMARY),
-            darkModeIcon=UiUtils.paintIcon(self.icons.ADD, Colors.white),
+            darkModeIcon=UiUtils.paintIcon(self.icons.ADD, Colors.WHITE),
             parent=self.add_playlist_card,
         )
         self.add_playlist_btn.setCursor(self.cursors.HAND)
@@ -116,13 +116,13 @@ class UiPlaylistCarousel(QScrollArea):
                 .addLightModeBackground(
                     Background(
                         borderRadius=0.5,
-                        color=ColorBoxes.HIDDEN_PRIMARY,
+                        color=ColorBoxes.HOVERABLE_HIDDEN_PRIMARY,
                     )
                 )
                 .addDarkModeBackground(
                     Background(
                         borderRadius=0.5,
-                        color=ColorBoxes.HIDDEN_WHITE,
+                        color=ColorBoxes.HOVERABLE_HIDDEN_WHITE,
                     )
                 )
                 .build(itemSize=self.icons.SIZES.LARGE.height())

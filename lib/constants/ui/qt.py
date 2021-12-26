@@ -3,19 +3,19 @@ from functools import lru_cache
 from PyQt5.QtCore import QSize, Qt
 from PyQt5.QtGui import QCursor, QIcon
 
-from .metaclass import MetaConst
+from .metaclass import SingletonConst
 
 
-class IconSize:
+class IconSizes:
     SMALL = QSize(24, 24)
     MEDIUM = QSize(32, 32)
     LARGE = QSize(48, 48)
     XLARGE = QSize(64, 64)
 
 
-class AppIcons(metaclass=MetaConst):
+class AppIcons(metaclass=SingletonConst):
     def __init__(self):
-        self.SIZES = IconSize
+        self.SIZES = IconSizes
         self.APP_ICON = QIcon("assets/images/Music.ico")
 
         self.DELETE = QIcon("assets/images/icons/delete.png")
@@ -24,14 +24,12 @@ class AppIcons(metaclass=MetaConst):
         self.SUBSTRACT = QIcon("assets/images/icons/substract.png")
         self.ADD = QIcon("assets/images/icons/add.png")
         self.EDIT = QIcon("assets/images/icons/edit.png")
-        self.CLOSE = QIcon("assets/images/icons/close.png")
-
         self.LOVE = QIcon("assets/images/icons/love.png")
+        self.DOWNLOAD = QIcon("assets/images/icons/download.png")
 
         self.MINIMIZE = QIcon("assets/images/icons/minimize.png")
-        self.CLOSE_2 = QIcon("assets/images/icons/close-window.png")
+        self.CLOSE = QIcon("assets/images/icons/close.png")
         self.BACKWARD = QIcon("assets/images/icons/chevron-backward.png")
-
         self.FORWARD = QIcon("assets/images/icons/chevron-forward.png")
 
         self.SETTINGS = QIcon("assets/images/icons/settings.png")

@@ -140,7 +140,7 @@ class DropdownMenuThemeBuilder(ThemeBuilder):
         styleSheet = (
             "QComboBox {"
             + f"    padding:{mainPadding};"
-            + f"    color:{'black' if color is None else color.toStylesheet()};"
+            + f"    color:{'BLACK' if color is None else color.toStylesheet()};"
             + f"    border:{background.borderStyleSheet()};"
             + f"    border-radius:{background.borderRadiusStyleSheet(elementSize)};"
             + f"    background-color:{background.colorStyleSheet()};"
@@ -162,7 +162,7 @@ class DropdownMenuThemeBuilder(ThemeBuilder):
             + "}"
             + "QComboBox::drop-down {"
             + "    border:none;"
-            + "    background-color:transparent;"
+            + "    background-color:TRANSPARENT;"
             + f"    min-width: {arrowBackgroundWidth}px;"
             + " }"
             + "QComboBox::down-arrow{"
@@ -182,7 +182,7 @@ class DropdownMenuThemeBuilder(ThemeBuilder):
                 if itemBackground is not None
                 else ""
             )
-            + f"    color:{'black' if menuTextColor is None else menuTextColor.toStylesheet()};"
+            + f"    color:{'BLACK' if menuTextColor is None else menuTextColor.toStylesheet()};"
             "}"
             + "QComboBox QAbstractItemView::item:hover,QComboBox QAbstractItemView::item:focus{"
             + (
@@ -192,18 +192,18 @@ class DropdownMenuThemeBuilder(ThemeBuilder):
                 if itemBackground is not None
                 else ""
             )
-            + f"    color:{'black' if menuTextColor is None else menuTextColor.toStylesheet(True)};"
+            + f"    color:{'BLACK' if menuTextColor is None else menuTextColor.toStylesheet(True)};"
             "}"
             + "QComboBox:editable {"
-            + "    background-color:transparent;"
+            + "    background-color:TRANSPARENT;"
             + "    border:none;"
             + "}"
             + "QComboBox QAbstractItemView{outline:0px;}"
             + "QComboBox::indicator{"
-            + "    background-color:transparent;"
-            + "    selection-background-color:transparent;"
-            + "    color:transparent;"
-            + "    selection-color:transparent;"
+            + "    background-color:TRANSPARENT;"
+            + "    selection-background-color:TRANSPARENT;"
+            + "    color:TRANSPARENT;"
+            + "    selection-color:TRANSPARENT;"
             + "}"
         )
         return styleSheet
@@ -243,7 +243,7 @@ class ButtonThemeBuilder(ThemeBuilder):
 
     def build(self, itemSize: int) -> ThemeData:
         lightMode = (
-            "border:none;background-color:transparent"
+            "border:none;background-color:TRANSPARENT"
             if self.lightModeTextColor is None
             and self.lightModeBackground is None
             and self.lightModeCheckedBackground is None
@@ -387,7 +387,7 @@ class BackgroundBuilder:
                 + f"background-color:{background.colorStyleSheet(isHover)};"
             )
             if background is not None
-            else "border:none;background-color:transparent;"
+            else "border:none;background-color:TRANSPARENT;"
         )
         return content
 
@@ -474,7 +474,7 @@ class HorizontalSliderThemeBuilder(ThemeBuilder):
                 + "}"
             )
             if background is not None
-            else "QSlider{border:None;background:transparent}"
+            else "QSlider{border:None;background:TRANSPARENT}"
         )
         styleSheet += (
             "QSlider::add-page{"

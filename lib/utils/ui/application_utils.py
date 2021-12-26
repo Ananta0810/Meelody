@@ -1,3 +1,4 @@
+from functools import lru_cache
 from typing import Any
 
 from modules.screens.qss.qss_elements import Color
@@ -11,6 +12,7 @@ from .pixmap_utils import PixmapUtils
 
 class UiUtils:
     @staticmethod
+    @lru_cache(maxsize=None)
     def paintIcon(icon: QIcon, color: Color):
         return IconUtils.colorize(icon, ColorUtils.getQColorFromColor(color))
 

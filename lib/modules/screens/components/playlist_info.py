@@ -36,6 +36,7 @@ class PlaylistInfo(QVBoxLayout):
 
         self.addWidget(self.cover)
         self.addLayout(self.text_area)
+        self.addStretch()
 
         self.setLabel("Library")
         self.setTotalSong(0)
