@@ -1,12 +1,6 @@
-from sys import path
-
+from modules.screens.components.view_item import ViewItem
 from PyQt5.QtCore import Qt
 from PyQt5.QtWidgets import QSlider
-
-path.append("./lib")
-from modules.screens.components.view_item import ViewItem
-from modules.screens.themes.theme_builder import ThemeBuilder
-from modules.screens.themes.theme_builders import HorizontalSliderThemeBuilder
 
 
 class HorizontalSlider(ViewItem):
@@ -18,6 +12,3 @@ class HorizontalSlider(ViewItem):
         slider.setOrientation(Qt.Horizontal)
         slider.setMaximumHeight(height)
         return slider
-
-    def getThemeBuilder() -> ThemeBuilder:
-        return HorizontalSliderThemeBuilder()

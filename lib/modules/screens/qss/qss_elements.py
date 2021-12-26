@@ -75,7 +75,7 @@ class Border(StylesheetElement):
 
 
 class Background:
-    def __init__(self, border: Border = None, borderRadius=0, color: ColorBox = None):
+    def __init__(self, border: Border = None, borderRadius: float = 0, color: ColorBox = None):
         self.border = border
         self.borderRadius = borderRadius
         self.color = color

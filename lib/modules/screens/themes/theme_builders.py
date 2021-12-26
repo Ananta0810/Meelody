@@ -241,7 +241,7 @@ class ButtonThemeBuilder(ThemeBuilder):
         self.darkModeCheckedBackground = background
         return self
 
-    def build(self, itemSize: int) -> ThemeData:
+    def build(self, itemSize: int = 0) -> ThemeData:
         lightMode = (
             "border:none;background-color:TRANSPARENT"
             if self.lightModeTextColor is None
@@ -441,7 +441,7 @@ class HorizontalSliderThemeBuilder(ThemeBuilder):
         self.lineSize = lineSize
         return self
 
-    def build(self, itemSize: int) -> ThemeData:
+    def build(self, itemSize: int = 0) -> ThemeData:
         lightMode = self.__getThemeContent(
             self.lightModeBackground,
             self.lightHandleColor,

@@ -5,16 +5,16 @@ from modules.screens.themes.theme_builders import LabelThemeBuilder, ThemeData
 from PyQt5.QtGui import QFont, QPixmap
 from PyQt5.QtWidgets import QVBoxLayout, QWidget
 from utils.ui.application_utils import UiUtils
+from views.view import View
 from widgets.image_displayer import ImageDisplayer
 
 
-class PlaylistInfo(QVBoxLayout):
+class PlaylistInfo(QVBoxLayout, View):
     def __init__(self, parent=None) -> None:
-        super().__init__(parent)
+        super(PlaylistInfo, self).__init__(parent)
         self.setupUi()
 
     def setupUi(self):
-        self.themeItems = {}
         fontBuilder = FontBuilder()
         labelFont: QFont = fontBuilder.withSize(20).withWeight("bold").build()
         totalSongFont: QFont = fontBuilder.withSize(10).withWeight("normal").build()
@@ -40,8 +40,8 @@ class PlaylistInfo(QVBoxLayout):
 
         self.setLabel("Library")
         self.setTotalSong(0)
-        self.__addThemeForItem(self.label, textTheme)
-        self.__addThemeForItem(self.total_song, textTheme)
+        self._addThemeForItem(self.label, textTheme)
+        self._addThemeForItem(self.total_song, textTheme)
 
     def setInfo(self, cover: bytes, label: str, songCount: int) -> None:
         self.setCover(cover)
@@ -67,20 +67,3 @@ class PlaylistInfo(QVBoxLayout):
         if coverAsByte is None:
             return None
         return UiUtils.getEditedPixmapFromBytes(coverAsByte, width=320, height=320, radius=24)
-
-    def darkMode(self) -> None:
-        for item in self.themeItems:
-            darkModeStyleSheet = self.themeItems.get(item).darkMode
-            if darkModeStyleSheet is None or darkModeStyleSheet.strip() == "":
-                continue
-            item.setStyleSheet(darkModeStyleSheet)
-
-    def lightMode(self) -> None:
-        for item in self.themeItems:
-            lightModeStyleSheet = self.themeItems.get(item).lightMode
-            if lightModeStyleSheet is None or lightModeStyleSheet.strip() == "":
-                continue
-            item.setStyleSheet(lightModeStyleSheet)
-
-    def __addThemeForItem(self, item: QWidget, theme: ThemeData) -> None:
-        self.themeItems[item] = theme

@@ -1,12 +1,11 @@
 from typing import Optional
 
 from constants.ui.base import ApplicationImage
-from constants.ui.qss import ColorBoxes, Colors, Paddings
+from constants.ui.qss import Backgrounds, Colors, Paddings
 from constants.ui.qt import AppCursors, AppIcons
 from modules.screens.components.icon_buttons import IconButton
 from modules.screens.components.playlist_info import PlaylistInfo
-from modules.screens.qss.qss_elements import Background
-from modules.screens.themes.theme_builders import ThemeData
+from modules.screens.themes.theme_builders import ButtonThemeBuilder, ThemeData
 from PyQt5.QtCore import QMetaObject, Qt
 from PyQt5.QtWidgets import QGraphicsDropShadowEffect, QHBoxLayout, QScrollArea, QVBoxLayout, QWidget
 from utils.ui.application_utils import UiUtils
@@ -16,23 +15,23 @@ from widgets.framless_window import FramelessWindow
 from .playlist_menu import PlaylistTable
 from .ui_player_music import UIPlayerMusic
 from .ui_playlist_carousel import UiPlaylistCarousel
+from .view import View
 from .window_settings_panel import SettingsPanel
 
 
-class ApplicationInterface(object):
+class ApplicationInterface(View):
     def __init__(self):
+        super(ApplicationInterface, self).__init__()
+        self.isDarkMode = True
         self.setupUi()
 
-    def setupUi(self):
+    def setupUi(self) -> None:
         self.MainWindow = FramelessWindow()
         self.MainWindow.resize(1368, 768)
         self.MainWindow.setTitleBarHeight(80)
 
-        self.isDarkMode = True
-        iconButtonThemeBuilder = IconButton.getThemeBuilder()
+        btnThemeBuilder = ButtonThemeBuilder()
         icons = AppIcons()
-        self.themeItems = {}
-        self.buttonsWithDarkMode = []
 
         backgroundTheme = ThemeData(
             lightMode="background:WHITE;border-radius:24px",
@@ -41,7 +40,7 @@ class ApplicationInterface(object):
 
         self.app_background = QWidget(self.MainWindow)
         self.app_background.resize(self.MainWindow.size())
-        self.__addThemeForItem(self.app_background, theme=backgroundTheme)
+        self._addThemeForItem(self.app_background, theme=backgroundTheme)
 
         self.home_screen = QWidget(self.MainWindow)
         self.MainWindow.setCentralWidget(self.home_screen)
@@ -74,23 +73,13 @@ class ApplicationInterface(object):
             lightModeIcon=UiUtils.paintIcon(icons.MINIMIZE, Colors.PRIMARY),
             darkModeIcon=UiUtils.paintIcon(icons.MINIMIZE, Colors.WHITE),
         )
-        self.__addButtonToList(self.minimize_btn)
-        self.__addThemeForItem(
+        self._addButtonToList(self.minimize_btn)
+        self._addThemeForItem(
             self.minimize_btn,
             theme=(
-                iconButtonThemeBuilder.addLightModeBackground(
-                    Background(
-                        borderRadius=0.33,
-                        color=ColorBoxes.HOVERABLE_PRIMARY_25,
-                    )
-                )
-                .addDarkModeBackground(
-                    Background(
-                        borderRadius=0.33,
-                        color=ColorBoxes.HOVERABLE_WHITE_25,
-                    )
-                )
-                .build(self.minimize_btn.height())
+                btnThemeBuilder.addLightModeBackground(Backgrounds.ROUNDED_PRIMARY_25)
+                .addDarkModeBackground(Backgrounds.ROUNDED_WHITE_25)
+                .build()
             ),
         )
         self.minimize_btn.setCursor(AppCursors.hand())
@@ -101,17 +90,12 @@ class ApplicationInterface(object):
             size=icons.SIZES.MEDIUM,
             lightModeIcon=UiUtils.paintIcon(icons.CLOSE, Colors.DANGER),
         )
-        self.__addThemeForItem(
+        self._addThemeForItem(
             self.close_btn,
             theme=(
-                iconButtonThemeBuilder.addLightModeBackground(
-                    Background(
-                        borderRadius=0.33,
-                        color=ColorBoxes.DANGER_50,
-                    )
-                )
+                btnThemeBuilder.addLightModeBackground(Backgrounds.ROUNDED_HIDDEN_DANGER_50)
                 .addDarkModeBackground(None)
-                .build(self.close_btn.height())
+                .build()
             ),
         )
         self.close_btn.setCursor(AppCursors.hand())
@@ -130,15 +114,15 @@ class ApplicationInterface(object):
             lightModeIcon=UiUtils.paintIcon(icons.SETTINGS, Colors.PRIMARY),
             darkModeIcon=UiUtils.paintIcon(icons.SETTINGS, Colors.WHITE),
         )
-        self.__addButtonToList(self.open_settings_btn)
-        self.__addThemeForItem(
+        self._addButtonToList(self.open_settings_btn)
+        self._addThemeForItem(
             self.open_settings_btn,
-            theme=(iconButtonThemeBuilder.addLightModeBackground(None).build(icons.SIZES.LARGE.height())),
+            theme=(btnThemeBuilder.addLightModeBackground(None).build()),
         )
         self.open_settings_btn.setCursor(AppCursors.hand())
         self.open_settings_btn.clicked.connect(self.clickedOpenSettingBtn)
 
-        self.__addButtonToList(self.open_settings_btn)
+        self._addButtonToList(self.open_settings_btn)
         self.menu_bar.addWidget(self.open_settings_btn)
         self.menu_bar.addStretch()
 
@@ -169,7 +153,7 @@ class ApplicationInterface(object):
         self.music_player = QWidget()
         self.music_player.setFixedHeight(96)
         self.music_player.setObjectName("music_player")
-        self.__addThemeForItem(
+        self._addThemeForItem(
             self.music_player,
             theme=ThemeData(
                 lightMode="QWidget#music_player{border-top: 1px solid #eaeaea}",
@@ -192,7 +176,7 @@ class ApplicationInterface(object):
                 yOffset=3,
             )
         )
-        self.__addThemeForItem(self.settings_panel, theme=backgroundTheme)
+        self._addThemeForItem(self.settings_panel, theme=backgroundTheme)
         self.settings_panel.hide()
 
         self.settings_panel.close_settings_window_btn.clicked.connect(self.clickedOpenSettingBtn)
@@ -210,8 +194,8 @@ class ApplicationInterface(object):
         self.isDarkMode = mode
         if self.isDarkMode:
             self.darkMode()
-        else:
-            self.lightMode()
+            return
+        self.lightMode()
 
     def clickedOpenSettingBtn(self) -> None:
         self.settings_panel.setVisible(not self.settings_panel.isVisible())
@@ -223,14 +207,7 @@ class ApplicationInterface(object):
         self.playlist_carousel.lightMode()
         self.playlist_info.lightMode()
         self.playlistMenu.lightMode()
-
-        for button in self.buttonsWithDarkMode:
-            button.setDarkMode(False)
-        for item in self.themeItems:
-            lightModeStyleSheet = self.themeItems.get(item).lightMode
-            if lightModeStyleSheet is None or lightModeStyleSheet.strip() == "":
-                continue
-            item.setStyleSheet(lightModeStyleSheet)
+        super().lightMode()
 
     def darkMode(self) -> None:
         self.isDarkMode = True
@@ -239,20 +216,7 @@ class ApplicationInterface(object):
         self.playlist_carousel.darkMode()
         self.playlist_info.darkMode()
         self.playlistMenu.darkMode()
-
-        for button in self.buttonsWithDarkMode:
-            button.setDarkMode(True)
-        for item in self.themeItems:
-            darkModeStyleSheet = self.themeItems.get(item).darkMode
-            if darkModeStyleSheet is None or darkModeStyleSheet.strip() == "":
-                continue
-            item.setStyleSheet(darkModeStyleSheet)
-
-    def __addThemeForItem(self, item, theme: ThemeData) -> None:
-        self.themeItems[item] = theme
-
-    def __addButtonToList(self, item) -> None:
-        self.buttonsWithDarkMode.append(item)
+        super().darkMode()
 
     def translate(self, language: dict[str, str]) -> None:
         self.settings_panel.translate(language)

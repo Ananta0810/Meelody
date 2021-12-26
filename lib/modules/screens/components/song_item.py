@@ -1,20 +1,21 @@
 from typing import Optional
 
-from constants.ui.qss import ColorBoxes, Colors, Paddings
+from constants.ui.qss import Colors, Paddings
 from constants.ui.qt import AppCursors, AppIcons, IconSizes
 from modules.screens.components.icon_buttons import IconButton, ToggleIconButton
 from modules.screens.components.labels import DoubleClickedEditableLabel, StandardLabel
 from modules.screens.themes.theme_builders import ThemeData
 from PyQt5.QtCore import Qt
-from PyQt5.QtGui import QCursor, QFont, QPixmap
-from PyQt5.QtWidgets import QHBoxLayout, QPushButton, QWidget
+from PyQt5.QtGui import QFont, QPixmap
+from PyQt5.QtWidgets import QHBoxLayout, QWidget
 from utils.helpers.my_string import Stringify
 from utils.ui.application_utils import UiUtils
+from views.view import View
 from widgets.image_displayer import ImageDisplayer
 from widgets.mouse_observer import ClickObserver
 
 
-class SongItem(QWidget):
+class SongItem(QWidget, View):
     def __init__(
         self,
         theme: ThemeData,
@@ -23,7 +24,7 @@ class SongItem(QWidget):
         buttonThemes: dict[str, ThemeData],
         parent: Optional["QWidget"] = None,
     ):
-        super().__init__(parent)
+        super(SongItem, self).__init__(parent)
         self.defaultTitle = ""
         self.defaultArtist = ""
         self.defaultLength = 0
@@ -36,12 +37,9 @@ class SongItem(QWidget):
         labelThemes: dict[str, ThemeData],
         buttonThemes: dict[str, ThemeData],
     ) -> None:
-        self.themeItems: dict[Optional["QWidget"], ThemeData] = {}
-        self.buttonsWithDarkMode: list[Optional["QWidget"]] = []
-
         self.setAttribute(Qt.WA_StyledBackground, True)
         self.setStyleSheet("background:red")
-        self.__addThemeForItem(
+        self._addThemeForItem(
             self,
             theme=ThemeData(
                 lightMode="SongItem{background-color:TRANSPARENT;border-radius:24px}SongItem:hover{background-color:rgba(0, 0, 0, 0.1)}",
@@ -64,7 +62,7 @@ class SongItem(QWidget):
         self.buttonsLayout.setSpacing(8)
 
         self.extraButtons = QWidget()
-        self.__addThemeForItem(self.extraButtons, theme)
+        self._addThemeForItem(self.extraButtons, theme)
         self.extraButtonsLayout = QHBoxLayout(self.extraButtons)
         self.extraButtonsLayout.setSpacing(8)
         self.extraButtonsLayout.setContentsMargins(8, 8, 8, 8)
@@ -79,15 +77,15 @@ class SongItem(QWidget):
         self.coverObserver = ClickObserver(self.cover)
 
         self.title = DoubleClickedEditableLabel.render(font)
-        self.__addThemeForItem(self.title, labelThemes.get("PRIMARY"))
+        self._addThemeForItem(self.title, labelThemes.get("PRIMARY"))
         self.info.addWidget(self.title, 1)
 
         self.artist = DoubleClickedEditableLabel.render(font)
-        self.__addThemeForItem(self.artist, labelThemes.get("secondary"))
+        self._addThemeForItem(self.artist, labelThemes.get("secondary"))
         self.info.addWidget(self.artist, 1)
 
         self.length = StandardLabel.render(font)
-        self.__addThemeForItem(self.length, labelThemes.get("secondary"))
+        self._addThemeForItem(self.length, labelThemes.get("secondary"))
         self.length.setFixedWidth(64)
         self.length.setAlignment(Qt.AlignCenter)
         self.info.addWidget(self.length)
@@ -102,9 +100,9 @@ class SongItem(QWidget):
             lightModeIcon=UiUtils.paintIcon(icons.MORE, Colors.PRIMARY),
         )
         self.moreBtn.setCursor(btnCursor)
-        self.moreBtn.clicked.connect(lambda: self.showMore())
-        self.__addThemeForItem(self.moreBtn, btnTheme)
-        self.__addButtonToList(self.moreBtn)
+        self.moreBtn.clicked.connect(self.showMore)
+        self._addThemeForItem(self.moreBtn, btnTheme)
+        self._addButtonToList(self.moreBtn)
         self.buttonsLayout.addWidget(self.moreBtn)
 
         self.loveBtn = ToggleIconButton.render(
@@ -114,8 +112,8 @@ class SongItem(QWidget):
             lightModeCheckedIcon=UiUtils.paintIcon(icons.LOVE, Colors.DANGER),
         )
         self.loveBtn.setCursor(btnCursor)
-        self.__addThemeForItem(self.loveBtn, btnTheme)
-        self.__addButtonToList(self.loveBtn)
+        self._addThemeForItem(self.loveBtn, btnTheme)
+        self._addButtonToList(self.loveBtn)
         self.buttonsLayout.addWidget(self.loveBtn)
 
         self.playBtn = IconButton.render(
@@ -125,8 +123,8 @@ class SongItem(QWidget):
             darkModeIcon=UiUtils.paintIcon(icons.PLAY, Colors.WHITE),
         )
         self.playBtn.setCursor(btnCursor)
-        self.__addThemeForItem(self.playBtn, buttonThemes.get("secondary"))
-        self.__addButtonToList(self.playBtn)
+        self._addThemeForItem(self.playBtn, buttonThemes.get("secondary"))
+        self._addButtonToList(self.playBtn)
         self.buttonsLayout.addWidget(self.playBtn)
 
         self.addToPlaylistBtn = IconButton.render(
@@ -135,8 +133,8 @@ class SongItem(QWidget):
             lightModeIcon=UiUtils.paintIcon(icons.ADD, Colors.PRIMARY),
         )
         self.addToPlaylistBtn.setCursor(btnCursor)
-        self.__addThemeForItem(self.addToPlaylistBtn, btnTheme)
-        self.__addButtonToList(self.addToPlaylistBtn)
+        self._addThemeForItem(self.addToPlaylistBtn, btnTheme)
+        self._addButtonToList(self.addToPlaylistBtn)
         self.extraButtonsLayout.addWidget(self.addToPlaylistBtn)
 
         self.editBtn = IconButton.render(
@@ -145,8 +143,8 @@ class SongItem(QWidget):
             lightModeIcon=UiUtils.paintIcon(icons.EDIT, Colors.PRIMARY),
         )
         self.editBtn.setCursor(btnCursor)
-        self.__addThemeForItem(self.editBtn, btnTheme)
-        self.__addButtonToList(self.editBtn)
+        self._addThemeForItem(self.editBtn, btnTheme)
+        self._addButtonToList(self.editBtn)
         self.extraButtonsLayout.addWidget(self.editBtn)
 
         self.deleteBtn = IconButton.render(
@@ -155,8 +153,8 @@ class SongItem(QWidget):
             lightModeIcon=UiUtils.paintIcon(icons.DELETE, Colors.PRIMARY),
         )
         self.deleteBtn.setCursor(btnCursor)
-        self.__addThemeForItem(self.deleteBtn, btnTheme)
-        self.__addButtonToList(self.deleteBtn)
+        self._addThemeForItem(self.deleteBtn, btnTheme)
+        self._addButtonToList(self.deleteBtn)
         self.extraButtonsLayout.addWidget(self.deleteBtn)
 
         self.closeBtn = IconButton.render(
@@ -171,8 +169,8 @@ class SongItem(QWidget):
         )
         self.closeBtn.setCursor(btnCursor)
         self.closeBtn.clicked.connect(lambda: self.showLess())
-        self.__addThemeForItem(self.closeBtn, buttonThemes.get("DANGER"))
-        self.__addButtonToList(self.closeBtn)
+        self._addThemeForItem(self.closeBtn, buttonThemes.get("DANGER"))
+        self._addButtonToList(self.closeBtn)
 
         self.showLess()
 
@@ -221,27 +219,3 @@ class SongItem(QWidget):
 
     def clearInfo(self):
         self.setCover(None)
-
-    def lightMode(self) -> None:
-        for button in self.buttonsWithDarkMode:
-            button.setDarkMode(False)
-        for item in self.themeItems:
-            lightModeStyleSheet = self.themeItems.get(item).lightMode
-            if lightModeStyleSheet is None or lightModeStyleSheet.strip() == "":
-                continue
-            item.setStyleSheet(lightModeStyleSheet)
-
-    def darkMode(self) -> None:
-        for button in self.buttonsWithDarkMode:
-            button.setDarkMode(True)
-        for item in self.themeItems:
-            darkModeStyleSheet = self.themeItems.get(item).darkMode
-            if darkModeStyleSheet is None or darkModeStyleSheet.strip() == "":
-                continue
-            item.setStyleSheet(darkModeStyleSheet)
-
-    def __addThemeForItem(self, item: Optional["QWidget"], theme: ThemeData) -> None:
-        self.themeItems[item] = theme
-
-    def __addButtonToList(self, item: Optional["QPushButton"]) -> None:
-        self.buttonsWithDarkMode.append(item)

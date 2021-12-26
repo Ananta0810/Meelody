@@ -1,15 +1,12 @@
 from functools import cached_property
 
 from constants.ui.base import ApplicationImage
-from constants.ui.qss import ColorBoxes, Colors
+from constants.ui.qss import Backgrounds, ColorBoxes
 from constants.ui.qt import AppCursors, AppIcons
 from modules.screens.components.confirm_message import ConfirmMessage
 from modules.screens.components.font_builder import FontBuilder
-from modules.screens.components.icon_buttons import IconButton
-from modules.screens.components.labels import StandardLabel
 from modules.screens.components.song_item import SongItem
-from modules.screens.qss.qss_elements import Background
-from modules.screens.themes.theme_builders import ThemeData
+from modules.screens.themes.theme_builders import ButtonThemeBuilder, LabelThemeBuilder, ThemeData
 from PyQt5.QtCore import QEvent, Qt, pyqtSignal
 from PyQt5.QtGui import QKeyEvent, QPixmap
 from PyQt5.QtWidgets import QFileDialog, QVBoxLayout, QWidget
@@ -17,15 +14,14 @@ from utils.ui.application_utils import UiUtils
 from widgets.image_displayer import ImageDisplayer
 from widgets.smooth_scroll_area import SmoothVerticalScrollArea
 
+from views.view import View
 
-class PlaylistTableBody(SmoothVerticalScrollArea):
+
+class PlaylistTableBody(SmoothVerticalScrollArea, View):
     keyPressed = pyqtSignal(QEvent)
 
     def __init__(self, parent=None):
-        super().__init__(parent)
-        self.themeItems = {}
-        self.buttonsWithDarkMode = []
-        self.isDarkMode = False
+        super(PlaylistTableBody, self).__init__(parent)
         self.setupUi()
 
     def keyPressEvent(self, event: QKeyEvent) -> None:
@@ -38,8 +34,8 @@ class PlaylistTableBody(SmoothVerticalScrollArea):
             "QScrollBar:vertical {border:none;background:TRANSPARENT;width:4px}\n"
             "QScrollBar::handle:vertical {background:rgba(160,160,160, 0.5);border-radius:2px}\n"
             "QScrollBar::handle:vertical:hover{background:#8040ff}\n"
-            "QScrollBar::sub-line:vertical{border: none}\n"
-            "QScrollBar::add-line:vertical{border: none}\n"
+            "QScrollBar::sub-line:vertical{border:none}\n"
+            "QScrollBar::add-line:vertical{border:none}\n"
             "QScrollBar::up-arrow:vertical,QScrollBar::down-arrow:vertical{background: none}\n"
             "QScrollBar::add-page:vertical,QScrollBar::sub-page:vertical{background: none}"
         )
@@ -73,26 +69,14 @@ class PlaylistTableBody(SmoothVerticalScrollArea):
         songCount = self.getTotalSongAvailable()
         for index in range(0, songCount):
             self.__getSongByIndex(index).lightMode()
-        for button in self.buttonsWithDarkMode:
-            button.setDarkMode(False)
-        for item in self.themeItems:
-            lightModeStyleSheet = self.themeItems.get(item).lightMode
-            if lightModeStyleSheet is None or lightModeStyleSheet.strip() == "":
-                continue
-            item.setStyleSheet(lightModeStyleSheet)
+        super().lightMode()
 
     def darkMode(self) -> None:
         self.isDarkMode = True
         songCount = self.getTotalSongAvailable()
         for index in range(0, songCount):
             self.__getSongByIndex(index).darkMode()
-        for button in self.buttonsWithDarkMode:
-            button.setDarkMode(True)
-        for item in self.themeItems:
-            darkModeStyleSheet = self.themeItems.get(item).darkMode
-            if darkModeStyleSheet is None or darkModeStyleSheet.strip() == "":
-                continue
-            item.setStyleSheet(darkModeStyleSheet)
+        super().darkMode()
 
     def updateLayout(self, totalPlaylistAvailable: int, controller) -> None:
         totalPlaylistDisplaying = self.getTotalSongAvailable()
@@ -164,13 +148,13 @@ class PlaylistTableBody(SmoothVerticalScrollArea):
                 "font": FontBuilder().withSize(10).withWeight("normal").build(),
                 "themes": {
                     "PRIMARY": (
-                        StandardLabel.getThemeBuilder()
+                        LabelThemeBuilder()
                         .addLightModeTextColor(ColorBoxes.BLACK)
                         .addDarkModeTextColor(ColorBoxes.WHITE)
                         .build(itemSize=self.icons.SIZES.LARGE.height())
                     ),
                     "secondary": (
-                        StandardLabel.getThemeBuilder()
+                        LabelThemeBuilder()
                         .addLightModeTextColor(ColorBoxes.GRAY)
                         .addDarkModeTextColor(ColorBoxes.GRAY)
                         .build(itemSize=self.icons.SIZES.LARGE.height())
@@ -181,45 +165,20 @@ class PlaylistTableBody(SmoothVerticalScrollArea):
                 "cursors": AppCursors(),
                 "themes": {
                     "PRIMARY": (
-                        IconButton.getThemeBuilder()
-                        .addLightModeBackground(
-                            Background(
-                                borderRadius=0.5,
-                                color=ColorBoxes.HOVERABLE_HIDDEN_PRIMARY,
-                            )
-                        )
-                        .addDarkModeBackground(
-                            Background(
-                                borderRadius=0.5,
-                                color=ColorBoxes.HOVERABLE_HIDDEN_WHITE,
-                            )
-                        )
+                        ButtonThemeBuilder()
+                        .addLightModeBackground(Backgrounds.CIRCLE_HIDDEN_PRIMARY)
+                        .addDarkModeBackground(Backgrounds.CIRCLE_HIDDEN_WHITE)
                         .build(itemSize=self.icons.SIZES.LARGE.height())
                     ),
                     "secondary": (
-                        IconButton.getThemeBuilder()
-                        .addLightModeBackground(
-                            Background(
-                                borderRadius=0.5,
-                                color=ColorBoxes.HOVERABLE_PRIMARY_25,
-                            )
-                        )
-                        .addDarkModeBackground(
-                            Background(
-                                borderRadius=0.5,
-                                color=ColorBoxes.HOVERABLE_WHITE_25,
-                            )
-                        )
+                        ButtonThemeBuilder()
+                        .addLightModeBackground(Backgrounds.CIRCLE_PRIMARY_25)
+                        .addDarkModeBackground(Backgrounds.CIRCLE_WHITE_25)
                         .build(itemSize=self.icons.SIZES.LARGE.height())
                     ),
                     "DANGER": (
-                        IconButton.getThemeBuilder()
-                        .addLightModeBackground(
-                            Background(
-                                borderRadius=0.5,
-                                color=ColorBoxes.HOVERABLE_DANGER,
-                            )
-                        )
+                        ButtonThemeBuilder()
+                        .addLightModeBackground(Backgrounds.CIRCLE_DANGER)
                         .addDarkModeBackground(None)
                         .build(itemSize=self.icons.SIZES.MEDIUM.height())
                     ),

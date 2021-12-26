@@ -1,14 +1,11 @@
 from abc import ABC, abstractstaticmethod
-from sys import path
 
-from PyQt5.QtCore import QObject, QSize
-from PyQt5.QtGui import QIcon
-from PyQt5.QtWidgets import QPushButton
-
-path.append("./lib")
 from modules.screens.components.view_item import ViewItem
 from modules.screens.qss.qss_elements import Padding
 from modules.screens.themes.theme_builders import ButtonThemeBuilder
+from PyQt5.QtCore import QObject, QSize
+from PyQt5.QtGui import QIcon
+from PyQt5.QtWidgets import QPushButton
 from widgets.multiple_icon_button import QMultipleIconButton
 from widgets.standard_icon_button import QIconButton
 from widgets.toggle_icon_button import QToggleButton
@@ -36,9 +33,6 @@ class IconButton(ViewItem):
         button.setFixedSize(size)
         return button
 
-    def getThemeBuilder():
-        return ButtonThemeBuilder()
-
 
 class ToggleIconButton(ViewItem):
     def render(
@@ -61,9 +55,6 @@ class ToggleIconButton(ViewItem):
         button.setFixedSize(size)
         return button
 
-    def getThemeBuilder():
-        return ButtonThemeBuilder()
-
 
 class MultiIconButton(ViewItem):
     def render(
@@ -79,6 +70,3 @@ class MultiIconButton(ViewItem):
             button.setIconSize(size - padding.getWidth(size))
         button.setFixedSize(size)
         return button
-
-    def getThemeBuilder():
-        return ButtonThemeBuilder()

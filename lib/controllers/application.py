@@ -11,7 +11,8 @@ from constants.application import supportedLanguages
 from modules.entities.playlist_info import PlaylistInfo
 from modules.models.player import Player
 from PyQt5.QtWidgets import QApplication
-from utils.data.config_utils import getLanguagePackage, retrievePlayerData, retrieveSettingsData, updateSettingsData
+from utils.data.config_utils import (getLanguagePackage, retrievePlayerData,
+                                     retrieveSettingsData, updateSettingsData)
 from utils.helpers.playlist_song_utils import getPlaylistFromDir
 from views.ui_application import ApplicationInterface
 
