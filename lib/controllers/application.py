@@ -36,10 +36,10 @@ class Appication:
         self.musicPlayer.displayDataRetrievedFrom(musicPlayerData)
 
     def setupControllers(self):
-        self.playlistCarousel = PlaylistCarousel(self.ui.playlist_carousel)
-        self.musicPlayer = MusicPlayer(self.ui.music_player_inner)
+        self.playlistCarousel = PlaylistCarousel(self.ui.body.playlistCarousel)
+        self.musicPlayer = MusicPlayer(self.ui.musicPlayerInner)
         self.playlistSelector = PlaylistSelector(self.ui)
-        self.playlistMenu = PlaylistMenu(self.ui.currentPlaylist.songs.body)
+        self.playlistMenu = PlaylistMenu(self.ui.body.currentPlaylist.songs.body)
         self.controllers = {
             "application": self,
             "playlistCarousel": self.playlistCarousel,
@@ -51,7 +51,7 @@ class Appication:
         self.playlistMenu.setControllers(self.controllers)
 
     def run(self):
-        self.ui.MainWindow.show()
+        self.ui.mainWindow.show()
 
     def handleChangedLanguage(self, index: int) -> None:
         supportedLanguagesAsList = [key for key in supportedLanguages.keys()]
@@ -92,9 +92,9 @@ class Appication:
         language: str = settingsData.get("language")
         languages: list[str] = [key for key in supportedLanguages.keys()]
 
-        self.ui.settings_panel.change_language_dropdown.setCurrentIndex(languages.index(language))
-        self.ui.settings_panel.current_folder.setText(settingsData.get("path"))
-        self.ui.settings_panel.switch_dark_mode_btn.setChecked(isDarkMode)
+        # self.ui.settings_panel.change_language_dropdown.setCurrentIndex(languages.index(language))
+        # self.ui.settings_panel.current_folder.setText(settingsData.get("path"))
+        # self.ui.settings_panel.switch_dark_mode_btn.setChecked(isDarkMode)
         self.ui.translate(getLanguagePackage(language))
         self.ui.switchDarkMode(isDarkMode)
         self.loadPlaylistFromDirForPlayer(settingsData.get("path"))

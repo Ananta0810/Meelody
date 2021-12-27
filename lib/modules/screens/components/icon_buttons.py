@@ -31,6 +31,7 @@ class IconButton(ViewItem):
         button.setIcon(lightModeIcon)
         button.setIconSize(size - padding.getWidth(size))
         button.setFixedSize(size)
+        button.setStyleSheet("background-color:none;border:none")
         return button
 
 
