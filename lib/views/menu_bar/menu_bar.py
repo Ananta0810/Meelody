@@ -31,7 +31,7 @@ class MenuBar(QHBoxLayout, View):
             self.openSettingBtn,
             theme=(ButtonThemeBuilder().addLightModeBackground(None).build()),
         )
-        self.openSettingBtn.setCursor(AppCursors.hand())
+        self.openSettingBtn.setCursor(AppCursors().HAND)
         # self.openSettingBtn.clicked.connect(self.openSettingsDiaglog)
 
         self._addButtonToList(self.openSettingBtn)

@@ -1,10 +1,7 @@
 from constants.ui.base import ApplicationImage
 from constants.ui.qss import Backgrounds, ColorBoxes
 from constants.ui.qt import IconSizes
-from modules.screens.components.song_item import SongItem
-from modules.screens.themes.theme_builders import (ButtonThemeBuilder,
-                                                   LabelThemeBuilder,
-                                                   ThemeData)
+from modules.screens.themes.theme_builders import ButtonThemeBuilder, LabelThemeBuilder, ThemeData
 from PyQt5.QtCore import QEvent, Qt, pyqtSignal
 from PyQt5.QtGui import QKeyEvent
 from PyQt5.QtWidgets import QFileDialog, QVBoxLayout, QWidget
@@ -12,6 +9,8 @@ from utils.ui.application_utils import UiUtils
 from views.view import View
 from widgets.image_displayer import ImageDisplayer
 from widgets.smooth_scroll_area import SmoothVerticalScrollArea
+
+from .song_row import SongItem
 
 
 class SongTableBody(SmoothVerticalScrollArea, View):
