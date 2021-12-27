@@ -1,19 +1,16 @@
 from typing import Optional
 
-from constants.ui.qss import Backgrounds, ColorBoxes
+from constants.ui.qss import Backgrounds, ColorBoxes, Colors, Paddings
 from constants.ui.qt import AppCursors
 from modules.screens.components.font_builder import FontBuilder
-from modules.screens.themes.theme_builders import (ActionButtonThemeBuilder,
-                                                   LabelThemeBuilder,
-                                                   ThemeData)
+from modules.screens.themes.theme_builders import ActionButtonThemeBuilder, LabelThemeBuilder, ThemeData
 from PyQt5.QtCore import Qt
-from PyQt5.QtWidgets import (QDialog, QDialogButtonBox,
-                             QGraphicsDropShadowEffect, QLabel, QVBoxLayout,
-                             QWidget)
+from PyQt5.QtWidgets import QDialog, QDialogButtonBox, QGraphicsDropShadowEffect, QLabel, QVBoxLayout, QWidget
+from utils.ui.color_utils import ColorUtils
 from views.view import View
 
 
-class ConfirmMessage(QDialog, View):
+class ConfirmDialog(QDialog, View):
     def __init__(
         self,
         header: str,
@@ -23,7 +20,7 @@ class ConfirmMessage(QDialog, View):
         darkMode: bool = False,
         parent: Optional["QWidget"] = None,
     ):
-        super(ConfirmMessage, self).__init__(parent)
+        super(ConfirmDialog, self).__init__(parent)
         self.setupUi(header, msg, acceptText, rejectText)
         if darkMode:
             self.darkMode()
@@ -49,14 +46,12 @@ class ConfirmMessage(QDialog, View):
             .build(itemSize=40)
         )
         cursors = AppCursors()
-
         self.setWindowFlags(Qt.Window | Qt.FramelessWindowHint | Qt.WindowMinMaxButtonsHint)
         self.setAttribute(Qt.WA_StyledBackground, True)
         self.setAttribute(Qt.WA_TranslucentBackground)
-        self._addThemeForItem(
-            self,
-            ThemeData(lightMode="background:WHITE;border-radius:24px", darkMode="background:BLACK;border-radius:24px"),
-        )
+
+        self.view = QWidget(self)
+        self.view.setContentsMargins(24, 24, 24, 16)
         # self.setGraphicsEffect(
         #     QGraphicsDropShadowEffect(
         #         blurRadius=50,
@@ -65,9 +60,12 @@ class ConfirmMessage(QDialog, View):
         #         yOffset=3,
         #     )
         # )
-
-        self.view = QWidget(self)
-        self.view.setContentsMargins(24, 24, 24, 16)
+        self._addThemeForItem(
+            self.view,
+            ThemeData(lightMode="background:WHITE;border-radius:24px", darkMode="background:BLACK;border-radius:24px"),
+        )
+        self.viewLayout = QVBoxLayout(self.view)
+        self.viewLayout.setSpacing(20)
 
         self.buttonBox = QDialogButtonBox(QDialogButtonBox.Ok | QDialogButtonBox.Cancel)
         self.buttonBox.accepted.connect(self.accept)
@@ -101,9 +99,6 @@ class ConfirmMessage(QDialog, View):
                 .build()
             ),
         )
-
-        self.viewLayout = QVBoxLayout(self.view)
-        self.viewLayout.setSpacing(20)
 
         self.header = QLabel()
         self.header.setFont(fontBuilder.withSize(16).withWeight("bold").build())

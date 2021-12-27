@@ -2,15 +2,13 @@ from sys import path
 
 path.append("./lib")
 
-from modules.entities.song import Song
 from modules.models.playlist_songs import PlaylistSongs
 from utils.helpers.my_bytes import MyBytes
 from utils.helpers.my_string import UnicodeString
-from views.ui_playlist_carousel import UiPlaylistCarousel
 
 
 class PlaylistMenu:
-    def __init__(self, ui: UiPlaylistCarousel):
+    def __init__(self, ui):
         self.ui = ui
         self.playlist = None
         self.controllers = None
@@ -135,7 +133,7 @@ class PlaylistMenu:
             return
 
         cover: bytes = MyBytes.getBytesFromFile(coverPath)
-        changeSuccessfully: bool = songs[index].changeCover(cover)
+        changeSuccessfully: bool = songs[index].setCover(cover)
         if not changeSuccessfully:
             return
         self.ui.setSongCoverAtIndex(index, cover)

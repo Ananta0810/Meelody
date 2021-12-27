@@ -6,7 +6,7 @@ from PyQt5.QtWidgets import QVBoxLayout, QWidget
 from widgets.image_displayer import ImageDisplayer
 
 
-class PlaylistCard(QWidget):
+class DefaultPlaylistCard(QWidget):
     clicked = pyqtSignal()
 
     def __init__(self, font: QFont, parent=None):

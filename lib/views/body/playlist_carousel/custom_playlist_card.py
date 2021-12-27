@@ -10,7 +10,7 @@ from utils.ui.pixmap_utils import PixmapUtils
 from widgets.image_displayer import ImageDisplayer
 
 
-class EditablePlaylistCard(QWidget):
+class CustomPlaylistCard(QWidget):
     clicked = pyqtSignal()
 
     def __init__(

@@ -1,26 +1,24 @@
 from constants.ui.base import ApplicationImage
 from constants.ui.qss import Backgrounds, ColorBoxes
 from constants.ui.qt import IconSizes
-from modules.screens.components.confirm_message import ConfirmMessage
 from modules.screens.components.song_item import SongItem
 from modules.screens.themes.theme_builders import (ButtonThemeBuilder,
                                                    LabelThemeBuilder,
                                                    ThemeData)
 from PyQt5.QtCore import QEvent, Qt, pyqtSignal
-from PyQt5.QtGui import QKeyEvent, QPixmap
+from PyQt5.QtGui import QKeyEvent
 from PyQt5.QtWidgets import QFileDialog, QVBoxLayout, QWidget
 from utils.ui.application_utils import UiUtils
+from views.view import View
 from widgets.image_displayer import ImageDisplayer
 from widgets.smooth_scroll_area import SmoothVerticalScrollArea
 
-from views.view import View
 
-
-class PlaylistTableBody(SmoothVerticalScrollArea, View):
+class SongTableBody(SmoothVerticalScrollArea, View):
     keyPressed = pyqtSignal(QEvent)
 
     def __init__(self, parent=None):
-        super(PlaylistTableBody, self).__init__(parent)
+        super(SongTableBody, self).__init__(parent)
         self.setupUi()
 
     def keyPressEvent(self, event: QKeyEvent) -> None:
@@ -61,7 +59,7 @@ class PlaylistTableBody(SmoothVerticalScrollArea, View):
         except ValueError:
             pass
 
-    def connectSignalsToController(self, controller):
+    def connectToController(self, controller):
         self.keyPressed.connect(lambda event: self.getKeyFromEvent(event, controller))
 
     def lightMode(self) -> None:
@@ -109,13 +107,13 @@ class PlaylistTableBody(SmoothVerticalScrollArea, View):
         song = self.__getSongByIndex(index)
         song.show()
         song.showLess()
-        song.setCover(self.__getPixmapForSongCover(cover))
+        song.setCover(cover)
         song.setTitle(title)
         song.setArtist(artist)
         song.setLength(length)
 
     def setSongCoverAtIndex(self, index: int, cover: bytes) -> None:
-        self.__getSongByIndex(index).setCover(self.__getPixmapForSongCover(cover))
+        self.__getSongByIndex(index).setCover(cover)
 
     def setSongTitleAtIndex(self, index: int, title: str) -> None:
         self.__getSongByIndex(index).setTitle(title)
@@ -134,7 +132,6 @@ class PlaylistTableBody(SmoothVerticalScrollArea, View):
 
     def __addLackingPlaylists(self, numberOfPlaylist: int, controller) -> None:
         defaultValues: dict = {
-            "cover": self.__getPixmapForSongCover(ApplicationImage.defaultSongCover),
             "theme": ThemeData(
                 lightMode="QWidget{background-color:rgba(0, 0, 0, 0.1);border-radius:16px}QWidget:hover{background-color:rgba(0, 0, 0, 0.15)}",
                 darkMode="QWidget{background-color:rgba(255, 255, 255, 0.1);border-radius:16px}QWidget:hover{background-color:rgba(255, 255, 255, 0.15)}",
@@ -207,8 +204,10 @@ class PlaylistTableBody(SmoothVerticalScrollArea, View):
             labelThemes=values.get("labels").get("themes"),
             buttonThemes=values.get("buttons").get("themes"),
         )
-        song.setDefaultCover(values.get("cover"))
+        song.setDefaultCover(ApplicationImage.defaultSongCover)
         song.setDefaultArtist("")
+        song.setTitle("Title")
+        song.setLength(0)
         self.menu.addWidget(song)
         UiUtils.setAttribute(self, "song", index, song)
         return song
@@ -228,8 +227,3 @@ class PlaylistTableBody(SmoothVerticalScrollArea, View):
 
     def __getSongByIndex(self, index: int) -> SongItem:
         return UiUtils.getAttribute(self, "song", index)
-
-    def __getPixmapForSongCover(self, coverAsByte: bytes) -> QPixmap:
-        if coverAsByte is None:
-            return None
-        return UiUtils.getEditedPixmapFromBytes(coverAsByte, width=64, height=64, radius=12)

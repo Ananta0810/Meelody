@@ -7,16 +7,17 @@ from modules.screens.components.icon_buttons import IconButton
 from modules.screens.components.playlist_info import PlaylistInfo
 from modules.screens.themes.theme_builders import ButtonThemeBuilder, ThemeData
 from PyQt5.QtCore import QMetaObject, Qt
-from PyQt5.QtWidgets import QGraphicsDropShadowEffect, QHBoxLayout, QScrollArea, QVBoxLayout, QWidget
+from PyQt5.QtWidgets import (QGraphicsDropShadowEffect, QHBoxLayout,
+                             QScrollArea, QVBoxLayout, QWidget)
 from utils.ui.application_utils import UiUtils
 from utils.ui.color_utils import ColorUtils
 from widgets.framless_window import FramelessWindow
 
-from .playlist_menu import PlaylistTable
-from .ui_player_music import UIPlayerMusic
-from .ui_playlist_carousel import UiPlaylistCarousel
+from .body.playlist_carousel.carousel import UiPlaylistCarousel
+from .body.song_table.song_table import SongTable
+from .dialogs.settings_dialog import SettingsDialog
+from .music_player.music_player import UIPlayerMusic
 from .view import View
-from .window_settings_panel import SettingsPanel
 
 
 class ApplicationInterface(View):
@@ -88,14 +89,12 @@ class ApplicationInterface(View):
         self.close_btn = IconButton.render(
             padding=Paddings.RELATIVE_50,
             size=icons.SIZES.MEDIUM,
-            lightModeIcon=UiUtils.paintIcon(icons.CLOSE, Colors.DANGER),
+            lightModeIcon=UiUtils.paintIcon(icons.CLOSE, Colors.WHITE),
         )
         self._addThemeForItem(
             self.close_btn,
             theme=(
-                btnThemeBuilder.addLightModeBackground(Backgrounds.ROUNDED_HIDDEN_DANGER_50)
-                .addDarkModeBackground(None)
-                .build()
+                btnThemeBuilder.addLightModeBackground(Backgrounds.ROUNDED_DANGER).addDarkModeBackground(None).build()
             ),
         )
         self.close_btn.setCursor(AppCursors.hand())
@@ -139,7 +138,7 @@ class ApplicationInterface(View):
 
         self.playlist_info = PlaylistInfo()
         self.playlist_info.setDefaultCover(ApplicationImage.defaultPlaylistCover)
-        self.playlistMenu = PlaylistTable()
+        self.playlistMenu = SongTable()
         self.playlistMenu.setFixedHeight(600)
 
         self.currentPlaylist.addLayout(self.playlist_info)
@@ -164,7 +163,7 @@ class ApplicationInterface(View):
         self.music_player_inner = UIPlayerMusic(self.music_player)
         self.music_player_layout.addWidget(self.music_player_inner)
 
-        self.settings_panel = SettingsPanel(self.MainWindow)
+        self.settings_panel = SettingsDialog(self.MainWindow)
         self.settings_panel.setFixedSize(500, 400)
         self.settings_panel.move(self.MainWindow.rect().center() - self.settings_panel.rect().center())
         self.settings_panel.setGraphicsEffect(
@@ -182,12 +181,12 @@ class ApplicationInterface(View):
 
         QMetaObject.connectSlotsByName(self.MainWindow)
 
-    def connectSignalsToControllers(self, controllers) -> None:
-        self.settings_panel.connectSignalsToController(controllers.get("application"))
-        self.music_player_inner.connectSignalsToController(controllers.get("musicPlayer"))
-        self.playlist_carousel.connectSignalsToController(controllers.get("playlistCarousel"))
-        self.playlistMenu.connectSignalsToController(controllers.get("playlistMenu"))
-        # self.playlsit_carousel.connectSignalsToController(controllers.get("playlistSelector"))
+    def connectToControllers(self, controllers) -> None:
+        self.settings_panel.connectToController(controllers.get("application"))
+        self.music_player_inner.connectToController(controllers.get("musicPlayer"))
+        self.playlist_carousel.connectToController(controllers.get("playlistCarousel"))
+        self.playlistMenu.connectToController(controllers.get("playlistMenu"))
+        # self.playlsit_carousel.connectToController(controllers.get("playlistSelector"))
 
     def switchDarkMode(self, mode) -> None:
         self.isDarkMode = mode

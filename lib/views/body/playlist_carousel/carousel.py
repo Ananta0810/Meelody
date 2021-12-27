@@ -1,19 +1,19 @@
 from constants.ui.base import ApplicationImage
 from constants.ui.qss import Backgrounds, Colors, Paddings
 from constants.ui.qt import AppCursors, AppIcons
-from modules.screens.components.confirm_message import ConfirmMessage
-from modules.screens.components.editable_playlist_card import EditablePlaylistCard
 from modules.screens.components.font_builder import FontBuilder
 from modules.screens.components.icon_buttons import IconButton
-from modules.screens.components.playlist_card import PlaylistCard
 from modules.screens.others.animation import Animation
 from modules.screens.themes.theme_builders import ButtonThemeBuilder, ThemeData
 from PyQt5.QtCore import Qt
 from PyQt5.QtGui import QIcon, QPixmap
 from PyQt5.QtWidgets import QFileDialog, QHBoxLayout, QScrollArea, QWidget
 from utils.ui.application_utils import UiUtils
+from views.dialogs.confirm_dialog import ConfirmDialog
+from views.view import View
 
-from .view import View
+from .custom_playlist_card import CustomPlaylistCard
+from .default_playlist_card import DefaultPlaylistCard
 
 
 class UiPlaylistCarousel(QScrollArea, View):
@@ -55,14 +55,14 @@ class UiPlaylistCarousel(QScrollArea, View):
         # =================Library=================
         self.defaultPlaylistCover = self.__getPixmapForPlaylistCover(ApplicationImage.defaultPlaylistCover)
 
-        self.library = PlaylistCard(self.playlistLabelFont)
+        self.library = DefaultPlaylistCard(self.playlistLabelFont)
         self.library.setAnimation(self.hoverAnimation)
         self.library.setFixedSize(256, 320)
         self.library.setCursor(self.cursors.HAND)
         self.library.setCover(self.defaultPlaylistCover)
         self.library.setLabelText("Library")
 
-        self.favourites = PlaylistCard(self.playlistLabelFont)
+        self.favourites = DefaultPlaylistCard(self.playlistLabelFont)
         self.favourites.setAnimation(self.hoverAnimation)
         self.favourites.setFixedSize(256, 320)
         self.favourites.setCursor(self.cursors.HAND)
@@ -113,13 +113,13 @@ class UiPlaylistCarousel(QScrollArea, View):
         self.main_layout.addWidget(self.addPlaylistCard)
         self.main_layout.addStretch()
 
-    def connectSignalsToController(self, controller):
+    def connectToController(self, controller):
         self.add_playlist_btn.clicked.connect(controller.handleAddNewPlaylist)
         self.library.clicked.connect(controller.handleSelectedLibrary)
         self.favourites.clicked.connect(controller.handleSelectedFavourites)
 
     def updateLayout(self, totalPlaylistAvailable: int, controller) -> None:
-        totalPlaylistDisplaying = self.getTotalPlaylistInLayout()
+        totalPlaylistDisplaying = self.__getTotalPlaylistInLayout()
         totalPlaylistLacking = totalPlaylistAvailable - totalPlaylistDisplaying
         if totalPlaylistLacking == 0:
             return
@@ -138,7 +138,7 @@ class UiPlaylistCarousel(QScrollArea, View):
             self.addNewEmptyPlaylist(controller)
 
     def addNewEmptyPlaylist(self, controller) -> None:
-        index = self.getTotalPlaylistInLayout()
+        index = self.__getTotalPlaylistInLayout()
         playlist = self.addPlaylist(index)
         playlist.clicked.connect(lambda: controller.handleSelectedPlaylist(index))
         playlist.label.returnPressed.connect(lambda: controller.handleChangedPlaylistName(index, playlist.label.text()))
@@ -146,7 +146,7 @@ class UiPlaylistCarousel(QScrollArea, View):
         playlist.editBtn.clicked.connect(lambda: self.openChoosingPlaylistCoverDialog(index, controller))
 
     def confirmDeletePlaylist(self, index: int, controller) -> None:
-        message_box = ConfirmMessage(
+        message_box = ConfirmDialog(
             header="Delete playlist", msg="Are you sure want to delete the playlist? This action can not be reversed."
         )
         confirmDelete = message_box.exec()
@@ -163,7 +163,7 @@ class UiPlaylistCarousel(QScrollArea, View):
             self.user_playlists.itemAt(index).widget().deleteLater()
 
     def addPlaylist(self, index: int):
-        playlist = EditablePlaylistCard(
+        playlist = CustomPlaylistCard(
             labelFont=self.playlistLabelFont,
             buttonTheme=self.buttonTheme,
             icons=self.buttonIcons,
@@ -184,7 +184,7 @@ class UiPlaylistCarousel(QScrollArea, View):
         self.changePlaylistNameAtIndex(index, name)
         self.changePlaylistCoverAtIndex(index, cover)
 
-    def getPlaylistByIndex(self, index: int) -> EditablePlaylistCard:
+    def getPlaylistByIndex(self, index: int) -> CustomPlaylistCard:
         return UiUtils.getAttribute(self, "playlist_card", index)
 
     def changePlaylistCoverAtIndex(self, index: int, cover: bytes) -> None:
@@ -196,25 +196,12 @@ class UiPlaylistCarousel(QScrollArea, View):
     def displayPlaylistInRange(self, start: int, end: int) -> None:
         for index in range(start, end):
             self.getPlaylistByIndex(index).show()
-        for index in range(end, self.getTotalPlaylistInLayout()):
+        for index in range(end, self.__getTotalPlaylistInLayout()):
             self.getPlaylistByIndex(index).hide()
         # UiUtils.getAttribute(self, "playlist_card", end).setParent(None)
 
-    def getTotalPlaylistInLayout(self) -> int:
+    def __getTotalPlaylistInLayout(self) -> int:
         return self.user_playlists.count()
-
-    def getNumberOfPlaylistDisplaying(self) -> int:
-        count: int = 0
-        while True:
-            playlist = self.getPlaylistByIndex(count)
-            if playlist is None:
-                return count
-            if not playlist.isVisible():
-                return count
-            playlistIsEmpty = playlist.label.isDisplayingDefaultText()
-            if playlistIsEmpty:
-                return count
-            count += 1
 
     def __getPixmapForPlaylistCover(self, coverAsByte: bytes) -> QPixmap:
         if coverAsByte is None:

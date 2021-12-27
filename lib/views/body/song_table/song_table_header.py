@@ -9,13 +9,12 @@ from modules.screens.themes.theme_builders import ButtonThemeBuilder, LabelTheme
 from PyQt5.QtCore import Qt
 from PyQt5.QtWidgets import QHBoxLayout, QWidget
 from utils.ui.application_utils import UiUtils
-
 from views.view import View
 
 
-class PlaylistTableHeader(QWidget, View):
+class SongTableHeader(QWidget, View):
     def __init__(self, parent: Optional["QWidget"] = None):
-        super(PlaylistTableHeader, self).__init__(parent)
+        super(SongTableHeader, self).__init__(parent)
         self.setupUi()
         self.setText()
 

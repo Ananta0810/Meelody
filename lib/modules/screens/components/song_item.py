@@ -2,6 +2,8 @@ from typing import Optional
 
 from constants.ui.qss import Colors, Paddings
 from constants.ui.qt import AppCursors, AppIcons, IconSizes
+
+# from joblib import Memory
 from modules.screens.components.font_builder import FontBuilder
 from modules.screens.components.icon_buttons import IconButton, ToggleIconButton
 from modules.screens.components.labels import DoubleClickedEditableLabel, StandardLabel
@@ -14,6 +16,15 @@ from utils.ui.application_utils import UiUtils
 from views.view import View
 from widgets.image_displayer import ImageDisplayer
 from widgets.mouse_observer import ClickObserver
+
+# memory = Memory("caches/ui", verbose=0)
+
+
+# @memory.cache
+def getSongCoverPixmap(coverAsByte: bytes) -> QPixmap:
+    if coverAsByte is None:
+        return None
+    return UiUtils.getEditedPixmapFromBytes(coverAsByte, width=64, height=64, radius=12)
 
 
 class SongItem(QWidget, View):
@@ -181,8 +192,8 @@ class SongItem(QWidget, View):
         self.closeBtn.hide()
         self.extraButtons.hide()
 
-    def setCover(self, pixmap: QPixmap) -> None:
-        self.cover.setPixmap(pixmap)
+    def setCover(self, cover: bytes) -> None:
+        self.cover.setPixmap(getSongCoverPixmap(cover))
 
     def setTitle(self, title: str) -> None:
         if title is None:
@@ -202,8 +213,8 @@ class SongItem(QWidget, View):
         self.length.setText(Stringify.floatToClockTime(length))
         self.length.setCursorPosition(0)
 
-    def setDefaultCover(self, pixmap: QPixmap) -> None:
-        self.cover.setDefaultPixmap(pixmap)
+    def setDefaultCover(self, cover: bytes) -> None:
+        self.cover.setDefaultPixmap(getSongCoverPixmap(cover))
 
     def setDefaultArtist(self, artist: str) -> None:
         self.defaultArtist = artist

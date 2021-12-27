@@ -1,18 +1,15 @@
-from sys import argv, exit, path
-from time import perf_counter
+from sys import path
 
-from music_player import MusicPlayer
-from playlist_carousel import PlaylistCarousel
-from playlist_chooser import PlaylistSelector
-from playlist_menu import PlaylistMenu
+from .music_player import MusicPlayer
+from .playlist_carousel import PlaylistCarousel
+from .playlist_chooser import PlaylistSelector
+from .playlist_menu import PlaylistMenu
 
 path.append("./lib")
 from constants.application import supportedLanguages
 from modules.entities.playlist_info import PlaylistInfo
 from modules.models.player import Player
-from PyQt5.QtWidgets import QApplication
-from utils.data.config_utils import (getLanguagePackage, retrievePlayerData,
-                                     retrieveSettingsData, updateSettingsData)
+from utils.data.config_utils import getLanguagePackage, retrievePlayerData, retrieveSettingsData, updateSettingsData
 from utils.helpers.playlist_song_utils import getPlaylistFromDir
 from views.ui_application import ApplicationInterface
 
@@ -50,7 +47,7 @@ class Appication:
             "playlistSelector": self.playlistSelector,
             "playlistMenu": self.playlistMenu,
         }
-        self.ui.connectSignalsToControllers(self.controllers)
+        self.ui.connectToControllers(self.controllers)
         self.playlistMenu.setControllers(self.controllers)
 
     def run(self):
@@ -101,17 +98,3 @@ class Appication:
         self.ui.translate(getLanguagePackage(language))
         self.ui.switchDarkMode(isDarkMode)
         self.loadPlaylistFromDirForPlayer(settingsData.get("path"))
-
-
-def main():
-    start = perf_counter()
-    app = QApplication(argv)
-    application = Appication()
-    application.run()
-    end = perf_counter()
-    print(f"Time to start application: {end - start}")
-    exit(app.exec_())
-
-
-if __name__ == "__main__":
-    main()

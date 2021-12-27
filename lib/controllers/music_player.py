@@ -6,7 +6,7 @@ from time import sleep
 
 from modules.models.player import Player
 from utils.data.config_utils import updatePlayerData
-from views.ui_player_music import UIPlayerMusic
+from views.music_player.music_player import UIPlayerMusic
 
 
 class MusicPlayer:
@@ -20,15 +20,13 @@ class MusicPlayer:
         self.player = player
 
     def displayDataRetrievedFrom(self, data: dict) -> None:
-
-        self.ui.setLoopState(data.get("isLooping"))
-        self.ui.setShuffleState(data.get("isShuffling"))
-        self.handleClickedShuffle()
-        self.ui.setVolume(data.get("volume"))
-
         self.player.setCurrentSong(data.get("currentSong"))
         self.player.loadSongToPlay()
         self.displayCurrentSongInfo()
+        self.ui.setLoopState(data.get("isLooping"))
+        self.ui.setShuffleState(data.get("isShuffling"))
+        # self.handleClickedShuffle()
+        self.ui.setVolume(data.get("volume"))
 
     def handleEnteredTimer(self) -> None:
         SECONDS_PER_MINUTE = 60
@@ -59,7 +57,7 @@ class MusicPlayer:
         currentSong = self.player.getCurrentSong()
         if currentSong is None:
             return
-        timeStart: float = self.ui.getCurrentTimeSliderPosition() / 100 * currentSong.length
+        timeStart: float = self.ui.getTimeSliderPosition() / 100 * currentSong.length
         self.player.stop()
         self.player.setTimeStart(timeStart)
         self.ui.displayPlayingTime(timeStart)

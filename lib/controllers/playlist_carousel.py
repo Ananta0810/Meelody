@@ -5,11 +5,10 @@ path.append("./lib")
 from modules.entities.playlist_info import PlaylistInfo
 from utils.helpers.my_bytes import MyBytes
 from utils.helpers.my_string import UnicodeString
-from views.ui_playlist_carousel import UiPlaylistCarousel
 
 
 class PlaylistCarousel:
-    def __init__(self, ui: UiPlaylistCarousel):
+    def __init__(self, ui):
         self.ui = ui
         self.playlists = None
 

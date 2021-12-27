@@ -1,6 +1,15 @@
 from os import path, remove, rename
 
+from joblib import Memory
 from modules.models.audio import MyAudio
+
+memory = Memory("caches/songs", verbose=0)
+
+
+@memory.cache
+def getInfoFromAudio(fileName: str):
+    audio = MyAudio(fileName)
+    return [audio.getArtist(), audio.getCover(), audio.getLength()]
 
 
 class Song:
@@ -49,10 +58,10 @@ class Song:
         """
         Load the information of the song when having the audio file
         """
-        audio = MyAudio(self.location)
-        self.artist = audio.getArtist()
-        self.cover = audio.getCover()
-        self.length = audio.getLength()
+        info = getInfoFromAudio(self.location)
+        self.artist = info[0]
+        self.cover = info[1]
+        self.length = info[2]
 
     def setTitle(self, title: str) -> bool:
         try:

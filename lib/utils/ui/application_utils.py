@@ -1,6 +1,7 @@
 from functools import lru_cache
 from typing import Any
 
+from joblib import Memory
 from modules.screens.qss.qss_elements import Color
 from PyQt5.QtGui import QIcon, QPixmap
 from widgets.scaleable_qpixmap import ScaleAblePixmap
