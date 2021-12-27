@@ -24,7 +24,7 @@ class HomeScreen(QScrollArea, View):
         self.playlistCarousel = PlaylistCarousel()
         self.playlistCarousel.setFixedHeight(360)
         self.playlistCarousel.setStyleSheet("background:transparent;border:none")
-        self.playlistCarousel.main_layout.setContentsMargins(84, 0, 50, 0)
+        self.playlistCarousel.mainLayout.setContentsMargins(84, 0, 50, 0)
 
         self.currentPlaylist = CurrentPlaylist()
         self.currentPlaylist.setAlignment(Qt.AlignLeft)

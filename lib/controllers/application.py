@@ -9,9 +9,10 @@ path.append("./lib")
 from constants.application import supportedLanguages
 from modules.entities.playlist_info import PlaylistInfo
 from modules.models.player import Player
-from utils.data.config_utils import getLanguagePackage, retrievePlayerData, retrieveSettingsData, updateSettingsData
+from utils.data.config_utils import (getLanguagePackage, retrievePlayerData,
+                                     retrieveSettingsData, updateSettingsData)
 from utils.helpers.playlist_song_utils import getPlaylistFromDir
-from views.ui_application import ApplicationInterface
+from views.application_interface import ApplicationInterface
 
 
 class Appication:
@@ -37,7 +38,7 @@ class Appication:
 
     def setupControllers(self):
         self.playlistCarousel = PlaylistCarousel(self.ui.body.playlistCarousel)
-        self.musicPlayer = MusicPlayer(self.ui.musicPlayerInner)
+        self.musicPlayer = MusicPlayer(self.ui.musicPlayer)
         self.playlistSelector = PlaylistSelector(self.ui)
         self.playlistMenu = PlaylistMenu(self.ui.body.currentPlaylist.songs.body)
         self.controllers = {
@@ -67,7 +68,7 @@ class Appication:
     def handleChangedFolder(self, folderDir: str) -> None:
         if len(folderDir) == 0:
             return
-        self.ui.settings_panel.changeCurrentFolder(folderDir)
+        self.ui.menuBar.settingsPanel.changeCurrentFolder(folderDir)
         updateSettingsData("path", folderDir)
         self.loadPlaylistFromDirForPlayer(folderDir)
         self.musicPlayer.player.setCurrentSongIndex(0)
@@ -92,9 +93,9 @@ class Appication:
         language: str = settingsData.get("language")
         languages: list[str] = [key for key in supportedLanguages.keys()]
 
-        # self.ui.settings_panel.change_language_dropdown.setCurrentIndex(languages.index(language))
-        # self.ui.settings_panel.current_folder.setText(settingsData.get("path"))
-        # self.ui.settings_panel.switch_dark_mode_btn.setChecked(isDarkMode)
+        self.ui.menuBar.settingsPanel.changeLanguagueDropdown.setCurrentIndex(languages.index(language))
+        self.ui.menuBar.settingsPanel.currentFolder.setText(settingsData.get("path"))
+        self.ui.menuBar.settingsPanel.switchDarkModeBtn.setChecked(isDarkMode)
         self.ui.translate(getLanguagePackage(language))
         self.ui.switchDarkMode(isDarkMode)
         self.loadPlaylistFromDirForPlayer(settingsData.get("path"))

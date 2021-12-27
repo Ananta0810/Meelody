@@ -48,9 +48,9 @@ class PlaylistCarousel(QScrollArea, View):
         self.inner = QWidget()
         self.setWidget(self.inner)
 
-        self.main_layout = QHBoxLayout(self.inner)
-        self.main_layout.setAlignment(Qt.AlignLeft)
-        self.main_layout.setSpacing(32)
+        self.mainLayout = QHBoxLayout(self.inner)
+        self.mainLayout.setAlignment(Qt.AlignLeft)
+        self.mainLayout.setSpacing(32)
 
         # =================Library=================
         self.defaultPlaylistCover = self.__getPixmapForPlaylistCover(ApplicationImage.defaultPlaylistCover)
@@ -77,8 +77,8 @@ class PlaylistCarousel(QScrollArea, View):
         self.user_playlists = QHBoxLayout()
         self.user_playlists.setAlignment(Qt.AlignLeft)
 
-        self.main_layout.addLayout(self.defautl_playlists)
-        self.main_layout.addLayout(self.user_playlists)
+        self.mainLayout.addLayout(self.defautl_playlists)
+        self.mainLayout.addLayout(self.user_playlists)
 
         # =================New playlist=================
         self.addPlaylistCard = QWidget()
@@ -110,8 +110,8 @@ class PlaylistCarousel(QScrollArea, View):
                 .build(itemSize=icons.SIZES.LARGE.height())
             ),
         )
-        self.main_layout.addWidget(self.addPlaylistCard)
-        self.main_layout.addStretch()
+        self.mainLayout.addWidget(self.addPlaylistCard)
+        self.mainLayout.addStretch()
 
     def connectToController(self, controller):
         self.add_playlist_btn.clicked.connect(controller.handleAddNewPlaylist)

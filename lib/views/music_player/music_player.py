@@ -1,7 +1,7 @@
 from typing import Optional
 
 from constants.ui.base import ApplicationImage
-from PyQt5.QtCore import QMetaObject
+from PyQt5.QtCore import Qt
 from PyQt5.QtWidgets import QHBoxLayout, QWidget
 from views.view import View
 
@@ -16,6 +16,7 @@ class UIPlayerMusic(QWidget, View):
         self.setupUi()
 
     def setupUi(self) -> None:
+        self.setAttribute(Qt.WA_StyledBackground, True)
         self.mainLayout = QHBoxLayout(self)
         self.mainLayout.setContentsMargins(40, 0, 40, 0)
         self.mainLayout.setSpacing(0)
@@ -37,8 +38,6 @@ class UIPlayerMusic(QWidget, View):
         self.right.setContentsMargins(0, 0, 0, 0)
         self.right.setSpacing(8)
         self.mainLayout.addLayout(self.right)
-
-        QMetaObject.connectSlotsByName(self)
 
     def lightMode(self) -> None:
         self.left.lightMode()

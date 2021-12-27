@@ -5,7 +5,8 @@ from constants.ui.qt import AppCursors, AppIcons
 from modules.screens.components.font_builder import FontBuilder
 from modules.screens.components.icon_buttons import IconButton
 from modules.screens.components.labels import StandardLabel
-from modules.screens.themes.theme_builders import ButtonThemeBuilder, LabelThemeBuilder
+from modules.screens.themes.theme_builders import (ButtonThemeBuilder,
+                                                   LabelThemeBuilder)
 from PyQt5.QtCore import Qt
 from PyQt5.QtWidgets import QHBoxLayout, QWidget
 from utils.ui.application_utils import UiUtils

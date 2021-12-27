@@ -2,7 +2,6 @@ from typing import Optional
 
 from modules.screens.themes.theme_builders import ThemeData
 from PyQt5.QtCore import QMetaObject, Qt
-from PyQt5.QtWidgets import QHBoxLayout, QWidget
 
 from .body.body import HomeScreen
 from .menu_bar.menu_bar import MenuBar
@@ -30,7 +29,7 @@ class ApplicationInterface(View):
         self.body.setHorizontalScrollBarPolicy(Qt.ScrollBarAlwaysOff)
         self.body.setWidgetResizable(True)
 
-        self.musicPlayer = QWidget()
+        self.musicPlayer = UIPlayerMusic()
         self.musicPlayer.setFixedHeight(96)
         self.musicPlayer.setObjectName("musicPlayer")
         self._addThemeForItem(
@@ -40,9 +39,6 @@ class ApplicationInterface(View):
                 darkMode="QWidget#musicPlayer{border-top: 1px solid #202020}",
             ),
         )
-        self.musicPlayer_layout = QHBoxLayout(self.musicPlayer)
-        self.musicPlayerInner = UIPlayerMusic(self.musicPlayer)
-        self.musicPlayer_layout.addWidget(self.musicPlayerInner)
 
         self.mainWindow.addLayout(self.menuBar)
         self.mainWindow.addWidget(self.body)
@@ -51,10 +47,9 @@ class ApplicationInterface(View):
         QMetaObject.connectSlotsByName(self.mainWindow)
 
     def connectToControllers(self, controllers) -> None:
-        # self.settings_panel.connectToController(controllers.get("application"))
-        self.musicPlayerInner.connectToController(controllers.get("musicPlayer"))
+        self.menuBar.connectToControllers(controllers)
         self.body.connectToControllers(controllers)
-        # self.playlsit_carousel.connectToController(controllers.get("playlistSelector"))
+        self.musicPlayer.connectToController(controllers.get("musicPlayer"))
 
     def switchDarkMode(self, mode) -> None:
         self.isDarkMode = mode
@@ -63,27 +58,22 @@ class ApplicationInterface(View):
             return
         self.lightMode()
 
-    # def clickedOpenSettingBtn(self) -> None:
-    #     self.settings_panel.setVisible(not self.settings_panel.isVisible())
-
     def lightMode(self) -> None:
         self.isDarkMode = False
         self.mainWindow.lightMode()
         self.menuBar.lightMode()
-        # self.settings_panel.lightMode()
-        self.musicPlayerInner.lightMode()
+        self.musicPlayer.lightMode()
         self.body.lightMode()
         super().lightMode()
 
     def darkMode(self) -> None:
         self.isDarkMode = True
-        # self.settings_panel.darkMode()
         self.mainWindow.darkMode()
         self.menuBar.darkMode()
-        self.musicPlayerInner.darkMode()
+        self.musicPlayer.darkMode()
         self.body.darkMode()
         super().darkMode()
 
     def translate(self, language: dict[str, str]) -> None:
-        # self.settings_panel.translate(language)
-        self.musicPlayerInner.translate(language)
+        self.menuBar.translate(language)
+        self.musicPlayer.translate(language)

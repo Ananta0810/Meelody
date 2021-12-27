@@ -3,9 +3,13 @@ from typing import Optional
 from constants.ui.qss import Backgrounds, ColorBoxes, Colors, Paddings
 from constants.ui.qt import AppCursors
 from modules.screens.components.font_builder import FontBuilder
-from modules.screens.themes.theme_builders import ActionButtonThemeBuilder, LabelThemeBuilder, ThemeData
+from modules.screens.themes.theme_builders import (ActionButtonThemeBuilder,
+                                                   LabelThemeBuilder,
+                                                   ThemeData)
 from PyQt5.QtCore import Qt
-from PyQt5.QtWidgets import QDialog, QDialogButtonBox, QGraphicsDropShadowEffect, QLabel, QVBoxLayout, QWidget
+from PyQt5.QtWidgets import (QDialog, QDialogButtonBox,
+                             QGraphicsDropShadowEffect, QLabel, QVBoxLayout,
+                             QWidget)
 from utils.ui.color_utils import ColorUtils
 from views.view import View
 

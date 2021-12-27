@@ -6,6 +6,7 @@ from PyQt5.QtCore import QEvent, Qt, pyqtSignal
 from PyQt5.QtGui import QKeyEvent
 from PyQt5.QtWidgets import QFileDialog, QVBoxLayout, QWidget
 from utils.ui.application_utils import UiUtils
+from views.dialogs.confirm_dialog import ConfirmDialog
 from views.view import View
 from widgets.image_displayer import ImageDisplayer
 from widgets.smooth_scroll_area import SmoothVerticalScrollArea
@@ -212,7 +213,7 @@ class SongTableBody(SmoothVerticalScrollArea, View):
         return song
 
     def __confirmDeleteSongAtIndex(self, index: int, controller) -> None:
-        message_box = ConfirmMessage(
+        message_box = ConfirmDialog(
             header="Delete song", msg="Are you sure want to delete the song? This action can not be reversed."
         )
         confirmDelete = message_box.exec()

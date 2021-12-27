@@ -39,7 +39,6 @@ class MainWindow(FramelessWindow, View):
         self.titleBar = QHBoxLayout()
         self.titleBar.setContentsMargins(12, 12, 12, 12)
         self.titleBar.setSpacing(8)
-
         self.mainLayout.addLayout(self.titleBar)
 
         self.minimize_btn = IconButton.render(
@@ -77,8 +76,6 @@ class MainWindow(FramelessWindow, View):
         self.titleBar.addStretch()
         self.titleBar.addWidget(self.minimize_btn)
         self.titleBar.addWidget(self.close_btn)
-
-        self.mainLayout.addLayout(self.titleBar)
 
         QMetaObject.connectSlotsByName(self)
 
