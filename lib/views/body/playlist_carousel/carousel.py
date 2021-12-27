@@ -16,9 +16,9 @@ from .custom_playlist_card import CustomPlaylistCard
 from .default_playlist_card import DefaultPlaylistCard
 
 
-class UiPlaylistCarousel(QScrollArea, View):
+class PlaylistCarousel(QScrollArea, View):
     def __init__(self, parent=None):
-        super(UiPlaylistCarousel, self).__init__(parent)
+        super(PlaylistCarousel, self).__init__(parent)
         self.setupUi()
 
     def setupUi(self):

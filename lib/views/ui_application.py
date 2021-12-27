@@ -13,8 +13,8 @@ from utils.ui.application_utils import UiUtils
 from utils.ui.color_utils import ColorUtils
 from widgets.framless_window import FramelessWindow
 
-from .body.playlist_carousel.carousel import UiPlaylistCarousel
-from .body.song_table.song_table import SongTable
+from .body.current_playlist.current_playlist import CurrentPlaylist
+from .body.playlist_carousel.carousel import PlaylistCarousel
 from .dialogs.settings_dialog import SettingsDialog
 from .music_player.music_player import UIPlayerMusic
 from .view import View
@@ -125,24 +125,15 @@ class ApplicationInterface(View):
         self.menu_bar.addWidget(self.open_settings_btn)
         self.menu_bar.addStretch()
 
-        self.playlist_carousel = UiPlaylistCarousel()
+        self.playlist_carousel = PlaylistCarousel()
         self.playlist_carousel.setFixedHeight(360)
         self.playlist_carousel.setStyleSheet("background:TRANSPARENT;border:none")
         self.playlist_carousel.main_layout.setContentsMargins(84, 0, 50, 0)
 
-        self.currentPlaylist = QHBoxLayout()
+        self.currentPlaylist = CurrentPlaylist()
         self.currentPlaylist.setAlignment(Qt.AlignLeft)
         self.currentPlaylist.setContentsMargins(84, 50, 50, 0)
         self.currentPlaylist.setSpacing(50)
-        self.playlist_info = QVBoxLayout()
-
-        self.playlist_info = PlaylistInfo()
-        self.playlist_info.setDefaultCover(ApplicationImage.defaultPlaylistCover)
-        self.playlistMenu = SongTable()
-        self.playlistMenu.setFixedHeight(600)
-
-        self.currentPlaylist.addLayout(self.playlist_info)
-        self.currentPlaylist.addWidget(self.playlistMenu, stretch=2)
 
         self.body_layout.addLayout(self.menu_bar)
         self.body_layout.addWidget(self.playlist_carousel)
@@ -185,7 +176,7 @@ class ApplicationInterface(View):
         self.settings_panel.connectToController(controllers.get("application"))
         self.music_player_inner.connectToController(controllers.get("musicPlayer"))
         self.playlist_carousel.connectToController(controllers.get("playlistCarousel"))
-        self.playlistMenu.connectToController(controllers.get("playlistMenu"))
+        self.currentPlaylist.songs.connectToController(controllers.get("playlistMenu"))
         # self.playlsit_carousel.connectToController(controllers.get("playlistSelector"))
 
     def switchDarkMode(self, mode) -> None:
@@ -203,8 +194,7 @@ class ApplicationInterface(View):
         self.settings_panel.lightMode()
         self.music_player_inner.lightMode()
         self.playlist_carousel.lightMode()
-        self.playlist_info.lightMode()
-        self.playlistMenu.lightMode()
+        self.currentPlaylist.lightMode()
         super().lightMode()
 
     def darkMode(self) -> None:
@@ -212,8 +202,7 @@ class ApplicationInterface(View):
         self.settings_panel.darkMode()
         self.music_player_inner.darkMode()
         self.playlist_carousel.darkMode()
-        self.playlist_info.darkMode()
-        self.playlistMenu.darkMode()
+        self.currentPlaylist.darkMode()
         super().darkMode()
 
     def translate(self, language: dict[str, str]) -> None:

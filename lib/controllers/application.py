@@ -39,7 +39,7 @@ class Appication:
         self.playlistCarousel = PlaylistCarousel(self.ui.playlist_carousel)
         self.musicPlayer = MusicPlayer(self.ui.music_player_inner)
         self.playlistSelector = PlaylistSelector(self.ui)
-        self.playlistMenu = PlaylistMenu(self.ui.playlistMenu.body)
+        self.playlistMenu = PlaylistMenu(self.ui.currentPlaylist.songs.body)
         self.controllers = {
             "application": self,
             "playlistCarousel": self.playlistCarousel,
