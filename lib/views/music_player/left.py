@@ -3,11 +3,9 @@ from typing import Optional
 from constants.ui.qss import Backgrounds, ColorBoxes, Colors, Paddings
 from constants.ui.qt import AppCursors, AppIcons
 from modules.screens.components.font_builder import FontBuilder
-from modules.screens.components.icon_buttons import (IconButton,
-                                                     ToggleIconButton)
+from modules.screens.components.icon_buttons import IconButton, ToggleIconButton
 from modules.screens.components.labels import LabelWithDefaultText
-from modules.screens.themes.theme_builders import (ButtonThemeBuilder,
-                                                   LabelThemBuilder)
+from modules.screens.themes.theme_builders import ButtonThemeBuilder, TextThemeBuilder
 from PyQt5.QtCore import QMetaObject
 from PyQt5.QtGui import QPixmap
 from PyQt5.QtWidgets import QHBoxLayout, QVBoxLayout, QWidget
@@ -30,7 +28,7 @@ class MusicPlayerLeftSide(QHBoxLayout, View):
             .addDarkModeBackground(None)
             .build(itemSize=icons.SIZES.LARGE.height())
         )
-        labelThemBuilder = LabelThemBuilder()
+        labelThemBuilder = TextThemeBuilder()
         fontBuilder = FontBuilder()
 
         # =================Ui=================

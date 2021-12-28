@@ -284,18 +284,13 @@ class ButtonThemeBuilder(ThemeBuilder):
         return styleSheet
 
 
-class LabelThemBuilder(ThemeBuilder):
+class TextThemeBuilder(ThemeBuilder):
     def __init__(self):
         self.lightModeTextColor = None
         self.darkModeTextColor = None
         self.lightModeBackground = None
         self.darkModeBackground = None
         self.padding = 0
-        self.id = "QLabel"
-
-    def addId(self, id: str) -> None:
-        self.id = id
-        return self
 
     def addPadding(self, padding: int):
         self.padding = padding
@@ -317,29 +312,18 @@ class LabelThemBuilder(ThemeBuilder):
         self.darkModeBackground = background
         return self
 
-    def build(self, itemSize: int = 0) -> ThemeData:
-        lightMode = self.__buildTheme(itemSize, self.lightModeTextColor, self.lightModeBackground)
+    def build(self, id: str = "QLabel,QLineEdit,QPushButton", itemSize: int = 0) -> ThemeData:
+        lightMode = self.__buildTheme(id, itemSize, self.lightModeTextColor, self.lightModeBackground)
         darkMode = self.__buildTheme(
+            id,
             itemSize,
             self.darkModeTextColor or self.lightModeTextColor,
             self.darkModeBackground or self.lightModeBackground,
         )
         return ThemeData(lightMode, darkMode)
 
-    def __buildTheme(self, itemSize: int, textColor: ColorBox, background: Background) -> str:
-        return BackgroundBuilder().export(self.id, itemSize, textColor, background, padding=self.padding)
-
-
-class LineEditThemBuilder(LabelThemBuilder):
-    def __init__(self):
-        super().__init__()
-        self.id = "QLineEdit"
-
-
-class ActionButtonThemeBuilder(LineEditThemBuilder):
-    def __init__(self):
-        super().__init__()
-        self.id = "QPushButton"
+    def __buildTheme(self, id: str, itemSize: int, textColor: ColorBox, background: Background) -> str:
+        return BackgroundBuilder().export(id, itemSize, textColor, background, padding=self.padding)
 
 
 class ScrollThemeBuilder(ThemeBuilder):

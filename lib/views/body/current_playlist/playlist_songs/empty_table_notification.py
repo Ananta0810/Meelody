@@ -7,7 +7,7 @@ from lib.modules.screens.themes.theme_builders import ThemeData
 from modules.screens.components.action_buttons import ActionButton
 from modules.screens.components.font_builder import FontBuilder
 from modules.screens.components.labels import StandardLabel
-from modules.screens.themes.theme_builders import ActionButtonThemeBuilder, LabelThemBuilder
+from modules.screens.themes.theme_builders import TextThemeBuilder, TextThemeBuilder
 from PyQt5.QtCore import Qt
 from PyQt5.QtGui import QShowEvent
 from PyQt5.QtWidgets import QSizePolicy, QVBoxLayout, QWidget
@@ -42,7 +42,7 @@ class EmptySongTableNotification(QWidget, View):
         self._addThemeForItem(
             self.label,
             theme=(
-                LabelThemBuilder()
+                TextThemeBuilder()
                 .addLightModeTextColor(ColorBoxes.BLACK)
                 .addDarkModeTextColor(ColorBoxes.WHITE)
                 .build()
@@ -58,7 +58,7 @@ class EmptySongTableNotification(QWidget, View):
         self._addThemeForItem(
             self.button,
             theme=(
-                ActionButtonThemeBuilder()
+                TextThemeBuilder()
                 .addLightModeTextColor(ColorBoxes.WHITE)
                 .addLightModeBackground(Backgrounds.ROUNDED_PRIMARY)
                 .build()

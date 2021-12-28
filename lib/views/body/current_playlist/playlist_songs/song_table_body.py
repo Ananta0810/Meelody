@@ -3,7 +3,8 @@ from typing import Optional
 from constants.ui.base import ApplicationImage
 from constants.ui.qss import Backgrounds, ColorBoxes
 from constants.ui.qt import IconSizes
-from modules.screens.themes.theme_builders import ButtonThemeBuilder, LineEditThemBuilder, ScrollThemeBuilder, ThemeData
+from constants.ui.theme_builders import IconButtonThemeBuilders, TextThemeBuilers
+from modules.screens.themes.theme_builders import ButtonThemeBuilder, ScrollThemeBuilder, TextThemeBuilder, ThemeData
 from PyQt5.QtCore import QEvent, QPoint, Qt, pyqtSignal
 from PyQt5.QtGui import QKeyEvent, QShowEvent
 from PyQt5.QtWidgets import QFileDialog, QVBoxLayout, QWidget
@@ -136,57 +137,12 @@ class SongTableBody(SmoothVerticalScrollArea, View):
         self.emptyNotification.hide()
 
     def __addLackingPlaylists(self, numberOfPlaylist: int, controller) -> None:
-        defaultValues: dict = {
-            "theme": ThemeData(
-                lightMode="QWidget{background-color:rgba(0, 0, 0, 0.1);border-radius:16px}QWidget:hover{background-color:rgba(0, 0, 0, 0.15)}",
-                darkMode="QWidget{background-color:rgba(255, 255, 255, 0.1);border-radius:16px}QWidget:hover{background-color:rgba(255, 255, 255, 0.15)}",
-            ),
-            "labels": {
-                "themes": {
-                    "PRIMARY": (
-                        LineEditThemBuilder()
-                        .addLightModeTextColor(ColorBoxes.BLACK)
-                        .addDarkModeTextColor(ColorBoxes.WHITE)
-                        .build(itemSize=IconSizes.LARGE.height())
-                    ),
-                    "secondary": (
-                        LineEditThemBuilder()
-                        .addId("QLabel,QLineEdit")
-                        .addLightModeTextColor(ColorBoxes.GRAY)
-                        .addDarkModeTextColor(ColorBoxes.GRAY)
-                        .build(itemSize=IconSizes.LARGE.height())
-                    ),
-                },
-            },
-            "buttons": {
-                "themes": {
-                    "PRIMARY": (
-                        ButtonThemeBuilder()
-                        .addLightModeBackground(Backgrounds.CIRCLE_HIDDEN_PRIMARY_25)
-                        .addDarkModeBackground(Backgrounds.CIRCLE_HIDDEN_WHITE_25)
-                        .build(itemSize=IconSizes.LARGE.height())
-                    ),
-                    "secondary": (
-                        ButtonThemeBuilder()
-                        .addLightModeBackground(Backgrounds.CIRCLE_PRIMARY_25)
-                        .addDarkModeBackground(Backgrounds.CIRCLE_WHITE_25)
-                        .build(itemSize=IconSizes.LARGE.height())
-                    ),
-                    "DANGER": (
-                        ButtonThemeBuilder()
-                        .addLightModeBackground(Backgrounds.CIRCLE_DANGER)
-                        .addDarkModeBackground(None)
-                        .build(itemSize=IconSizes.MEDIUM.height())
-                    ),
-                },
-            },
-        }
         for index in range(0, numberOfPlaylist):
-            self.__addNewEmptyPlaylist(defaultValues, controller)
+            self.__addNewEmptyPlaylist(controller)
 
-    def __addNewEmptyPlaylist(self, defaultValues: dict, controller) -> None:
+    def __addNewEmptyPlaylist(self, controller) -> None:
         index = self.getTotalSongAvailable()
-        song = self.__addSong(index, defaultValues)
+        song = self.__addSong(index)
 
         song.title.returnPressed.connect(lambda: controller.handleChangedSongTitle(index, song.title.text()))
         song.artist.returnPressed.connect(lambda: controller.handleChangedSongArtist(index, song.artist.text()))
@@ -204,11 +160,22 @@ class SongTableBody(SmoothVerticalScrollArea, View):
         for index in range(start, end):
             self.menu.itemAt(index).widget().deleteLater()
 
-    def __addSong(self, index: int, values: dict):
-        song = SongItem(
-            theme=values.get("theme"),
-            labelThemes=values.get("labels").get("themes"),
-            buttonThemes=values.get("buttons").get("themes"),
+    def __addSong(self, index: int):
+        song = SongItem()
+        song.setWidgetThemes(
+            ThemeData(
+                lightMode="SongItem{background-color:TRANSPARENT;border-radius:24px}SongItem:hover{background-color:rgba(0, 0, 0, 0.1)}",
+                darkMode="SongItem{background-color:TRANSPARENT;border-radius:24px}SongItem:hover{background-color:rgba(255, 255, 255, 0.1)}",
+            )
+        )
+        song.setButtonThemes(
+            primary=IconButtonThemeBuilders.HIDDEN_PRIMARY.build(itemSize=IconSizes.LARGE.height()),
+            secondary=IconButtonThemeBuilders.PRIMARY.build(itemSize=IconSizes.LARGE.height()),
+            danger=IconButtonThemeBuilders.DANGER.build(itemSize=IconSizes.MEDIUM.height()),
+        )
+        song.setTextThemes(
+            primary=TextThemeBuilers.DEFAULT.build(),
+            secondary=TextThemeBuilers.GRAY.build(),
         )
         song.setDefaultCover(ApplicationImage.defaultSongCover)
         song.setDefaultArtist("")

@@ -8,7 +8,7 @@ from modules.screens.components.font_builder import FontBuilder
 from modules.screens.components.icon_buttons import IconButton
 from modules.screens.components.labels import LabelWithDefaultText
 from modules.screens.qss.qss_elements import Background, Border, ColorBox
-from modules.screens.themes.theme_builders import ButtonThemeBuilder, LabelThemBuilder
+from modules.screens.themes.theme_builders import ButtonThemeBuilder, TextThemeBuilder
 from PyQt5.QtCore import Qt
 from PyQt5.QtWidgets import QFileDialog, QHBoxLayout, QVBoxLayout, QWidget
 from utils.ui.application_utils import UiUtils
@@ -26,7 +26,7 @@ class SettingsDialog(QWidget, View):
         icons = AppIcons()
         cursors = AppCursors()
         fontBuilder = FontBuilder()
-        labelThemBuilder = LabelThemBuilder()
+        labelThemBuilder = TextThemeBuilder()
         buttonWithCheveronTheme = (
             iconButtonThemeBuilder.addLightModeBackground(Backgrounds.CIRCLE_PRIMARY_25)
             .addDarkModeBackground(Backgrounds.CIRCLE_WHITE_25)

@@ -10,7 +10,7 @@ from PyQt5.QtWidgets import QLabel, QLineEdit, QWidget
 path.append("./lib")
 from modules.screens.components.view_item import ViewItem
 from modules.screens.themes.theme_builder import ThemeBuilder
-from modules.screens.themes.theme_builders import LineEditThemBuilder
+from modules.screens.themes.theme_builders import TextThemeBuilder
 from widgets.double_clicked_editable_label import QDoubleClickedEditableLabel
 from widgets.label_with_default_text import QLabelWithDefaultText
 from widgets.placeholder_label import LabelWithPlaceholder
@@ -26,7 +26,7 @@ class ViewLabel(ViewItem, ABC):
 
     @abstractstaticmethod
     def getThemeBuilder() -> ThemeBuilder:
-        return LineEditThemBuilder()
+        return TextThemeBuilder()
 
 
 class StandardLabel(ViewLabel):
@@ -66,7 +66,7 @@ class EditableLabel(ViewLabel):
         return label
 
     def getThemeBuilder() -> ThemeBuilder:
-        return LineEditThemBuilder()
+        return TextThemeBuilder()
 
 
 class DoubleClickedEditableLabel(ViewLabel):
@@ -80,4 +80,4 @@ class DoubleClickedEditableLabel(ViewLabel):
         return label
 
     def getThemeBuilder() -> ThemeBuilder:
-        return LineEditThemBuilder()
+        return TextThemeBuilder()

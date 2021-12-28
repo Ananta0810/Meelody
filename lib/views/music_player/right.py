@@ -6,7 +6,7 @@ from modules.screens.components.font_builder import FontBuilder
 from modules.screens.components.icon_buttons import IconButton, MultiIconButton, ToggleIconButton
 from modules.screens.components.labels import EditableLabel
 from modules.screens.components.sliders import HorizontalSlider
-from modules.screens.themes.theme_builders import ButtonThemeBuilder, HorizontalSliderThemeBuilder, LineEditThemBuilder
+from modules.screens.themes.theme_builders import ButtonThemeBuilder, HorizontalSliderThemeBuilder, TextThemeBuilder
 from PyQt5.QtCore import QMetaObject, Qt
 from PyQt5.QtGui import QIntValidator
 from PyQt5.QtWidgets import QHBoxLayout, QWidget
@@ -112,7 +112,7 @@ class MusicPlayerRightSide(QHBoxLayout, View):
         self._addThemeForItem(
             self.timerInput,
             theme=(
-                LineEditThemBuilder()
+                TextThemeBuilder()
                 .addLightModeTextColor(ColorBoxes.PRIMARY)
                 .addLightModeBackground(Backgrounds.ROUNDED_PRIMARY_25)
                 .addDarkModeTextColor(ColorBoxes.WHITE)

@@ -3,7 +3,7 @@ from typing import Optional
 from constants.ui.qss import ColorBoxes
 from modules.screens.components.font_builder import FontBuilder
 from modules.screens.components.labels import LabelWithDefaultText
-from modules.screens.themes.theme_builders import LabelThemBuilder, ThemeData
+from modules.screens.themes.theme_builders import TextThemeBuilder, ThemeData
 from PyQt5.QtGui import QFont, QPixmap
 from PyQt5.QtWidgets import QVBoxLayout, QWidget
 from utils.ui.application_utils import UiUtils
@@ -21,7 +21,7 @@ class PlaylistInfo(QVBoxLayout, View):
         labelFont: QFont = fontBuilder.withSize(20).withWeight("bold").build()
         totalSongFont: QFont = fontBuilder.withSize(10).withWeight("normal").build()
         textTheme: ThemeData = (
-            LabelThemBuilder().addLightModeTextColor(ColorBoxes.BLACK).addDarkModeTextColor(ColorBoxes.WHITE).build()
+            TextThemeBuilder().addLightModeTextColor(ColorBoxes.BLACK).addDarkModeTextColor(ColorBoxes.WHITE).build()
         )
 
         self.setSpacing(12)

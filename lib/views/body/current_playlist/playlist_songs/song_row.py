@@ -2,12 +2,9 @@ from typing import Optional
 
 from constants.ui.qss import Colors, Paddings
 from constants.ui.qt import AppCursors, AppIcons, IconSizes
-# from joblib import Memory
 from modules.screens.components.font_builder import FontBuilder
-from modules.screens.components.icon_buttons import (IconButton,
-                                                     ToggleIconButton)
-from modules.screens.components.labels import (DoubleClickedEditableLabel,
-                                               LabelWithDefaultText)
+from modules.screens.components.icon_buttons import IconButton, ToggleIconButton
+from modules.screens.components.labels import DoubleClickedEditableLabel, LabelWithDefaultText
 from modules.screens.themes.theme_builders import ThemeData
 from PyQt5.QtCore import Qt
 from PyQt5.QtGui import QPixmap
@@ -18,8 +15,6 @@ from views.view import View
 from widgets.image_displayer import ImageDisplayer
 from widgets.mouse_observer import ClickObserver
 
-# memory = Memory("caches/ui", verbose=0)
-
 
 # @memory.cache
 def getSongCoverPixmap(coverAsByte: bytes) -> QPixmap:
@@ -29,31 +24,13 @@ def getSongCoverPixmap(coverAsByte: bytes) -> QPixmap:
 
 
 class SongItem(QWidget, View):
-    def __init__(
-        self,
-        theme: ThemeData,
-        labelThemes: dict[str, ThemeData],
-        buttonThemes: dict[str, ThemeData],
-        parent: Optional["QWidget"] = None,
-    ):
+    def __init__(self, parent: Optional["QWidget"] = None):
         super(SongItem, self).__init__(parent)
         self.defaultArtist = ""
-        self.setupUi(theme, labelThemes, buttonThemes)
+        self.setupUi()
 
-    def setupUi(
-        self,
-        theme: ThemeData,
-        labelThemes: dict[str, ThemeData],
-        buttonThemes: dict[str, ThemeData],
-    ) -> None:
+    def setupUi(self) -> None:
         self.setAttribute(Qt.WA_StyledBackground, True)
-        self._addThemeForItem(
-            self,
-            theme=ThemeData(
-                lightMode="SongItem{background-color:TRANSPARENT;border-radius:24px}SongItem:hover{background-color:rgba(0, 0, 0, 0.1)}",
-                darkMode="SongItem{background-color:TRANSPARENT;border-radius:24px}SongItem:hover{background-color:rgba(255, 255, 255, 0.1)}",
-            ),
-        )
         self.mainLayout = QHBoxLayout()
         self.mainLayout.setContentsMargins(20, 12, 20, 12)
         self.mainLayout.setSpacing(0)
@@ -70,7 +47,6 @@ class SongItem(QWidget, View):
         self.buttonsLayout.setSpacing(8)
 
         self.extraButtons = QWidget()
-        self._addThemeForItem(self.extraButtons, theme)
         self.extraButtonsLayout = QHBoxLayout(self.extraButtons)
         self.extraButtonsLayout.setSpacing(8)
         self.extraButtonsLayout.setContentsMargins(8, 8, 8, 8)
@@ -86,23 +62,18 @@ class SongItem(QWidget, View):
 
         font = FontBuilder().withSize(10).build()
         self.title = DoubleClickedEditableLabel.render(font)
-        self._addThemeForItem(self.title, labelThemes.get("PRIMARY"))
         self.info.addWidget(self.title, 1)
 
         self.artist = DoubleClickedEditableLabel.render(font)
-        self._addThemeForItem(self.artist, labelThemes.get("secondary"))
         self.info.addWidget(self.artist, 1)
 
         self.length = LabelWithDefaultText.render(font)
-        self._addThemeForItem(self.length, labelThemes.get("secondary"))
         self.length.setFixedWidth(64)
         self.length.setAlignment(Qt.AlignCenter)
         self.info.addWidget(self.length)
 
-        btnTheme = buttonThemes.get("PRIMARY")
         icons = AppIcons()
         btnCursor = AppCursors().HAND
-
         self.moreBtn = IconButton.render(
             size=IconSizes.LARGE,
             padding=Paddings.RELATIVE_50,
@@ -110,7 +81,6 @@ class SongItem(QWidget, View):
         )
         self.moreBtn.setCursor(btnCursor)
         self.moreBtn.clicked.connect(self.showMore)
-        self._addThemeForItem(self.moreBtn, btnTheme)
         self._addButtonToList(self.moreBtn)
         self.buttonsLayout.addWidget(self.moreBtn)
 
@@ -121,7 +91,6 @@ class SongItem(QWidget, View):
             lightModeCheckedIcon=UiUtils.paintIcon(icons.LOVE, Colors.DANGER),
         )
         self.loveBtn.setCursor(btnCursor)
-        self._addThemeForItem(self.loveBtn, btnTheme)
         self._addButtonToList(self.loveBtn)
         self.buttonsLayout.addWidget(self.loveBtn)
 
@@ -132,7 +101,6 @@ class SongItem(QWidget, View):
             darkModeIcon=UiUtils.paintIcon(icons.PLAY, Colors.WHITE),
         )
         self.playBtn.setCursor(btnCursor)
-        self._addThemeForItem(self.playBtn, buttonThemes.get("secondary"))
         self._addButtonToList(self.playBtn)
         self.buttonsLayout.addWidget(self.playBtn)
 
@@ -142,7 +110,6 @@ class SongItem(QWidget, View):
             lightModeIcon=UiUtils.paintIcon(icons.ADD, Colors.PRIMARY),
         )
         self.addToPlaylistBtn.setCursor(btnCursor)
-        self._addThemeForItem(self.addToPlaylistBtn, btnTheme)
         self._addButtonToList(self.addToPlaylistBtn)
         self.extraButtonsLayout.addWidget(self.addToPlaylistBtn)
 
@@ -152,7 +119,6 @@ class SongItem(QWidget, View):
             lightModeIcon=UiUtils.paintIcon(icons.EDIT, Colors.PRIMARY),
         )
         self.editBtn.setCursor(btnCursor)
-        self._addThemeForItem(self.editBtn, btnTheme)
         self._addButtonToList(self.editBtn)
         self.extraButtonsLayout.addWidget(self.editBtn)
 
@@ -162,7 +128,6 @@ class SongItem(QWidget, View):
             lightModeIcon=UiUtils.paintIcon(icons.DELETE, Colors.PRIMARY),
         )
         self.deleteBtn.setCursor(btnCursor)
-        self._addThemeForItem(self.deleteBtn, btnTheme)
         self._addButtonToList(self.deleteBtn)
         self.extraButtonsLayout.addWidget(self.deleteBtn)
 
@@ -178,7 +143,6 @@ class SongItem(QWidget, View):
         )
         self.closeBtn.setCursor(btnCursor)
         self.closeBtn.clicked.connect(lambda: self.showLess())
-        self._addThemeForItem(self.closeBtn, buttonThemes.get("DANGER"))
         self._addButtonToList(self.closeBtn)
 
         self.showLess()
@@ -192,6 +156,24 @@ class SongItem(QWidget, View):
         self.buttons.show()
         self.closeBtn.hide()
         self.extraButtons.hide()
+
+    def setWidgetThemes(self, theme: ThemeData) -> None:
+        self._addThemeForItem(self, theme)
+        self._addThemeForItem(self.extraButtons, theme)
+
+    def setButtonThemes(self, primary: ThemeData, secondary: ThemeData, danger: ThemeData) -> None:
+        self._addThemeForItem(self.moreBtn, primary)
+        self._addThemeForItem(self.loveBtn, primary)
+        self._addThemeForItem(self.deleteBtn, primary)
+        self._addThemeForItem(self.editBtn, primary)
+        self._addThemeForItem(self.addToPlaylistBtn, primary)
+        self._addThemeForItem(self.playBtn, secondary)
+        self._addThemeForItem(self.closeBtn, danger)
+
+    def setTextThemes(self, primary: ThemeData, secondary: ThemeData) -> None:
+        self._addThemeForItem(self.title, primary)
+        self._addThemeForItem(self.artist, secondary)
+        self._addThemeForItem(self.length, secondary)
 
     def setCover(self, cover: bytes) -> None:
         self.cover.setPixmap(getSongCoverPixmap(cover))

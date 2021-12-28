@@ -5,7 +5,7 @@ from constants.ui.qt import AppCursors, AppIcons
 from modules.screens.components.font_builder import FontBuilder
 from modules.screens.components.icon_buttons import IconButton
 from modules.screens.components.labels import LabelWithDefaultText
-from modules.screens.themes.theme_builders import ButtonThemeBuilder, LabelThemBuilder
+from modules.screens.themes.theme_builders import ButtonThemeBuilder, TextThemeBuilder
 from PyQt5.QtCore import Qt
 from PyQt5.QtWidgets import QHBoxLayout, QWidget
 from utils.ui.application_utils import UiUtils
@@ -40,7 +40,7 @@ class SongTableHeader(QWidget, View):
 
         font = FontBuilder().withSize(9).build()
         labelTheme = (
-            LabelThemBuilder().addLightModeTextColor(ColorBoxes.BLACK).addDarkModeTextColor(ColorBoxes.WHITE).build()
+            TextThemeBuilder().addLightModeTextColor(ColorBoxes.BLACK).addDarkModeTextColor(ColorBoxes.WHITE).build()
         )
 
         self.track = LabelWithDefaultText.render(font)

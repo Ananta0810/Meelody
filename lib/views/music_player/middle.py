@@ -4,8 +4,7 @@ from constants.ui.qss import ColorBoxes
 from modules.screens.components.font_builder import FontBuilder
 from modules.screens.components.labels import LabelWithDefaultText
 from modules.screens.components.sliders import HorizontalSlider
-from modules.screens.themes.theme_builders import (
-    HorizontalSliderThemeBuilder, LabelThemBuilder)
+from modules.screens.themes.theme_builders import HorizontalSliderThemeBuilder, TextThemeBuilder
 from PyQt5.QtCore import QMetaObject, Qt
 from PyQt5.QtWidgets import QHBoxLayout, QWidget
 from utils.helpers.my_string import Stringify
@@ -20,12 +19,12 @@ class MusicPlayerTimeSlider(QHBoxLayout, View):
     def setupUi(self) -> None:
         font = FontBuilder().withSize(9).build()
         labelTheme = (
-            LabelThemBuilder().addLightModeTextColor(ColorBoxes.GRAY).addDarkModeTextColor(ColorBoxes.WHITE).build()
+            TextThemeBuilder().addLightModeTextColor(ColorBoxes.GRAY).addDarkModeTextColor(ColorBoxes.WHITE).build()
         )
 
         self.playingTime = LabelWithDefaultText.render(font)
         self.playingTime.setFixedWidth(60)
-        self.playingTime.setAlignment(Qt.AlignRight| Qt.AlignVCenter)
+        self.playingTime.setAlignment(Qt.AlignRight | Qt.AlignVCenter)
         self.addWidget(self.playingTime)
         self._addThemeForItem(self.playingTime, labelTheme)
 
