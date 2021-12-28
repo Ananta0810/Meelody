@@ -41,20 +41,25 @@ class ColorBox(StylesheetElement):
 
 
 class Padding:
-    def __init__(self, width, height=None):
+    def __init__(self, width, height=None, relativeOnly: bool = False):
         self.width = width
         self.height = width if height is None else height
+        self.relativeOnly = relativeOnly
 
     def getWidth(self, size: int = 0) -> float:
         width = self.width
+        if self.relativeOnly:
+            return width * size
         if width <= 1:
-            width *= size
+            return width * size
         return width
 
     def getHeight(self, size: int = 0) -> float:
         height = self.height
+        if self.relativeOnly:
+            return height * size
         if height <= 1:
-            height *= size
+            return height * size
         return height
 
     def toStylesheet(self, size: int = 0) -> str:

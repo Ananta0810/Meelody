@@ -18,11 +18,11 @@ class CurrentPlaylist(QWidget, View):
         self.mainLayout = QHBoxLayout(self)
         self.mainLayout.setAlignment(Qt.AlignLeft)
         self.mainLayout.setSpacing(50)
+        self.mainLayout.setContentsMargins(0, 0, 0, 0)
 
         self.info = PlaylistInfo()
         self.info.setDefaultCover(ApplicationImage.defaultPlaylistCover)
         self.songs = SongTable()
-        self.songs.setFixedHeight(600)
 
         self.mainLayout.addLayout(self.info)
         self.mainLayout.addWidget(self.songs, stretch=2)

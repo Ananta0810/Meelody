@@ -4,9 +4,8 @@ from constants.ui.qss import Backgrounds, ColorBoxes, Colors, Paddings
 from constants.ui.qt import AppCursors, AppIcons
 from modules.screens.components.font_builder import FontBuilder
 from modules.screens.components.icon_buttons import IconButton
-from modules.screens.components.labels import StandardLabel
-from modules.screens.themes.theme_builders import (ButtonThemeBuilder,
-                                                   LabelThemeBuilder)
+from modules.screens.components.labels import LabelWithDefaultText
+from modules.screens.themes.theme_builders import ButtonThemeBuilder, LabelThemBuilder
 from PyQt5.QtCore import Qt
 from PyQt5.QtWidgets import QHBoxLayout, QWidget
 from utils.ui.application_utils import UiUtils
@@ -41,10 +40,10 @@ class SongTableHeader(QWidget, View):
 
         font = FontBuilder().withSize(9).build()
         labelTheme = (
-            LabelThemeBuilder().addLightModeTextColor(ColorBoxes.BLACK).addDarkModeTextColor(ColorBoxes.WHITE).build()
+            LabelThemBuilder().addLightModeTextColor(ColorBoxes.BLACK).addDarkModeTextColor(ColorBoxes.WHITE).build()
         )
 
-        self.track = StandardLabel.render(font)
+        self.track = LabelWithDefaultText.render(font)
         self.track.setFixedWidth(64)
         self.track.setAlignment(Qt.AlignCenter)
         self._addThemeForItem(self.track, labelTheme)
@@ -52,11 +51,11 @@ class SongTableHeader(QWidget, View):
         self.info.addStretch(1)
         self.info.addSpacing(24)
 
-        self.artist = StandardLabel.render(font)
+        self.artist = LabelWithDefaultText.render(font)
         self._addThemeForItem(self.artist, labelTheme)
         self.info.addWidget(self.artist, 1)
 
-        self.length = StandardLabel.render(font)
+        self.length = LabelWithDefaultText.render(font)
         self.length.setFixedWidth(64)
         self.length.setAlignment(Qt.AlignCenter)
         self._addThemeForItem(self.length, labelTheme)

@@ -1,7 +1,7 @@
-from PyQt5.QtWidgets import QLineEdit
+from PyQt5.QtWidgets import QLabel
 
 
-class LabelWithDefaultText(QLineEdit):
+class QLabelWithDefaultText(QLabel):
     def __init__(self, parent=None):
         super().__init__(parent)
         self.defaultText = ""
@@ -13,4 +13,4 @@ class LabelWithDefaultText(QLineEdit):
 
     def setText(self, text: str) -> None:
         text = self.defaultText if text is None else text
-        super().setText(text)
+        return super().setText(text)

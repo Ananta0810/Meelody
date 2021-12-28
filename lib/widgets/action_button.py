@@ -10,16 +10,19 @@ class QActionButton(QPushButton):
     def __init__(self, parent: Optional[QWidget] = None):
         super().__init__(parent)
         self.padding = None
-        self.textChanged.connect(self.paddingText)
 
     def setPadding(self, padding: Padding) -> None:
         self.padding = padding
+
+    def setText(self, text: str) -> None:
+        super().setText(text)
+        self.paddingText()
 
     def paddingText(self) -> None:
         if self.padding is None:
             return
         textSize = self.sizeHint()
-        self.setBaseSize(
+        self.setFixedSize(
             textSize.width() + self.padding.getWidth(textSize.width()),
             textSize.height() + self.padding.getHeight(textSize.height()),
         )

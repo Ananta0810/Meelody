@@ -3,8 +3,8 @@ from typing import Optional
 from constants.ui.base import ApplicationImage
 from constants.ui.qss import Backgrounds, ColorBoxes
 from constants.ui.qt import IconSizes
-from modules.screens.themes.theme_builders import ButtonThemeBuilder, LabelThemeBuilder, ThemeData
-from PyQt5.QtCore import QEvent, QPoint, QRect, Qt, pyqtSignal
+from modules.screens.themes.theme_builders import ButtonThemeBuilder, LineEditThemBuilder, ScrollThemeBuilder, ThemeData
+from PyQt5.QtCore import QEvent, QPoint, Qt, pyqtSignal
 from PyQt5.QtGui import QKeyEvent, QShowEvent
 from PyQt5.QtWidgets import QFileDialog, QVBoxLayout, QWidget
 from utils.ui.application_utils import UiUtils
@@ -32,14 +32,8 @@ class SongTableBody(SmoothVerticalScrollArea, View):
         self.setHorizontalScrollBarPolicy(Qt.ScrollBarAlwaysOff)
         self.setWidgetResizable(True)
         self.setItemHeight(104)
-        self.setStyleSheet(
-            "QScrollBar:vertical{border:none;background:TRANSPARENT;width:4px}"
-            "QScrollBar::handle:vertical{background:rgba(160,160,160,0.5);border-radius:2px}"
-            "QScrollBar::handle:vertical:hover{background:#8040ff}"
-            "QScrollBar::sub-line:vertical{border:none}"
-            "QScrollBar::add-line:vertical{border:none}"
-            "QScrollBar::add-page:vertical,QScrollBar::sub-page:vertical{background:none}"
-            "QScrollBar::up-arrow:vertical,QScrollBar::down-arrow:vertical{background:none}"
+        self._addThemeForItem(
+            self, theme=ScrollThemeBuilder().addLightModeBackground(Backgrounds.CIRCLE_PRIMARY).build()
         )
 
         self.inner = QWidget(self)
@@ -48,9 +42,9 @@ class SongTableBody(SmoothVerticalScrollArea, View):
         self.menu.setAlignment(Qt.AlignTop)
         self.menu.setSpacing(0)
         self.menu.setContentsMargins(8, 0, 8, 8)
+
         self.emptyNotification = EmptySongTableNotification(self.inner)
-        self.emptyNotification.setMessage("Oh no, you don't have any song yet", "Add Now")
-        self.emptyNotification.setFixedSize(256, 400)
+        self.emptyNotification.setMessage("Oh no! You don't have any song yet", "Add Now")
 
     def getKeyFromEvent(self, event: QKeyEvent, controller=None) -> None:
         isHoldingALT = int(event.modifiers()) == Qt.AltModifier
@@ -67,16 +61,18 @@ class SongTableBody(SmoothVerticalScrollArea, View):
         self.keyPressed.connect(lambda event: self.getKeyFromEvent(event, controller))
 
     def lightMode(self) -> None:
-        super().lightMode()
+        self.emptyNotification.lightMode()
         songCount = self.getTotalSongAvailable()
         for index in range(0, songCount):
             self.__getSongByIndex(index).lightMode()
+        return super().lightMode()
 
     def darkMode(self) -> None:
-        super().darkMode()
+        self.emptyNotification.darkMode()
         songCount = self.getTotalSongAvailable()
         for index in range(0, songCount):
             self.__getSongByIndex(index).darkMode()
+        return super().darkMode()
 
     def updateLayout(self, totalItem: int, controller) -> None:
         itemsDisplaying = self.getTotalSongAvailable()
@@ -110,7 +106,10 @@ class SongTableBody(SmoothVerticalScrollArea, View):
         song.setLength(length)
 
     def showEvent(self, a0: QShowEvent) -> None:
-        self.emptyNotification.move(self.inner.rect().center() - self.emptyNotification.rect().center())
+        offsetToTopForTheBalanceOfNotification = QPoint(0, 48)
+        self.emptyNotification.move(
+            self.inner.rect().center() - self.emptyNotification.rect().center() - offsetToTopForTheBalanceOfNotification
+        )
         return super().showEvent(a0)
 
     def setSongCoverAtIndex(self, index: int, cover: bytes) -> None:
@@ -145,13 +144,14 @@ class SongTableBody(SmoothVerticalScrollArea, View):
             "labels": {
                 "themes": {
                     "PRIMARY": (
-                        LabelThemeBuilder()
+                        LineEditThemBuilder()
                         .addLightModeTextColor(ColorBoxes.BLACK)
                         .addDarkModeTextColor(ColorBoxes.WHITE)
                         .build(itemSize=IconSizes.LARGE.height())
                     ),
                     "secondary": (
-                        LabelThemeBuilder()
+                        LineEditThemBuilder()
+                        .addId("QLabel,QLineEdit")
                         .addLightModeTextColor(ColorBoxes.GRAY)
                         .addDarkModeTextColor(ColorBoxes.GRAY)
                         .build(itemSize=IconSizes.LARGE.height())

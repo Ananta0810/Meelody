@@ -2,9 +2,10 @@ from typing import Optional
 
 from constants.ui.qss import ColorBoxes
 from modules.screens.components.font_builder import FontBuilder
-from modules.screens.components.labels import StandardLabel
+from modules.screens.components.labels import LabelWithDefaultText
 from modules.screens.components.sliders import HorizontalSlider
-from modules.screens.themes.theme_builders import HorizontalSliderThemeBuilder, LabelThemeBuilder
+from modules.screens.themes.theme_builders import (
+    HorizontalSliderThemeBuilder, LabelThemBuilder)
 from PyQt5.QtCore import QMetaObject, Qt
 from PyQt5.QtWidgets import QHBoxLayout, QWidget
 from utils.helpers.my_string import Stringify
@@ -19,12 +20,12 @@ class MusicPlayerTimeSlider(QHBoxLayout, View):
     def setupUi(self) -> None:
         font = FontBuilder().withSize(9).build()
         labelTheme = (
-            LabelThemeBuilder().addLightModeTextColor(ColorBoxes.GRAY).addDarkModeTextColor(ColorBoxes.WHITE).build()
+            LabelThemBuilder().addLightModeTextColor(ColorBoxes.GRAY).addDarkModeTextColor(ColorBoxes.WHITE).build()
         )
 
-        self.playingTime = StandardLabel.render(font)
+        self.playingTime = LabelWithDefaultText.render(font)
         self.playingTime.setFixedWidth(60)
-        self.playingTime.setAlignment(Qt.AlignRight)
+        self.playingTime.setAlignment(Qt.AlignRight| Qt.AlignVCenter)
         self.addWidget(self.playingTime)
         self._addThemeForItem(self.playingTime, labelTheme)
 
@@ -40,9 +41,9 @@ class MusicPlayerTimeSlider(QHBoxLayout, View):
             .addDarkLineColor(ColorBoxes.HOVERABLE_WHITE_25)
             .build(itemSize=self.timeSlider.height()),
         )
-        self.totalTime = StandardLabel.render(font)
+        self.totalTime = LabelWithDefaultText.render(font)
         self.totalTime.setFixedWidth(60)
-        self.totalTime.setAlignment(Qt.AlignLeft)
+        self.totalTime.setAlignment(Qt.AlignLeft | Qt.AlignVCenter)
         self.addWidget(self.totalTime)
         self._addThemeForItem(self.totalTime, labelTheme)
 

@@ -2,11 +2,12 @@ from typing import Optional
 
 from constants.ui.qss import Colors, Paddings
 from constants.ui.qt import AppCursors, AppIcons, IconSizes
-
 # from joblib import Memory
 from modules.screens.components.font_builder import FontBuilder
-from modules.screens.components.icon_buttons import IconButton, ToggleIconButton
-from modules.screens.components.labels import DoubleClickedEditableLabel, StandardLabel
+from modules.screens.components.icon_buttons import (IconButton,
+                                                     ToggleIconButton)
+from modules.screens.components.labels import (DoubleClickedEditableLabel,
+                                               LabelWithDefaultText)
 from modules.screens.themes.theme_builders import ThemeData
 from PyQt5.QtCore import Qt
 from PyQt5.QtGui import QPixmap
@@ -92,7 +93,7 @@ class SongItem(QWidget, View):
         self._addThemeForItem(self.artist, labelThemes.get("secondary"))
         self.info.addWidget(self.artist, 1)
 
-        self.length = StandardLabel.render(font)
+        self.length = LabelWithDefaultText.render(font)
         self._addThemeForItem(self.length, labelThemes.get("secondary"))
         self.length.setFixedWidth(64)
         self.length.setAlignment(Qt.AlignCenter)
@@ -211,7 +212,6 @@ class SongItem(QWidget, View):
         if length is None:
             length = self.defaultLength
         self.length.setText(Stringify.floatToClockTime(length))
-        self.length.setCursorPosition(0)
 
     def setDefaultCover(self, cover: bytes) -> None:
         self.cover.setDefaultPixmap(getSongCoverPixmap(cover))

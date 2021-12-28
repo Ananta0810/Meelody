@@ -14,6 +14,10 @@ class Paddings(metaclass=SingletonConst):
     ABSOLUTE_SMALL = Padding(4)
     ABSOLUTE_MEDIUM = Padding(12)
 
+    LABEL_SMALL = Padding(1.25, 0.625, relativeOnly=True)
+    LABEL_MEDIUM = Padding(1.25, 0.625, relativeOnly=True)
+    LABEL_LARGE = Padding(1.5, 1, relativeOnly=True)
+
 
 class Colors(metaclass=SingletonConst):
     PRIMARY = Color(128, 64, 255)

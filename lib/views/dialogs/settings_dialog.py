@@ -6,10 +6,9 @@ from constants.ui.qt import AppCursors, AppIcons
 from modules.screens.components.dropdowns import DropdownMenu
 from modules.screens.components.font_builder import FontBuilder
 from modules.screens.components.icon_buttons import IconButton
-from modules.screens.components.labels import StandardLabel
+from modules.screens.components.labels import LabelWithDefaultText
 from modules.screens.qss.qss_elements import Background, Border, ColorBox
-from modules.screens.themes.theme_builders import (ButtonThemeBuilder,
-                                                   LabelThemeBuilder)
+from modules.screens.themes.theme_builders import ButtonThemeBuilder, LabelThemBuilder
 from PyQt5.QtCore import Qt
 from PyQt5.QtWidgets import QFileDialog, QHBoxLayout, QVBoxLayout, QWidget
 from utils.ui.application_utils import UiUtils
@@ -27,7 +26,7 @@ class SettingsDialog(QWidget, View):
         icons = AppIcons()
         cursors = AppCursors()
         fontBuilder = FontBuilder()
-        labelThemeBuilder = LabelThemeBuilder()
+        labelThemBuilder = LabelThemBuilder()
         buttonWithCheveronTheme = (
             iconButtonThemeBuilder.addLightModeBackground(Backgrounds.CIRCLE_PRIMARY_25)
             .addDarkModeBackground(Backgrounds.CIRCLE_WHITE_25)
@@ -40,7 +39,7 @@ class SettingsDialog(QWidget, View):
         )
         itemFont = fontBuilder.withSize(9).build()
         itemTextStyle = (
-            labelThemeBuilder.addLightModeTextColor(ColorBoxes.BLACK).addDarkModeTextColor(ColorBoxes.WHITE).build()
+            labelThemBuilder.addLightModeTextColor(ColorBoxes.BLACK).addDarkModeTextColor(ColorBoxes.WHITE).build()
         )
 
         # =========================UI=========================
@@ -70,7 +69,7 @@ class SettingsDialog(QWidget, View):
         self.header.addWidget(self.closePanelBtn)
         self.header.addStretch()
 
-        self.settingsLabel = StandardLabel.render(fontBuilder.withSize(24).withWeight("bold").build())
+        self.settingsLabel = LabelWithDefaultText.render(fontBuilder.withSize(24).withWeight("bold").build())
         self._addThemeForItem(self.settingsLabel, itemTextStyle)
         self.body.addWidget(self.settingsLabel)
 
@@ -97,7 +96,7 @@ class SettingsDialog(QWidget, View):
         self._addButtonToList(self.languageIcon)
         self._addThemeForItem(self.languageIcon, theme=iconTheme)
 
-        self.languageLabel = StandardLabel.render(font=itemFont, parent=self)
+        self.languageLabel = LabelWithDefaultText.render(font=itemFont, parent=self)
         self._addThemeForItem(self.languageLabel, itemTextStyle)
 
         dropdownMenuFormer = DropdownMenu()
@@ -139,7 +138,7 @@ class SettingsDialog(QWidget, View):
         self._addButtonToList(self.darkModeIcon)
         self._addThemeForItem(self.darkModeIcon, theme=iconTheme)
 
-        self.darkModeLabel = StandardLabel.render(font=itemFont, parent=self)
+        self.darkModeLabel = LabelWithDefaultText.render(font=itemFont, parent=self)
         self._addThemeForItem(self.darkModeLabel, itemTextStyle)
 
         self.switchDarkModeBtn = Toggle(self)
@@ -164,13 +163,13 @@ class SettingsDialog(QWidget, View):
         self._addButtonToList(self.folderIcon)
         self._addThemeForItem(self.folderIcon, theme=iconTheme)
 
-        self.folderLabel = StandardLabel.render(font=itemFont, parent=self)
+        self.folderLabel = LabelWithDefaultText.render(font=itemFont, parent=self)
         self._addThemeForItem(self.folderLabel, itemTextStyle)
 
-        self.currentFolder = StandardLabel.render(font=itemFont, parent=self)
+        self.currentFolder = LabelWithDefaultText.render(font=itemFont, parent=self)
         self._addThemeForItem(
             self.currentFolder,
-            theme=labelThemeBuilder.addPadding(12)
+            theme=labelThemBuilder.addPadding(12)
             .addLightModeTextColor(ColorBoxes.BLACK)
             .addDarkModeTextColor(ColorBoxes.WHITE)
             .addLightModeBackground(Backgrounds.ROUNDED_PRIMARY_25)

@@ -284,13 +284,18 @@ class ButtonThemeBuilder(ThemeBuilder):
         return styleSheet
 
 
-class LabelThemeBuilder(ThemeBuilder):
+class LabelThemBuilder(ThemeBuilder):
     def __init__(self):
         self.lightModeTextColor = None
         self.darkModeTextColor = None
         self.lightModeBackground = None
         self.darkModeBackground = None
         self.padding = 0
+        self.id = "QLabel"
+
+    def addId(self, id: str) -> None:
+        self.id = id
+        return self
 
     def addPadding(self, padding: int):
         self.padding = padding
@@ -322,23 +327,36 @@ class LabelThemeBuilder(ThemeBuilder):
         return ThemeData(lightMode, darkMode)
 
     def __buildTheme(self, itemSize: int, textColor: ColorBox, background: Background) -> str:
-        return BackgroundBuilder().export("QLineEdit", itemSize, textColor, background, padding=self.padding)
+        return BackgroundBuilder().export(self.id, itemSize, textColor, background, padding=self.padding)
 
 
-class ActionButtonThemeBuilder(ThemeBuilder):
+class LineEditThemBuilder(LabelThemBuilder):
     def __init__(self):
-        self.lightModeTextColor = None
-        self.darkModeTextColor = None
-        self.lightModeBackground = None
-        self.darkModeBackground = None
-        self.padding = 0
+        super().__init__()
+        self.id = "QLineEdit"
 
-    def addLightModeTextColor(self, color: ColorBox):
-        self.lightModeTextColor = color
+
+class ActionButtonThemeBuilder(LineEditThemBuilder):
+    def __init__(self):
+        super().__init__()
+        self.id = "QPushButton"
+
+
+class ScrollThemeBuilder(ThemeBuilder):
+    lightModeBackground: Background = None
+    darkModeBackground: Background = None
+    type: str = "vertical"
+    length: int = 4
+
+    def setItemSize(self, size: int):
         return self
 
-    def addDarkModeTextColor(self, color: ColorBox):
-        self.darkModeTextColor = color
+    def addType(self, type: str):
+        self.type = type
+        return self
+
+    def addLength(self, length: int):
+        self.length = length
         return self
 
     def addLightModeBackground(self, background: Background):
@@ -349,17 +367,23 @@ class ActionButtonThemeBuilder(ThemeBuilder):
         self.darkModeBackground = background
         return self
 
-    def build(self, itemSize: int = 0) -> ThemeData:
-        lightMode = self.__buildTheme(itemSize, self.lightModeTextColor, self.lightModeBackground)
-        darkMode = self.__buildTheme(
-            itemSize,
-            self.darkModeTextColor or self.lightModeTextColor,
-            self.darkModeBackground or self.lightModeBackground,
-        )
+    def build(self) -> ThemeData:
+        lightMode = self.__buildTheme(self.lightModeBackground)
+        darkMode = lightMode if self.darkModeBackground is None else self.__buildTheme(self.darkModeBackground)
         return ThemeData(lightMode, darkMode)
 
-    def __buildTheme(self, itemSize: int, textColor: ColorBox, background: Background) -> str:
-        return BackgroundBuilder().export("QPushButton", itemSize, textColor, background)
+    def __buildTheme(self, background: Background) -> str:
+        return "".join(
+            [
+                f"QScrollBar::handle:{self.type}{{background-color:{background.colorStyleSheet()};border-radius:{background.borderRadiusStyleSheet(self.length)}px}}",
+                f"QScrollBar::handle:{self.type}:hover{{background-color:{background.colorStyleSheet(True)}}}",
+                f"QScrollBar:{self.type}{{border:none;background-color:transparent;width:{self.length}px}}",
+                f"QScrollBar::sub-line:{self.type}{{border:none}}",
+                f"QScrollBar::add-line:{self.type}{{border:none}}",
+                f"QScrollBar::add-page:{self.type},QScrollBar::sub-page:{self.type}{{background-color:none}}",
+                f"QScrollBar::up-arrow:{self.type},QScrollBar::down-arrow:{self.type}{{background-color:none}}",
+            ]
+        )
 
 
 class BackgroundBuilder:

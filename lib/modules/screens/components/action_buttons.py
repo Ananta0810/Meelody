@@ -1,13 +1,9 @@
 from abc import ABC, abstractstaticmethod
-from sys import path
-
-from PyQt5.QtGui import QFont
-from PyQt5.QtWidgets import QWidget
-
-path.append("./lib")
 from typing import Optional
 
 from modules.screens.qss.qss_elements import Padding
+from PyQt5.QtGui import QFont
+from PyQt5.QtWidgets import QWidget
 from widgets.action_button import QActionButton
 
 

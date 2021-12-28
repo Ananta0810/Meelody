@@ -1,4 +1,4 @@
-from modules.screens.components.labels import StandardLabel
+from modules.screens.components.labels import LabelWithDefaultText
 from modules.screens.others.animation import Animation
 from PyQt5.QtCore import Qt, pyqtSignal
 from PyQt5.QtGui import QCursor, QFont, QPixmap
@@ -17,7 +17,7 @@ class DefaultPlaylistCard(QWidget):
         self.layout = QVBoxLayout(self)
         self.layout.setContentsMargins(20, 20, 20, 20)
         self.cover = ImageDisplayer(self)
-        self.label = StandardLabel.render(font, parent=self)
+        self.label = LabelWithDefaultText.render(font, parent=self)
         self.label.setFixedSize(160, 32)
         self.layout.addStretch()
         self.layout.addWidget(self.label)

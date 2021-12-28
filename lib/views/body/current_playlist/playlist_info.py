@@ -1,7 +1,9 @@
+from typing import Optional
+
 from constants.ui.qss import ColorBoxes
 from modules.screens.components.font_builder import FontBuilder
-from modules.screens.components.labels import StandardLabel
-from modules.screens.themes.theme_builders import LabelThemeBuilder, ThemeData
+from modules.screens.components.labels import LabelWithDefaultText
+from modules.screens.themes.theme_builders import LabelThemBuilder, ThemeData
 from PyQt5.QtGui import QFont, QPixmap
 from PyQt5.QtWidgets import QVBoxLayout, QWidget
 from utils.ui.application_utils import UiUtils
@@ -10,7 +12,7 @@ from widgets.image_displayer import ImageDisplayer
 
 
 class PlaylistInfo(QVBoxLayout, View):
-    def __init__(self, parent=None) -> None:
+    def __init__(self, parent: Optional["QWidget"] = None) -> None:
         super(PlaylistInfo, self).__init__(parent)
         self.setupUi()
 
@@ -19,7 +21,7 @@ class PlaylistInfo(QVBoxLayout, View):
         labelFont: QFont = fontBuilder.withSize(20).withWeight("bold").build()
         totalSongFont: QFont = fontBuilder.withSize(10).withWeight("normal").build()
         textTheme: ThemeData = (
-            LabelThemeBuilder().addLightModeTextColor(ColorBoxes.BLACK).addDarkModeTextColor(ColorBoxes.WHITE).build()
+            LabelThemBuilder().addLightModeTextColor(ColorBoxes.BLACK).addDarkModeTextColor(ColorBoxes.WHITE).build()
         )
 
         self.setSpacing(12)
@@ -28,8 +30,8 @@ class PlaylistInfo(QVBoxLayout, View):
 
         self.text_area = QVBoxLayout()
         self.text_area.setSpacing(0)
-        self.label = StandardLabel.render(labelFont)
-        self.total_song = StandardLabel.render(totalSongFont)
+        self.label = LabelWithDefaultText.render(labelFont)
+        self.total_song = LabelWithDefaultText.render(totalSongFont)
 
         self.text_area.addWidget(self.label)
         self.text_area.addWidget(self.total_song)
