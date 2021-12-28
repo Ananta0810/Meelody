@@ -77,15 +77,12 @@ class MyByteImage:
         return mainColor
 
     def getContrastLevel(self) -> float:
-        mainColor = self.getMainColor()
-        if mainColor is None:
-            return None
-        imageBrightness = (85 * mainColor[0] + 280 * mainColor[1] + 26 * mainColor[2]) / 100000
+        red, green, blue = self.getMainColor()
+        imageBrightness = (85 * red + 280 * green + 26 * blue) / 100000
         return imageBrightness
 
     @staticmethod
-    def saveFile(data: bytes, file_path: str) -> bool:
+    def saveFile(data: bytes, file_path: str) -> None:
         file = open(file_path, "wb")
         file.write(bytearray(data))
         file.close()
-        return True

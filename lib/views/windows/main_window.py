@@ -1,12 +1,13 @@
 from typing import Optional, Union
 
-from constants.ui.qss import Backgrounds, Colors, Paddings
+from constants.ui.qss import Colors, Paddings
 from constants.ui.qt import AppCursors, AppIcons
+from constants.ui.theme_builders import IconButtonThemeBuilders
 from modules.screens.components.icon_buttons import IconButton
 from modules.screens.themes.theme_builders import ButtonThemeBuilder, ThemeData
 from PyQt5.QtCore import QMetaObject, Qt
 from PyQt5.QtGui import QResizeEvent
-from PyQt5.QtWidgets import QHBoxLayout, QLayout, QScrollArea, QVBoxLayout, QWidget
+from PyQt5.QtWidgets import QHBoxLayout, QLayout, QVBoxLayout, QWidget
 from utils.ui.application_utils import UiUtils
 from views.view import View
 from widgets.framless_window import FramelessWindow
@@ -48,14 +49,7 @@ class MainWindow(FramelessWindow, View):
             darkModeIcon=UiUtils.paintIcon(icons.MINIMIZE, Colors.WHITE),
         )
         self._addButtonToList(self.minimize_btn)
-        self._addThemeForItem(
-            self.minimize_btn,
-            theme=(
-                btnThemeBuilder.addLightModeBackground(Backgrounds.ROUNDED_PRIMARY_25)
-                .addDarkModeBackground(Backgrounds.ROUNDED_WHITE_25)
-                .build()
-            ),
-        )
+        self._addThemeForItem(self.minimize_btn, theme=IconButtonThemeBuilders.CIRCLE_PRIMARY_25.build(24))
         self.minimize_btn.setCursor(AppCursors.hand())
         self.minimize_btn.clicked.connect(self.showMinimized)
 
@@ -64,12 +58,7 @@ class MainWindow(FramelessWindow, View):
             size=icons.SIZES.MEDIUM,
             lightModeIcon=UiUtils.paintIcon(icons.CLOSE, Colors.WHITE),
         )
-        self._addThemeForItem(
-            self.close_btn,
-            theme=(
-                btnThemeBuilder.addLightModeBackground(Backgrounds.ROUNDED_DANGER).addDarkModeBackground(None).build()
-            ),
-        )
+        self._addThemeForItem(self.close_btn, theme=(IconButtonThemeBuilders.CIRCLE_DANGER.build(24)))
         self.close_btn.setCursor(AppCursors.hand())
         self.close_btn.clicked.connect(self.close)
 
@@ -95,8 +84,5 @@ class MainWindow(FramelessWindow, View):
             return
         self.mainLayout.addWidget(a0, stretch, alignment)
 
-    def addLayout(self, layout: QLayout) -> None:
-        self.mainLayout.addLayout(layout)
-
-    # def addLayout(self, layout: QLayout, stretch: int = ...) -> None:
-    #     self.mainLayout.addLayout(layout, stretch=stretch)
+    def addLayout(self, layout: QLayout, stretch: int = 0) -> None:
+        self.mainLayout.addLayout(layout, stretch=stretch)

@@ -1,6 +1,6 @@
 {
-    "currentSong": "Blue Monday",
-    "volume": 99,
-    "isLooping": false,
-    "isShuffling": false
+    "currentSong": "Tiger Warrior",
+    "volume": 34,
+    "isLooping": true,
+    "isShuffling": true
 }

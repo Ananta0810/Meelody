@@ -1,10 +1,9 @@
 from typing import Optional
 
-from constants.ui.qss import ColorBoxes
+from constants.ui.theme_builders import SliderThemeBuilders, TextThemeBuilders
 from modules.screens.components.font_builder import FontBuilder
 from modules.screens.components.labels import LabelWithDefaultText
 from modules.screens.components.sliders import HorizontalSlider
-from modules.screens.themes.theme_builders import HorizontalSliderThemeBuilder, TextThemeBuilder
 from PyQt5.QtCore import QMetaObject, Qt
 from PyQt5.QtWidgets import QHBoxLayout, QWidget
 from utils.helpers.my_string import Stringify
@@ -18,9 +17,7 @@ class MusicPlayerTimeSlider(QHBoxLayout, View):
 
     def setupUi(self) -> None:
         font = FontBuilder().withSize(9).build()
-        labelTheme = (
-            TextThemeBuilder().addLightModeTextColor(ColorBoxes.GRAY).addDarkModeTextColor(ColorBoxes.WHITE).build()
-        )
+        labelTheme = TextThemeBuilders.DEFAULT.build()
 
         self.playingTime = LabelWithDefaultText.render(font)
         self.playingTime.setFixedWidth(60)
@@ -33,12 +30,7 @@ class MusicPlayerTimeSlider(QHBoxLayout, View):
         self.timeSlider.setProperty("value", 0)
         self.addWidget(self.timeSlider)
         self._addThemeForItem(
-            self.timeSlider,
-            theme=HorizontalSliderThemeBuilder()
-            .addLightHandleColor(ColorBoxes.PRIMARY)
-            .addLightLineColor(ColorBoxes.HOVERABLE_PRIMARY_25)
-            .addDarkLineColor(ColorBoxes.HOVERABLE_WHITE_25)
-            .build(itemSize=self.timeSlider.height()),
+            self.timeSlider, theme=SliderThemeBuilders.PRIMARY.build(itemSize=self.timeSlider.height())
         )
         self.totalTime = LabelWithDefaultText.render(font)
         self.totalTime.setFixedWidth(60)

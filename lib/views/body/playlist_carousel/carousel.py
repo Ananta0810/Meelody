@@ -1,6 +1,9 @@
 from constants.ui.base import ApplicationImage
 from constants.ui.qss import Backgrounds, Colors, Paddings
 from constants.ui.qt import AppCursors, AppIcons
+from constants.ui.theme_builders import (IconButtonThemeBuilders,
+                                         SliderThemeBuilders,
+                                         TextThemeBuilders)
 from modules.screens.components.font_builder import FontBuilder
 from modules.screens.components.icon_buttons import IconButton
 from modules.screens.others.animation import Animation
@@ -83,12 +86,11 @@ class PlaylistCarousel(QScrollArea, View):
         # =================New playlist=================
         self.addPlaylistCard = QWidget()
         self.addPlaylistCard.setFixedSize(256, 320)
-        self.addPlaylistCard.setObjectName("addPlaylistCard")
         self._addThemeForItem(
             self.addPlaylistCard,
             theme=ThemeData(
-                lightMode="#addPlaylistCard{background:rgba(0,0,0,0.1);border-radius:24px}",
-                darkMode="#addPlaylistCard{background:rgba(255,255,255,0.25);border-radius:24px}",
+                lightMode="QWidget{background:rgba(0,0,0,0.1);border-radius:24px}",
+                darkMode="QWidget{background:rgba(255,255,255,0.25);border-radius:24px}",
             ),
         )
         self.add_playlist_btn = IconButton.render(
@@ -103,12 +105,7 @@ class PlaylistCarousel(QScrollArea, View):
         self._addButtonToList(self.add_playlist_btn)
         self._addThemeForItem(
             self.add_playlist_btn,
-            theme=(
-                ButtonThemeBuilder()
-                .addLightModeBackground(Backgrounds.CIRCLE_HIDDEN_PRIMARY_25)
-                .addDarkModeBackground(Backgrounds.CIRCLE_HIDDEN_WHITE_25)
-                .build(itemSize=icons.SIZES.LARGE.height())
-            ),
+            theme=IconButtonThemeBuilders.CIRCLE_HIDDEN_PRIMARY_25.build(itemSize=icons.SIZES.LARGE.height()),
         )
         self.mainLayout.addWidget(self.addPlaylistCard)
         self.mainLayout.addStretch()
@@ -139,30 +136,31 @@ class PlaylistCarousel(QScrollArea, View):
 
     def addNewEmptyPlaylist(self, controller) -> None:
         index = self.__getTotalPlaylistInLayout()
-        playlist = self.addPlaylist(index)
+        playlist = self.__addPlaylist(index)
         playlist.clicked.connect(lambda: controller.handleSelectedPlaylist(index))
         playlist.label.returnPressed.connect(lambda: controller.handleChangedPlaylistName(index, playlist.label.text()))
-        playlist.deleteBtn.clicked.connect(lambda: self.confirmDeletePlaylist(index, controller))
-        playlist.editBtn.clicked.connect(lambda: self.openChoosingPlaylistCoverDialog(index, controller))
-
-    def confirmDeletePlaylist(self, index: int, controller) -> None:
-        message_box = ConfirmDialog(
-            header="Delete playlist", msg="Are you sure want to delete the playlist? This action can not be reversed."
-        )
-        confirmDelete = message_box.exec()
-        if not confirmDelete:
-            return
-        controller.handleDeletePlaylistAtIndex(index)
-
-    def openChoosingPlaylistCoverDialog(self, index: int, controller) -> None:
-        path = QFileDialog.getOpenFileName(self, filter="JPEG, PNG (*.JPEG *.jpeg *.JPG *.jpg *.JPE *.jpe)")[0]
-        controller.handleChangedPlaylistCover(index, path)
+        playlist.deleteBtn.clicked.connect(lambda: self.__confirmDeletePlaylist(index, controller))
+        playlist.editBtn.clicked.connect(lambda: self.__openChoosingPlaylistCoverDialog(index, controller))
 
     def removePlaylistsInRange(self, start: int, end: int):
         for index in range(start, end):
             self.user_playlists.itemAt(index).widget().deleteLater()
 
-    def addPlaylist(self, index: int):
+    def displayPlaylistInfoAtIndex(self, index: int, name: str, cover: bytes) -> None:
+        self.getPlaylistByIndex(index).show()
+        self.changePlaylistNameAtIndex(index, name)
+        self.changePlaylistCoverAtIndex(index, cover)
+
+    def getPlaylistByIndex(self, index: int) -> CustomPlaylistCard:
+        return UiUtils.getAttribute(self, "playlistCard", index)
+
+    def changePlaylistCoverAtIndex(self, index: int, cover: bytes) -> None:
+        self.getPlaylistByIndex(index).setCover(self.__getPixmapForPlaylistCover(cover))
+
+    def changePlaylistNameAtIndex(self, index: int, name: str) -> None:
+        self.getPlaylistByIndex(index).setText(name)
+
+    def __addPlaylist(self, index: int):
         playlist = CustomPlaylistCard(
             labelFont=self.playlistLabelFont,
             buttonTheme=self.buttonTheme,
@@ -176,29 +174,21 @@ class PlaylistCarousel(QScrollArea, View):
         playlist.setCursor(AppCursors.hand())
 
         self.user_playlists.addWidget(playlist)
-        UiUtils.setAttribute(self, "playlist_card", index, playlist)
+        UiUtils.setAttribute(self, "playlistCard", index, playlist)
         return playlist
 
-    def displayPlaylistInfoAtIndex(self, index: int, name: str, cover: bytes) -> None:
-        self.getPlaylistByIndex(index).show()
-        self.changePlaylistNameAtIndex(index, name)
-        self.changePlaylistCoverAtIndex(index, cover)
+    def __confirmDeletePlaylist(self, index: int, controller) -> None:
+        message_box = ConfirmDialog(
+            header="Delete playlist", msg="Are you sure want to delete the playlist? This action can not be reversed."
+        )
+        confirmDelete = message_box.exec()
+        if not confirmDelete:
+            return
+        controller.handleDeletePlaylistAtIndex(index)
 
-    def getPlaylistByIndex(self, index: int) -> CustomPlaylistCard:
-        return UiUtils.getAttribute(self, "playlist_card", index)
-
-    def changePlaylistCoverAtIndex(self, index: int, cover: bytes) -> None:
-        self.getPlaylistByIndex(index).setCover(self.__getPixmapForPlaylistCover(cover))
-
-    def changePlaylistNameAtIndex(self, index: int, name: str) -> None:
-        self.getPlaylistByIndex(index).setText(name)
-
-    def displayPlaylistInRange(self, start: int, end: int) -> None:
-        for index in range(start, end):
-            self.getPlaylistByIndex(index).show()
-        for index in range(end, self.__getTotalPlaylistInLayout()):
-            self.getPlaylistByIndex(index).hide()
-        # UiUtils.getAttribute(self, "playlist_card", end).setParent(None)
+    def __openChoosingPlaylistCoverDialog(self, index: int, controller) -> None:
+        path = QFileDialog.getOpenFileName(self, filter="JPEG, PNG (*.JPEG *.jpeg *.JPG *.jpg *.JPE *.jpe)")[0]
+        controller.handleChangedPlaylistCover(index, path)
 
     def __getTotalPlaylistInLayout(self) -> int:
         return self.user_playlists.count()

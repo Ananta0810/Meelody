@@ -1,11 +1,12 @@
 from typing import Optional
 
-from constants.ui.qss import Backgrounds, ColorBoxes, Colors, Paddings
+from constants.ui.qss import Backgrounds, Colors, Paddings
 from constants.ui.qt import AppCursors, AppIcons
+from constants.ui.theme_builders import IconButtonThemeBuilders, TextThemeBuilders
 from modules.screens.components.font_builder import FontBuilder
 from modules.screens.components.icon_buttons import IconButton, ToggleIconButton
 from modules.screens.components.labels import LabelWithDefaultText
-from modules.screens.themes.theme_builders import ButtonThemeBuilder, TextThemeBuilder
+from modules.screens.themes.theme_builders import ButtonThemeBuilder
 from PyQt5.QtCore import QMetaObject
 from PyQt5.QtGui import QPixmap
 from PyQt5.QtWidgets import QHBoxLayout, QVBoxLayout, QWidget
@@ -22,13 +23,7 @@ class MusicPlayerLeftSide(QHBoxLayout, View):
     def setupUi(self) -> None:
         icons = AppIcons()
         cursors = AppCursors()
-        buttonThemeBuilder = ButtonThemeBuilder()
-        changeSongBtnTheme = (
-            buttonThemeBuilder.addLightModeBackground(Backgrounds.CIRCLE_HIDDEN_PRIMARY_25)
-            .addDarkModeBackground(None)
-            .build(itemSize=icons.SIZES.LARGE.height())
-        )
-        labelThemBuilder = TextThemeBuilder()
+        changeSongBtnTheme = IconButtonThemeBuilders.CIRCLE_HIDDEN_PRIMARY_25.build(itemSize=icons.SIZES.LARGE.height())
         fontBuilder = FontBuilder()
 
         # =================Ui=================
@@ -37,15 +32,10 @@ class MusicPlayerLeftSide(QHBoxLayout, View):
         self.addWidget(self.songCover)
 
         self.songTitle = LabelWithDefaultText.render(font=fontBuilder.withSize(10).withWeight("bold").build())
-        self._addThemeForItem(
-            self.songTitle,
-            labelThemBuilder.addLightModeTextColor(ColorBoxes.BLACK).addDarkModeTextColor(ColorBoxes.WHITE).build(),
-        )
+        self._addThemeForItem(self.songTitle, TextThemeBuilders.DEFAULT.build())
         self.songArtist = LabelWithDefaultText.render(font=fontBuilder.withSize(9).withWeight("normal").build())
-        self._addThemeForItem(
-            self.songArtist,
-            labelThemBuilder.addLightModeTextColor(ColorBoxes.GRAY).addDarkModeTextColor(ColorBoxes.WHITE).build(),
-        )
+        self._addThemeForItem(self.songArtist, TextThemeBuilders.GRAY.build())
+
         self.songInfoLayout = QVBoxLayout()
         self.songInfoLayout.setContentsMargins(0, 0, 0, 0)
         self.songInfoLayout.setSpacing(0)
@@ -81,7 +71,8 @@ class MusicPlayerLeftSide(QHBoxLayout, View):
         self._addThemeForItem(
             item=self.playBtn,
             theme=(
-                buttonThemeBuilder.addLightModeBackground(Backgrounds.CIRCLE_PRIMARY_25)
+                ButtonThemeBuilder()
+                .addLightModeBackground(Backgrounds.CIRCLE_PRIMARY_25)
                 .addLightModeActiveBackground(Backgrounds.CIRCLE_PRIMARY_25)
                 .addDarkModeBackground(Backgrounds.CIRCLE_PRIMARY)
                 .addDarkModeActiveBackground(Backgrounds.CIRCLE_PRIMARY)

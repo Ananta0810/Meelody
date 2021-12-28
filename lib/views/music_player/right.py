@@ -1,13 +1,13 @@
 from typing import Optional
 
-from constants.ui.qss import Backgrounds, ColorBoxes, Colors, Paddings
+from constants.ui.qss import Colors, Paddings
 from constants.ui.qt import AppCursors, AppIcons
+from constants.ui.theme_builders import IconButtonThemeBuilders, SliderThemeBuilders, TextThemeBuilders
 from modules.screens.components.font_builder import FontBuilder
 from modules.screens.components.icon_buttons import IconButton, MultiIconButton, ToggleIconButton
 from modules.screens.components.labels import EditableLabel
 from modules.screens.components.sliders import HorizontalSlider
-from modules.screens.themes.theme_builders import ButtonThemeBuilder, HorizontalSliderThemeBuilder, TextThemeBuilder
-from PyQt5.QtCore import QMetaObject, Qt
+from PyQt5.QtCore import Qt
 from PyQt5.QtGui import QIntValidator
 from PyQt5.QtWidgets import QHBoxLayout, QWidget
 from utils.ui.application_utils import UiUtils
@@ -22,17 +22,12 @@ class MusicPlayerRightSide(QHBoxLayout, View):
     def setupUi(self) -> None:
         icons = AppIcons()
         cursors = AppCursors()
-        buttonThemeBuilder = ButtonThemeBuilder()
 
-        normalButtonThemeStyle = (
-            buttonThemeBuilder.addLightModeBackground(Backgrounds.CIRCLE_HIDDEN_PRIMARY_25)
-            .addDarkModeBackground(None)
-            .build(itemSize=icons.SIZES.LARGE.height())
+        normalButtonThemeStyle = IconButtonThemeBuilders.CIRCLE_HIDDEN_PRIMARY_25.build(
+            itemSize=icons.SIZES.LARGE.height()
         )
-        toggleButtonThemeStyle = (
-            buttonThemeBuilder.addLightModeBackground(Backgrounds.CIRCLE_HIDDEN_PRIMARY_25)
-            .addLightModeActiveBackground(Backgrounds.CIRCLE_HIDDEN_DANGER_25)
-            .build(itemSize=icons.SIZES.LARGE.height())
+        toggleBtnTheme = IconButtonThemeBuilders.CIRCLE_HIDDEN_PRIMARY_DANGER_25.build(
+            itemSize=icons.SIZES.LARGE.height()
         )
         font = FontBuilder().withSize(10).withWeight("bold").build()
 
@@ -44,7 +39,7 @@ class MusicPlayerRightSide(QHBoxLayout, View):
             lightModeCheckedIcon=UiUtils.paintIcon(icons.LOOP, Colors.DANGER),
         )
         self.loopBtn.setCursor(cursors.HAND)
-        self._addThemeForItem(self.loopBtn, toggleButtonThemeStyle)
+        self._addThemeForItem(self.loopBtn, toggleBtnTheme)
         self.addWidget(self.loopBtn)
 
         self.shuffleBtn = ToggleIconButton.render(
@@ -55,7 +50,7 @@ class MusicPlayerRightSide(QHBoxLayout, View):
         )
         self.shuffleBtn.setCursor(cursors.HAND)
         self.addWidget(self.shuffleBtn)
-        self._addThemeForItem(self.shuffleBtn, toggleButtonThemeStyle)
+        self._addThemeForItem(self.shuffleBtn, toggleBtnTheme)
 
         self.loveBtn = ToggleIconButton.render(
             size=icons.SIZES.LARGE,
@@ -65,7 +60,7 @@ class MusicPlayerRightSide(QHBoxLayout, View):
         )
         self.loveBtn.setCursor(cursors.HAND)
         self.addWidget(self.loveBtn)
-        self._addThemeForItem(self.loveBtn, toggleButtonThemeStyle)
+        self._addThemeForItem(self.loveBtn, toggleBtnTheme)
 
         self.volumeBtn = MultiIconButton.render(
             size=icons.SIZES.LARGE,
@@ -87,17 +82,7 @@ class MusicPlayerRightSide(QHBoxLayout, View):
         self.addWidget(self.inputs, 1)
 
         self.volumeSlider = HorizontalSlider.render(height=48)
-        self._addThemeForItem(
-            self.volumeSlider,
-            theme=(
-                HorizontalSliderThemeBuilder()
-                .addLightHandleColor(ColorBoxes.PRIMARY)
-                .addLightLineColor(ColorBoxes.HOVERABLE_PRIMARY_25)
-                .addLightModeBackground(Backgrounds.ROUNDED_PRIMARY_25)
-                .addDarkModeBackground(Backgrounds.ROUNDED_WHITE_25)
-                .build(itemSize=48)
-            ),
-        )
+        self._addThemeForItem(self.volumeSlider, theme=(SliderThemeBuilders.BG_PRIMARY.build(itemSize=48)))
         self.volumeSlider.setSliderPosition(100)
         self.volumeSlider.setVisible(False)
         self.volumeSlider.valueChanged.connect(self.__changeVolumeIcon)
@@ -111,14 +96,7 @@ class MusicPlayerRightSide(QHBoxLayout, View):
         self.rightBoxes.addWidget(self.timerInput)
         self._addThemeForItem(
             self.timerInput,
-            theme=(
-                TextThemeBuilder()
-                .addLightModeTextColor(ColorBoxes.PRIMARY)
-                .addLightModeBackground(Backgrounds.ROUNDED_PRIMARY_25)
-                .addDarkModeTextColor(ColorBoxes.WHITE)
-                .addDarkModeBackground(Backgrounds.ROUNDED_WHITE_25)
-                .build(itemSize=self.timerInput.width())
-            ),
+            theme=(TextThemeBuilders.BG_PRIMARY_25.build(itemSize=self.timerInput.width())),
         )
         self.timerBtn = IconButton.render(
             padding=Paddings.RELATIVE_50,
@@ -129,7 +107,6 @@ class MusicPlayerRightSide(QHBoxLayout, View):
         self.timerBtn.clicked.connect(self.__showTimerInput)
         self.addWidget(self.timerBtn)
         self._addThemeForItem(self.timerBtn, normalButtonThemeStyle)
-        QMetaObject.connectSlotsByName(self)
 
     def setLoopState(self, state: bool) -> None:
         self.loopBtn.setChecked(state)

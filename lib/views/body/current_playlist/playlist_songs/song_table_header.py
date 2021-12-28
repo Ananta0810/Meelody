@@ -1,11 +1,11 @@
 from typing import Optional
 
-from constants.ui.qss import Backgrounds, ColorBoxes, Colors, Paddings
+from constants.ui.qss import Colors, Paddings
 from constants.ui.qt import AppCursors, AppIcons
+from constants.ui.theme_builders import IconButtonThemeBuilders, TextThemeBuilders
 from modules.screens.components.font_builder import FontBuilder
 from modules.screens.components.icon_buttons import IconButton
 from modules.screens.components.labels import LabelWithDefaultText
-from modules.screens.themes.theme_builders import ButtonThemeBuilder, TextThemeBuilder
 from PyQt5.QtCore import Qt
 from PyQt5.QtWidgets import QHBoxLayout, QWidget
 from utils.ui.application_utils import UiUtils
@@ -39,9 +39,7 @@ class SongTableHeader(QWidget, View):
         self.mainLayout.addWidget(self.buttons)
 
         font = FontBuilder().withSize(9).build()
-        labelTheme = (
-            TextThemeBuilder().addLightModeTextColor(ColorBoxes.BLACK).addDarkModeTextColor(ColorBoxes.WHITE).build()
-        )
+        labelTheme = TextThemeBuilders.DEFAULT.build()
 
         self.track = LabelWithDefaultText.render(font)
         self.track.setFixedWidth(64)
@@ -62,12 +60,7 @@ class SongTableHeader(QWidget, View):
         self.info.addWidget(self.length)
 
         icons = AppIcons()
-        buttonTheme = (
-            ButtonThemeBuilder()
-            .addLightModeBackground(Backgrounds.CIRCLE_PRIMARY_25)
-            .addDarkModeBackground(Backgrounds.CIRCLE_WHITE_25)
-            .build(icons.SIZES.LARGE.height())
-        )
+        buttonTheme = IconButtonThemeBuilders.CIRCLE_PRIMARY_25.build(icons.SIZES.LARGE.height())
 
         self.buttonsLayout.addSpacing(48)
         self.buttonsLayout.addSpacing(8)

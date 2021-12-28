@@ -3,7 +3,7 @@ from typing import Optional
 from constants.ui.base import ApplicationImage
 from constants.ui.qss import Backgrounds, ColorBoxes
 from constants.ui.qt import IconSizes
-from constants.ui.theme_builders import IconButtonThemeBuilders, TextThemeBuilers
+from constants.ui.theme_builders import IconButtonThemeBuilders, TextThemeBuilders
 from modules.screens.themes.theme_builders import ButtonThemeBuilder, ScrollThemeBuilder, TextThemeBuilder, ThemeData
 from PyQt5.QtCore import QEvent, QPoint, Qt, pyqtSignal
 from PyQt5.QtGui import QKeyEvent, QShowEvent
@@ -169,13 +169,13 @@ class SongTableBody(SmoothVerticalScrollArea, View):
             )
         )
         song.setButtonThemes(
-            primary=IconButtonThemeBuilders.HIDDEN_PRIMARY.build(itemSize=IconSizes.LARGE.height()),
-            secondary=IconButtonThemeBuilders.PRIMARY.build(itemSize=IconSizes.LARGE.height()),
-            danger=IconButtonThemeBuilders.DANGER.build(itemSize=IconSizes.MEDIUM.height()),
+            primary=IconButtonThemeBuilders.CIRCLE_HIDDEN_PRIMARY_25.build(itemSize=IconSizes.LARGE.height()),
+            secondary=IconButtonThemeBuilders.CIRCLE_PRIMARY_25.build(itemSize=IconSizes.LARGE.height()),
+            danger=IconButtonThemeBuilders.CIRCLE_DANGER.build(itemSize=IconSizes.MEDIUM.height()),
         )
         song.setTextThemes(
-            primary=TextThemeBuilers.DEFAULT.build(),
-            secondary=TextThemeBuilers.GRAY.build(),
+            primary=TextThemeBuilders.DEFAULT.build(),
+            secondary=TextThemeBuilders.GRAY.build(),
         )
         song.setDefaultCover(ApplicationImage.defaultSongCover)
         song.setDefaultArtist("")
