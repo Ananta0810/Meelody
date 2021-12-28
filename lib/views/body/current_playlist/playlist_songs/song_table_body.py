@@ -1,23 +1,25 @@
+from typing import Optional
+
 from constants.ui.base import ApplicationImage
 from constants.ui.qss import Backgrounds, ColorBoxes
 from constants.ui.qt import IconSizes
 from modules.screens.themes.theme_builders import ButtonThemeBuilder, LabelThemeBuilder, ThemeData
-from PyQt5.QtCore import QEvent, Qt, pyqtSignal
-from PyQt5.QtGui import QKeyEvent
+from PyQt5.QtCore import QEvent, QPoint, QRect, Qt, pyqtSignal
+from PyQt5.QtGui import QKeyEvent, QShowEvent
 from PyQt5.QtWidgets import QFileDialog, QVBoxLayout, QWidget
 from utils.ui.application_utils import UiUtils
 from views.dialogs.confirm_dialog import ConfirmDialog
 from views.view import View
-from widgets.image_displayer import ImageDisplayer
 from widgets.smooth_scroll_area import SmoothVerticalScrollArea
 
+from .empty_table_notification import EmptySongTableNotification
 from .song_row import SongItem
 
 
 class SongTableBody(SmoothVerticalScrollArea, View):
     keyPressed = pyqtSignal(QEvent)
 
-    def __init__(self, parent=None):
+    def __init__(self, parent: Optional["QWidget"] = None):
         super(SongTableBody, self).__init__(parent)
         self.setupUi()
 
@@ -29,6 +31,7 @@ class SongTableBody(SmoothVerticalScrollArea, View):
         self.setContentsMargins(0, 0, 0, 0)
         self.setHorizontalScrollBarPolicy(Qt.ScrollBarAlwaysOff)
         self.setWidgetResizable(True)
+        self.setItemHeight(104)
         self.setStyleSheet(
             "QScrollBar:vertical{border:none;background:TRANSPARENT;width:4px}"
             "QScrollBar::handle:vertical{background:rgba(160,160,160,0.5);border-radius:2px}"
@@ -41,12 +44,13 @@ class SongTableBody(SmoothVerticalScrollArea, View):
 
         self.inner = QWidget(self)
         self.setWidget(self.inner)
-
         self.menu = QVBoxLayout(self.inner)
         self.menu.setAlignment(Qt.AlignTop)
         self.menu.setSpacing(0)
         self.menu.setContentsMargins(8, 0, 8, 8)
-        self.setItemHeight(104)
+        self.emptyNotification = EmptySongTableNotification(self.inner)
+        self.emptyNotification.setMessage("Oh no, you don't have any song yet", "Add Now")
+        self.emptyNotification.setFixedSize(256, 400)
 
     def getKeyFromEvent(self, event: QKeyEvent, controller=None) -> None:
         isHoldingALT = int(event.modifiers()) == Qt.AltModifier
@@ -78,10 +82,11 @@ class SongTableBody(SmoothVerticalScrollArea, View):
         itemsDisplaying = self.getTotalSongAvailable()
 
         if totalItem == 0:
-            self.__showPlaylistEmptyNotification()
+            self.emptyNotification.show()
             self.__removePlaylistsInRange(totalItem, itemsDisplaying)
             return
 
+        self.__hidePlaylistEmptyNotification()
         totalPlaylistLacking = totalItem - itemsDisplaying
         if totalPlaylistLacking == 0:
             return
@@ -95,14 +100,6 @@ class SongTableBody(SmoothVerticalScrollArea, View):
         if isDisplayingLessThanNumberOfPlaylists:
             self.__addLackingPlaylists(totalPlaylistLacking, controller)
 
-    def __showPlaylistEmptyNotification(self):
-        self.emptyNotification = ImageDisplayer(self.inner)
-        edge: int = 256
-        self.emptyNotification.setFixedSize(edge, edge)
-        self.emptyNotification.setPixmap(
-            UiUtils.getEditedPixmapFromBytes(ApplicationImage.errorPlaylist, width=edge, height=edge)
-        )
-
     def displaySongInfoAtIndex(self, index: int, cover: bytes, title: str, artist: str, length: float) -> None:
         song = self.__getSongByIndex(index)
         song.show()
@@ -111,6 +108,10 @@ class SongTableBody(SmoothVerticalScrollArea, View):
         song.setTitle(title)
         song.setArtist(artist)
         song.setLength(length)
+
+    def showEvent(self, a0: QShowEvent) -> None:
+        self.emptyNotification.move(self.inner.rect().center() - self.emptyNotification.rect().center())
+        return super().showEvent(a0)
 
     def setSongCoverAtIndex(self, index: int, cover: bytes) -> None:
         self.__getSongByIndex(index).setCover(cover)
@@ -129,6 +130,11 @@ class SongTableBody(SmoothVerticalScrollArea, View):
 
     def getTotalSongAvailable(self) -> int:
         return self.menu.count()
+
+    def __hidePlaylistEmptyNotification(self):
+        if self.emptyNotification is None:
+            return
+        self.emptyNotification.hide()
 
     def __addLackingPlaylists(self, numberOfPlaylist: int, controller) -> None:
         defaultValues: dict = {

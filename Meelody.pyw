@@ -1,4 +1,4 @@
-from sys import argv, exit
+from sys import argv, exit, path
 from time import perf_counter
 
 from PyQt5.QtWidgets import QApplication

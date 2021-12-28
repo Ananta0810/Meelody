@@ -1,11 +1,7 @@
+from os import getcwd
 from sys import path
 
-from .music_player import MusicPlayer
-from .playlist_carousel import PlaylistCarousel
-from .playlist_chooser import PlaylistSelector
-from .playlist_menu import PlaylistMenu
-
-path.append("./lib")
+path.append(getcwd() + "/lib")
 from constants.application import supportedLanguages
 from modules.entities.playlist_info import PlaylistInfo
 from modules.models.player import Player
@@ -13,6 +9,11 @@ from utils.data.config_utils import (getLanguagePackage, retrievePlayerData,
                                      retrieveSettingsData, updateSettingsData)
 from utils.helpers.playlist_song_utils import getPlaylistFromDir
 from views.application_interface import ApplicationInterface
+
+from .music_player import MusicPlayer
+from .playlist_carousel import PlaylistCarousel
+from .playlist_chooser import PlaylistSelector
+from .playlist_menu import PlaylistMenu
 
 
 class Appication:
@@ -27,10 +28,10 @@ class Appication:
         self.displaySettingsDataRetrievedFrom(settingsData)
         # =================Music Player=================
         playlists: list[PlaylistInfo] = [
-            PlaylistInfo(0, "ABC", None),
-            PlaylistInfo(1, "BCD", None),
-            PlaylistInfo(2, "EFG", None),
-            PlaylistInfo(3, "HIB", None),
+            # PlaylistInfo(0, "ABC", None),
+            # PlaylistInfo(1, "BCD", None),
+            # PlaylistInfo(2, "EFG", None),
+            # PlaylistInfo(3, "HIB", None),
         ]
         self.loadPlaylists(playlists)
         musicPlayerData: dict[str, str] = retrievePlayerData()
