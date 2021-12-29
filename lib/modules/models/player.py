@@ -23,6 +23,7 @@ class Player:
     _currentSong: Song
     _timeStartInSec: float
     _sampleRateOffset: float
+    _loaded: bool
     timer: Timer
 
     def __init__(self):
@@ -32,6 +33,7 @@ class Player:
         self._timeStartInSec = 0
         self._sampleRateOffset = 1
         self.timer = Timer()
+        self._loaded = False
         # mixer.pre_init()
         mixer.init()
 
@@ -56,46 +58,51 @@ class Player:
         mixer.music.set_volume(volumeAsFloat)
 
     def loadSongToPlay(self):
-        newSong = self._playlist.getSong(self._currentSongIndex)
-        isTheSameSong: bool = newSong is not None and self._currentSong is newSong
-        if isTheSameSong:
+        if self._loaded:
             return
-        self._currentSong = newSong
-        self._sampleRateOffset = 1
         self.resetTime()
-        mixer.music.unload()
+        self.__resetSampleRate()
+
+        self._currentSong = self._playlist.getSong(self._currentSongIndex)
         if self._currentSong is None:
             return
+        self._loaded = True
+        mixer.music.unload()
         mixer.music.load(self._currentSong.location)
+
+    def __resetSampleRate(self):
+        self._sampleRateOffset = 1
 
     def play(self):
         mixer.music.play(start=self._timeStartInSec)
 
+    def previous(self):
+        self.resetTime()
+        self.setCurrentSongIndex((self._currentSongIndex - 1) % self._playlist.size())
+
     def next(self):
         self.resetTime()
-        self._currentSongIndex = (self._currentSongIndex + 1) % self._playlist.size()
+        self.setCurrentSongIndex((self._currentSongIndex + 1) % self._playlist.size())
 
     def getPlaylist(self) -> list[Song]:
         return self._playlist
 
     def setCurrentSongIndex(self, index: int) -> None:
         self._currentSongIndex = index
+        self._loaded = False
 
     def setCurrentSong(self, title: str) -> None:
         songIndex = self._playlist.findSongByTitle(title)
         if songIndex < 0 or songIndex >= len(self._playlist._songs):
             songIndex = 0
         self._currentSongIndex = songIndex
+        self._loaded = False
 
     def getCurrentSong(self):
         return self._currentSong
 
     def getCurrentSongIndex(self):
         return self._currentSongIndex
-
-    def previous(self):
-        self.resetTime()
-        self._currentSongIndex = (self._currentSongIndex - 1) % self._playlist.size()
 
     def fixSampleRateOffsetWhenSongIsPaused(self):
         if self._currentSong is None:

@@ -163,9 +163,8 @@ class MusicPlayer:
             self.__doAfterSongFinished()
 
     def __threadPlaySong(self) -> None:
-        thread: Thread = Thread(target=self.playMusic)
         self.currentThreadNumber += 1
-        thread.start()
+        Thread(target=self.playMusic).start()
 
     def __doWhilePlayingMusic(self, player: Player) -> None:
         if player is None:

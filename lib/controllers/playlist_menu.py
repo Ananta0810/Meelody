@@ -1,7 +1,3 @@
-from sys import path
-
-path.append("./lib")
-
 from modules.models.playlist_songs import PlaylistSongs
 from utils.helpers.my_bytes import MyBytes
 from utils.helpers.my_string import UnicodeString

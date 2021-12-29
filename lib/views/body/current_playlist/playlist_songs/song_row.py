@@ -195,8 +195,11 @@ class SongItem(QWidget, View):
             length = self.defaultLength
         self.length.setText(Stringify.floatToClockTime(length))
 
-    def setDefaultCover(self, cover: bytes) -> None:
-        self.cover.setDefaultPixmap(getSongCoverPixmap(cover))
+    # def setDefaultCover(self, cover: bytes) -> None:
+    #     self.cover.setDefaultPixmap(getSongCoverPixmap(cover))
+
+    def setDefaultCover(self, cover: QPixmap) -> None:
+        self.cover.setDefaultPixmap(cover)
 
     def setDefaultArtist(self, artist: str) -> None:
         self.defaultArtist = artist

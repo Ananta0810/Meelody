@@ -8,11 +8,13 @@ from PyQt5.QtWidgets import QScrollArea, QWidget
 class SmoothVerticalScrollArea(QScrollArea):
     scrolled = pyqtSignal()
 
+
     def __init__(self, parent: Optional[QWidget] = ...) -> None:
         super().__init__(parent=parent)
         self._itemHeight = 0
         self._animation = QVariantAnimation(self, valueChanged=self.__smoothScroll, duration=1000)
         self._animation.setEasingCurve(QEasingCurve.OutCubic)
+
 
     def wheelEvent(self, event: QWheelEvent) -> None:
         self._animation.stop()

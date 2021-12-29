@@ -1,12 +1,12 @@
 from typing import Optional
 
 from constants.ui.base import ApplicationImage
-from constants.ui.qss import Backgrounds, ColorBoxes
+from constants.ui.qss import Backgrounds
 from constants.ui.qt import IconSizes
 from constants.ui.theme_builders import IconButtonThemeBuilders, TextThemeBuilders
-from modules.screens.themes.theme_builders import ButtonThemeBuilder, ScrollThemeBuilder, TextThemeBuilder, ThemeData
+from modules.screens.themes.theme_builders import ScrollThemeBuilder, ThemeData
 from PyQt5.QtCore import QEvent, QPoint, Qt, pyqtSignal
-from PyQt5.QtGui import QKeyEvent, QShowEvent
+from PyQt5.QtGui import QKeyEvent, QShowEvent, QWheelEvent
 from PyQt5.QtWidgets import QFileDialog, QVBoxLayout, QWidget
 from utils.ui.application_utils import UiUtils
 from views.dialogs.confirm_dialog import ConfirmDialog
@@ -14,7 +14,7 @@ from views.view import View
 from widgets.smooth_scroll_area import SmoothVerticalScrollArea
 
 from .empty_table_notification import EmptySongTableNotification
-from .song_row import SongItem
+from .song_row import SongItem, getSongCoverPixmap
 
 
 class SongTableBody(SmoothVerticalScrollArea, View):
@@ -22,11 +22,33 @@ class SongTableBody(SmoothVerticalScrollArea, View):
 
     def __init__(self, parent: Optional["QWidget"] = None):
         super(SongTableBody, self).__init__(parent)
+        self.covers = []
+        self.start = 0
+        self.last = 6
         self.setupUi()
+        self.verticalScrollBar().valueChanged.connect(self.setLaterLoading)
+
+    # def wheelEvent(self, event: QWheelEvent) -> None:
+    #     self.laterLoading()
+    #     return super().wheelEvent(event)
 
     def keyPressEvent(self, event: QKeyEvent) -> None:
         self.keyPressed.emit(event)
         return super().keyPressEvent(event)
+
+    def setLaterLoading(self) -> None:
+        currentPos = self.__getCurrentIndex()
+
+        self.setStart(currentPos - 6)
+        self.setLastItem(currentPos + 6)
+        self.laterLoading()
+
+    def laterLoading(self) -> None:
+        for index in range(self.start, self.last):
+            if self.covers[index] is None:
+                continue
+            self.__getSongByIndex(index).setCover(self.covers[index])
+            self.covers[index] = None
 
     def setupUi(self):
         self.setContentsMargins(0, 0, 0, 0)
@@ -47,6 +69,9 @@ class SongTableBody(SmoothVerticalScrollArea, View):
         self.emptyNotification = EmptySongTableNotification(self.inner)
         self.emptyNotification.setMessage("Oh no! You don't have any song yet", "Add Now")
 
+    def __getCurrentIndex(self) -> int:
+        return self.verticalScrollBar().value() // self._itemHeight
+
     def getKeyFromEvent(self, event: QKeyEvent, controller=None) -> None:
         isHoldingALT = int(event.modifiers()) == Qt.AltModifier
         if not isHoldingALT:
@@ -54,9 +79,19 @@ class SongTableBody(SmoothVerticalScrollArea, View):
         try:
             key = chr(event.key())
             index = controller.handleFindSongInsertIndexWithTitle(key)
+            self.setStart(index - 6)
+            self.setLastItem(index + 6)
+            self.laterLoading()
             self.scrollToItem(index)
         except ValueError:
             pass
+
+    def setStart(self, index: int) -> None:
+        self.start = index if index >= 0 else 0
+
+    def setLastItem(self, index: int) -> None:
+        max = len(self.covers) - 1
+        self.last = index if index <= max else max
 
     def connectToController(self, controller):
         self.keyPressed.connect(lambda event: self.getKeyFromEvent(event, controller))
@@ -98,10 +133,12 @@ class SongTableBody(SmoothVerticalScrollArea, View):
             self.__addLackingPlaylists(totalPlaylistLacking, controller)
 
     def displaySongInfoAtIndex(self, index: int, cover: bytes, title: str, artist: str, length: float) -> None:
+        self.covers.append(cover)
         song = self.__getSongByIndex(index)
         song.show()
         song.showLess()
-        song.setCover(cover)
+        if self.start < index <= self.last:
+            song.setCover(cover)
         song.setTitle(title)
         song.setArtist(artist)
         song.setLength(length)
@@ -177,7 +214,7 @@ class SongTableBody(SmoothVerticalScrollArea, View):
             primary=TextThemeBuilders.DEFAULT.build(),
             secondary=TextThemeBuilders.GRAY.build(),
         )
-        song.setDefaultCover(ApplicationImage.defaultSongCover)
+        song.setDefaultCover(getSongCoverPixmap(ApplicationImage.defaultSongCover))
         song.setDefaultArtist("")
         song.setTitle("Title")
         song.setLength(0)

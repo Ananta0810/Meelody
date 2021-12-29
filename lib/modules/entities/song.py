@@ -41,7 +41,7 @@ class Song:
     def __str__(self):
         return f"song({self.title}, {self.artist}, {self.length}, {self.loved})"
 
-    def equals(self, other):
+    def __eq__(self, other: object) -> bool:
         return (
             self.location == other.location
             and self.title == other.title
