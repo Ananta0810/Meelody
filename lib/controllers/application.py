@@ -39,7 +39,6 @@ class Appication:
         self.player.player.displayDataRetrievedFrom(musicPlayerData)
 
     def setupControllers(self):
-        controllerPools: dict = {}
         playlistCarousel = PlaylistCarousel(self.ui.body.playlistCarousel)
         musicPlayer = MusicPlayer(self.ui.musicPlayer)
         playlistMenu = PlaylistMenu(self.ui.body.currentPlaylist)
