@@ -28,10 +28,6 @@ class SongTableBody(SmoothVerticalScrollArea, View):
         self.setupUi()
         self.verticalScrollBar().valueChanged.connect(self.setLaterLoading)
 
-    # def wheelEvent(self, event: QWheelEvent) -> None:
-    #     self.laterLoading()
-    #     return super().wheelEvent(event)
-
     def keyPressEvent(self, event: QKeyEvent) -> None:
         self.keyPressed.emit(event)
         return super().keyPressEvent(event)
@@ -44,6 +40,7 @@ class SongTableBody(SmoothVerticalScrollArea, View):
         self.laterLoading()
 
     def laterLoading(self) -> None:
+        return
         for index in range(self.start, self.last):
             if self.covers[index] is None:
                 continue
@@ -137,8 +134,8 @@ class SongTableBody(SmoothVerticalScrollArea, View):
         song = self.__getSongByIndex(index)
         song.show()
         song.showLess()
-        if self.start < index <= self.last:
-            song.setCover(cover)
+        # if self.start < index <= self.last:
+        song.setCover(cover)
         song.setTitle(title)
         song.setArtist(artist)
         song.setLength(length)
@@ -179,8 +176,11 @@ class SongTableBody(SmoothVerticalScrollArea, View):
 
     def __addNewEmptyPlaylist(self, controller) -> None:
         index = self.getTotalSongAvailable()
-        song = self.__addSong(index)
+        self.__addSong(index)
+        self.connectSignalForSongAtIndex(index, controller)
 
+    def connectSignalForSongAtIndex(self, index: int, controller) -> None:
+        song = self.__getSongByIndex(index)
         song.title.returnPressed.connect(lambda: controller.handleChangedSongTitle(index, song.title.text()))
         song.artist.returnPressed.connect(lambda: controller.handleChangedSongArtist(index, song.artist.text()))
         song.coverObserver.doubleClicked.connect(lambda: self.__openChoosingCoverDialog(index, controller))

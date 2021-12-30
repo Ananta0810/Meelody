@@ -4,7 +4,7 @@ from constants.ui.theme_builders import TextThemeBuilders
 from modules.screens.components.font_builder import FontBuilder
 from modules.screens.components.labels import LabelWithDefaultText
 from modules.screens.themes.theme_builders import ThemeData
-from PyQt5.QtGui import QFont, QPixmap
+from PyQt5.QtGui import QPixmap
 from PyQt5.QtWidgets import QVBoxLayout, QWidget
 from utils.ui.application_utils import UiUtils
 from views.view import View
@@ -57,9 +57,6 @@ class PlaylistInfo(QVBoxLayout, View):
 
     def setTotalSong(self, songCount: str) -> None:
         self.total_song.setText(f"{str(songCount)} TRACKS")
-
-    def setCover(self, pixmap) -> None:
-        self.cover.setPixmap(self, pixmap)
 
     def __getCoverPixmap(self, coverAsByte: bytes) -> QPixmap:
         if coverAsByte is None:

@@ -5,25 +5,16 @@ path.append("./lib")
 from modules.entities.playlist_info import PlaylistInfo
 from utils.helpers.my_bytes import MyBytes
 from utils.helpers.my_string import UnicodeString
+from views.body.playlist_carousel.carousel import UIPlaylistCarousel
 
 
 class PlaylistCarousel:
-    def __init__(self, ui):
+    def __init__(self, ui: UIPlaylistCarousel):
         self.ui = ui
         self.playlists = None
 
     def setPlaylists(self, playlists: list[PlaylistInfo]):
         self.playlists = playlists
-
-    def addPlaylistsToUi(self):
-        for index, playlist in enumerate(self.playlists):
-            self.ui.addNewEmptyPlaylist(controller=self)
-            self.ui.displayPlaylistInfoAtIndex(index, playlist.name, playlist.cover)
-
-    def updatePlaylistsToUi(self):
-        self.ui.updateLayout(len(self.playlists), controller=self)
-        for index, playlist in enumerate(self.playlists):
-            self.ui.displayPlaylistInfoAtIndex(index, playlist.name, playlist.cover)
 
     def handleAddNewPlaylist(self):
         playlistCount = len(self.playlists)
@@ -32,16 +23,15 @@ class PlaylistCarousel:
             if lastPlaylist.isNull():
                 return
         self.playlists.append(PlaylistInfo())
-        self.ui.updateLayout(len(self.playlists), controller=self)
 
     def handleSelectedLibrary(self):
-        print("clicked library")
+        pass
 
     def handleSelectedFavourites(self):
-        print("clicked favourites")
+        pass
 
     def handleSelectedPlaylist(self, playlistIndex: int):
-        print(playlistIndex)
+        pass
 
     def handleChangedPlaylistName(self, playlistIndex: int, newName: str):
         if not (0 <= playlistIndex < len(self.playlists)):
@@ -70,4 +60,3 @@ class PlaylistCarousel:
         if not (0 <= index < len(self.playlists)):
             return
         self.playlists.pop(index)
-        self.updatePlaylistsToUi()

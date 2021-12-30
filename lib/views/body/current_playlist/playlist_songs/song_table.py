@@ -32,6 +32,3 @@ class SongTable(QWidget):
     def darkMode(self) -> None:
         self.header.darkMode()
         self.body.darkMode()
-
-    def connectToController(self, controller):
-        self.body.connectToController(controller)

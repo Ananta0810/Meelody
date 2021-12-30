@@ -1,1 +1,1 @@
-play
+__doAfterSongFinished

@@ -6,7 +6,7 @@ from PyQt5.QtWidgets import QScrollArea, QVBoxLayout, QWidget
 from views.view import View
 
 from .current_playlist.current_playlist import CurrentPlaylist
-from .playlist_carousel.carousel import PlaylistCarousel
+from .playlist_carousel.carousel import UIPlaylistCarousel
 
 
 class HomeScreen(QScrollArea, View):
@@ -22,7 +22,7 @@ class HomeScreen(QScrollArea, View):
         self.mainLayout.setContentsMargins(0, 0, 0, 0)
         self.mainLayout.setSpacing(50)
 
-        self.playlistCarousel = PlaylistCarousel()
+        self.playlistCarousel = UIPlaylistCarousel()
         self.playlistCarousel.setFixedHeight(360)
         self.playlistCarousel.setStyleSheet("background:transparent;border:none")
         self.playlistCarousel.mainLayout.setContentsMargins(84, 0, 50, 0)

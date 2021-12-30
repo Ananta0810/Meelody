@@ -1,32 +1,16 @@
 from modules.models.playlist_songs import PlaylistSongs
 from utils.helpers.my_bytes import MyBytes
 from utils.helpers.my_string import UnicodeString
+from views.body.current_playlist.current_playlist import CurrentPlaylist
 
 
 class PlaylistMenu:
-    def __init__(self, ui):
+    def __init__(self, ui: CurrentPlaylist):
         self.ui = ui
         self.playlist = None
-        self.controllers = None
-
-    def setControllers(self, controllers):
-        self.controllers = controllers
 
     def setPlaylist(self, playlist: PlaylistSongs):
         self.playlist = playlist
-
-    def updateUi(self, isDarkMode: bool) -> None:
-        self.updatePlaylistToScreen()
-        if isDarkMode:
-            self.ui.darkMode()
-        else:
-            self.ui.lightMode()
-
-    def updatePlaylistToScreen(self):
-        songs = self.playlist.getSongs()
-        self.ui.updateLayout(len(songs), controller=self)
-        for index, song in enumerate(songs):
-            self.ui.displaySongInfoAtIndex(index, song.cover, song.title, song.artist, song.length)
 
     def handleFindSongInsertIndexWithTitle(self, title) -> int:
         return self.playlist.findSongInsertPosition(title)
@@ -39,20 +23,12 @@ class PlaylistMenu:
             return
         songs[index].loved = isLoved
 
-        if self.__isPlayingSongAtIndex(index):
-            self.controllers.get("musicPlayer").ui.setLoveState(isLoved)
-
     def handlePlayedSongAtIndex(self, index: int) -> None:
         if self.playlist is None:
             return
         songs = self.playlist.getSongs()
         if not (0 <= index < len(songs)):
             return
-        if self.__isPlayingSongAtIndex(index):
-            return
-        musicPlayer = self.controllers.get("musicPlayer")
-        musicPlayer.player.setCurrentSongIndex(index)
-        musicPlayer.playSong()
 
     def handleAddSongToPlaylistAtIndex(self, index: int) -> None:
         pass
@@ -66,21 +42,16 @@ class PlaylistMenu:
         songs = self.playlist.getSongs()
         if not (0 <= index < len(songs)):
             return
-        if self.__isPlayingSongAtIndex(index):
-            return
         songs.pop(index)
         self.updatePlaylistToScreen()
 
-    def handleChangedSongTitle(self, index: int, newTitle: str):
+    def handleChangedSongTitle(self, index: int, newTitle: str) -> None:
         if self.playlist is None:
             return
         songs = self.playlist.getSongs()
         if not (0 <= index < len(songs)):
             return
         song = songs[index]
-        if self.__isPlayingSongAtIndex(index):
-            self.ui.setSongTitleAtIndex(index, song.title)
-            return
         changedTitle: bool = (
             True if song.title is None else (len(newTitle) != 0 and UnicodeString.compare(song.title, newTitle) != 0)
         )
@@ -96,7 +67,7 @@ class PlaylistMenu:
         self.updatePlaylistToScreen()
         self.ui.scrollToItem(newSongIndex)
 
-    def handleChangedSongArtist(self, index: int, newArtist: str):
+    def handleChangedSongArtist(self, index: int, newArtist: str) -> None:
         if self.playlist is None:
             return
         songs = self.playlist.getSongs()
@@ -104,9 +75,6 @@ class PlaylistMenu:
             return
 
         song = songs[index]
-        if self.__isPlayingSongAtIndex(index):
-            self.ui.setSongArtistAtIndex(index, song.artist)
-            return
         userChangedTitle: bool = (
             True
             if song.artist is None
@@ -117,10 +85,8 @@ class PlaylistMenu:
             return
         song.setArtist(newArtist)
 
-    def handleChangedSongCover(self, index: int, coverPath: str):
+    def handleChangedSongCover(self, index: int, coverPath: str) -> None:
         if self.playlist is None:
-            return
-        if self.__isPlayingSongAtIndex(index):
             return
         songs = self.playlist.getSongs()
         if not (0 <= index < len(songs)):
@@ -133,6 +99,3 @@ class PlaylistMenu:
         if not changeSuccessfully:
             return
         self.ui.setSongCoverAtIndex(index, cover)
-
-    def __isPlayingSongAtIndex(self, index: int) -> bool:
-        return self.controllers.get("musicPlayer").player.getCurrentSongIndex() == index

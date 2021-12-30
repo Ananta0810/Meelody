@@ -49,7 +49,6 @@ class ApplicationInterface(View):
     def connectToControllers(self, controllers) -> None:
         self.menuBar.connectToControllers(controllers)
         self.body.connectToControllers(controllers)
-        self.musicPlayer.connectToController(controllers.get("musicPlayer"))
 
     def switchDarkMode(self, mode) -> None:
         self.isDarkMode = mode

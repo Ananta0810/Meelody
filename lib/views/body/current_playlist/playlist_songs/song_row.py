@@ -195,6 +195,9 @@ class SongItem(QWidget, View):
             length = self.defaultLength
         self.length.setText(Stringify.floatToClockTime(length))
 
+    def setLoveState(self, state: bool) -> None:
+        self.loveBtn.setChecked(state)
+
     # def setDefaultCover(self, cover: bytes) -> None:
     #     self.cover.setDefaultPixmap(getSongCoverPixmap(cover))
 

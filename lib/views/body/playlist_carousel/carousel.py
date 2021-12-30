@@ -1,9 +1,7 @@
 from constants.ui.base import ApplicationImage
 from constants.ui.qss import Backgrounds, Colors, Paddings
 from constants.ui.qt import AppCursors, AppIcons
-from constants.ui.theme_builders import (IconButtonThemeBuilders,
-                                         SliderThemeBuilders,
-                                         TextThemeBuilders)
+from constants.ui.theme_builders import IconButtonThemeBuilders
 from modules.screens.components.font_builder import FontBuilder
 from modules.screens.components.icon_buttons import IconButton
 from modules.screens.others.animation import Animation
@@ -19,9 +17,9 @@ from .custom_playlist_card import CustomPlaylistCard
 from .default_playlist_card import DefaultPlaylistCard
 
 
-class PlaylistCarousel(QScrollArea, View):
+class UIPlaylistCarousel(QScrollArea, View):
     def __init__(self, parent=None):
-        super(PlaylistCarousel, self).__init__(parent)
+        super(UIPlaylistCarousel, self).__init__(parent)
         self.setupUi()
 
     def setupUi(self):
