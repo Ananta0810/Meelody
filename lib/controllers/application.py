@@ -5,15 +5,16 @@ path.append(getcwd() + "/lib")
 from constants.application import supportedLanguages
 from modules.entities.playlist_info import PlaylistInfo
 from modules.models.player import Player
-from utils.data.config_utils import (getLanguagePackage, retrievePlayerData,
-                                     retrieveSettingsData, updateSettingsData)
+from utils.data.config_utils import getLanguagePackage, retrievePlayerData, retrieveSettingsData, updateSettingsData
 from utils.helpers.playlist_song_utils import getPlaylistFromDir
 from views.application_interface import ApplicationInterface
 
-from .music_player import MusicPlayer
-from .playlist_carousel import PlaylistCarousel
-from .playlist_chooser import PlaylistSelector
-from .playlist_menu import PlaylistMenu
+from .application_controllers.music_player import MusicPlayerController
+from .application_controllers.playlist_carousel import PlaylistCarouselController
+from .application_controllers.playlist_menu import PlaylistMenuController
+from .self_controllers.music_player_controller import MusicPlayer
+from .self_controllers.playlist_carousel import PlaylistCarousel
+from .self_controllers.playlist_menu import PlaylistMenu
 
 
 class Appication:
@@ -35,22 +36,25 @@ class Appication:
         ]
         self.loadPlaylists(playlists)
         musicPlayerData: dict[str, str] = retrievePlayerData()
-        self.musicPlayer.displayDataRetrievedFrom(musicPlayerData)
+        self.player.player.displayDataRetrievedFrom(musicPlayerData)
 
     def setupControllers(self):
-        self.playlistCarousel = PlaylistCarousel(self.ui.body.playlistCarousel)
-        self.musicPlayer = MusicPlayer(self.ui.musicPlayer)
-        self.playlistSelector = PlaylistSelector(self.ui)
-        self.playlistMenu = PlaylistMenu(self.ui.body.currentPlaylist.songs.body)
-        self.controllers = {
-            "application": self,
-            "playlistCarousel": self.playlistCarousel,
-            "musicPlayer": self.musicPlayer,
-            "playlistSelector": self.playlistSelector,
-            "playlistMenu": self.playlistMenu,
-        }
-        self.ui.connectToControllers(self.controllers)
-        self.playlistMenu.setControllers(self.controllers)
+        controllerPools: dict = {}
+        playlistCarousel = PlaylistCarousel(self.ui.body.playlistCarousel)
+        musicPlayer = MusicPlayer(self.ui.musicPlayer)
+        playlistMenu = PlaylistMenu(self.ui.body.currentPlaylist)
+
+        self.player = MusicPlayerController()
+        self.player.setMainController(musicPlayer)
+        self.player.setSecondController(playlistMenu)
+
+        self.menu = PlaylistMenuController()
+        self.menu.setMainController(playlistMenu)
+        self.menu.setSecondController(musicPlayer)
+
+        self.playlistCarousel = PlaylistCarouselController()
+        self.playlistCarousel.setMainController(playlistCarousel)
+        self.playlistCarousel.setSecondController(self.menu)
 
     def run(self):
         self.ui.mainWindow.show()
@@ -72,22 +76,22 @@ class Appication:
         self.ui.menuBar.settingsPanel.changeCurrentFolder(folderDir)
         updateSettingsData("path", folderDir)
         self.loadPlaylistFromDirForPlayer(folderDir)
-        self.musicPlayer.player.setCurrentSongIndex(0)
-        self.musicPlayer.player.loadSongToPlay()
-        self.musicPlayer.displayCurrentSongInfo()
+        self.player.player.player.setCurrentSongIndex(0)
+        self.player.player.player.loadSongToPlay()
+        self.player.player.displayCurrentSongInfo()
 
     def loadPlaylists(self, playlists: list[PlaylistInfo]):
-        self.playlistCarousel.setPlaylists(playlists)
+        self.playlistCarousel.carousel.setPlaylists(playlists)
         self.playlistCarousel.addPlaylistsToUi()
 
     def loadPlaylistFromDirForPlayer(self, dir: str) -> None:
-        self.musicPlayer.stopPlayingMusic()
+        self.player.player.stopPlayingMusic()
         player = Player()
         library = getPlaylistFromDir(dir, withExtension=".mp3")
         player.loadPlaylist(library)
-        self.playlistMenu.setPlaylist(library)
-        self.playlistMenu.updateUi(self.ui.isDarkMode)
-        self.musicPlayer.setPlayer(player)
+        self.menu.menu.setPlaylist(library)
+        self.menu.updateUi(self.ui.isDarkMode)
+        self.player.player.setPlayer(player)
 
     def displaySettingsDataRetrievedFrom(self, settingsData: dict[str, str]) -> None:
         isDarkMode: bool = settingsData.get("darkMode")
