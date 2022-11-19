@@ -12,7 +12,7 @@ class Color(StylesheetElement):
     red: int
     green: int
     blue: int
-    alpha: float = 1.0
+    alpha: int = 255
 
     def __str__(self) -> str:
         return self.to_stylesheet()
@@ -20,12 +20,13 @@ class Color(StylesheetElement):
     def to_stylesheet(self) -> str:
         return f"rgba({self.red}, {self.green}, {self.blue}, {self.alpha})"
 
-    def with_alpha(self, alpha: float) -> Self:
-        return Color(self.red, self.green, self.blue, alpha)
+    def with_alpha(self, alpha: int) -> Self:
+        value: int = Numbers.clampInt(alpha, 0, 255)
+        return Color(self.red, self.green, self.blue, value)
 
-    def with_opacity(self, alpha: int) -> Self:
-        value = Numbers.clampFloat(alpha, 0, 100)
-        return self.with_alpha(255 * value / 100)
+    def with_opacity(self, opacity: int) -> Self:
+        value: int = Numbers.clampInt(opacity, 0, 100)
+        return self.with_alpha(255 * value // 100)
 
     def to_QColor(self) -> QColor:
-        return QColor(self.red, self.green, self.blue, self.alpha * 255)
+        return QColor(self.red, self.green, self.blue, self.alpha)

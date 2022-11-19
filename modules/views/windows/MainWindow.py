@@ -21,7 +21,6 @@ class MainWindow(FramelessWindow):
 
     def setup_ui(self) -> None:
         self.setCentralWidget(self.home_screen)
-        self.setStyleSheet("background:black;border-radius:24px")
         self.setFixedWidth(1280)
         self.setFixedHeight(720)
 

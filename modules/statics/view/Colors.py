@@ -48,5 +48,6 @@ class ColorBoxes:
     WHITE_50 = ColorBox(Colors.WHITE.with_opacity(50))
     WHITE_25 = ColorBox(Colors.WHITE.with_opacity(25))
 
+
 class Backgrounds:
     pass
