@@ -4,6 +4,8 @@ from PyQt5.QtCore import QMetaObject, Qt
 from PyQt5.QtGui import QResizeEvent
 from PyQt5.QtWidgets import QWidget, QVBoxLayout, QHBoxLayout, QLayout
 
+from modules.models.view.Background import Background
+from modules.statics.view.Colors import ColorBoxes
 from modules.widgets.windows.FramelessWindow import FramelessWindow
 
 
@@ -49,9 +51,23 @@ class MainWindow(FramelessWindow):
     def add_widget(self, layout: QLayout, stretch: int = 0) -> None:
         self.main_layout.addLayout(layout, stretch=stretch)
 
-    def add_widget_with_alignment(self, a0: QWidget, stretch: int = 0, alignment: Union[Qt.Alignment, Qt.AlignmentFlag] = None) -> None:
+    def add_widget_with_alignment(self, a0: QWidget, stretch: int = 0,
+                                  alignment: Union[Qt.Alignment, Qt.AlignmentFlag] = None) -> None:
         if alignment is None:
             self.main_layout.addWidget(a0, stretch)
             return
         self.main_layout.addWidget(a0, stretch, alignment)
 
+    def apply_light_mode(self) -> None:
+        stylesheet = Background(border_radius=24, color=ColorBoxes.WHITE).to_stylesheet()
+        self.setStyleSheet(stylesheet)
+
+    def apply_dark_mode(self) -> None:
+        stylesheet = Background(border_radius=24, color=ColorBoxes.BLACK).to_stylesheet()
+        self.setStyleSheet(stylesheet)
+
+    def connect_signal(self) -> None:
+        pass
+
+    def translate(self) -> None:
+        pass

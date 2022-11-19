@@ -3,6 +3,7 @@ from typing import Self
 
 from PyQt5.QtGui import QColor
 
+from modules.helpers.types.Numbers import Numbers
 from modules.models.view.StylesheetElement import StylesheetElement
 
 
@@ -23,7 +24,8 @@ class Color(StylesheetElement):
         return Color(self.red, self.green, self.blue, alpha)
 
     def with_opacity(self, alpha: int) -> Self:
-        return self.with_alpha(255 * alpha)
+        value = Numbers.clampFloat(alpha, 0, 100)
+        return self.with_alpha(255 * value / 100)
 
     def to_QColor(self) -> QColor:
         return QColor(self.red, self.green, self.blue, self.alpha * 255)
