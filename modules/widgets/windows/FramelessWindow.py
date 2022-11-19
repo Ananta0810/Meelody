@@ -3,6 +3,7 @@ from typing import Self
 from PyQt5.QtCore import Qt
 from PyQt5.QtWidgets import QMainWindow
 
+
 class FramelessWindow(QMainWindow):
     def __init__(self, parent=None):
         super().__init__(parent)

@@ -11,14 +11,17 @@ class MainWindow(FramelessWindow):
 
     def __init__(self, parent: Optional["QWidget"] = None):
         super(MainWindow, self).__init__(parent)
+        self.background = QWidget(self)
         self.title_bar = QHBoxLayout()
         self.home_screen = QWidget(self)
-        self.background = QWidget(self)
         self.main_layout = QVBoxLayout(self.home_screen)
         self.setup_ui()
 
     def setup_ui(self) -> None:
         self.setCentralWidget(self.home_screen)
+        self.setStyleSheet("background:black;border-radius:24px")
+        self.setFixedWidth(1280)
+        self.setFixedHeight(720)
 
         self.main_layout.setContentsMargins(0, 0, 0, 0)
         self.main_layout.setSpacing(0)
@@ -28,7 +31,6 @@ class MainWindow(FramelessWindow):
         self.main_layout.addLayout(self.title_bar)
 
         self.title_bar.addStretch()
-        self.setStyleSheet("background:WHITE;border-radius:24px")
         # self.titleBar.addWidget(self.minimize_btn)
         # self.titleBar.addWidget(self.close_btn)
 
