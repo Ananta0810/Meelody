@@ -18,7 +18,7 @@ class Color(StylesheetElement):
         return self.to_stylesheet()
 
     def to_stylesheet(self) -> str:
-        return f"rgba({self.red}, {self.green}, {self.blue}, {self.alpha})"
+        return f"rgba({self.red}, {self.green}, {self.blue}, {self.alpha / 255})"
 
     def with_alpha(self, alpha: int) -> Self:
         value: int = Numbers.clampInt(alpha, 0, 255)

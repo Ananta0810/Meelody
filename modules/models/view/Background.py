@@ -1,5 +1,6 @@
 from typing import Self
 
+from modules.helpers.types.Strings import Strings
 from modules.models.view.Border import Border
 from modules.models.view.ColorBox import ColorBox
 from modules.models.view.StylesheetElement import StylesheetElement
@@ -33,23 +34,26 @@ class Background(StylesheetElement):
         self.color = color
         return self
 
-    def __get_color(self, active: bool = False) -> str:
+    def get_color_style(self, active: bool = False) -> str:
         if self.color is None:
             return 'None'
         return self.color.to_stylesheet(active)
 
-    def __get_border(self, active: bool = False) -> str:
+    def get_border_style(self, active: bool = False) -> str:
         if self.border is None:
             return 'None'
         return self.border.to_stylesheet(active)
 
-    def __get_darius(self, size: int = 0) -> float:
+    def get_border_darius_style(self, size: float = 0) -> float:
         return self.border_radius \
             if self.border_radius >= 1 \
             else self.border_radius * size
 
-    def to_stylesheet(self) -> str:
-        return self.__str__()
-
-    def __str__(self) -> str:
-        return f"border:{self.__get_border()};border-radius:{self.__get_darius()};background-color:{self.__get_color()}"
+    def to_stylesheet(self, active_color: bool = False, active_border: bool = False, border_radius_size: float = 0) -> str:
+        return (
+            f"""
+            border:{self.get_border_style(active_border)};
+            border-radius:{self.get_border_darius_style(border_radius_size)};
+            background-color:{self.get_color_style(active_color)}; 
+            """
+        )
