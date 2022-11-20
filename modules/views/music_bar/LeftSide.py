@@ -1,19 +1,24 @@
 from typing import Optional, Union
 
 from PyQt5.QtCore import QMetaObject
-from PyQt5.QtWidgets import QHBoxLayout, QWidget, QVBoxLayout, QPushButton
+from PyQt5.QtGui import QPixmap
+from PyQt5.QtWidgets import QHBoxLayout, QWidget, QVBoxLayout
 
+from modules.helpers.PixmapHelper import PixmapHelper
 from modules.models.view.builder.IconButtonStyle import IconButtonStyle
-from modules.statics.view.Apps import Paddings, Icons, Colors, Backgrounds
+from modules.statics.view.Material import Paddings, Icons, Colors, Backgrounds
 from modules.widgets.IconButton import IconButton
+from modules.widgets.ImageViewer import ImageViewer
 from modules.widgets.StatelessIconButton import StatelessIconButton
 
 
 class MusicPlayerLeftSide(QHBoxLayout):
-    play_song_btn: StatelessIconButton
     song_info_layout: QVBoxLayout
     play_buttons: QHBoxLayout
+    song_cover: ImageViewer
+
     prev_song_btn: IconButton
+    play_song_btn: StatelessIconButton
     next_song_btn: IconButton
 
     def __init__(self, parent: Optional["QWidget"] = None):
@@ -21,6 +26,10 @@ class MusicPlayerLeftSide(QHBoxLayout):
         self.setup_ui()
 
     def setup_ui(self) -> None:
+        self.song_cover = ImageViewer()
+        self.song_cover.setFixedSize(64, 64)
+        self.addWidget(self.song_cover)
+
         self.song_info_layout = QVBoxLayout()
         self.song_info_layout.setContentsMargins(0, 0, 0, 0)
         self.song_info_layout.setSpacing(0)
@@ -85,3 +94,13 @@ class MusicPlayerLeftSide(QHBoxLayout):
         self.next_song_btn.apply_dark_mode()
         self.prev_song_btn.apply_dark_mode()
         self.play_song_btn.apply_dark_mode()
+
+    def set_default_pixmap(self, byte_pixmap: bytes) -> None:
+        self.song_cover.set_default_pixmap(self.__get_pixmap_for_song_cover(byte_pixmap))
+
+    @staticmethod
+    def __get_pixmap_for_song_cover(byte_pixmap: bytes) -> Union[QPixmap, None]:
+        if byte_pixmap is None:
+            return None
+        pixmap = PixmapHelper.get_rounded_squared_pixmap_from_bytes(byte_pixmap, edge=64, radius=12)
+        return pixmap

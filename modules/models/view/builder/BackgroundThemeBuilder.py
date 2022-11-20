@@ -1,7 +1,7 @@
 from modules.helpers.types.Strings import Strings
 from modules.models.view.Background import Background
 from modules.models.view.ColorBox import ColorBox
-from modules.statics.view.Apps import Backgrounds, ColorBoxes
+from modules.statics.view.Material import Backgrounds, ColorBoxes
 
 
 class BackgroundThemeBuilder:

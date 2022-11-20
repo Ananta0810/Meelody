@@ -1,6 +1,7 @@
 from PyQt5.QtCore import QSize, Qt
 from PyQt5.QtGui import QCursor
 
+from modules.helpers.types.Bytes import Bytes
 from modules.models.view.AppIcon import AppIcon
 from modules.models.view.Background import Background
 from modules.models.view.Color import Color
@@ -20,9 +21,9 @@ class Paddings:
     ABSOLUTE_SMALL = Padding(4)
     ABSOLUTE_MEDIUM = Padding(12)
 
-    LABEL_SMALL = Padding(1.25, 0.625, is_relative = True)
-    LABEL_MEDIUM = Padding(1.25, 0.625, is_relative = True)
-    LABEL_LARGE = Padding(1.5, 1, is_relative = True)
+    LABEL_SMALL = Padding(1.25, 0.625, is_relative=True)
+    LABEL_MEDIUM = Padding(1.25, 0.625, is_relative=True)
+    LABEL_LARGE = Padding(1.5, 1, is_relative=True)
 
 
 class Colors:
@@ -293,6 +294,13 @@ class Icons:
         Icons.VOLUME_DOWN = AppIcon("assets/images/icons/volume-down.png")
         Icons.VOLUME_SILENT = AppIcon("assets/images/icons/volume-silent.png")
         Icons.TIMER = AppIcon("assets/images/icons/timer.png")
+
+
+class Images:
+    ERROR_PLAYLIST: bytes = Bytes.get_bytes_from_file("assets\images\defaults\oops.png")
+    DEFAULT_SONG_COVER: bytes = Bytes.get_bytes_from_file("assets\images\defaults\song_cover.jpg")
+    DEFAULT_PLAYLIST_COVER: bytes = Bytes.get_bytes_from_file("assets\images\defaults\playlist_cover.jpg")
+    FAVOURITES_COVER: bytes = Bytes.get_bytes_from_file("assets\images\defaults\playlist_favourite_cover.jpg")
 
 
 class Cursors:

@@ -6,7 +6,7 @@ from PyQt5.QtWidgets import QWidget, QVBoxLayout, QHBoxLayout, QLayout
 
 from modules.models.view.Background import Background
 from modules.models.view.builder.IconButtonStyle import IconButtonStyle
-from modules.statics.view.Apps import ColorBoxes, Paddings, Colors, Icons, Backgrounds
+from modules.statics.view.Material import ColorBoxes, Paddings, Colors, Icons, Backgrounds
 from modules.views.music_bar.MusicPlayerBar import MusicPlayerBar
 from modules.widgets.IconButton import IconButton
 from modules.widgets.windows.FramelessWindow import FramelessWindow

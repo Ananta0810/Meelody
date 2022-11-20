@@ -1,6 +1,6 @@
 from modules.models.view.AppIcon import AppIcon
 from modules.models.view.Background import Background
-from modules.statics.view.Apps import Backgrounds
+from modules.statics.view.Material import Backgrounds
 
 
 class IconButtonStyle:

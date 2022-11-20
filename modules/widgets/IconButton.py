@@ -7,7 +7,7 @@ from modules.models.view.AppIcon import AppIcon
 from modules.models.view.Padding import Padding
 from modules.models.view.builder.BackgroundThemeBuilder import BackgroundThemeBuilder
 from modules.models.view.builder.IconButtonStyle import IconButtonStyle
-from modules.statics.view.Apps import Cursors
+from modules.statics.view.Material import Cursors
 
 
 class IconButton(QPushButton):

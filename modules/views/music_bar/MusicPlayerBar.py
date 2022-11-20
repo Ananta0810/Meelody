@@ -3,6 +3,7 @@ from typing import Optional, Union
 from PyQt5.QtCore import Qt
 from PyQt5.QtWidgets import QHBoxLayout, QWidget
 
+from modules.statics.view.Material import Images
 from modules.views.music_bar.LeftSide import MusicPlayerLeftSide
 
 
@@ -24,6 +25,8 @@ class MusicPlayerBar(QWidget):
         self.left = MusicPlayerLeftSide()
         self.left.setContentsMargins(0, 0, 0, 0)
         self.left.setSpacing(12)
+        self.left.set_default_pixmap(Images.DEFAULT_SONG_COVER)
+
         self.main_layout.addLayout(self.left)
 
     def apply_light_mode(self) -> None:
