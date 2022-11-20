@@ -179,6 +179,11 @@ class Backgrounds:
     ROUNDED_HIDDEN_DANGER_50 = Background(border_radius=12, color=ColorBoxes.HOVERABLE_DANGER_HIDDEN_50)
     ROUNDED_HIDDEN_DANGER_25 = Background(border_radius=12, color=ColorBoxes.HOVERABLE_DANGER_HIDDEN_25)
 
+    ROUNDED_DANGER = Background(border_radius=12, color=ColorBoxes.HOVERABLE_DANGER)
+    ROUNDED_DANGER_75 = Background(border_radius=12, color=ColorBoxes.HOVERABLE_DANGER_75)
+    ROUNDED_DANGER_50 = Background(border_radius=12, color=ColorBoxes.HOVERABLE_DANGER_50)
+    ROUNDED_DANGER_25 = Background(border_radius=12, color=ColorBoxes.HOVERABLE_DANGER_25)
+
     # ========================= //Black// =========================
     CIRCLE_BLACK = Background(border_radius=0.5, color=ColorBoxes.HOVERABLE_BLACK)
     CIRCLE_BLACK_75 = Background(border_radius=0.5, color=ColorBoxes.HOVERABLE_BLACK_75)

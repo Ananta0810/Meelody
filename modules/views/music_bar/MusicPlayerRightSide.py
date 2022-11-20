@@ -69,7 +69,6 @@ class MusicPlayerRightSide(QHBoxLayout):
                 background=Backgrounds.ROUNDED_WHITE_25,
             ),
         )
-        self.slider_volume.setFixedWidth(160)
         self.slider_volume.setSliderPosition(100)
         self.right_boxes.addWidget(self.slider_volume)
 
