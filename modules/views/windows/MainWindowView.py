@@ -71,6 +71,7 @@ class MainWindowView(FramelessWindow):
 
         self.music_player = MusicPlayerBar()
         self.music_player.setFixedHeight(96)
+        self.music_player.setObjectName("musicPlayer")
 
         self.main_layout.addWidget(self.music_player, alignment=Qt.AlignBottom)
         QMetaObject.connectSlotsByName(self)
@@ -96,13 +97,15 @@ class MainWindowView(FramelessWindow):
         self.main_layout.addWidget(a0, stretch, alignment)
 
     def apply_light_mode(self) -> None:
-        self.setStyleSheet(Background(border_radius=24, color=ColorBoxes.WHITE).to_stylesheet())
+        self.background.setStyleSheet(Background(border_radius=24, color=ColorBoxes.WHITE).to_stylesheet())
+        self.music_player.setStyleSheet("QWidget#musicPlayer{border-top: 1px solid #eaeaea};border-radius:0px")
         self.minimize_btn.apply_light_mode()
         self.close_btn.apply_light_mode()
         self.music_player.apply_light_mode()
 
     def apply_dark_mode(self) -> None:
-        self.setStyleSheet(Background(border_radius=24, color=ColorBoxes.BLACK).to_stylesheet())
+        self.background.setStyleSheet(Background(border_radius=24, color=ColorBoxes.BLACK).to_stylesheet())
+        self.music_player.setStyleSheet("QWidget#musicPlayer{border-top: 1px solid #202020};border-radius:0px")
         self.minimize_btn.apply_dark_mode()
         self.close_btn.apply_dark_mode()
         self.music_player.apply_dark_mode()

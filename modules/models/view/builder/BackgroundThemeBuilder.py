@@ -6,6 +6,7 @@ from modules.statics.view.Material import Backgrounds, ColorBoxes
 
 class BackgroundThemeBuilder:
     BUTTON = "QPushButton"
+    LABEL = "QLabel,QLineEdit,QPushButton"
 
     @staticmethod
     def build(
@@ -31,9 +32,10 @@ class BackgroundThemeBuilder:
         background: Background = Backgrounds.TRANSPARENT,
         is_hover: bool = False
     ) -> str:
-        background = background.to_stylesheet(border_radius_size=element_size, active_color=is_hover, active_border=is_hover).removeprefix("\n")
+        text_color = text_color.to_stylesheet(is_hover)
+        background_style = background.to_stylesheet(border_radius_size=element_size, active_color=is_hover, active_border=is_hover).removeprefix("\n")
         return \
             f"""
-            color:{text_color.to_stylesheet(is_hover)};
+            color:{text_color};
             padding:{padding}px;
-            {background} """
+            {background_style}"""

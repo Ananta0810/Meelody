@@ -1,5 +1,5 @@
 from PyQt5.QtCore import QSize, Qt
-from PyQt5.QtGui import QCursor
+from PyQt5.QtGui import QCursor, QFont
 
 from modules.helpers.types.Bytes import Bytes
 from modules.models.view.AppIcon import AppIcon

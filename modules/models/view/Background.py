@@ -1,6 +1,5 @@
 from typing import Self
 
-from modules.helpers.types.Strings import Strings
 from modules.models.view.Border import Border
 from modules.models.view.ColorBox import ColorBox
 from modules.models.view.StylesheetElement import StylesheetElement
