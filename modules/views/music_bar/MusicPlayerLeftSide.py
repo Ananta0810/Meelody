@@ -52,7 +52,9 @@ class MusicPlayerLeftSide(QHBoxLayout):
         self.song_info_layout = QVBoxLayout()
         self.song_info_layout.setContentsMargins(0, 0, 0, 0)
         self.song_info_layout.setSpacing(0)
+
         self.addLayout(self.song_info_layout, stretch=1)
+
         self.song_info_layout.addStretch(0)
         self.song_info_layout.addWidget(self.song_title)
         self.song_info_layout.addWidget(self.song_artist)

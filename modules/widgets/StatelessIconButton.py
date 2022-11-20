@@ -51,6 +51,9 @@ class StatelessIconButton(QPushButton):
     def set_children(self, children: list[StatelessIconButtonThemeData]) -> None:
         self.children = children
 
+    def add_child(self, child: StatelessIconButtonThemeData) -> None:
+        self.children.append(child)
+
     def set_change_state_on_pressed(self, a0: bool) -> Self:
         self.change_state_on_pressed = a0
         return self
