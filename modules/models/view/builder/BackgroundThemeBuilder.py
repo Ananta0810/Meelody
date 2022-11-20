@@ -6,14 +6,13 @@ from modules.statics.view.Apps import Backgrounds, ColorBoxes
 
 class BackgroundThemeBuilder:
     BUTTON = "QPushButton"
-    BUTTON_CHECKED = "QPushButton:checked"
 
     @staticmethod
     def build(
         element: str,
         element_size: float,
-        text_color: ColorBox = ColorBoxes.TRANSPARENT,
         background: Background = Backgrounds.TRANSPARENT,
+        text_color: ColorBox = ColorBoxes.TRANSPARENT,
         padding: int = 0,
     ) -> str:
         normal_content: str = BackgroundThemeBuilder.__build_content(padding, element_size, text_color, background)

@@ -9,6 +9,7 @@ from modules.models.view.Padding import Padding
 
 
 class Paddings:
+    DEFAULT = Padding(0.00)
     RELATIVE_25 = Padding(0.25)
     RELATIVE_33 = Padding(0.33)
     RELATIVE_50 = Padding(0.5)

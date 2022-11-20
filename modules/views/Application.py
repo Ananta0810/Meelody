@@ -8,7 +8,7 @@ class Application:
         Apps.Icons.init_value()
 
         self.window = MainWindowView().with_title_bar_height(24)
-        self.window.apply_dark_mode()
+        self.window.apply_light_mode()
 
     def run(self) -> None:
         self.window.show()
