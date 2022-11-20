@@ -7,6 +7,7 @@ from modules.statics.view.Material import Backgrounds, ColorBoxes
 class BackgroundThemeBuilder:
     BUTTON = "QPushButton"
     LABEL = "QLabel,QLineEdit,QPushButton"
+    SLIDER = "QSlider"
 
     @staticmethod
     def build(
