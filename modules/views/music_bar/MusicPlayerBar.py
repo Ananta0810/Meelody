@@ -26,6 +26,9 @@ class MusicPlayerBar(QWidget):
         self.left.set_artist("Song Artist")
         self.middle.set_total_time(60)
         self.middle.set_playing_time(0)
+        self.right.btn_loop.set_active(False)
+        self.right.btn_shuffle.set_active(False)
+        self.right.btn_love.set_active(False)
 
     def setup_ui(self) -> None:
         self.setAttribute(Qt.WA_StyledBackground, True)

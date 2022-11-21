@@ -240,6 +240,27 @@ class Backgrounds:
     ROUNDED_HIDDEN_WHITE_50 = Background(border_radius=12, color=ColorBoxes.HOVERABLE_WHITE_HIDDEN_50)
     ROUNDED_HIDDEN_WHITE_25 = Background(border_radius=12, color=ColorBoxes.HOVERABLE_WHITE_HIDDEN_25)
 
+    # ========================= //Gray// =========================
+    CIRCLE_GRAY = Background(border_radius=0.5, color=ColorBoxes.HOVERABLE_GRAY)
+    CIRCLE_GRAY_75 = Background(border_radius=0.5, color=ColorBoxes.HOVERABLE_GRAY_75)
+    CIRCLE_GRAY_50 = Background(border_radius=0.5, color=ColorBoxes.HOVERABLE_GRAY_50)
+    CIRCLE_GRAY_25 = Background(border_radius=0.5, color=ColorBoxes.HOVERABLE_GRAY_25)
+
+    CIRCLE_HIDDEN_GRAY = Background(border_radius=0.5, color=ColorBoxes.HOVERABLE_GRAY_HIDDEN)
+    CIRCLE_HIDDEN_GRAY_75 = Background(border_radius=0.5, color=ColorBoxes.HOVERABLE_GRAY_HIDDEN_75)
+    CIRCLE_HIDDEN_GRAY_50 = Background(border_radius=0.5, color=ColorBoxes.HOVERABLE_GRAY_HIDDEN_50)
+    CIRCLE_HIDDEN_GRAY_25 = Background(border_radius=0.5, color=ColorBoxes.HOVERABLE_GRAY_HIDDEN_25)
+
+    ROUNDED_GRAY = Background(border_radius=12, color=ColorBoxes.HOVERABLE_GRAY)
+    ROUNDED_GRAY_75 = Background(border_radius=12, color=ColorBoxes.HOVERABLE_GRAY_75)
+    ROUNDED_GRAY_50 = Background(border_radius=12, color=ColorBoxes.HOVERABLE_GRAY_50)
+    ROUNDED_GRAY_25 = Background(border_radius=12, color=ColorBoxes.HOVERABLE_GRAY_25)
+
+    ROUNDED_HIDDEN_GRAY = Background(border_radius=12, color=ColorBoxes.HOVERABLE_GRAY_HIDDEN)
+    ROUNDED_HIDDEN_GRAY_75 = Background(border_radius=12, color=ColorBoxes.HOVERABLE_GRAY_HIDDEN_75)
+    ROUNDED_HIDDEN_GRAY_50 = Background(border_radius=12, color=ColorBoxes.HOVERABLE_GRAY_HIDDEN_50)
+    ROUNDED_HIDDEN_GRAY_25 = Background(border_radius=12, color=ColorBoxes.HOVERABLE_GRAY_HIDDEN_25)
+
 
 class Icons:
     SMALL: QSize = QSize(24, 24)

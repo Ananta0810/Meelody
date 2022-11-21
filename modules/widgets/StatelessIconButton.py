@@ -43,45 +43,45 @@ class StatelessIconButton(QPushButton):
 
     def __init__(self, parent=None):
         super().__init__(parent)
-        self.children: list[StatelessIconButtonThemeData] = []
-        self.current_index = 0
-        self.change_state_on_pressed = True
+        self._children: list[StatelessIconButtonThemeData] = []
+        self._current_index = 0
+        self._change_state_on_pressed = True
         self._is_dark_mode = False
 
     def set_children(self, children: list[StatelessIconButtonThemeData]) -> None:
-        self.children = children
+        self._children = children
 
     def add_child(self, child: StatelessIconButtonThemeData) -> None:
-        self.children.append(child)
+        self._children.append(child)
 
     def set_change_state_on_pressed(self, a0: bool) -> Self:
-        self.change_state_on_pressed = a0
+        self._change_state_on_pressed = a0
         return self
 
     def mousePressEvent(self, event) -> None:
         super().mousePressEvent(event)
-        if self.change_state_on_pressed:
+        if self._change_state_on_pressed:
             self.to_next_state()
 
     def set_state_index(self, index: int) -> None:
-        if index >= len(self.children):
+        if index >= len(self._children):
             return
-        self.current_index = index
-        self.__change_button_based_on_state()
+        self._current_index = index
+        self._change_button_based_on_state()
 
     def to_next_state(self) -> None:
-        self.set_state_index((self.current_index + 1) % len(self.children))
+        self.set_state_index((self._current_index + 1) % len(self._children))
 
     def apply_dark_mode(self):
         self._is_dark_mode = True
-        self.__change_button_based_on_state()
+        self._change_button_based_on_state()
 
     def apply_light_mode(self):
         self._is_dark_mode = False
-        self.__change_button_based_on_state()
+        self._change_button_based_on_state()
 
-    def __change_button_based_on_state(self) -> None:
-        button = self.children[self.current_index]
+    def _change_button_based_on_state(self) -> None:
+        button = self._children[self._current_index]
 
         if self._is_dark_mode:
             self.setIcon(button.dark_mode_icon)
