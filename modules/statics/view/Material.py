@@ -132,8 +132,9 @@ class ColorBoxes:
     HOVERABLE_GRAY_HIDDEN_50 = ColorBox(normal=Colors.TRANSPARENT, active=Colors.GRAY.with_opacity(50))
     HOVERABLE_GRAY_HIDDEN_25 = ColorBox(normal=Colors.TRANSPARENT, active=Colors.GRAY.with_opacity(25))
 
+
 class Backgrounds:
-    TRANSPARENT = Background()
+    TRANSPARENT = Background(color=ColorBoxes.TRANSPARENT)
 
     # ========================= //Primary// =========================
     CIRCLE_PRIMARY = Background(border_radius=0.5, color=ColorBoxes.HOVERABLE_PRIMARY)

@@ -6,11 +6,11 @@ from PyQt5.QtGui import QPixmap, QPainter, QPainterPath
 
 class PixmapHelper:
     @staticmethod
-    def get_pixmap_from_bytes(byte_image: bytes) -> Union[QPixmap, None]:
-        if byte_image is None:
+    def get_pixmap_from_bytes(image_byte: bytes) -> Union[QPixmap, None]:
+        if image_byte is None:
             return None
         pixmap = QPixmap()
-        pixmap.loadFromData(byte_image)
+        pixmap.loadFromData(image_byte)
         return pixmap
 
     @staticmethod
@@ -47,8 +47,8 @@ class PixmapHelper:
         w = pixmap.width()
         h = pixmap.height()
 
-        isQuared: bool = w == h
-        if isQuared:
+        is_squared: bool = w == h
+        if is_squared:
             return pixmap
 
         edge: int = min(w, h)
@@ -84,5 +84,21 @@ class PixmapHelper:
             return None
         pixmap = PixmapHelper.scale_pixmap_keeping_ratio(pixmap, edge)
         pixmap = PixmapHelper.square_pixmap(pixmap)
+        pixmap = PixmapHelper.round_pixmap(pixmap, radius)
+        return pixmap
+
+    @staticmethod
+    def get_edited_pixmap_from_bytes(
+        image_byte: bytes,
+        width: int,
+        height: int,
+        radius: int = 0,
+        crop_center: bool = True,
+    ) -> Union[QPixmap, None]:
+        pixmap = PixmapHelper.get_pixmap_from_bytes(image_byte)
+        if pixmap.isNull():
+            return None
+        pixmap = PixmapHelper.scale_pixmap_keeping_ratio(pixmap, max(width, height))
+        pixmap = PixmapHelper.crop_pixmap(pixmap, width, height, crop_center)
         pixmap = PixmapHelper.round_pixmap(pixmap, radius)
         return pixmap
