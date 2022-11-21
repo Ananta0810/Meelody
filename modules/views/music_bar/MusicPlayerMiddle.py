@@ -27,17 +27,22 @@ class MusicPlayerMiddle(QHBoxLayout):
         font: QFont = FontBuilder.build(size=9)
 
         self.label_playing_time = LabelWithDefaultText.build(
-            width=128,
+            width=60,
             font=font,
             light_mode_style=TextStyle(text_color=ColorBoxes.BLACK),
         )
-        self.label_playing_time.setFixedWidth(60)
         self.label_playing_time.setAlignment(Qt.AlignRight | Qt.AlignVCenter)
 
         self.slider_time = HorizontalSlider.build(
             height=12,
-            light_mode_style=SliderStyle(handler_color=ColorBoxes.PRIMARY, line_color=ColorBoxes.PRIMARY),
-            dark_mode_style=SliderStyle(handler_color=ColorBoxes.PRIMARY, line_color=ColorBoxes.PRIMARY),
+            light_mode_style=SliderStyle(
+                handler_color=ColorBoxes.PRIMARY,
+                track_active_color=ColorBoxes.PRIMARY,
+            ),
+            dark_mode_style=SliderStyle(
+                handler_color=ColorBoxes.PRIMARY,
+                track_active_color=ColorBoxes.PRIMARY,
+            ),
         )
         self.slider_time.setFixedWidth(250)
         self.slider_time.setMaximum(100)
@@ -45,11 +50,10 @@ class MusicPlayerMiddle(QHBoxLayout):
         self.slider_time.setPageStep(0)
 
         self.label_total_time = LabelWithDefaultText.build(
-            width=128,
+            width=60,
             font=font,
             light_mode_style=TextStyle(text_color=ColorBoxes.BLACK),
         )
-        self.label_total_time.setFixedWidth(60)
         self.label_total_time.setAlignment(Qt.AlignLeft | Qt.AlignVCenter)
 
         self.addWidget(self.label_playing_time)

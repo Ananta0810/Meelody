@@ -60,12 +60,12 @@ class MusicPlayerRightSide(QHBoxLayout):
             height=48,
             light_mode_style=SliderStyle(
                 handler_color=ColorBoxes.PRIMARY,
-                line_color=ColorBoxes.PRIMARY,
+                track_active_color=ColorBoxes.PRIMARY,
                 background=Backgrounds.ROUNDED_PRIMARY_25,
             ),
             dark_mode_style=SliderStyle(
                 handler_color=ColorBoxes.PRIMARY,
-                line_color=ColorBoxes.PRIMARY,
+                track_active_color=ColorBoxes.PRIMARY,
                 background=Backgrounds.ROUNDED_WHITE_25,
             ),
         )

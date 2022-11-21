@@ -117,6 +117,20 @@ class ColorBoxes:
     HOVERABLE_WHITE_HIDDEN_50 = ColorBox(normal=Colors.TRANSPARENT, active=Colors.WHITE.with_opacity(50))
     HOVERABLE_WHITE_HIDDEN_25 = ColorBox(normal=Colors.TRANSPARENT, active=Colors.WHITE.with_opacity(25))
 
+    # =========================// Gray //=========================
+    GRAY = ColorBox(Colors.GRAY)
+    GRAY_75 = ColorBox(Colors.GRAY.with_opacity(75))
+    GRAY_50 = ColorBox(Colors.GRAY.with_opacity(50))
+    GRAY_25 = ColorBox(Colors.GRAY.with_opacity(25))
+
+    HOVERABLE_GRAY = ColorBox(normal=Colors.GRAY, active=Colors.GRAY)
+    HOVERABLE_GRAY_75 = ColorBox(normal=Colors.GRAY.with_opacity(75), active=Colors.GRAY)
+    HOVERABLE_GRAY_50 = ColorBox(normal=Colors.GRAY.with_opacity(50), active=Colors.GRAY.with_opacity(75))
+    HOVERABLE_GRAY_25 = ColorBox(normal=Colors.GRAY.with_opacity(25), active=Colors.GRAY.with_opacity(50))
+    HOVERABLE_GRAY_HIDDEN = ColorBox(normal=Colors.TRANSPARENT, active=Colors.GRAY)
+    HOVERABLE_GRAY_HIDDEN_75 = ColorBox(normal=Colors.TRANSPARENT, active=Colors.GRAY.with_opacity(75))
+    HOVERABLE_GRAY_HIDDEN_50 = ColorBox(normal=Colors.TRANSPARENT, active=Colors.GRAY.with_opacity(50))
+    HOVERABLE_GRAY_HIDDEN_25 = ColorBox(normal=Colors.TRANSPARENT, active=Colors.GRAY.with_opacity(25))
 
 class Backgrounds:
     TRANSPARENT = Background()

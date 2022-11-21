@@ -19,14 +19,14 @@ class HorizontalSliderThemeBuilder:
             {BackgroundThemeBuilder.build(BackgroundThemeBuilder.SLIDER, item_size, background=style.background)}
             QSlider::groove{{border:none}}
             QSlider::add-page {{
-                 border:none;
-                background:{style.line_color.to_stylesheet()};
+                border:none;
+                background:{style.track_inactive_color.to_stylesheet()};
                 border-radius:{line_radius}px;
                 margin:{line_margin}px {handle_margin}px {line_margin}px 0px
             }}
             QSlider::sub-page {{
-                 border:none;
-                background:{style.handler_color.to_stylesheet()};
+                border:none;
+                background:{style.track_active_color.to_stylesheet()};
                 border-radius:{line_radius}px;
                 margin:{line_margin}px 0px {line_margin}px {handle_margin + 1}px
             }}
