@@ -35,7 +35,7 @@ class CurrentPlaylistView(QWidget):
     def set_current_playlist_info(self, name: str, total_song: int, cover: bytes = None) -> None:
         if cover is None:
             cover = (
-                Images.FAVOURITES_COVER
+                Images.FAVOURITES_PLAYLIST_COVER
                 if name.lower() == "favourites"
                 else Images.DEFAULT_PLAYLIST_COVER
             )

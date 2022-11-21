@@ -108,6 +108,7 @@ class MainWindowView(FramelessWindow):
         self.music_player.setStyleSheet("QWidget#musicPlayer{border-top: 1px solid #eaeaea};border-radius:0px")
         self.minimize_btn.apply_light_mode()
         self.close_btn.apply_light_mode()
+        self.body.apply_light_mode()
         self.music_player.apply_light_mode()
 
     def apply_dark_mode(self) -> None:
@@ -115,6 +116,7 @@ class MainWindowView(FramelessWindow):
         self.music_player.setStyleSheet("QWidget#musicPlayer{border-top: 1px solid #202020};border-radius:0px")
         self.minimize_btn.apply_dark_mode()
         self.close_btn.apply_dark_mode()
+        self.body.apply_dark_mode()
         self.music_player.apply_dark_mode()
 
     def connect_signal(self) -> None:

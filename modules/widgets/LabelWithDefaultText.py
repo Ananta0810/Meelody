@@ -30,10 +30,10 @@ class LabelWithDefaultText(QLabel):
 
     @staticmethod
     def build(
-        width: int,
         font: QFont,
         light_mode_style: TextStyle,
         dark_mode_style: TextStyle = None,
+        width: int = 0,
         padding: int = 0,
         allow_multiple_lines: bool = True,
         parent: Optional["QWidget"] = None,

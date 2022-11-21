@@ -51,7 +51,8 @@ class ColorBoxes:
     HOVERABLE_PRIMARY = ColorBox(normal=Colors.PRIMARY, active=Colors.PRIMARY)
     HOVERABLE_PRIMARY_75 = ColorBox(normal=Colors.PRIMARY.with_opacity(75), active=Colors.PRIMARY)
     HOVERABLE_PRIMARY_50 = ColorBox(normal=Colors.PRIMARY.with_opacity(50), active=Colors.PRIMARY.with_opacity(75))
-    HOVERABLE_PRIMARY_25 = ColorBox(normal=Colors.PRIMARY.with_opacity(25), active=Colors.PRIMARY.with_opacity(25))
+    HOVERABLE_PRIMARY_25 = ColorBox(normal=Colors.PRIMARY.with_opacity(25), active=Colors.PRIMARY.with_opacity(50))
+    HOVERABLE_PRIMARY_10 = ColorBox(normal=Colors.PRIMARY.with_opacity(10), active=Colors.PRIMARY.with_opacity(25))
     HOVERABLE_PRIMARY_HIDDEN = ColorBox(normal=Colors.TRANSPARENT, active=Colors.PRIMARY)
     HOVERABLE_PRIMARY_HIDDEN_75 = ColorBox(normal=Colors.TRANSPARENT, active=Colors.PRIMARY.with_opacity(75))
     HOVERABLE_PRIMARY_HIDDEN_50 = ColorBox(normal=Colors.TRANSPARENT, active=Colors.PRIMARY.with_opacity(50))
@@ -141,6 +142,7 @@ class Backgrounds:
     CIRCLE_PRIMARY_75 = Background(border_radius=0.5, color=ColorBoxes.HOVERABLE_PRIMARY_75)
     CIRCLE_PRIMARY_50 = Background(border_radius=0.5, color=ColorBoxes.HOVERABLE_PRIMARY_50)
     CIRCLE_PRIMARY_25 = Background(border_radius=0.5, color=ColorBoxes.HOVERABLE_PRIMARY_25)
+    CIRCLE_PRIMARY_10 = Background(border_radius=0.5, color=ColorBoxes.HOVERABLE_PRIMARY_10)
 
     CIRCLE_HIDDEN_PRIMARY = Background(border_radius=0.5, color=ColorBoxes.HOVERABLE_PRIMARY_HIDDEN)
     CIRCLE_HIDDEN_PRIMARY_75 = Background(border_radius=0.5, color=ColorBoxes.HOVERABLE_PRIMARY_HIDDEN_75)
@@ -341,7 +343,7 @@ class Images:
     ERROR_PLAYLIST: bytes = Bytes.get_bytes_from_file("assets\images\defaults\oops.png")
     DEFAULT_SONG_COVER: bytes = Bytes.get_bytes_from_file("assets\images\defaults\song_cover.jpg")
     DEFAULT_PLAYLIST_COVER: bytes = Bytes.get_bytes_from_file("assets\images\defaults\playlist_cover.jpg")
-    FAVOURITES_COVER: bytes = Bytes.get_bytes_from_file("assets\images\defaults\playlist_favourite_cover.jpg")
+    FAVOURITES_PLAYLIST_COVER: bytes = Bytes.get_bytes_from_file("assets\images\defaults\playlist_favourite_cover.jpg")
 
 
 class Cursors:
