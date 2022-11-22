@@ -1,13 +1,14 @@
 from typing import Optional
 
 from PyQt5.QtCore import pyqtSignal, QEvent, Qt
-from PyQt5.QtWidgets import QWidget, QScrollArea, QVBoxLayout
+from PyQt5.QtWidgets import QWidget, QVBoxLayout
 
-from modules.statics.view.Material import Images
+from modules.statics.view.Material import Images, Backgrounds
 from modules.views.body.songs_table.SongTableRow import SongTableRow
+from modules.widgets.SmoothVerticalScrollArea import SmoothVerticalScrollArea
 
 
-class SongTableBody(QScrollArea):
+class SongTableBody(SmoothVerticalScrollArea):
     keyPressed = pyqtSignal(QEvent)
 
     inner: QWidget
@@ -38,10 +39,12 @@ class SongTableBody(QScrollArea):
         self.menu.setContentsMargins(8, 0, 8, 8)
 
     def apply_light_mode(self) -> None:
+        self.setStyleSheet(SmoothVerticalScrollArea.build_style(background=Backgrounds.CIRCLE_PRIMARY))
         for song in self._songs:
             song.apply_light_mode()
 
     def apply_dark_mode(self) -> None:
+        self.setStyleSheet(SmoothVerticalScrollArea.build_style(background=Backgrounds.CIRCLE_PRIMARY))
         for song in self._songs:
             song.apply_dark_mode()
 

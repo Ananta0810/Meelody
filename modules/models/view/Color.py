@@ -21,11 +21,11 @@ class Color(StylesheetElement):
         return f"rgba({self.red}, {self.green}, {self.blue}, {self.alpha / 255})"
 
     def with_alpha(self, alpha: int) -> Self:
-        value: int = Numbers.clampInt(alpha, 0, 255)
+        value: int = Numbers.clamp_int(alpha, 0, 255)
         return Color(self.red, self.green, self.blue, value)
 
     def with_opacity(self, opacity: int) -> Self:
-        value: int = Numbers.clampInt(opacity, 0, 100)
+        value: int = Numbers.clamp_int(opacity, 0, 100)
         return self.with_alpha(255 * value // 100)
 
     def to_QColor(self) -> QColor:
