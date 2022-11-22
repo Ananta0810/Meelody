@@ -45,8 +45,8 @@ class Background(StylesheetElement):
 
     def get_border_darius_style(self, size: float = 0) -> float:
         return self.border_radius \
-            if self.border_radius >= 1 \
-            else self.border_radius * size
+            if self.border_radius > 1 \
+            else self.border_radius * (size or 0)
 
     def to_stylesheet(self, active_color: bool = False, active_border: bool = False, border_radius_size: float = 0) -> str:
         return (

@@ -1,4 +1,4 @@
-from typing import Optional, Self
+from typing import Optional, Self, Union
 
 from PyQt5.QtGui import QFont
 from PyQt5.QtWidgets import QLabel, QWidget
@@ -33,7 +33,7 @@ class LabelWithDefaultText(QLabel):
         font: QFont,
         light_mode_style: TextStyle,
         dark_mode_style: TextStyle = None,
-        width: int = 0,
+        width: Union[int, None] = None,
         padding: int = 0,
         allow_multiple_lines: bool = True,
         parent: Optional["QWidget"] = None,
@@ -41,7 +41,8 @@ class LabelWithDefaultText(QLabel):
         label = LabelWithDefaultText(parent)
         label.setFont(font)
         label.setWordWrap(allow_multiple_lines)
-        label.setFixedWidth(width)
+        if width is not None:
+            label.setFixedWidth(width)
         label.light_mode_style = LabelWithDefaultText.build_style(light_mode_style, padding, width)
         label.dark_mode_style = LabelWithDefaultText.build_style(dark_mode_style or light_mode_style, padding, width)
         return label
