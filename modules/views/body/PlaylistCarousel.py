@@ -44,8 +44,8 @@ class PlaylistCarousel(QScrollArea):
         self.main_layout.setSpacing(32)
 
         # =================Library=================
-        self.playlist_library = self.create_default_playlist_with_cover(Images.DEFAULT_PLAYLIST_COVER)
-        self.playlist_favourites = self.create_default_playlist_with_cover(Images.FAVOURITES_PLAYLIST_COVER)
+        self.playlist_library = self.__create_default_playlist_with_cover(Images.DEFAULT_PLAYLIST_COVER)
+        self.playlist_favourites = self.__create_default_playlist_with_cover(Images.FAVOURITES_PLAYLIST_COVER)
 
         self.default_playlists = QHBoxLayout()
         self.default_playlists.setAlignment(Qt.AlignLeft)
@@ -85,7 +85,7 @@ class PlaylistCarousel(QScrollArea):
         self.add_playlist_card.setStyleSheet(Backgrounds.CIRCLE_WHITE_25.to_stylesheet(border_radius_size=48))
 
     @staticmethod
-    def create_default_playlist_with_cover(cover_byte: bytes) -> DefaultPlaylistCard:
+    def __create_default_playlist_with_cover(cover_byte: bytes) -> DefaultPlaylistCard:
         playlist = DefaultPlaylistCard(FontBuilder.build(size=16, bold=True))
         playlist.setFixedSize(256, 320)
         playlist.setCursor(Cursors.HAND)

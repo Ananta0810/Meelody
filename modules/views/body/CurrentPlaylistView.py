@@ -5,11 +5,13 @@ from PyQt5.QtWidgets import QWidget, QHBoxLayout
 
 from modules.statics.view.Material import Images
 from modules.views.body.PlaylistInfoView import PlaylistInfoView
+from modules.views.body.songs_table.SongTable import SongTable
 
 
 class CurrentPlaylistView(QWidget):
     main_layout: QHBoxLayout
     info: PlaylistInfoView
+    menu: SongTable
 
     def __init__(self, parent: Optional["QWidget"] = None):
         super(CurrentPlaylistView, self).__init__(parent)
@@ -24,13 +26,18 @@ class CurrentPlaylistView(QWidget):
         self.info = PlaylistInfoView()
         self.info.set_default_cover(Images.DEFAULT_PLAYLIST_COVER)
 
+        self.menu = SongTable()
+
         self.main_layout.addLayout(self.info)
+        self.main_layout.addWidget(self.menu, stretch=2)
 
     def apply_light_mode(self) -> None:
         self.info.apply_light_mode()
+        self.menu.apply_light_mode()
 
     def apply_dark_mode(self) -> None:
         self.info.apply_dark_mode()
+        self.menu.apply_dark_mode()
 
     def set_current_playlist_info(self, name: str, total_song: int, cover: bytes = None) -> None:
         if cover is None:
