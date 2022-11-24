@@ -16,20 +16,17 @@ class SongTableBody(SmoothVerticalScrollArea):
 
     def __init__(self, parent: Optional["QWidget"] = None):
         super(SongTableBody, self).__init__(parent)
-        self.start = 0
-        self.last = 6
-        self._songs = []
-        self._current_song_index = []
+        self.start: int = 0
+        self.last: int = 6
+        self._songs: list[SongTableRow] = []
+        self._current_song_index: list[int] = []
         self.setup_ui()
 
     def setup_ui(self):
         self.setContentsMargins(0, 0, 0, 0)
         self.setHorizontalScrollBarPolicy(Qt.ScrollBarAlwaysOff)
         self.setWidgetResizable(True)
-        # self.setItemHeight(104)
-        # self._addThemeForItem(
-        #     self, theme=ScrollThemeBuilder().addLightModeBackground(Backgrounds.CIRCLE_PRIMARY).build()
-        # )
+        self.set_item_height(104)
 
         self.inner = QWidget(self)
         self.setWidget(self.inner)

@@ -1,7 +1,7 @@
 from typing import Self, Optional
 
-from PyQt5.QtCore import Qt, pyqtSignal
-from PyQt5.QtGui import QFont, QCursor, QPixmap
+from PyQt5.QtCore import pyqtSignal, QEvent
+from PyQt5.QtGui import QFont, QCursor, QPixmap, QResizeEvent
 from PyQt5.QtWidgets import QWidget, QVBoxLayout
 
 from modules.models.view.Animation import Animation
@@ -34,15 +34,15 @@ class DefaultPlaylistCard(QWidget):
         self.main_layout.addStretch()
         self.main_layout.addWidget(self.label)
 
-    def resizeEvent(self, event) -> None:
+    def resizeEvent(self, event: QResizeEvent) -> None:
         self.cover.setFixedSize(self.size())
         return super().resizeEvent(event)
 
-    def enterEvent(self, event) -> None:
+    def enterEvent(self, event: QEvent) -> None:
         super().enterEvent(event)
         self.cover.animationOnEnteredHover()
 
-    def leaveEvent(self, event) -> None:
+    def leaveEvent(self, event: QEvent) -> None:
         super().leaveEvent(event)
         self.cover.animationOnLeavedHover()
 

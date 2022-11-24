@@ -1,6 +1,6 @@
-from typing import Optional, Union, Any
+from typing import Optional, Union
 
-from PyQt5.QtCore import Qt
+from PyQt5.QtCore import Qt, QEvent
 from PyQt5.QtGui import QPixmap, QResizeEvent
 from PyQt5.QtWidgets import QWidget, QHBoxLayout
 
@@ -26,9 +26,9 @@ class SongTableRow(QWidget):
     extra_buttons: QWidget
     extra_buttons_layout: QHBoxLayout
     cover: ImageViewer
-    title: LabelWithDefaultText
-    artist: LabelWithDefaultText
-    length: LabelWithDefaultText
+    label_title: LabelWithDefaultText
+    label_artist: LabelWithDefaultText
+    label_length: LabelWithDefaultText
     btn_more: IconButton
     btn_love: ToggleIconButton
     btn_play: IconButton
@@ -40,9 +40,14 @@ class SongTableRow(QWidget):
     def __init__(self, parent: Optional["QWidget"] = None):
         super(SongTableRow, self).__init__(parent)
         self.default_artist = ""
-        self.setupUi()
+        self.setup_ui()
+        self.label_title.installEventFilter(self)
+        self.children = self.findChildren(QWidget)
+        for child in self.children:
+            child.installEventFilter(self)
+            child.setAttribute(Qt.WA_Hover)
 
-    def setupUi(self) -> None:
+    def setup_ui(self) -> None:
         font = FontBuilder.build(size=10)
 
         self.background = QWidget(self)
@@ -71,27 +76,27 @@ class SongTableRow(QWidget):
         self.cover = ImageViewer(self)
         self.cover.setFixedSize(64, 64)
 
-        self.title = LabelWithDefaultText.build(
+        self.label_title = LabelWithDefaultText.build(
             font,
             light_mode_style=TextStyle(text_color=ColorBoxes.BLACK),
             dark_mode_style=TextStyle(text_color=ColorBoxes.WHITE)
         )
-        self.title.setFixedWidth(188)
+        self.label_title.setFixedWidth(188)
 
-        self.artist = LabelWithDefaultText.build(
+        self.label_artist = LabelWithDefaultText.build(
             font,
             light_mode_style=TextStyle(text_color=ColorBoxes.GRAY),
             dark_mode_style=TextStyle(text_color=ColorBoxes.WHITE)
         )
-        self.artist.setFixedWidth(128)
+        self.label_artist.setFixedWidth(128)
 
-        self.length = LabelWithDefaultText.build(
+        self.label_length = LabelWithDefaultText.build(
             font,
             light_mode_style=TextStyle(text_color=ColorBoxes.GRAY),
             dark_mode_style=TextStyle(text_color=ColorBoxes.WHITE)
         )
-        self.length.setFixedWidth(64)
-        self.length.setAlignment(Qt.AlignCenter)
+        self.label_length.setFixedWidth(64)
+        self.label_length.setAlignment(Qt.AlignCenter)
 
         self.btn_more = IconButton.build(
             size=Icons.LARGE,
@@ -173,9 +178,9 @@ class SongTableRow(QWidget):
         self.main_layout.addWidget(self.extra_buttons)
 
         self.info.addWidget(self.cover)
-        self.info.addWidget(self.title, 1)
-        self.info.addWidget(self.artist, 1)
-        self.info.addWidget(self.length)
+        self.info.addWidget(self.label_title, 1)
+        self.info.addWidget(self.label_artist, 1)
+        self.info.addWidget(self.label_length)
 
         self.buttons_layout.addWidget(self.btn_more)
         self.buttons_layout.addWidget(self.btn_love)
@@ -188,11 +193,11 @@ class SongTableRow(QWidget):
         self.show_less()
 
     def apply_light_mode(self) -> None:
-        style = BackgroundThemeBuilder.build("QWidget", 16, Backgrounds.CIRCLE_HIDDEN_GRAY_10.with_border_radius(1))
-        self.background.setStyleSheet(style)
-        self.title.apply_light_mode()
-        self.artist.apply_light_mode()
-        self.length.apply_light_mode()
+        # style = BackgroundThemeBuilder.build("QWidget", 16, Backgrounds.CIRCLE_HIDDEN_GRAY_10.with_border_radius(1))
+        # self.background.setStyleSheet(style)
+        self.label_title.apply_light_mode()
+        self.label_artist.apply_light_mode()
+        self.label_length.apply_light_mode()
         self.btn_more.apply_light_mode()
         self.btn_love.apply_light_mode()
         self.btn_play.apply_light_mode()
@@ -202,11 +207,11 @@ class SongTableRow(QWidget):
         self.btn_close.apply_light_mode()
 
     def apply_dark_mode(self) -> None:
-        style = BackgroundThemeBuilder.build("QWidget", 16, Backgrounds.CIRCLE_HIDDEN_GRAY_10.with_border_radius(1))
-        self.background.setStyleSheet(style)
-        self.title.apply_dark_mode()
-        self.artist.apply_dark_mode()
-        self.length.apply_dark_mode()
+        # style = BackgroundThemeBuilder.build("QWidget", 16, Backgrounds.CIRCLE_HIDDEN_GRAY_10.with_border_radius(1))
+        # self.background.setStyleSheet(style)
+        self.label_title.apply_dark_mode()
+        self.label_artist.apply_dark_mode()
+        self.label_length.apply_dark_mode()
         self.btn_more.apply_dark_mode()
         self.btn_love.apply_dark_mode()
         self.btn_play.apply_dark_mode()
@@ -218,6 +223,17 @@ class SongTableRow(QWidget):
     def resizeEvent(self, a0: QResizeEvent) -> None:
         self.background.resize(self.size())
         return super().resizeEvent(a0)
+
+    def eventFilter(self, source, event):
+        if source in self.children and event.type() in [QEvent.HoverEnter, QEvent.HoverLeave, QEvent.HoverMove]:
+            style = BackgroundThemeBuilder.build("QWidget", 16, Backgrounds.CIRCLE_GRAY_10.with_border_radius(1))
+            self.background.setStyleSheet(style)
+        return super().eventFilter(source, event)
+
+    def leaveEvent(self, event: QEvent) -> None:
+        super(SongTableRow, self).enterEvent(event)
+        style = BackgroundThemeBuilder.build("QWidget", 16, Backgrounds.TRANSPARENT)
+        self.background.setStyleSheet(style)
 
     def show_more(self) -> None:
         self.buttons.hide()
@@ -233,13 +249,13 @@ class SongTableRow(QWidget):
         self.cover.setPixmap(self.__get_cover_from_bytes(cover))
 
     def set_title(self, title: str = "Song Title") -> None:
-        self.title.setText(title)
+        self.label_title.setText(title)
 
     def set_artist(self, artist: str) -> None:
-        self.artist.setText(artist or self.default_artist)
+        self.label_artist.setText(artist or self.default_artist)
 
     def set_length(self, length: float = 0) -> None:
-        self.length.setText(Strings.float_to_clock_time(length))
+        self.label_length.setText(Strings.float_to_clock_time(length))
 
     def set_love_state(self, state: bool) -> None:
         self.btn_love.setChecked(state)

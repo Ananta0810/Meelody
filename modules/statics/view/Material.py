@@ -128,6 +128,7 @@ class ColorBoxes:
     HOVERABLE_GRAY_75 = ColorBox(normal=Colors.GRAY.with_opacity(75), active=Colors.GRAY)
     HOVERABLE_GRAY_50 = ColorBox(normal=Colors.GRAY.with_opacity(50), active=Colors.GRAY.with_opacity(75))
     HOVERABLE_GRAY_25 = ColorBox(normal=Colors.GRAY.with_opacity(25), active=Colors.GRAY.with_opacity(50))
+    HOVERABLE_GRAY_10 = ColorBox(normal=Colors.GRAY.with_opacity(10), active=Colors.GRAY.with_opacity(10))
     HOVERABLE_GRAY_HIDDEN = ColorBox(normal=Colors.TRANSPARENT, active=Colors.GRAY)
     HOVERABLE_GRAY_HIDDEN_75 = ColorBox(normal=Colors.TRANSPARENT, active=Colors.GRAY.with_opacity(75))
     HOVERABLE_GRAY_HIDDEN_50 = ColorBox(normal=Colors.TRANSPARENT, active=Colors.GRAY.with_opacity(50))
@@ -249,6 +250,7 @@ class Backgrounds:
     CIRCLE_GRAY_75 = Background(border_radius=0.5, color=ColorBoxes.HOVERABLE_GRAY_75)
     CIRCLE_GRAY_50 = Background(border_radius=0.5, color=ColorBoxes.HOVERABLE_GRAY_50)
     CIRCLE_GRAY_25 = Background(border_radius=0.5, color=ColorBoxes.HOVERABLE_GRAY_25)
+    CIRCLE_GRAY_10 = Background(border_radius=0.5, color=ColorBoxes.HOVERABLE_GRAY_10)
 
     CIRCLE_HIDDEN_GRAY = Background(border_radius=0.5, color=ColorBoxes.HOVERABLE_GRAY_HIDDEN)
     CIRCLE_HIDDEN_GRAY_75 = Background(border_radius=0.5, color=ColorBoxes.HOVERABLE_GRAY_HIDDEN_75)
