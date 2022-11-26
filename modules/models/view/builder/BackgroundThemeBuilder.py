@@ -22,7 +22,7 @@ class BackgroundThemeBuilder:
         return Strings.unindent(
             f"""
             {element} {{{normal_content}}}
-            {element}:hover {{{hover_content}}}"""
+            {element}:hover, {element}[hovered=true] {{{hover_content}}}"""
         )
 
     @staticmethod

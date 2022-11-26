@@ -11,13 +11,14 @@ from modules.models.view.builder.FontBuilder import FontBuilder
 from modules.models.view.builder.IconButtonStyle import IconButtonStyle
 from modules.models.view.builder.TextStyle import TextStyle
 from modules.statics.view.Material import Icons, Paddings, Colors, Backgrounds, ColorBoxes
+from modules.widgets.BackgroundWidget import BackgroundWidget
 from modules.widgets.IconButton import IconButton
 from modules.widgets.ImageViewer import ImageViewer
 from modules.widgets.LabelWithDefaultText import LabelWithDefaultText
 from modules.widgets.ToggleIconButton import ToggleIconButton
 
 
-class SongTableRow(QWidget):
+class SongTableRow(BackgroundWidget):
     background: QWidget
     main_layout: QHBoxLayout
     info: QHBoxLayout
@@ -40,17 +41,10 @@ class SongTableRow(QWidget):
     def __init__(self, parent: Optional["QWidget"] = None):
         super(SongTableRow, self).__init__(parent)
         self.default_artist = ""
-        self.setup_ui()
-        self.label_title.installEventFilter(self)
-        self.children = self.findChildren(QWidget)
-        for child in self.children:
-            child.installEventFilter(self)
-            child.setAttribute(Qt.WA_Hover)
+        self.__init_ui()
 
-    def setup_ui(self) -> None:
+    def __init_ui(self) -> None:
         font = FontBuilder.build(size=10)
-
-        self.background = QWidget(self)
 
         self.setAttribute(Qt.WA_StyledBackground, True)
         self.main_layout = QHBoxLayout()
@@ -193,8 +187,8 @@ class SongTableRow(QWidget):
         self.show_less()
 
     def apply_light_mode(self) -> None:
-        # style = BackgroundThemeBuilder.build("QWidget", 16, Backgrounds.CIRCLE_HIDDEN_GRAY_10.with_border_radius(1))
-        # self.background.setStyleSheet(style)
+        style = BackgroundThemeBuilder.build("QWidget", 16, Backgrounds.CIRCLE_HIDDEN_GRAY_10.with_border_radius(1))
+        self.setStyleSheet(style)
         self.label_title.apply_light_mode()
         self.label_artist.apply_light_mode()
         self.label_length.apply_light_mode()
@@ -207,8 +201,8 @@ class SongTableRow(QWidget):
         self.btn_close.apply_light_mode()
 
     def apply_dark_mode(self) -> None:
-        # style = BackgroundThemeBuilder.build("QWidget", 16, Backgrounds.CIRCLE_HIDDEN_GRAY_10.with_border_radius(1))
-        # self.background.setStyleSheet(style)
+        style = BackgroundThemeBuilder.build("QWidget", 16, Backgrounds.CIRCLE_HIDDEN_GRAY_10.with_border_radius(1))
+        self.setStyleSheet(style)
         self.label_title.apply_dark_mode()
         self.label_artist.apply_dark_mode()
         self.label_length.apply_dark_mode()
@@ -219,21 +213,6 @@ class SongTableRow(QWidget):
         self.btn_add_to_playlist.apply_dark_mode()
         self.btn_delete.apply_dark_mode()
         self.btn_close.apply_dark_mode()
-
-    def resizeEvent(self, a0: QResizeEvent) -> None:
-        self.background.resize(self.size())
-        return super().resizeEvent(a0)
-
-    def eventFilter(self, source, event):
-        if source in self.children and event.type() in [QEvent.HoverEnter, QEvent.HoverLeave, QEvent.HoverMove]:
-            style = BackgroundThemeBuilder.build("QWidget", 16, Backgrounds.CIRCLE_GRAY_10.with_border_radius(1))
-            self.background.setStyleSheet(style)
-        return super().eventFilter(source, event)
-
-    def leaveEvent(self, event: QEvent) -> None:
-        super(SongTableRow, self).enterEvent(event)
-        style = BackgroundThemeBuilder.build("QWidget", 16, Backgrounds.TRANSPARENT)
-        self.background.setStyleSheet(style)
 
     def show_more(self) -> None:
         self.buttons.hide()
