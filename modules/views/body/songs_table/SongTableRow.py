@@ -90,11 +90,11 @@ class SongTableRow(BackgroundWidget, ViewComponent):
             padding=Paddings.RELATIVE_50,
             active_btn=IconButtonStyle(
                 light_mode_icon=Icons.LOVE.with_color(Colors.PRIMARY),
-                light_mode_background=Backgrounds.CIRCLE_HIDDEN_PRIMARY_25,
+                light_mode_background=Backgrounds.CIRCLE_HIDDEN_PRIMARY_10,
             ),
             inactive_btn=IconButtonStyle(
                 light_mode_icon=Icons.LOVE.with_color(Colors.DANGER),
-                light_mode_background=Backgrounds.CIRCLE_HIDDEN_DANGER_25,
+                light_mode_background=Backgrounds.CIRCLE_HIDDEN_DANGER_10,
             )
         )
 
@@ -217,7 +217,7 @@ class SongTableRow(BackgroundWidget, ViewComponent):
             padding=padding,
             style=IconButtonStyle(
                 light_mode_icon=with_icon.with_color(Colors.PRIMARY),
-                light_mode_background=Backgrounds.CIRCLE_HIDDEN_PRIMARY_25,
+                light_mode_background=Backgrounds.CIRCLE_HIDDEN_PRIMARY_10,
             ),
         )
 

@@ -37,7 +37,7 @@ class MusicPlayerRightSide(QHBoxLayout, ViewComponent):
         self.__btn_love = self.__build_option_btn_with_icon(
             icon=Icons.LOVE,
             active_icon_color=Colors.DANGER,
-            active_background=Backgrounds.CIRCLE_HIDDEN_DANGER_25,
+            active_background=Backgrounds.CIRCLE_HIDDEN_DANGER_10,
         )
 
         self.__btn_volume = StatelessIconButton.build(
@@ -46,15 +46,15 @@ class MusicPlayerRightSide(QHBoxLayout, ViewComponent):
             children=[
                 IconButtonStyle(
                     light_mode_icon=Icons.VOLUME_UP.with_color(Colors.PRIMARY),
-                    light_mode_background=Backgrounds.CIRCLE_HIDDEN_PRIMARY_25,
+                    light_mode_background=Backgrounds.CIRCLE_HIDDEN_PRIMARY_10,
                 ),
                 IconButtonStyle(
                     light_mode_icon=Icons.VOLUME_DOWN.with_color(Colors.PRIMARY),
-                    light_mode_background=Backgrounds.CIRCLE_HIDDEN_PRIMARY_25,
+                    light_mode_background=Backgrounds.CIRCLE_HIDDEN_PRIMARY_10,
                 ),
                 IconButtonStyle(
                     light_mode_icon=Icons.VOLUME_SILENT.with_color(Colors.PRIMARY),
-                    light_mode_background=Backgrounds.CIRCLE_HIDDEN_PRIMARY_25,
+                    light_mode_background=Backgrounds.CIRCLE_HIDDEN_PRIMARY_10,
                 ),
             ],
         )
@@ -69,7 +69,7 @@ class MusicPlayerRightSide(QHBoxLayout, ViewComponent):
             light_mode_style=SliderStyle(
                 handler_color=ColorBoxes.PRIMARY,
                 track_active_color=ColorBoxes.PRIMARY,
-                background=Backgrounds.ROUNDED_PRIMARY_25,
+                background=Backgrounds.ROUNDED_PRIMARY_10,
             ),
             dark_mode_style=SliderStyle(
                 handler_color=ColorBoxes.PRIMARY,
@@ -86,7 +86,7 @@ class MusicPlayerRightSide(QHBoxLayout, ViewComponent):
             size=Icons.LARGE,
             style=IconButtonStyle(
                 light_mode_icon=Icons.TIMER.with_color(Colors.PRIMARY),
-                light_mode_background=Backgrounds.CIRCLE_HIDDEN_PRIMARY_25
+                light_mode_background=Backgrounds.CIRCLE_HIDDEN_PRIMARY_10
             )
         )
         self.__btn_volume.clicked.connect(
@@ -137,7 +137,7 @@ class MusicPlayerRightSide(QHBoxLayout, ViewComponent):
         inactive_icon_color: Color = Colors.GRAY,
         inactive_background: Background = Backgrounds.CIRCLE_HIDDEN_GRAY_25,
         active_icon_color: Color = Colors.PRIMARY,
-        active_background: Background = Backgrounds.CIRCLE_HIDDEN_PRIMARY_25
+        active_background: Background = Backgrounds.CIRCLE_HIDDEN_PRIMARY_10
     ) -> ToggleIconButton:
         return ToggleIconButton.build(
             size=Icons.LARGE,

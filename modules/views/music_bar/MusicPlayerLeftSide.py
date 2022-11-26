@@ -73,7 +73,7 @@ class MusicPlayerLeftSide(QHBoxLayout, ViewComponent):
             size=Icons.LARGE,
             style=IconButtonStyle(
                 light_mode_icon=Icons.PREVIOUS.with_color(Colors.PRIMARY),
-                light_mode_background=Backgrounds.CIRCLE_HIDDEN_PRIMARY_25,
+                light_mode_background=Backgrounds.CIRCLE_HIDDEN_PRIMARY_10,
             )
         )
         self.__play_buttons.addWidget(self.__btn_prev_song)
@@ -85,13 +85,13 @@ class MusicPlayerLeftSide(QHBoxLayout, ViewComponent):
                 IconButtonStyle(
                     light_mode_icon=Icons.PLAY.with_color(Colors.PRIMARY),
                     dark_mode_icon=Icons.PLAY.with_color(Colors.WHITE),
-                    light_mode_background=Backgrounds.CIRCLE_PRIMARY_25,
+                    light_mode_background=Backgrounds.CIRCLE_PRIMARY_10,
                     dark_mode_background=Backgrounds.CIRCLE_PRIMARY,
                 ),
                 IconButtonStyle(
                     light_mode_icon=Icons.PAUSE.with_color(Colors.PRIMARY),
                     dark_mode_icon=Icons.PAUSE.with_color(Colors.WHITE),
-                    light_mode_background=Backgrounds.CIRCLE_PRIMARY_25,
+                    light_mode_background=Backgrounds.CIRCLE_PRIMARY_10,
                     dark_mode_background=Backgrounds.CIRCLE_PRIMARY,
                 ),
             ],
@@ -104,7 +104,7 @@ class MusicPlayerLeftSide(QHBoxLayout, ViewComponent):
             size=Icons.LARGE,
             style=IconButtonStyle(
                 light_mode_icon=Icons.NEXT.with_color(Colors.PRIMARY),
-                light_mode_background=Backgrounds.CIRCLE_HIDDEN_PRIMARY_25,
+                light_mode_background=Backgrounds.CIRCLE_HIDDEN_PRIMARY_10,
             )
         )
         self.__play_buttons.addWidget(self.__btn_next_song)

@@ -52,11 +52,12 @@ class ColorBoxes:
     HOVERABLE_PRIMARY_75 = ColorBox(normal=Colors.PRIMARY.with_opacity(75), active=Colors.PRIMARY)
     HOVERABLE_PRIMARY_50 = ColorBox(normal=Colors.PRIMARY.with_opacity(50), active=Colors.PRIMARY.with_opacity(75))
     HOVERABLE_PRIMARY_25 = ColorBox(normal=Colors.PRIMARY.with_opacity(25), active=Colors.PRIMARY.with_opacity(50))
-    HOVERABLE_PRIMARY_10 = ColorBox(normal=Colors.PRIMARY.with_opacity(10), active=Colors.PRIMARY.with_opacity(25))
+    HOVERABLE_PRIMARY_10 = ColorBox(normal=Colors.PRIMARY.with_opacity(12), active=Colors.PRIMARY.with_opacity(25))
     HOVERABLE_PRIMARY_HIDDEN = ColorBox(normal=Colors.TRANSPARENT, active=Colors.PRIMARY)
     HOVERABLE_PRIMARY_HIDDEN_75 = ColorBox(normal=Colors.TRANSPARENT, active=Colors.PRIMARY.with_opacity(75))
     HOVERABLE_PRIMARY_HIDDEN_50 = ColorBox(normal=Colors.TRANSPARENT, active=Colors.PRIMARY.with_opacity(50))
     HOVERABLE_PRIMARY_HIDDEN_25 = ColorBox(normal=Colors.TRANSPARENT, active=Colors.PRIMARY.with_opacity(25))
+    HOVERABLE_PRIMARY_HIDDEN_10 = ColorBox(normal=Colors.TRANSPARENT, active=Colors.PRIMARY.with_opacity(12))
 
     # =========================// Warning //=========================
     WARNING = ColorBox(Colors.WARNING)
@@ -87,6 +88,7 @@ class ColorBoxes:
     HOVERABLE_DANGER_HIDDEN_75 = ColorBox(normal=Colors.TRANSPARENT, active=Colors.DANGER.with_opacity(75))
     HOVERABLE_DANGER_HIDDEN_50 = ColorBox(normal=Colors.TRANSPARENT, active=Colors.DANGER.with_opacity(50))
     HOVERABLE_DANGER_HIDDEN_25 = ColorBox(normal=Colors.TRANSPARENT, active=Colors.DANGER.with_opacity(25))
+    HOVERABLE_DANGER_HIDDEN_10 = ColorBox(normal=Colors.TRANSPARENT, active=Colors.DANGER.with_opacity(12))
 
     # =========================// Black //=========================
     BLACK = ColorBox(Colors.BLACK)
@@ -128,12 +130,12 @@ class ColorBoxes:
     HOVERABLE_GRAY_75 = ColorBox(normal=Colors.GRAY.with_opacity(75), active=Colors.GRAY)
     HOVERABLE_GRAY_50 = ColorBox(normal=Colors.GRAY.with_opacity(50), active=Colors.GRAY.with_opacity(75))
     HOVERABLE_GRAY_25 = ColorBox(normal=Colors.GRAY.with_opacity(25), active=Colors.GRAY.with_opacity(50))
-    HOVERABLE_GRAY_10 = ColorBox(normal=Colors.GRAY.with_opacity(10), active=Colors.GRAY.with_opacity(10))
+    HOVERABLE_GRAY_10 = ColorBox(normal=Colors.GRAY.with_opacity(10), active=Colors.GRAY.with_opacity(12))
     HOVERABLE_GRAY_HIDDEN = ColorBox(normal=Colors.TRANSPARENT, active=Colors.GRAY)
     HOVERABLE_GRAY_HIDDEN_75 = ColorBox(normal=Colors.TRANSPARENT, active=Colors.GRAY.with_opacity(75))
     HOVERABLE_GRAY_HIDDEN_50 = ColorBox(normal=Colors.TRANSPARENT, active=Colors.GRAY.with_opacity(50))
     HOVERABLE_GRAY_HIDDEN_25 = ColorBox(normal=Colors.TRANSPARENT, active=Colors.GRAY.with_opacity(25))
-    HOVERABLE_GRAY_HIDDEN_10 = ColorBox(normal=Colors.TRANSPARENT, active=Colors.GRAY.with_opacity(10))
+    HOVERABLE_GRAY_HIDDEN_10 = ColorBox(normal=Colors.TRANSPARENT, active=Colors.GRAY.with_opacity(12))
 
 
 class Backgrounds:
@@ -150,16 +152,19 @@ class Backgrounds:
     CIRCLE_HIDDEN_PRIMARY_75 = Background(border_radius=0.5, color=ColorBoxes.HOVERABLE_PRIMARY_HIDDEN_75)
     CIRCLE_HIDDEN_PRIMARY_50 = Background(border_radius=0.5, color=ColorBoxes.HOVERABLE_PRIMARY_HIDDEN_50)
     CIRCLE_HIDDEN_PRIMARY_25 = Background(border_radius=0.5, color=ColorBoxes.HOVERABLE_PRIMARY_HIDDEN_25)
+    CIRCLE_HIDDEN_PRIMARY_10 = Background(border_radius=0.5, color=ColorBoxes.HOVERABLE_PRIMARY_HIDDEN_10)
 
     ROUNDED_PRIMARY = Background(border_radius=12, color=ColorBoxes.HOVERABLE_PRIMARY)
     ROUNDED_PRIMARY_75 = Background(border_radius=12, color=ColorBoxes.HOVERABLE_PRIMARY_75)
     ROUNDED_PRIMARY_50 = Background(border_radius=12, color=ColorBoxes.HOVERABLE_PRIMARY_50)
     ROUNDED_PRIMARY_25 = Background(border_radius=12, color=ColorBoxes.HOVERABLE_PRIMARY_25)
+    ROUNDED_PRIMARY_10 = Background(border_radius=12, color=ColorBoxes.HOVERABLE_PRIMARY_10)
 
     ROUNDED_HIDDEN_PRIMARY = Background(border_radius=12, color=ColorBoxes.HOVERABLE_PRIMARY_HIDDEN)
     ROUNDED_HIDDEN_PRIMARY_75 = Background(border_radius=12, color=ColorBoxes.HOVERABLE_PRIMARY_HIDDEN_75)
     ROUNDED_HIDDEN_PRIMARY_50 = Background(border_radius=12, color=ColorBoxes.HOVERABLE_PRIMARY_HIDDEN_50)
     ROUNDED_HIDDEN_PRIMARY_25 = Background(border_radius=12, color=ColorBoxes.HOVERABLE_PRIMARY_HIDDEN_25)
+    ROUNDED_HIDDEN_PRIMARY_10 = Background(border_radius=12, color=ColorBoxes.HOVERABLE_PRIMARY_HIDDEN_10)
 
     # ========================= //Warning// =========================
     CIRCLE_WARNING = Background(border_radius=0.5, color=ColorBoxes.HOVERABLE_WARNING)
@@ -192,6 +197,7 @@ class Backgrounds:
     CIRCLE_HIDDEN_DANGER_75 = Background(border_radius=0.5, color=ColorBoxes.HOVERABLE_DANGER_HIDDEN_75)
     CIRCLE_HIDDEN_DANGER_50 = Background(border_radius=0.5, color=ColorBoxes.HOVERABLE_DANGER_HIDDEN_50)
     CIRCLE_HIDDEN_DANGER_25 = Background(border_radius=0.5, color=ColorBoxes.HOVERABLE_DANGER_HIDDEN_25)
+    CIRCLE_HIDDEN_DANGER_10 = Background(border_radius=0.5, color=ColorBoxes.HOVERABLE_DANGER_HIDDEN_10)
 
     ROUNDED_HIDDEN_DANGER = Background(border_radius=12, color=ColorBoxes.HOVERABLE_DANGER_HIDDEN)
     ROUNDED_HIDDEN_DANGER_75 = Background(border_radius=12, color=ColorBoxes.HOVERABLE_DANGER_HIDDEN_75)
