@@ -5,18 +5,18 @@ from PyQt5.QtWidgets import QWidget, QVBoxLayout
 
 from modules.helpers.types.Decorators import override
 from modules.views.ViewComponent import ViewComponent
-from modules.views.body.songs_table.SongTableBody import SongTableBody
-from modules.views.body.songs_table.SongTableHeader import SongTableHeader
+from modules.views.body.songs_table.SongTableBodyView import SongTableBodyView
+from modules.views.body.songs_table.SongTableHeaderView import SongTableHeaderView
 
 
-class SongTable(QWidget, ViewComponent):
+class SongTableView(QWidget, ViewComponent):
     __main_layout: QVBoxLayout
-    __header: SongTableHeader
-    __body: SongTableBody
+    __header: SongTableHeaderView
+    __body: SongTableBodyView
 
     def __init__(self, parent: Optional["QWidget"] = None) -> None:
         super().__init__(parent)
-        self.setup_ui()
+        self.__init_ui()
         self.__header.setText()
         self.__body.add_new_song()
         self.__body.add_new_song()
@@ -26,16 +26,16 @@ class SongTable(QWidget, ViewComponent):
         self.__body.add_new_song()
         self.__body.add_new_song()
 
-    def setup_ui(self):
+    def __init_ui(self):
         self.setAttribute(Qt.WA_StyledBackground, True)
         self.__main_layout = QVBoxLayout(self)
         self.__main_layout.setSpacing(4)
         self.__main_layout.setContentsMargins(0, 0, 0, 0)
 
-        self.__header = SongTableHeader()
+        self.__header = SongTableHeaderView()
         self.__header.setFixedHeight(48)
 
-        self.__body = SongTableBody()
+        self.__body = SongTableBodyView()
 
         self.__main_layout.addWidget(self.__header)
         self.__main_layout.addWidget(self.__body)

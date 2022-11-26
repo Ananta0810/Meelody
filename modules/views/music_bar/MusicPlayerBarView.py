@@ -6,19 +6,19 @@ from PyQt5.QtWidgets import QHBoxLayout, QWidget
 from modules.helpers.types.Decorators import override
 from modules.statics.view.Material import Images
 from modules.views.ViewComponent import ViewComponent
-from modules.views.music_bar.MusicPlayerLeftSide import MusicPlayerLeftSide
-from modules.views.music_bar.MusicPlayerMiddle import MusicPlayerMiddle
-from modules.views.music_bar.MusicPlayerRightSide import MusicPlayerRightSide
+from modules.views.music_bar.MusicPlayerLeftSideView import MusicPlayerLeftSideView
+from modules.views.music_bar.MusicPlayerMiddleView import MusicPlayerMiddleView
+from modules.views.music_bar.MusicPlayerRightSideView import MusicPlayerRightSideView
 
 
-class MusicPlayerBar(QWidget, ViewComponent):
+class MusicPlayerBarView(QWidget, ViewComponent):
     __main_layout: QHBoxLayout
-    __left: MusicPlayerLeftSide
-    __middle: MusicPlayerMiddle
-    __right: MusicPlayerRightSide
+    __left: MusicPlayerLeftSideView
+    __middle: MusicPlayerMiddleView
+    __right: MusicPlayerRightSideView
 
     def __init__(self, parent: Optional["QWidget"] = None):
-        super(MusicPlayerBar, self).__init__(parent)
+        super(MusicPlayerBarView, self).__init__(parent)
         self._totalTime = 0
         self.__init_ui()
 
@@ -35,16 +35,16 @@ class MusicPlayerBar(QWidget, ViewComponent):
         self.__main_layout.setContentsMargins(20, 0, 20, 0)
         self.__main_layout.setSpacing(0)
 
-        self.__left = MusicPlayerLeftSide()
+        self.__left = MusicPlayerLeftSideView()
         self.__left.setContentsMargins(0, 0, 0, 0)
         self.__left.setSpacing(12)
         self.__left.set_default_cover(Images.DEFAULT_SONG_COVER)
 
-        self.__middle = MusicPlayerMiddle()
+        self.__middle = MusicPlayerMiddleView()
         self.__middle.setContentsMargins(0, 0, 0, 0)
         self.__middle.setSpacing(4)
 
-        self.__right = MusicPlayerRightSide()
+        self.__right = MusicPlayerRightSideView()
         self.__right.setContentsMargins(0, 0, 0, 0)
         self.__right.setSpacing(8)
 

@@ -15,13 +15,13 @@ from modules.widgets.HorizontalSlider import HorizontalSlider
 from modules.widgets.LabelWithDefaultText import LabelWithDefaultText
 
 
-class MusicPlayerMiddle(QHBoxLayout, ViewComponent):
+class MusicPlayerMiddleView(QHBoxLayout, ViewComponent):
     __label_playing_time: LabelWithDefaultText
     __slider_time: HorizontalSlider
     __label_total_time: LabelWithDefaultText
 
     def __init__(self, parent: Optional["QWidget"] = None) -> None:
-        super(MusicPlayerMiddle, self).__init__(parent)
+        super(MusicPlayerMiddleView, self).__init__(parent)
         self._total_time: int = 0
         self.__init_ui()
 

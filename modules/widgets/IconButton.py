@@ -4,7 +4,7 @@ from PyQt5.QtCore import QObject, QSize
 from PyQt5.QtWidgets import QPushButton, QWidget
 
 from modules.helpers.types.Decorators import override
-from modules.models.view.AppIcon import AppIcon
+from modules.widgets.AppIcon import AppIcon
 from modules.models.view.Padding import Padding
 from modules.models.view.builder.BackgroundThemeBuilder import BackgroundThemeBuilder
 from modules.models.view.builder.IconButtonStyle import IconButtonStyle

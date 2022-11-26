@@ -3,7 +3,7 @@ from typing import Optional
 from PyQt5.QtWidgets import QHBoxLayout, QWidget
 
 from modules.helpers.types.Decorators import override
-from modules.models.view.AppIcon import AppIcon
+from modules.widgets.AppIcon import AppIcon
 from modules.models.view.Background import Background
 from modules.models.view.Color import Color
 from modules.models.view.builder.IconButtonStyle import IconButtonStyle
@@ -16,7 +16,7 @@ from modules.widgets.StatelessIconButton import StatelessIconButton
 from modules.widgets.ToggleIconButton import ToggleIconButton
 
 
-class MusicPlayerRightSide(QHBoxLayout, ViewComponent):
+class MusicPlayerRightSideView(QHBoxLayout, ViewComponent):
     __btn_loop: ToggleIconButton
     __btn_shuffle: ToggleIconButton
     __btn_love: ToggleIconButton
@@ -28,7 +28,7 @@ class MusicPlayerRightSide(QHBoxLayout, ViewComponent):
     __btn_timer: IconButton
 
     def __init__(self, parent: Optional["QWidget"] = None):
-        super(MusicPlayerRightSide, self).__init__(parent)
+        super(MusicPlayerRightSideView, self).__init__(parent)
         self.__init_ui()
 
     def __init_ui(self) -> None:

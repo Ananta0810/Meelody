@@ -1,4 +1,4 @@
-from modules.models.view.AppIcon import AppIcon
+from modules.widgets.AppIcon import AppIcon
 from modules.models.view.Background import Background
 from modules.statics.view.Material import Backgrounds
 

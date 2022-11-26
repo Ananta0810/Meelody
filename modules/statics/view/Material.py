@@ -1,8 +1,8 @@
 from PyQt5.QtCore import QSize, Qt
-from PyQt5.QtGui import QCursor, QFont
+from PyQt5.QtGui import QCursor
 
 from modules.helpers.types.Bytes import Bytes
-from modules.models.view.AppIcon import AppIcon
+from modules.widgets.AppIcon import AppIcon
 from modules.models.view.Background import Background
 from modules.models.view.Color import Color
 from modules.models.view.ColorBox import ColorBox

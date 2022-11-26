@@ -17,7 +17,7 @@ from modules.widgets.LabelWithDefaultText import LabelWithDefaultText
 from modules.widgets.StatelessIconButton import StatelessIconButton
 
 
-class MusicPlayerLeftSide(QHBoxLayout, ViewComponent):
+class MusicPlayerLeftSideView(QHBoxLayout, ViewComponent):
     __song_info_layout: QVBoxLayout
     __play_buttons: QHBoxLayout
 
@@ -30,7 +30,7 @@ class MusicPlayerLeftSide(QHBoxLayout, ViewComponent):
     __btn_next_song: IconButton
 
     def __init__(self, parent: Optional["QWidget"] = None):
-        super(MusicPlayerLeftSide, self).__init__(parent)
+        super(MusicPlayerLeftSideView, self).__init__(parent)
         self.__init_ui()
 
     def __init_ui(self) -> None:

@@ -15,7 +15,7 @@ from modules.widgets.DefaultPlaylistCard import DefaultPlaylistCard
 from modules.widgets.IconButton import IconButton
 
 
-class PlaylistCarousel(QScrollArea, ViewComponent):
+class PlaylistCarouselView(QScrollArea, ViewComponent):
     __HOVER_ANIMATION: Animation = Animation(1.0, 1.1, 250)
 
     __inner: QWidget
@@ -28,7 +28,7 @@ class PlaylistCarousel(QScrollArea, ViewComponent):
     __btn_add_playlist: IconButton
 
     def __init__(self, parent: Optional["QWidget"] = None):
-        super(PlaylistCarousel, self).__init__(parent)
+        super(PlaylistCarouselView, self).__init__(parent)
         self.__init_ui()
         self.__playlist_library.set_label_text("Library")
         self.__playlist_favourites.set_label_text("Favourites")
@@ -97,8 +97,8 @@ class PlaylistCarousel(QScrollArea, ViewComponent):
         playlist = DefaultPlaylistCard(FontBuilder.build(size=16, bold=True))
         playlist.setFixedSize(256, 320)
         playlist.setCursor(Cursors.HAND)
-        playlist.set_animation(PlaylistCarousel.__HOVER_ANIMATION)
-        playlist.set_cover(PlaylistCarousel.__get_pixmap_for_playlist_cover(cover_byte))
+        playlist.set_animation(PlaylistCarouselView.__HOVER_ANIMATION)
+        playlist.set_cover(PlaylistCarouselView.__get_pixmap_for_playlist_cover(cover_byte))
         return playlist
 
     @staticmethod

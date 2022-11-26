@@ -7,13 +7,13 @@ from modules.helpers.types.Decorators import override
 from modules.statics.view.Material import Images
 from modules.views.ViewComponent import ViewComponent
 from modules.views.body.PlaylistInfoView import PlaylistInfoView
-from modules.views.body.songs_table.SongTable import SongTable
+from modules.views.body.songs_table.SongTableView import SongTableView
 
 
 class CurrentPlaylistView(QWidget, ViewComponent):
     __main_layout: QHBoxLayout
     __info: PlaylistInfoView
-    __menu: SongTable
+    __menu: SongTableView
 
     def __init__(self, parent: Optional["QWidget"] = None):
         super(CurrentPlaylistView, self).__init__(parent)
@@ -28,7 +28,7 @@ class CurrentPlaylistView(QWidget, ViewComponent):
         self.__info = PlaylistInfoView()
         self.__info.set_default_cover(Images.DEFAULT_PLAYLIST_COVER)
 
-        self.__menu = SongTable()
+        self.__menu = SongTableView()
 
         self.__main_layout.addLayout(self.__info)
         self.__main_layout.addWidget(self.__menu, stretch=2)

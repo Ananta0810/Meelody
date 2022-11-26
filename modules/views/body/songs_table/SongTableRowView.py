@@ -1,13 +1,13 @@
 from typing import Optional, Union
 
-from PyQt5.QtCore import Qt, QEvent
-from PyQt5.QtGui import QPixmap, QResizeEvent, QFont
+from PyQt5.QtCore import Qt
+from PyQt5.QtGui import QPixmap, QFont
 from PyQt5.QtWidgets import QWidget, QHBoxLayout
 
 from modules.helpers.PixmapHelper import PixmapHelper
 from modules.helpers.types.Decorators import override
 from modules.helpers.types.Strings import Strings
-from modules.models.view.AppIcon import AppIcon
+from modules.widgets.AppIcon import AppIcon
 from modules.models.view.builder.BackgroundThemeBuilder import BackgroundThemeBuilder
 from modules.models.view.builder.FontBuilder import FontBuilder
 from modules.models.view.builder.IconButtonStyle import IconButtonStyle
@@ -21,7 +21,7 @@ from modules.widgets.LabelWithDefaultText import LabelWithDefaultText
 from modules.widgets.ToggleIconButton import ToggleIconButton
 
 
-class SongTableRow(BackgroundWidget, ViewComponent):
+class SongTableRowView(BackgroundWidget, ViewComponent):
     __main_layout: QHBoxLayout
     __info: QHBoxLayout
     __buttons: QWidget
@@ -41,7 +41,7 @@ class SongTableRow(BackgroundWidget, ViewComponent):
     __btn_close: IconButton
 
     def __init__(self, parent: Optional["QWidget"] = None):
-        super(SongTableRow, self).__init__(parent)
+        super(SongTableRowView, self).__init__(parent)
         self.default_artist = ""
         self.__init_ui()
 

@@ -2,7 +2,7 @@ from sys import argv, exit
 from time import perf_counter
 from PyQt5.QtWidgets import QApplication
 
-from modules.views.Application import Application
+from modules.controllers.Application import Application
 
 def run_application():
     print("starting...")

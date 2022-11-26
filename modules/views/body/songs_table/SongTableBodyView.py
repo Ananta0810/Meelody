@@ -6,25 +6,25 @@ from PyQt5.QtWidgets import QWidget, QVBoxLayout
 from modules.helpers.types.Decorators import override
 from modules.statics.view.Material import Images, Backgrounds
 from modules.views.ViewComponent import ViewComponent
-from modules.views.body.songs_table.SongTableRow import SongTableRow
+from modules.views.body.songs_table.SongTableRowView import SongTableRowView
 from modules.widgets.SmoothVerticalScrollArea import SmoothVerticalScrollArea
 
 
-class SongTableBody(SmoothVerticalScrollArea, ViewComponent):
+class SongTableBodyView(SmoothVerticalScrollArea, ViewComponent):
     keyPressed = pyqtSignal(QEvent)
 
     __inner: QWidget
     __menu: QVBoxLayout
 
     def __init__(self, parent: Optional["QWidget"] = None):
-        super(SongTableBody, self).__init__(parent)
+        super(SongTableBodyView, self).__init__(parent)
         self.start: int = 0
         self.last: int = 6
-        self._songs: list[SongTableRow] = []
+        self._songs: list[SongTableRowView] = []
         self._current_song_index: list[int] = []
-        self.setup_ui()
+        self.__init_ui()
 
-    def setup_ui(self):
+    def __init_ui(self):
         self.setContentsMargins(0, 0, 0, 0)
         self.setHorizontalScrollBarPolicy(Qt.ScrollBarAlwaysOff)
         self.setWidgetResizable(True)
@@ -76,7 +76,7 @@ class SongTableBody(SmoothVerticalScrollArea, ViewComponent):
     def get_total_songs(self) -> int:
         return self.__menu.count()
 
-    def __get_song_at(self, index: int) -> SongTableRow:
+    def __get_song_at(self, index: int) -> SongTableRowView:
         return self._songs[index]
 
     def add_new_song(self, title: str = "Title", artist: str = "Artist", length: int = 0) -> None:
@@ -89,8 +89,8 @@ class SongTableBody(SmoothVerticalScrollArea, ViewComponent):
         for index in range(start, end):
             self.__menu.itemAt(index).widget().deleteLater()
 
-    def __addSong(self, title: str, artist: str, length: int) -> SongTableRow:
-        song = SongTableRow()
+    def __addSong(self, title: str, artist: str, length: int) -> SongTableRowView:
+        song = SongTableRowView()
         song.set_default_cover(Images.DEFAULT_SONG_COVER)
         song.set_default_artist(artist)
         song.set_artist(artist)

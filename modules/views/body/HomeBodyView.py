@@ -7,13 +7,13 @@ from modules.helpers.types.Decorators import override
 from modules.statics.view.Material import Backgrounds
 from modules.views.ViewComponent import ViewComponent
 from modules.views.body.CurrentPlaylistView import CurrentPlaylistView
-from modules.views.body.PlaylistCarousel import PlaylistCarousel
+from modules.views.body.PlaylistCarouselView import PlaylistCarouselView
 
 
 class HomeBodyView(QScrollArea, ViewComponent):
     __inner: QWidget
     __main_layout: QVBoxLayout
-    __playlist_carousel: PlaylistCarousel
+    __playlist_carousel: PlaylistCarouselView
     __current_playlist: CurrentPlaylistView
 
     def __init__(self, parent: Optional["QWidget"] = None):
@@ -29,7 +29,7 @@ class HomeBodyView(QScrollArea, ViewComponent):
         self.__main_layout.setContentsMargins(0, 0, 0, 0)
         self.__main_layout.setSpacing(50)
 
-        self.__playlist_carousel = PlaylistCarousel()
+        self.__playlist_carousel = PlaylistCarouselView()
         self.__playlist_carousel.setFixedHeight(360)
         self.__playlist_carousel.setStyleSheet(Backgrounds.TRANSPARENT.to_stylesheet())
 

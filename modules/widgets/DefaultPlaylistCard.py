@@ -17,7 +17,7 @@ class DefaultPlaylistCard(QWidget):
     __label: LabelWithDefaultText
     __cover: ImageViewer
 
-    def __init__(self, font: QFont, parent: Optional["QWidget"] = None) -> Self:
+    def __init__(self, font: QFont, parent: Optional["QWidget"] = None):
         super().__init__(parent)
         self.clicked: pyqtSignal = pyqtSignal()
         self.__init_component_ui(font)

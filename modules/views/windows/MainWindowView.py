@@ -8,13 +8,13 @@ from modules.models.view.Background import Background
 from modules.statics.view.Material import ColorBoxes
 from modules.views.ViewComponent import ViewComponent
 from modules.views.body.HomeBodyView import HomeBodyView
-from modules.views.music_bar.MusicPlayerBar import MusicPlayerBar
-from modules.widgets.windows.FramelessWindow import FramelessWindow
+from modules.views.music_bar.MusicPlayerBarView import MusicPlayerBarView
+from modules.widgets.FramelessWindow import FramelessWindow
 
 
 class MainWindowView(FramelessWindow, ViewComponent):
     __body: HomeBodyView
-    __music_player: MusicPlayerBar
+    __music_player: MusicPlayerBarView
 
     def __init__(self, parent: Optional["QWidget"] = None, width: int = 1280, height: int = 720):
         super(MainWindowView, self).__init__(parent)
@@ -29,7 +29,7 @@ class MainWindowView(FramelessWindow, ViewComponent):
         self.__body.setWidgetResizable(True)
         self.__body.setContentsMargins(72, 0, 50, 0)
 
-        self.__music_player = MusicPlayerBar()
+        self.__music_player = MusicPlayerBarView()
         self.__music_player.setFixedHeight(96)
         self.__music_player.setObjectName("musicPlayer")
 

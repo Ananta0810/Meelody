@@ -5,7 +5,7 @@ from PyQt5.QtGui import QFont
 from PyQt5.QtWidgets import QWidget, QHBoxLayout
 
 from modules.helpers.types.Decorators import override
-from modules.models.view.AppIcon import AppIcon
+from modules.widgets.AppIcon import AppIcon
 from modules.models.view.Padding import Padding
 from modules.models.view.builder.FontBuilder import FontBuilder
 from modules.models.view.builder.IconButtonStyle import IconButtonStyle
@@ -16,7 +16,7 @@ from modules.widgets.IconButton import IconButton
 from modules.widgets.LabelWithDefaultText import LabelWithDefaultText
 
 
-class SongTableHeader(QWidget, ViewComponent):
+class SongTableHeaderView(QWidget, ViewComponent):
     __main_layout: QHBoxLayout
     __info: QHBoxLayout
 
@@ -30,7 +30,7 @@ class SongTableHeader(QWidget, ViewComponent):
     __btn_add_songs: IconButton
 
     def __init__(self, parent: Optional["QWidget"] = None):
-        super(SongTableHeader, self).__init__(parent)
+        super(SongTableHeaderView, self).__init__(parent)
         self.__init_ui()
 
     def __init_ui(self) -> None:
