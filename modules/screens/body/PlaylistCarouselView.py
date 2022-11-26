@@ -10,12 +10,12 @@ from modules.models.view.Animation import Animation
 from modules.models.view.builder.FontBuilder import FontBuilder
 from modules.models.view.builder.IconButtonStyle import IconButtonStyle
 from modules.statics.view.Material import Icons, Colors, Cursors, Paddings, Backgrounds, Images
-from modules.views.ViewComponent import ViewComponent
+from modules.screens.AbstractScreen import BaseView
 from modules.widgets.DefaultPlaylistCard import DefaultPlaylistCard
 from modules.widgets.IconButton import IconButton
 
 
-class PlaylistCarouselView(QScrollArea, ViewComponent):
+class PlaylistCarouselView(QScrollArea, BaseView):
     __HOVER_ANIMATION: Animation = Animation(1.0, 1.1, 250)
 
     __inner: QWidget

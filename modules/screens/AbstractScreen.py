@@ -7,7 +7,7 @@ class MixinMeta(type(QObject), ABCMeta):
     pass
 
 
-class ViewComponent(metaclass=MixinMeta):
+class BaseView(metaclass=MixinMeta):
 
     @abstractmethod
     def apply_dark_mode(self) -> None:
@@ -15,4 +15,11 @@ class ViewComponent(metaclass=MixinMeta):
 
     @abstractmethod
     def apply_light_mode(self) -> None:
+        pass
+
+
+class BaseControl:
+
+    @abstractmethod
+    def connect_to_view(self) -> None:
         pass

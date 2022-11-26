@@ -6,10 +6,10 @@ from PyQt5.QtWidgets import QLabel, QWidget
 from modules.helpers.types.Decorators import override
 from modules.models.view.builder.BackgroundThemeBuilder import BackgroundThemeBuilder
 from modules.models.view.builder.TextStyle import TextStyle
-from modules.views.ViewComponent import ViewComponent
+from modules.screens.AbstractScreen import BaseView
 
 
-class LabelWithDefaultText(QLabel, ViewComponent):
+class LabelWithDefaultText(QLabel, BaseView):
     __default_text: str
     __light_mode_style: str
     __dark_mode_style: str

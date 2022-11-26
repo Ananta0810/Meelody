@@ -5,12 +5,12 @@ from PyQt5.QtWidgets import QWidget, QVBoxLayout
 
 from modules.helpers.types.Decorators import override
 from modules.statics.view.Material import Images, Backgrounds
-from modules.views.ViewComponent import ViewComponent
-from modules.views.body.songs_table.SongTableRowView import SongTableRowView
+from modules.screens.AbstractScreen import BaseView
+from modules.screens.body.songs_table.SongTableRowView import SongTableRowView
 from modules.widgets.SmoothVerticalScrollArea import SmoothVerticalScrollArea
 
 
-class SongTableBodyView(SmoothVerticalScrollArea, ViewComponent):
+class SongTableBodyView(SmoothVerticalScrollArea, BaseView):
     keyPressed = pyqtSignal(QEvent)
 
     __inner: QWidget

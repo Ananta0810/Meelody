@@ -11,12 +11,12 @@ from modules.models.view.builder.FontBuilder import FontBuilder
 from modules.models.view.builder.IconButtonStyle import IconButtonStyle
 from modules.models.view.builder.TextStyle import TextStyle
 from modules.statics.view.Material import ColorBoxes, Icons, Paddings, Colors, Backgrounds
-from modules.views.ViewComponent import ViewComponent
+from modules.screens.AbstractScreen import BaseView
 from modules.widgets.IconButton import IconButton
 from modules.widgets.LabelWithDefaultText import LabelWithDefaultText
 
 
-class SongTableHeaderView(QWidget, ViewComponent):
+class SongTableHeaderView(QWidget, BaseView):
     __main_layout: QHBoxLayout
     __info: QHBoxLayout
 

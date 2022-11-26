@@ -6,13 +6,13 @@ from PyQt5.QtWidgets import QWidget
 from modules.helpers.types.Decorators import override
 from modules.models.view.Background import Background
 from modules.statics.view.Material import ColorBoxes
-from modules.views.ViewComponent import ViewComponent
-from modules.views.body.HomeBodyView import HomeBodyView
-from modules.views.music_bar.MusicPlayerBarView import MusicPlayerBarView
+from modules.screens.AbstractScreen import BaseView
+from modules.screens.body.HomeBodyView import HomeBodyView
+from modules.screens.music_bar.MusicPlayerBarView import MusicPlayerBarView
 from modules.widgets.FramelessWindow import FramelessWindow
 
 
-class MainWindowView(FramelessWindow, ViewComponent):
+class MainWindowView(FramelessWindow, BaseView):
     __body: HomeBodyView
     __music_player: MusicPlayerBarView
 

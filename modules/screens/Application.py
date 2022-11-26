@@ -1,5 +1,5 @@
+from modules.screens.windows.MainWindowView import MainWindowView
 from modules.statics.view import Material
-from modules.views.windows.MainWindowView import MainWindowView
 
 
 class Application:

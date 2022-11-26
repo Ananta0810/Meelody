@@ -9,7 +9,7 @@ from modules.models.view.Padding import Padding
 from modules.models.view.builder.BackgroundThemeBuilder import BackgroundThemeBuilder
 from modules.models.view.builder.IconButtonStyle import IconButtonStyle
 from modules.statics.view.Material import Cursors, Paddings
-from modules.views.ViewComponent import ViewComponent
+from modules.screens.AbstractScreen import BaseView
 
 
 class StatelessIconButtonThemeData:
@@ -41,7 +41,7 @@ class StatelessIconButtonThemeData:
         )
 
 
-class StatelessIconButton(QPushButton, ViewComponent):
+class StatelessIconButton(QPushButton, BaseView):
     _children: list[StatelessIconButtonThemeData] = []
     _current_index: int = 0
     __change_state_on_pressed: bool = True

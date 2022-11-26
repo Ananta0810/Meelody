@@ -9,10 +9,10 @@ from modules.models.view.Padding import Padding
 from modules.models.view.builder.BackgroundThemeBuilder import BackgroundThemeBuilder
 from modules.models.view.builder.IconButtonStyle import IconButtonStyle
 from modules.statics.view.Material import Cursors
-from modules.views.ViewComponent import ViewComponent
+from modules.screens.AbstractScreen import BaseView
 
 
-class IconButton(QPushButton, ViewComponent):
+class IconButton(QPushButton, BaseView):
     __is_dark_mode: bool = False
     __light_mode_icon: AppIcon
     __dark_mode_icon: AppIcon

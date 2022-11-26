@@ -10,12 +10,12 @@ from modules.models.view.builder.FontBuilder import FontBuilder
 from modules.models.view.builder.SliderStyle import SliderStyle
 from modules.models.view.builder.TextStyle import TextStyle
 from modules.statics.view.Material import ColorBoxes
-from modules.views.ViewComponent import ViewComponent
+from modules.screens.AbstractScreen import BaseView
 from modules.widgets.HorizontalSlider import HorizontalSlider
 from modules.widgets.LabelWithDefaultText import LabelWithDefaultText
 
 
-class MusicPlayerMiddleView(QHBoxLayout, ViewComponent):
+class MusicPlayerMiddleView(QHBoxLayout, BaseView):
     __label_playing_time: LabelWithDefaultText
     __slider_time: HorizontalSlider
     __label_total_time: LabelWithDefaultText

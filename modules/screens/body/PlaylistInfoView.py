@@ -8,12 +8,12 @@ from modules.helpers.types.Decorators import override
 from modules.models.view.builder.FontBuilder import FontBuilder
 from modules.models.view.builder.TextStyle import TextStyle
 from modules.statics.view.Material import ColorBoxes
-from modules.views.ViewComponent import ViewComponent
+from modules.screens.AbstractScreen import BaseView
 from modules.widgets.ImageViewer import ImageViewer
 from modules.widgets.LabelWithDefaultText import LabelWithDefaultText
 
 
-class PlaylistInfoView(QVBoxLayout, ViewComponent):
+class PlaylistInfoView(QVBoxLayout, BaseView):
     __cover: ImageViewer
     __text_area: QVBoxLayout
     __label_title: LabelWithDefaultText

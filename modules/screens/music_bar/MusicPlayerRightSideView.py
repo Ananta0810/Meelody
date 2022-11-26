@@ -9,14 +9,14 @@ from modules.models.view.Color import Color
 from modules.models.view.builder.IconButtonStyle import IconButtonStyle
 from modules.models.view.builder.SliderStyle import SliderStyle
 from modules.statics.view.Material import Icons, Paddings, Colors, Backgrounds, ColorBoxes
-from modules.views.ViewComponent import ViewComponent
+from modules.screens.AbstractScreen import BaseView
 from modules.widgets.HorizontalSlider import HorizontalSlider
 from modules.widgets.IconButton import IconButton
 from modules.widgets.StatelessIconButton import StatelessIconButton
 from modules.widgets.ToggleIconButton import ToggleIconButton
 
 
-class MusicPlayerRightSideView(QHBoxLayout, ViewComponent):
+class MusicPlayerRightSideView(QHBoxLayout, BaseView):
     __btn_loop: ToggleIconButton
     __btn_shuffle: ToggleIconButton
     __btn_love: ToggleIconButton

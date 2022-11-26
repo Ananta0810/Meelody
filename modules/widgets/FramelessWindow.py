@@ -7,11 +7,11 @@ from PyQt5.QtWidgets import QMainWindow, QWidget, QVBoxLayout, QHBoxLayout, QLay
 from modules.helpers.types.Decorators import override
 from modules.models.view.builder.IconButtonStyle import IconButtonStyle
 from modules.statics.view.Material import Paddings, Icons, Colors, Backgrounds
-from modules.views.ViewComponent import ViewComponent
+from modules.screens.AbstractScreen import BaseView
 from modules.widgets.IconButton import IconButton
 
 
-class FramelessWindow(QMainWindow, ViewComponent):
+class FramelessWindow(QMainWindow, BaseView):
     __main_layout: QVBoxLayout
     __inner: QWidget
     __title_bar: QHBoxLayout

@@ -5,12 +5,12 @@ from PyQt5.QtWidgets import QWidget, QHBoxLayout
 
 from modules.helpers.types.Decorators import override
 from modules.statics.view.Material import Images
-from modules.views.ViewComponent import ViewComponent
-from modules.views.body.PlaylistInfoView import PlaylistInfoView
-from modules.views.body.songs_table.SongTableView import SongTableView
+from modules.screens.AbstractScreen import BaseView
+from modules.screens.body.PlaylistInfoView import PlaylistInfoView
+from modules.screens.body.songs_table.SongTableView import SongTableView
 
 
-class CurrentPlaylistView(QWidget, ViewComponent):
+class CurrentPlaylistView(QWidget, BaseView):
     __main_layout: QHBoxLayout
     __info: PlaylistInfoView
     __menu: SongTableView

@@ -13,7 +13,7 @@ from modules.models.view.builder.FontBuilder import FontBuilder
 from modules.models.view.builder.IconButtonStyle import IconButtonStyle
 from modules.models.view.builder.TextStyle import TextStyle
 from modules.statics.view.Material import Icons, Paddings, Colors, Backgrounds, ColorBoxes
-from modules.views.ViewComponent import ViewComponent
+from modules.screens.AbstractScreen import BaseView
 from modules.widgets.BackgroundWidget import BackgroundWidget
 from modules.widgets.IconButton import IconButton
 from modules.widgets.ImageViewer import ImageViewer
@@ -21,7 +21,7 @@ from modules.widgets.LabelWithDefaultText import LabelWithDefaultText
 from modules.widgets.ToggleIconButton import ToggleIconButton
 
 
-class SongTableRowView(BackgroundWidget, ViewComponent):
+class SongTableRowView(BackgroundWidget, BaseView):
     __main_layout: QHBoxLayout
     __info: QHBoxLayout
     __buttons: QWidget

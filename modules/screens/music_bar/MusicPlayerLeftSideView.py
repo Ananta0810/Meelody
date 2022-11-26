@@ -10,14 +10,14 @@ from modules.models.view.builder.FontBuilder import FontBuilder
 from modules.models.view.builder.IconButtonStyle import IconButtonStyle
 from modules.models.view.builder.TextStyle import TextStyle
 from modules.statics.view.Material import Paddings, Icons, Colors, Backgrounds, ColorBoxes
-from modules.views.ViewComponent import ViewComponent
+from modules.screens.AbstractScreen import BaseView
 from modules.widgets.IconButton import IconButton
 from modules.widgets.ImageViewer import ImageViewer
 from modules.widgets.LabelWithDefaultText import LabelWithDefaultText
 from modules.widgets.StatelessIconButton import StatelessIconButton
 
 
-class MusicPlayerLeftSideView(QHBoxLayout, ViewComponent):
+class MusicPlayerLeftSideView(QHBoxLayout, BaseView):
     __song_info_layout: QVBoxLayout
     __play_buttons: QHBoxLayout
 

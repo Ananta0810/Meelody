@@ -5,12 +5,12 @@ from PyQt5.QtWidgets import QScrollArea, QWidget, QVBoxLayout
 
 from modules.helpers.types.Decorators import override
 from modules.statics.view.Material import Backgrounds
-from modules.views.ViewComponent import ViewComponent
-from modules.views.body.CurrentPlaylistView import CurrentPlaylistView
-from modules.views.body.PlaylistCarouselView import PlaylistCarouselView
+from modules.screens.AbstractScreen import BaseView
+from modules.screens.body.CurrentPlaylistView import CurrentPlaylistView
+from modules.screens.body.PlaylistCarouselView import PlaylistCarouselView
 
 
-class HomeBodyView(QScrollArea, ViewComponent):
+class HomeBodyView(QScrollArea, BaseView):
     __inner: QWidget
     __main_layout: QVBoxLayout
     __playlist_carousel: PlaylistCarouselView

@@ -5,13 +5,13 @@ from PyQt5.QtWidgets import QHBoxLayout, QWidget
 
 from modules.helpers.types.Decorators import override
 from modules.statics.view.Material import Images
-from modules.views.ViewComponent import ViewComponent
-from modules.views.music_bar.MusicPlayerLeftSideView import MusicPlayerLeftSideView
-from modules.views.music_bar.MusicPlayerMiddleView import MusicPlayerMiddleView
-from modules.views.music_bar.MusicPlayerRightSideView import MusicPlayerRightSideView
+from modules.screens.AbstractScreen import BaseView
+from modules.screens.music_bar.MusicPlayerLeftSideView import MusicPlayerLeftSideView
+from modules.screens.music_bar.MusicPlayerMiddleView import MusicPlayerMiddleView
+from modules.screens.music_bar.MusicPlayerRightSideView import MusicPlayerRightSideView
 
 
-class MusicPlayerBarView(QWidget, ViewComponent):
+class MusicPlayerBarView(QWidget, BaseView):
     __main_layout: QHBoxLayout
     __left: MusicPlayerLeftSideView
     __middle: MusicPlayerMiddleView

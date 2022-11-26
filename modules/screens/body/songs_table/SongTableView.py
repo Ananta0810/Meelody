@@ -4,12 +4,12 @@ from PyQt5.QtCore import Qt
 from PyQt5.QtWidgets import QWidget, QVBoxLayout
 
 from modules.helpers.types.Decorators import override
-from modules.views.ViewComponent import ViewComponent
-from modules.views.body.songs_table.SongTableBodyView import SongTableBodyView
-from modules.views.body.songs_table.SongTableHeaderView import SongTableHeaderView
+from modules.screens.AbstractScreen import BaseView
+from modules.screens.body.songs_table.SongTableBodyView import SongTableBodyView
+from modules.screens.body.songs_table.SongTableHeaderView import SongTableHeaderView
 
 
-class SongTableView(QWidget, ViewComponent):
+class SongTableView(QWidget, BaseView):
     __main_layout: QVBoxLayout
     __header: SongTableHeaderView
     __body: SongTableBodyView

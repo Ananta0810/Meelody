@@ -6,10 +6,10 @@ from PyQt5.QtWidgets import QSlider, QWidget
 from modules.helpers.types.Decorators import override
 from modules.models.view.builder.HorizontalSliderThemeBuilder import HorizontalSliderThemeBuilder
 from modules.models.view.builder.SliderStyle import SliderStyle
-from modules.views.ViewComponent import ViewComponent
+from modules.screens.AbstractScreen import BaseView
 
 
-class HorizontalSlider(QSlider, ViewComponent):
+class HorizontalSlider(QSlider, BaseView):
     __light_mode_style: str
     __dark_mode_style: str
 
