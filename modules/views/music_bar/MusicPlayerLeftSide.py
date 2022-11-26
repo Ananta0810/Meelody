@@ -132,13 +132,13 @@ class MusicPlayerLeftSide(QHBoxLayout):
         self.song_artist.set_default_text(text)
 
     def set_cover(self, byte_pixmap: bytes) -> None:
-        self.song_cover.set_pixmap(self.__get_pixmap_for_song_cover(byte_pixmap))
+        self.song_cover.setPixmap(self.__get_pixmap_for_song_cover(byte_pixmap))
 
     def set_title(self, text: str) -> None:
-        self.song_title.set_text(text)
+        self.song_title.setText(text)
 
     def set_artist(self, text: str) -> None:
-        self.song_artist.set_text(text)
+        self.song_artist.setText(text)
 
     @staticmethod
     def __get_pixmap_for_song_cover(byte_pixmap: bytes) -> Union[QPixmap, None]:

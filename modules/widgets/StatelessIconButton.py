@@ -3,6 +3,7 @@ from typing import Self
 from PyQt5.QtCore import QSize, QObject
 from PyQt5.QtWidgets import QPushButton
 
+from modules.helpers.types.Decorators import override
 from modules.models.view.AppIcon import AppIcon
 from modules.models.view.Padding import Padding
 from modules.models.view.builder.BackgroundThemeBuilder import BackgroundThemeBuilder
@@ -58,6 +59,7 @@ class StatelessIconButton(QPushButton):
         self._change_state_on_pressed = a0
         return self
 
+    @override
     def mousePressEvent(self, event) -> None:
         super().mousePressEvent(event)
         if self._change_state_on_pressed:

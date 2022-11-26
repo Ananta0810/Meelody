@@ -4,6 +4,7 @@ from PyQt5.QtCore import pyqtSignal, QEvent
 from PyQt5.QtGui import QFont, QCursor, QPixmap, QResizeEvent
 from PyQt5.QtWidgets import QWidget, QVBoxLayout
 
+from modules.helpers.types.Decorators import override
 from modules.models.view.Animation import Animation
 from modules.models.view.builder.TextStyle import TextStyle
 from modules.statics.view.Material import ColorBoxes
@@ -34,35 +35,40 @@ class DefaultPlaylistCard(QWidget):
         self.main_layout.addStretch()
         self.main_layout.addWidget(self.label)
 
+    @override
     def resizeEvent(self, event: QResizeEvent) -> None:
         self.cover.setFixedSize(self.size())
         return super().resizeEvent(event)
 
+    @override
     def enterEvent(self, event: QEvent) -> None:
         super().enterEvent(event)
-        self.cover.animationOnEnteredHover()
+        self.cover.animation_on_entered_hover()
 
+    @override
     def leaveEvent(self, event: QEvent) -> None:
         super().leaveEvent(event)
-        self.cover.animationOnLeavedHover()
+        self.cover.animation_on_leaved_hover()
 
+    @override
     def mousePressEvent(self, event) -> None:
         super().mousePressEvent(event)
         # if event.button() == Qt.LeftButton:
         #     self.clicked.emit()
 
-    def set_cursor(self, cursor: QCursor) -> None:
+    @override
+    def setCursor(self, cursor: QCursor) -> None:
         super().setCursor(cursor)
         self.label.setCursor(cursor)
 
     def set_cover(self, pixmap: QPixmap) -> None:
-        self.cover.set_pixmap(pixmap)
+        self.cover.setPixmap(pixmap)
 
     def set_default_cover(self, pixmap: QPixmap) -> None:
         self.cover.set_default_pixmap(pixmap)
 
     def set_label_text(self, text: str) -> None:
-        self.label.set_text(text)
+        self.label.setText(text)
 
     def set_label_default_text(self, text: str) -> None:
         self.label.set_default_text(text)

@@ -50,7 +50,7 @@ class PlaylistInfoView(QVBoxLayout):
         self.addLayout(self.text_area)
         self.addStretch()
 
-    def setInfo(self, cover: bytes, label: str, song_count: int) -> None:
+    def set_info(self, cover: bytes, label: str, song_count: int) -> None:
         self.set_cover(cover)
         self.set_title(label)
         self.set_total_song(song_count)
@@ -67,12 +67,6 @@ class PlaylistInfoView(QVBoxLayout):
     def set_total_song(self, song_count: int) -> None:
         self.label_total_song.setText(f"{str(song_count)} TRACKS")
 
-    @staticmethod
-    def __get_cover_pixmap(pixmap_byte: bytes) -> Union[QPixmap, None]:
-        if pixmap_byte is None:
-            return None
-        return PixmapHelper.get_edited_pixmap_from_bytes(pixmap_byte, width=320, height=320, radius=24)
-
     def apply_light_mode(self) -> None:
         self.label_title.apply_light_mode()
         self.label_total_song.apply_light_mode()
@@ -80,3 +74,9 @@ class PlaylistInfoView(QVBoxLayout):
     def apply_dark_mode(self) -> None:
         self.label_title.apply_dark_mode()
         self.label_total_song.apply_dark_mode()
+
+    @staticmethod
+    def __get_cover_pixmap(pixmap_byte: bytes) -> Union[QPixmap, None]:
+        if pixmap_byte is None:
+            return None
+        return PixmapHelper.get_edited_pixmap_from_bytes(pixmap_byte, width=320, height=320, radius=24)

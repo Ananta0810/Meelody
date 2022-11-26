@@ -4,6 +4,8 @@ from PyQt5.QtCore import Qt, QEvent, QObject
 from PyQt5.QtGui import QResizeEvent
 from PyQt5.QtWidgets import QWidget
 
+from modules.helpers.types.Decorators import override
+
 
 class BackgroundWidget(QWidget):
     background: QWidget
@@ -27,15 +29,18 @@ class BackgroundWidget(QWidget):
         self.background = QWidget(self)
         self.background.setAttribute(Qt.WA_Hover, True)
 
+    @override
     def resizeEvent(self, a0: QResizeEvent) -> None:
         self.__post_init__()
         self.background.resize(self.size())
         return super().resizeEvent(a0)
 
+    @override
     def enterEvent(self, event: QEvent) -> None:
         self.background.enterEvent(event)
         return super().enterEvent(event)
 
+    @override
     def leaveEvent(self, a0: QEvent) -> None:
         self.background.leaveEvent(a0)
         self.background.setProperty("hovered", False)
@@ -50,5 +55,6 @@ class BackgroundWidget(QWidget):
             self.background.style().polish(self.background)
         return super().eventFilter(source, event)
 
+    @override
     def setStyleSheet(self, style_sheet: str) -> None:
         self.background.setStyleSheet(style_sheet)

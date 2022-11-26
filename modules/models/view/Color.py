@@ -3,6 +3,7 @@ from typing import Self
 
 from PyQt5.QtGui import QColor
 
+from modules.helpers.types.Decorators import override
 from modules.helpers.types.Numbers import Numbers
 from modules.models.view.StylesheetElement import StylesheetElement
 
@@ -17,6 +18,7 @@ class Color(StylesheetElement):
     def __str__(self) -> str:
         return self.to_stylesheet()
 
+    @override
     def to_stylesheet(self) -> str:
         return f"rgba({self.red}, {self.green}, {self.blue}, {self.alpha / 255})"
 

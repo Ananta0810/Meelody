@@ -1,5 +1,6 @@
 from typing import Self
 
+from modules.helpers.types.Decorators import override
 from modules.models.view.Border import Border
 from modules.models.view.ColorBox import ColorBox
 from modules.models.view.StylesheetElement import StylesheetElement
@@ -48,6 +49,7 @@ class Background(StylesheetElement):
             if self.border_radius > 1 \
             else self.border_radius * (size or 0)
 
+    @override
     def to_stylesheet(self, active_color: bool = False, active_border: bool = False, border_radius_size: float = 0) -> str:
         return (
             f"""

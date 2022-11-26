@@ -7,7 +7,7 @@ from modules.models.view.Color import Color
 
 class AppIcon(QIcon):
 
-    def __or__(self, other) -> Self:
+    def __or__(self, other: Self) -> Self:
         return self if self is not None else other
 
     def with_color(self, color: Color):

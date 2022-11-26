@@ -5,6 +5,7 @@ from PyQt5.QtGui import QPixmap
 from PyQt5.QtWidgets import QLabel, QWidget
 
 from modules.helpers.PixmapHelper import PixmapHelper
+from modules.helpers.types.Decorators import override
 
 
 class ImageViewer(QLabel):
@@ -25,7 +26,8 @@ class ImageViewer(QLabel):
     def set_radius(self, radius: int) -> None:
         self._radius = radius
 
-    def set_pixmap(self, pixmap: QPixmap) -> None:
+    @override
+    def setPixmap(self, pixmap: QPixmap) -> None:
         if pixmap is None:
             pixmap = self._default_pixmap
         self._current_pixmap = pixmap
@@ -47,7 +49,7 @@ class ImageViewer(QLabel):
         pixmap = PixmapHelper.round_pixmap(pixmap, radius=24)
         self.__set_hover_pixmap(pixmap)
 
-    def animationOnEnteredHover(self) -> None:
+    def animation_on_entered_hover(self) -> None:
         if self._animation is None:
             return
         self._animation.stop()
@@ -55,7 +57,7 @@ class ImageViewer(QLabel):
         self._animation.setEndValue(self._end)
         self._animation.start()
 
-    def animationOnLeavedHover(self) -> None:
+    def animation_on_leaved_hover(self) -> None:
         if self._animation is None:
             return
         self._animation.setStartValue(self._value)

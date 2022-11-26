@@ -5,6 +5,7 @@ from PyQt5.QtGui import QPixmap
 from PyQt5.QtWidgets import QScrollArea, QWidget, QHBoxLayout
 
 from modules.helpers.PixmapHelper import PixmapHelper
+from modules.helpers.types.Decorators import override
 from modules.models.view.Animation import Animation
 from modules.models.view.builder.FontBuilder import FontBuilder
 from modules.models.view.builder.IconButtonStyle import IconButtonStyle
@@ -76,6 +77,10 @@ class PlaylistCarousel(QScrollArea):
         self.main_layout.addWidget(self.add_playlist_card)
         self.main_layout.addStretch()
 
+    @override
+    def setContentsMargins(self, left: int, top: int, right: int, bottom: int) -> None:
+        self.main_layout.setContentsMargins(left, top, right, bottom)
+
     def apply_light_mode(self) -> None:
         self.btn_add_playlist.apply_light_mode()
         self.add_playlist_card.setStyleSheet(Backgrounds.CIRCLE_PRIMARY_10.to_stylesheet(border_radius_size=48))
@@ -98,7 +103,3 @@ class PlaylistCarousel(QScrollArea):
         if cover_byte is None:
             return None
         return PixmapHelper.get_edited_pixmap_from_bytes(cover_byte, width=256, height=320, radius=24)
-
-    # =================Qt Override methods=================
-    def setContentsMargins(self, left: int, top: int, right: int, bottom: int) -> None:
-        self.main_layout.setContentsMargins(left, top, right, bottom)

@@ -26,7 +26,6 @@ class MainWindowView(FramelessWindow):
         self.setFixedWidth(width)
         self.setFixedHeight(height)
         self.__init_ui()
-        self.show_minimize_button(False)
 
     def __init_ui(self) -> None:
         self.body = HomeBodyView()
@@ -56,9 +55,3 @@ class MainWindowView(FramelessWindow):
         self.body.apply_dark_mode()
         self.music_player.setStyleSheet("QWidget#musicPlayer{border-top: 1px solid #202020};border-radius:0px")
         self.music_player.apply_dark_mode()
-
-    def connect_signal(self) -> None:
-        pass
-
-    def translate(self) -> None:
-        pass

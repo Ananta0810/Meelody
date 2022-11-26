@@ -4,6 +4,7 @@ from PyQt5.QtCore import Qt
 from PyQt5.QtGui import QResizeEvent
 from PyQt5.QtWidgets import QMainWindow, QWidget, QVBoxLayout, QHBoxLayout, QLayout
 
+from modules.helpers.types.Decorators import override
 from modules.models.view.builder.IconButtonStyle import IconButtonStyle
 from modules.statics.view.Material import Paddings, Icons, Colors, Backgrounds
 from modules.widgets.IconButton import IconButton
@@ -67,10 +68,6 @@ class FramelessWindow(QMainWindow):
 
         self.addLayout(self.title_bar)
 
-    def resizeEvent(self, event: QResizeEvent) -> None:
-        self.background.resize(self.size())
-        return super().resizeEvent(event)
-
     def with_title_bar_height(self, height: int) -> Self:
         self.title_bar_height = height
         return self
@@ -81,9 +78,24 @@ class FramelessWindow(QMainWindow):
     def show_close_button(self, enable: bool) -> None:
         self.close_btn.setVisible(enable)
 
+    def apply_light_mode(self) -> None:
+        self.minimize_btn.apply_light_mode()
+        self.close_btn.apply_light_mode()
+
+    def apply_dark_mode(self) -> None:
+        self.minimize_btn.apply_dark_mode()
+        self.close_btn.apply_dark_mode()
+
+    @override
+    def resizeEvent(self, event: QResizeEvent) -> None:
+        self.background.resize(self.size())
+        return super().resizeEvent(event)
+
+    @override
     def addLayout(self, widget: QLayout) -> None:
         self.main_layout.addLayout(widget)
 
+    @override
     def addWidget(
         self,
         layout: QWidget,
@@ -95,26 +107,22 @@ class FramelessWindow(QMainWindow):
             return
         self.main_layout.addWidget(layout, stretch=stretch, alignment=alignment)
 
+    @override
     def setStyleSheet(self, style_sheet: str) -> None:
         self.background.setStyleSheet(style_sheet)
 
-    def apply_light_mode(self) -> None:
-        self.minimize_btn.apply_light_mode()
-        self.close_btn.apply_light_mode()
-
-    def apply_dark_mode(self) -> None:
-        self.minimize_btn.apply_dark_mode()
-        self.close_btn.apply_dark_mode()
-
+    @override
     def mousePressEvent(self, event):
         super().mousePressEvent(event)
         if event.pos().y() < self.title_bar_height and event.button() == Qt.LeftButton:
             self.offset = event.pos()
 
+    @override
     def mouseReleaseEvent(self, event):
         super().mouseReleaseEvent(event)
         self.offset = 0
 
+    @override
     def mouseMoveEvent(self, event):
         super().mouseMoveEvent(event)
         if self.offset == 0:

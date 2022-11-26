@@ -3,6 +3,7 @@ from typing import Optional, Self, Union
 from PyQt5.QtGui import QFont
 from PyQt5.QtWidgets import QLabel, QWidget
 
+from modules.helpers.types.Decorators import override
 from modules.models.view.builder.BackgroundThemeBuilder import BackgroundThemeBuilder
 from modules.models.view.builder.TextStyle import TextStyle
 
@@ -19,7 +20,8 @@ class LabelWithDefaultText(QLabel):
             self.setText(text)
         self.default_text = text
 
-    def set_text(self, text: str) -> None:
+    @override
+    def setText(self, text: str) -> None:
         return super().setText(text or self.default_text)
 
     def apply_light_mode(self):

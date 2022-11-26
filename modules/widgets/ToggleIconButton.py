@@ -13,6 +13,7 @@ class ToggleIconButton(StatelessIconButton):
     def __init__(self, parent=None):
         super().__init__(parent)
         self._is_active: bool = True
+        self.change_state_on_pressed = True
 
     def set_active(self, active: bool) -> None:
         self._is_active = active

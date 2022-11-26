@@ -1,3 +1,4 @@
+from modules.helpers.types.Decorators import override
 from modules.models.view.StylesheetElement import StylesheetElement
 
 
@@ -21,5 +22,6 @@ class Padding(StylesheetElement):
             return self.height * size
         return self.height
 
+    @override
     def to_stylesheet(self, size: int = 0) -> str:
         return f"{self.get_width(size)}px {self.get_height(size)}px"

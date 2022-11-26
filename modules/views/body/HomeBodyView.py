@@ -3,6 +3,7 @@ from typing import Optional
 from PyQt5.QtGui import QShowEvent
 from PyQt5.QtWidgets import QScrollArea, QWidget, QVBoxLayout
 
+from modules.helpers.types.Decorators import override
 from modules.statics.view.Material import Backgrounds
 from modules.views.body.CurrentPlaylistView import CurrentPlaylistView
 from modules.views.body.PlaylistCarousel import PlaylistCarousel
@@ -36,10 +37,12 @@ class HomeBodyView(QScrollArea):
         self.main_layout.addWidget(self.playlist_carousel)
         self.main_layout.addWidget(self.current_playlist)
 
+    @override
     def setContentsMargins(self, left: int, top: int, right: int, bottom: int) -> None:
         self.playlist_carousel.setContentsMargins(left, top, right, bottom)
         self.current_playlist.setContentsMargins(left, top, right, bottom)
 
+    @override
     def showEvent(self, a0: QShowEvent) -> None:
         self.current_playlist.setFixedHeight(self.height())
         return super().showEvent(a0)

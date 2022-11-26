@@ -4,6 +4,7 @@ from PyQt5.QtCore import pyqtSignal, QVariantAnimation, QEasingCurve
 from PyQt5.QtGui import QWheelEvent
 from PyQt5.QtWidgets import QScrollArea, QWidget
 
+from modules.helpers.types.Decorators import override
 from modules.helpers.types.Numbers import Numbers
 from modules.models.view.Background import Background
 from modules.models.view.builder.BackgroundThemeBuilder import BackgroundThemeBuilder
@@ -19,6 +20,7 @@ class SmoothVerticalScrollArea(QScrollArea):
         self._animation = QVariantAnimation(self, valueChanged=self.__smooth_scroll, duration=1000)
         self._animation.setEasingCurve(QEasingCurve.OutCubic)
 
+    @override
     def wheelEvent(self, event: QWheelEvent) -> None:
         self._animation.stop()
         return super().wheelEvent(event)
