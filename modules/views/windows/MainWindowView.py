@@ -3,15 +3,17 @@ from typing import Optional
 from PyQt5.QtCore import QMetaObject, Qt
 from PyQt5.QtWidgets import QWidget, QVBoxLayout, QHBoxLayout
 
+from modules.helpers.types.Decorators import override
 from modules.models.view.Background import Background
 from modules.statics.view.Material import ColorBoxes
+from modules.views.ViewComponent import ViewComponent
 from modules.views.body.HomeBodyView import HomeBodyView
 from modules.views.music_bar.MusicPlayerBar import MusicPlayerBar
 from modules.widgets.IconButton import IconButton
 from modules.widgets.windows.FramelessWindow import FramelessWindow
 
 
-class MainWindowView(FramelessWindow):
+class MainWindowView(FramelessWindow, ViewComponent):
     music_player: MusicPlayerBar
     main_layout: QVBoxLayout
     home_screen: QWidget
@@ -42,6 +44,7 @@ class MainWindowView(FramelessWindow):
         self.addWidget(self.music_player, alignment=Qt.AlignBottom)
         QMetaObject.connectSlotsByName(self)
 
+    @override
     def apply_light_mode(self) -> None:
         super().apply_light_mode()
         self.setStyleSheet(Background(border_radius=24, color=ColorBoxes.WHITE).to_stylesheet())
@@ -49,6 +52,7 @@ class MainWindowView(FramelessWindow):
         self.music_player.setStyleSheet("QWidget#musicPlayer{border-top: 1px solid #eaeaea};border-radius:0px")
         self.music_player.apply_light_mode()
 
+    @override
     def apply_dark_mode(self) -> None:
         super().apply_dark_mode()
         self.setStyleSheet(Background(border_radius=24, color=ColorBoxes.BLACK).to_stylesheet())

@@ -3,11 +3,13 @@ from typing import Optional
 from PyQt5.QtCore import Qt
 from PyQt5.QtWidgets import QWidget, QVBoxLayout
 
+from modules.helpers.types.Decorators import override
+from modules.views.ViewComponent import ViewComponent
 from modules.views.body.songs_table.SongTableBody import SongTableBody
 from modules.views.body.songs_table.SongTableHeader import SongTableHeader
 
 
-class SongTable(QWidget):
+class SongTable(QWidget, ViewComponent):
     main_layout: QVBoxLayout
     header: SongTableHeader
     body: SongTableBody
@@ -38,10 +40,12 @@ class SongTable(QWidget):
         self.main_layout.addWidget(self.header)
         self.main_layout.addWidget(self.body)
 
+    @override
     def apply_light_mode(self) -> None:
         self.header.apply_light_mode()
         self.body.apply_light_mode()
 
+    @override
     def apply_dark_mode(self) -> None:
         self.header.apply_dark_mode()
         self.body.apply_dark_mode()

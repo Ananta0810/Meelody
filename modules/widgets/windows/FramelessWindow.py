@@ -7,10 +7,11 @@ from PyQt5.QtWidgets import QMainWindow, QWidget, QVBoxLayout, QHBoxLayout, QLay
 from modules.helpers.types.Decorators import override
 from modules.models.view.builder.IconButtonStyle import IconButtonStyle
 from modules.statics.view.Material import Paddings, Icons, Colors, Backgrounds
+from modules.views.ViewComponent import ViewComponent
 from modules.widgets.IconButton import IconButton
 
 
-class FramelessWindow(QMainWindow):
+class FramelessWindow(QMainWindow, ViewComponent):
     main_layout: QVBoxLayout
     home_screen: QWidget
     title_bar: QHBoxLayout
@@ -78,10 +79,12 @@ class FramelessWindow(QMainWindow):
     def show_close_button(self, enable: bool) -> None:
         self.close_btn.setVisible(enable)
 
+    @override
     def apply_light_mode(self) -> None:
         self.minimize_btn.apply_light_mode()
         self.close_btn.apply_light_mode()
 
+    @override
     def apply_dark_mode(self) -> None:
         self.minimize_btn.apply_dark_mode()
         self.close_btn.apply_dark_mode()

@@ -2,19 +2,21 @@ from typing import Optional
 
 from PyQt5.QtWidgets import QHBoxLayout, QWidget
 
+from modules.helpers.types.Decorators import override
 from modules.models.view.AppIcon import AppIcon
 from modules.models.view.Background import Background
 from modules.models.view.Color import Color
 from modules.models.view.builder.IconButtonStyle import IconButtonStyle
 from modules.models.view.builder.SliderStyle import SliderStyle
 from modules.statics.view.Material import Icons, Paddings, Colors, Backgrounds, ColorBoxes
+from modules.views.ViewComponent import ViewComponent
 from modules.widgets.HorizontalSlider import HorizontalSlider
 from modules.widgets.IconButton import IconButton
 from modules.widgets.StatelessIconButton import StatelessIconButton
 from modules.widgets.ToggleIconButton import ToggleIconButton
 
 
-class MusicPlayerRightSide(QHBoxLayout):
+class MusicPlayerRightSide(QHBoxLayout, ViewComponent):
     btn_loop: ToggleIconButton
     btn_shuffle: ToggleIconButton
     btn_love: ToggleIconButton
@@ -97,6 +99,7 @@ class MusicPlayerRightSide(QHBoxLayout):
         self.addWidget(self.inputs, 1)
         self.addWidget(self.btn_timer)
 
+    @override
     def apply_light_mode(self) -> None:
         self.btn_loop.apply_light_mode()
         self.btn_shuffle.apply_light_mode()
@@ -105,6 +108,7 @@ class MusicPlayerRightSide(QHBoxLayout):
         self.btn_timer.apply_light_mode()
         self.slider_volume.apply_light_mode()
 
+    @override
     def apply_dark_mode(self) -> None:
         self.btn_loop.apply_dark_mode()
         self.btn_shuffle.apply_dark_mode()

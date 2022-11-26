@@ -4,16 +4,18 @@ from PyQt5.QtCore import Qt
 from PyQt5.QtGui import QFont
 from PyQt5.QtWidgets import QHBoxLayout, QWidget
 
+from modules.helpers.types.Decorators import override
 from modules.helpers.types.Strings import Strings
 from modules.models.view.builder.FontBuilder import FontBuilder
 from modules.models.view.builder.SliderStyle import SliderStyle
 from modules.models.view.builder.TextStyle import TextStyle
 from modules.statics.view.Material import ColorBoxes
+from modules.views.ViewComponent import ViewComponent
 from modules.widgets.HorizontalSlider import HorizontalSlider
 from modules.widgets.LabelWithDefaultText import LabelWithDefaultText
 
 
-class MusicPlayerMiddle(QHBoxLayout):
+class MusicPlayerMiddle(QHBoxLayout, ViewComponent):
     label_playing_time: LabelWithDefaultText
     slider_time: HorizontalSlider
     label_total_time: LabelWithDefaultText
@@ -60,11 +62,13 @@ class MusicPlayerMiddle(QHBoxLayout):
         self.addWidget(self.slider_time)
         self.addWidget(self.label_total_time)
 
+    @override
     def apply_light_mode(self) -> None:
         self.label_playing_time.apply_light_mode()
         self.slider_time.apply_light_mode()
         self.label_total_time.apply_light_mode()
 
+    @override
     def apply_dark_mode(self) -> None:
         self.label_playing_time.apply_dark_mode()
         self.slider_time.apply_dark_mode()

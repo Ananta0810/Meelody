@@ -48,7 +48,7 @@ class DefaultPlaylistCard(QWidget):
     @override
     def leaveEvent(self, event: QEvent) -> None:
         super().leaveEvent(event)
-        self.cover.animation_on_leaved_hover()
+        self.cover.animation_on_left_hover()
 
     @override
     def mousePressEvent(self, event) -> None:

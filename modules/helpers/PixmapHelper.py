@@ -15,12 +15,12 @@ class PixmapHelper:
 
     @staticmethod
     def get_bytes_from_pixmap(pixmap: QPixmap) -> bytes:
-        bytearray = QByteArray()
-        buff = QBuffer(bytearray)
+        byte_array = QByteArray()
+        buff = QBuffer(byte_array)
         buff.open(QIODevice.WriteOnly)
         ok = pixmap.save(buff, "JPG")
         assert ok
-        return bytearray.data()
+        return byte_array.data()
 
     @staticmethod
     def crop_pixmap(pixmap, width: int, height: int, crop_center: bool = True) -> QPixmap:

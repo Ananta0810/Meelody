@@ -4,14 +4,16 @@ from PyQt5.QtGui import QPixmap
 from PyQt5.QtWidgets import QVBoxLayout, QWidget
 
 from modules.helpers.PixmapHelper import PixmapHelper
+from modules.helpers.types.Decorators import override
 from modules.models.view.builder.FontBuilder import FontBuilder
 from modules.models.view.builder.TextStyle import TextStyle
 from modules.statics.view.Material import ColorBoxes
+from modules.views.ViewComponent import ViewComponent
 from modules.widgets.ImageViewer import ImageViewer
 from modules.widgets.LabelWithDefaultText import LabelWithDefaultText
 
 
-class PlaylistInfoView(QVBoxLayout):
+class PlaylistInfoView(QVBoxLayout, ViewComponent):
     cover: ImageViewer
     text_area: QVBoxLayout
     label_title: LabelWithDefaultText
@@ -67,10 +69,12 @@ class PlaylistInfoView(QVBoxLayout):
     def set_total_song(self, song_count: int) -> None:
         self.label_total_song.setText(f"{str(song_count)} TRACKS")
 
+    @override
     def apply_light_mode(self) -> None:
         self.label_title.apply_light_mode()
         self.label_total_song.apply_light_mode()
 
+    @override
     def apply_dark_mode(self) -> None:
         self.label_title.apply_dark_mode()
         self.label_total_song.apply_dark_mode()

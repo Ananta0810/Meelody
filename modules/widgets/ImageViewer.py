@@ -57,7 +57,7 @@ class ImageViewer(QLabel):
         self._animation.setEndValue(self._end)
         self._animation.start()
 
-    def animation_on_leaved_hover(self) -> None:
+    def animation_on_left_hover(self) -> None:
         if self._animation is None:
             return
         self._animation.setStartValue(self._value)

@@ -1,7 +1,13 @@
-from abc import ABC, abstractmethod
+from abc import ABCMeta, abstractmethod, ABC
+
+from PyQt5.QtCore import QObject
 
 
-class ViewComponent(ABC):
+class MixinMeta(type(QObject), ABCMeta):
+    pass
+
+
+class ViewComponent(metaclass=MixinMeta):
 
     @abstractmethod
     def apply_dark_mode(self) -> None:
@@ -9,12 +15,4 @@ class ViewComponent(ABC):
 
     @abstractmethod
     def apply_light_mode(self) -> None:
-        pass
-
-    @abstractmethod
-    def connect_signal(self) -> None:
-        pass
-
-    @abstractmethod
-    def translate(self) -> None:
         pass

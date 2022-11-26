@@ -3,13 +3,15 @@ from typing import Optional
 from PyQt5.QtCore import Qt
 from PyQt5.QtWidgets import QHBoxLayout, QWidget
 
+from modules.helpers.types.Decorators import override
 from modules.statics.view.Material import Images
+from modules.views.ViewComponent import ViewComponent
 from modules.views.music_bar.MusicPlayerLeftSide import MusicPlayerLeftSide
 from modules.views.music_bar.MusicPlayerMiddle import MusicPlayerMiddle
 from modules.views.music_bar.MusicPlayerRightSide import MusicPlayerRightSide
 
 
-class MusicPlayerBar(QWidget):
+class MusicPlayerBar(QWidget, ViewComponent):
     main_layout: QHBoxLayout
     left: MusicPlayerLeftSide
     middle: MusicPlayerMiddle
@@ -53,11 +55,13 @@ class MusicPlayerBar(QWidget):
         self.main_layout.addLayout(self.middle)
         self.main_layout.addLayout(self.right)
 
+    @override
     def apply_light_mode(self) -> None:
         self.left.apply_light_mode()
         self.middle.apply_light_mode()
         self.right.apply_light_mode()
 
+    @override
     def apply_dark_mode(self) -> None:
         self.left.apply_dark_mode()
         self.middle.apply_dark_mode()

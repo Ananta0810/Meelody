@@ -9,6 +9,7 @@ from modules.models.view.Padding import Padding
 from modules.models.view.builder.BackgroundThemeBuilder import BackgroundThemeBuilder
 from modules.models.view.builder.IconButtonStyle import IconButtonStyle
 from modules.statics.view.Material import Cursors, Paddings
+from modules.views.ViewComponent import ViewComponent
 
 
 class StatelessIconButtonThemeData:
@@ -40,7 +41,7 @@ class StatelessIconButtonThemeData:
         )
 
 
-class StatelessIconButton(QPushButton):
+class StatelessIconButton(QPushButton, ViewComponent):
 
     def __init__(self, parent=None):
         super().__init__(parent)
@@ -74,12 +75,14 @@ class StatelessIconButton(QPushButton):
     def to_next_state(self) -> None:
         self.set_state_index((self._current_index + 1) % len(self._children))
 
-    def apply_dark_mode(self):
-        self._is_dark_mode = True
-        self._change_button_based_on_state()
-
+    @override
     def apply_light_mode(self):
         self._is_dark_mode = False
+        self._change_button_based_on_state()
+
+    @override
+    def apply_dark_mode(self):
+        self._is_dark_mode = True
         self._change_button_based_on_state()
 
     def _change_button_based_on_state(self) -> None:

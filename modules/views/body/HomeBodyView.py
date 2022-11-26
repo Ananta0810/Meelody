@@ -5,11 +5,12 @@ from PyQt5.QtWidgets import QScrollArea, QWidget, QVBoxLayout
 
 from modules.helpers.types.Decorators import override
 from modules.statics.view.Material import Backgrounds
+from modules.views.ViewComponent import ViewComponent
 from modules.views.body.CurrentPlaylistView import CurrentPlaylistView
 from modules.views.body.PlaylistCarousel import PlaylistCarousel
 
 
-class HomeBodyView(QScrollArea):
+class HomeBodyView(QScrollArea, ViewComponent):
     inner: QWidget
     main_layout: QVBoxLayout
     playlist_carousel: PlaylistCarousel
@@ -47,10 +48,12 @@ class HomeBodyView(QScrollArea):
         self.current_playlist.setFixedHeight(self.height())
         return super().showEvent(a0)
 
+    @override
     def apply_light_mode(self) -> None:
         self.playlist_carousel.apply_light_mode()
         self.current_playlist.apply_light_mode()
 
+    @override
     def apply_dark_mode(self) -> None:
         self.playlist_carousel.apply_dark_mode()
         self.current_playlist.apply_dark_mode()

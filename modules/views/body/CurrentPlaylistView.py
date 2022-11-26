@@ -3,12 +3,14 @@ from typing import Optional
 from PyQt5.QtCore import Qt
 from PyQt5.QtWidgets import QWidget, QHBoxLayout
 
+from modules.helpers.types.Decorators import override
 from modules.statics.view.Material import Images
+from modules.views.ViewComponent import ViewComponent
 from modules.views.body.PlaylistInfoView import PlaylistInfoView
 from modules.views.body.songs_table.SongTable import SongTable
 
 
-class CurrentPlaylistView(QWidget):
+class CurrentPlaylistView(QWidget, ViewComponent):
     main_layout: QHBoxLayout
     info: PlaylistInfoView
     menu: SongTable
@@ -31,10 +33,12 @@ class CurrentPlaylistView(QWidget):
         self.main_layout.addLayout(self.info)
         self.main_layout.addWidget(self.menu, stretch=2)
 
+    @override
     def apply_light_mode(self) -> None:
         self.info.apply_light_mode()
         self.menu.apply_light_mode()
 
+    @override
     def apply_dark_mode(self) -> None:
         self.info.apply_dark_mode()
         self.menu.apply_dark_mode()

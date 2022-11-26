@@ -10,11 +10,12 @@ from modules.models.view.Animation import Animation
 from modules.models.view.builder.FontBuilder import FontBuilder
 from modules.models.view.builder.IconButtonStyle import IconButtonStyle
 from modules.statics.view.Material import Icons, Colors, Cursors, Paddings, Backgrounds, Images
+from modules.views.ViewComponent import ViewComponent
 from modules.widgets.DefaultPlaylistCard import DefaultPlaylistCard
 from modules.widgets.IconButton import IconButton
 
 
-class PlaylistCarousel(QScrollArea):
+class PlaylistCarousel(QScrollArea, ViewComponent):
     HOVER_ANIMATION: Animation = Animation(1.0, 1.1, 250)
 
     inner: QWidget
@@ -81,10 +82,12 @@ class PlaylistCarousel(QScrollArea):
     def setContentsMargins(self, left: int, top: int, right: int, bottom: int) -> None:
         self.main_layout.setContentsMargins(left, top, right, bottom)
 
+    @override
     def apply_light_mode(self) -> None:
         self.btn_add_playlist.apply_light_mode()
         self.add_playlist_card.setStyleSheet(Backgrounds.CIRCLE_PRIMARY_10.to_stylesheet(border_radius_size=48))
 
+    @override
     def apply_dark_mode(self) -> None:
         self.btn_add_playlist.apply_dark_mode()
         self.add_playlist_card.setStyleSheet(Backgrounds.CIRCLE_WHITE_25.to_stylesheet(border_radius_size=48))

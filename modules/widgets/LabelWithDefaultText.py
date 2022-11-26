@@ -6,14 +6,19 @@ from PyQt5.QtWidgets import QLabel, QWidget
 from modules.helpers.types.Decorators import override
 from modules.models.view.builder.BackgroundThemeBuilder import BackgroundThemeBuilder
 from modules.models.view.builder.TextStyle import TextStyle
+from modules.views.ViewComponent import ViewComponent
 
 
-class LabelWithDefaultText(QLabel):
+class LabelWithDefaultText(QLabel, ViewComponent):
     def __init__(self, parent: Optional["QWidget"] = None):
         super().__init__(parent)
         self.default_text: str = ""
         self.light_mode_style: str = ''
         self.dark_mode_style: str = ''
+
+    @override
+    def setText(self, text: str) -> None:
+        return super().setText(text or self.default_text)
 
     def set_default_text(self, text: str) -> None:
         if self.text() == self.default_text:
@@ -21,12 +26,10 @@ class LabelWithDefaultText(QLabel):
         self.default_text = text
 
     @override
-    def setText(self, text: str) -> None:
-        return super().setText(text or self.default_text)
-
     def apply_light_mode(self):
         self.setStyleSheet(self.light_mode_style)
 
+    @override
     def apply_dark_mode(self):
         self.setStyleSheet(self.dark_mode_style)
 

@@ -5,6 +5,7 @@ from PyQt5.QtGui import QPixmap, QResizeEvent, QFont
 from PyQt5.QtWidgets import QWidget, QHBoxLayout
 
 from modules.helpers.PixmapHelper import PixmapHelper
+from modules.helpers.types.Decorators import override
 from modules.helpers.types.Strings import Strings
 from modules.models.view.AppIcon import AppIcon
 from modules.models.view.builder.BackgroundThemeBuilder import BackgroundThemeBuilder
@@ -12,6 +13,7 @@ from modules.models.view.builder.FontBuilder import FontBuilder
 from modules.models.view.builder.IconButtonStyle import IconButtonStyle
 from modules.models.view.builder.TextStyle import TextStyle
 from modules.statics.view.Material import Icons, Paddings, Colors, Backgrounds, ColorBoxes
+from modules.views.ViewComponent import ViewComponent
 from modules.widgets.BackgroundWidget import BackgroundWidget
 from modules.widgets.IconButton import IconButton
 from modules.widgets.ImageViewer import ImageViewer
@@ -19,7 +21,7 @@ from modules.widgets.LabelWithDefaultText import LabelWithDefaultText
 from modules.widgets.ToggleIconButton import ToggleIconButton
 
 
-class SongTableRow(BackgroundWidget):
+class SongTableRow(BackgroundWidget, ViewComponent):
     background: QWidget
     main_layout: QHBoxLayout
     info: QHBoxLayout
@@ -145,6 +147,7 @@ class SongTableRow(BackgroundWidget):
 
         self.show_less()
 
+    @override
     def apply_light_mode(self) -> None:
         style = BackgroundThemeBuilder.build("QWidget", 16, Backgrounds.CIRCLE_HIDDEN_GRAY_10.with_border_radius(1))
         self.setStyleSheet(style)
@@ -159,6 +162,7 @@ class SongTableRow(BackgroundWidget):
         self.btn_delete.apply_light_mode()
         self.btn_close.apply_light_mode()
 
+    @override
     def apply_dark_mode(self) -> None:
         style = BackgroundThemeBuilder.build("QWidget", 16, Backgrounds.CIRCLE_HIDDEN_GRAY_10.with_border_radius(1))
         self.setStyleSheet(style)

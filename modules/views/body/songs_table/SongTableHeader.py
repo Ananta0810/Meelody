@@ -4,17 +4,19 @@ from PyQt5.QtCore import Qt
 from PyQt5.QtGui import QFont
 from PyQt5.QtWidgets import QWidget, QHBoxLayout
 
+from modules.helpers.types.Decorators import override
 from modules.models.view.AppIcon import AppIcon
 from modules.models.view.Padding import Padding
 from modules.models.view.builder.FontBuilder import FontBuilder
 from modules.models.view.builder.IconButtonStyle import IconButtonStyle
 from modules.models.view.builder.TextStyle import TextStyle
 from modules.statics.view.Material import ColorBoxes, Icons, Paddings, Colors, Backgrounds
+from modules.views.ViewComponent import ViewComponent
 from modules.widgets.IconButton import IconButton
 from modules.widgets.LabelWithDefaultText import LabelWithDefaultText
 
 
-class SongTableHeader(QWidget):
+class SongTableHeader(QWidget, ViewComponent):
     main_layout: QHBoxLayout
     info: QHBoxLayout
 
@@ -80,6 +82,7 @@ class SongTableHeader(QWidget):
         self.info.addWidget(self.label_length)
         self.info.addWidget(self.buttons)
 
+    @override
     def apply_light_mode(self) -> None:
         self.label_track.apply_light_mode()
         self.label_artist.apply_light_mode()
@@ -87,6 +90,7 @@ class SongTableHeader(QWidget):
         self.btn_download_songs.apply_light_mode()
         self.btn_add_songs.apply_light_mode()
 
+    @override
     def apply_dark_mode(self) -> None:
         self.label_track.apply_dark_mode()
         self.label_artist.apply_dark_mode()

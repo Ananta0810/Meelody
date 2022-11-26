@@ -3,14 +3,16 @@ from typing import Self
 from PyQt5.QtCore import QObject, QSize
 from PyQt5.QtWidgets import QPushButton
 
+from modules.helpers.types.Decorators import override
 from modules.models.view.AppIcon import AppIcon
 from modules.models.view.Padding import Padding
 from modules.models.view.builder.BackgroundThemeBuilder import BackgroundThemeBuilder
 from modules.models.view.builder.IconButtonStyle import IconButtonStyle
 from modules.statics.view.Material import Cursors
+from modules.views.ViewComponent import ViewComponent
 
 
-class IconButton(QPushButton):
+class IconButton(QPushButton, ViewComponent):
     def __init__(self, parent=None):
         super().__init__(parent)
         self.is_dark_mode = False
@@ -19,13 +21,15 @@ class IconButton(QPushButton):
         self.light_mode_background: str = ''
         self.dark_mode_background: str = ''
 
-    def apply_dark_mode(self) -> Self:
-        self.is_dark_mode = True
+    @override
+    def apply_light_mode(self) -> Self:
+        self.is_dark_mode = False
         self.__change_icon_based_on_state()
         return self
 
-    def apply_light_mode(self) -> Self:
-        self.is_dark_mode = False
+    @override
+    def apply_dark_mode(self) -> Self:
+        self.is_dark_mode = True
         self.__change_icon_based_on_state()
         return self
 

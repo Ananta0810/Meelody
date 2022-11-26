@@ -5,17 +5,19 @@ from PyQt5.QtGui import QPixmap
 from PyQt5.QtWidgets import QHBoxLayout, QWidget, QVBoxLayout
 
 from modules.helpers.PixmapHelper import PixmapHelper
+from modules.helpers.types.Decorators import override
 from modules.models.view.builder.FontBuilder import FontBuilder
 from modules.models.view.builder.IconButtonStyle import IconButtonStyle
 from modules.models.view.builder.TextStyle import TextStyle
 from modules.statics.view.Material import Paddings, Icons, Colors, Backgrounds, ColorBoxes
+from modules.views.ViewComponent import ViewComponent
 from modules.widgets.IconButton import IconButton
 from modules.widgets.ImageViewer import ImageViewer
 from modules.widgets.LabelWithDefaultText import LabelWithDefaultText
 from modules.widgets.StatelessIconButton import StatelessIconButton
 
 
-class MusicPlayerLeftSide(QHBoxLayout):
+class MusicPlayerLeftSide(QHBoxLayout, ViewComponent):
     song_info_layout: QVBoxLayout
     play_buttons: QHBoxLayout
 
@@ -108,6 +110,7 @@ class MusicPlayerLeftSide(QHBoxLayout):
         self.play_buttons.addWidget(self.next_song_btn)
         QMetaObject.connectSlotsByName(self)
 
+    @override
     def apply_light_mode(self) -> None:
         self.next_song_btn.apply_light_mode()
         self.prev_song_btn.apply_light_mode()
@@ -115,6 +118,7 @@ class MusicPlayerLeftSide(QHBoxLayout):
         self.song_title.apply_light_mode()
         self.song_artist.apply_light_mode()
 
+    @override
     def apply_dark_mode(self) -> None:
         self.next_song_btn.apply_dark_mode()
         self.prev_song_btn.apply_dark_mode()
