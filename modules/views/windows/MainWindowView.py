@@ -1,19 +1,17 @@
-from typing import Optional, Union, Self
+from typing import Optional
 
 from PyQt5.QtCore import QMetaObject, Qt
-from PyQt5.QtGui import QResizeEvent
-from PyQt5.QtWidgets import QWidget, QVBoxLayout, QHBoxLayout, QLayout
+from PyQt5.QtWidgets import QWidget, QVBoxLayout, QHBoxLayout
 
 from modules.models.view.Background import Background
-from modules.models.view.builder.IconButtonStyle import IconButtonStyle
-from modules.statics.view.Material import ColorBoxes, Paddings, Colors, Icons, Backgrounds
+from modules.statics.view.Material import ColorBoxes
 from modules.views.body.HomeBodyView import HomeBodyView
 from modules.views.music_bar.MusicPlayerBar import MusicPlayerBar
 from modules.widgets.IconButton import IconButton
-from modules.widgets.windows.FramelessWindowWithTitleBar import FramelessWindowWithTitleBar
+from modules.widgets.windows.FramelessWindow import FramelessWindow
 
 
-class MainWindowView(FramelessWindowWithTitleBar):
+class MainWindowView(FramelessWindow):
     music_player: MusicPlayerBar
     main_layout: QVBoxLayout
     home_screen: QWidget
@@ -28,12 +26,14 @@ class MainWindowView(FramelessWindowWithTitleBar):
         self.setFixedWidth(width)
         self.setFixedHeight(height)
         self.__init_ui()
+        self.show_minimize_button(False)
 
     def __init_ui(self) -> None:
         self.body = HomeBodyView()
         self.body.setVerticalScrollBarPolicy(Qt.ScrollBarAlwaysOff)
         self.body.setHorizontalScrollBarPolicy(Qt.ScrollBarAlwaysOff)
         self.body.setWidgetResizable(True)
+        self.body.setContentsMargins(72, 0, 50, 0)
 
         self.music_player = MusicPlayerBar()
         self.music_player.setFixedHeight(96)

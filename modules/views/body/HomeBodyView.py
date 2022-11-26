@@ -30,13 +30,15 @@ class HomeBodyView(QScrollArea):
         self.playlist_carousel = PlaylistCarousel()
         self.playlist_carousel.setFixedHeight(360)
         self.playlist_carousel.setStyleSheet(Backgrounds.TRANSPARENT.to_stylesheet())
-        self.playlist_carousel.setContentsMargins(84, 0, 50, 0)
 
         self.current_playlist = CurrentPlaylistView()
-        self.current_playlist.setContentsMargins(84, 0, 50, 0)
 
         self.main_layout.addWidget(self.playlist_carousel)
         self.main_layout.addWidget(self.current_playlist)
+
+    def setContentsMargins(self, left: int, top: int, right: int, bottom: int) -> None:
+        self.playlist_carousel.setContentsMargins(left, top, right, bottom)
+        self.current_playlist.setContentsMargins(left, top, right, bottom)
 
     def showEvent(self, a0: QShowEvent) -> None:
         self.current_playlist.setFixedHeight(self.height())
