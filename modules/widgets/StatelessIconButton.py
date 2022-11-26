@@ -1,7 +1,7 @@
-from typing import Self
+from typing import Self, Optional
 
 from PyQt5.QtCore import QSize, QObject
-from PyQt5.QtWidgets import QPushButton
+from PyQt5.QtWidgets import QPushButton, QWidget
 
 from modules.helpers.types.Decorators import override
 from modules.models.view.AppIcon import AppIcon
@@ -42,13 +42,13 @@ class StatelessIconButtonThemeData:
 
 
 class StatelessIconButton(QPushButton, ViewComponent):
+    _children: list[StatelessIconButtonThemeData] = []
+    _current_index: int = 0
+    __change_state_on_pressed: bool = True
+    __is_dark_mode: bool = False
 
-    def __init__(self, parent=None):
+    def __init__(self, parent: Optional["QWidget"] = None):
         super().__init__(parent)
-        self._children: list[StatelessIconButtonThemeData] = []
-        self._current_index = 0
-        self._change_state_on_pressed = True
-        self._is_dark_mode = False
 
     def set_children(self, children: list[StatelessIconButtonThemeData]) -> None:
         self._children = children
@@ -56,15 +56,8 @@ class StatelessIconButton(QPushButton, ViewComponent):
     def add_child(self, child: StatelessIconButtonThemeData) -> None:
         self._children.append(child)
 
-    def set_change_state_on_pressed(self, a0: bool) -> Self:
-        self._change_state_on_pressed = a0
-        return self
-
-    @override
-    def mousePressEvent(self, event) -> None:
-        super().mousePressEvent(event)
-        if self._change_state_on_pressed:
-            self.to_next_state()
+    def set_change_state_on_pressed(self, a0: bool) -> None:
+        self.__change_state_on_pressed = a0
 
     def set_state_index(self, index: int) -> None:
         if index >= len(self._children):
@@ -75,26 +68,32 @@ class StatelessIconButton(QPushButton, ViewComponent):
     def to_next_state(self) -> None:
         self.set_state_index((self._current_index + 1) % len(self._children))
 
-    @override
-    def apply_light_mode(self):
-        self._is_dark_mode = False
-        self._change_button_based_on_state()
-
-    @override
-    def apply_dark_mode(self):
-        self._is_dark_mode = True
-        self._change_button_based_on_state()
-
     def _change_button_based_on_state(self) -> None:
         button = self._children[self._current_index]
 
-        if self._is_dark_mode:
+        if self.__is_dark_mode:
             self.setIcon(button.dark_mode_icon)
             self.setStyleSheet(button.dark_mode_background)
             return
 
         self.setIcon(button.light_mode_icon)
         self.setStyleSheet(button.light_mode_background)
+
+    @override
+    def mousePressEvent(self, event) -> None:
+        super().mousePressEvent(event)
+        if self.__change_state_on_pressed:
+            self.to_next_state()
+
+    @override
+    def apply_light_mode(self):
+        self.__is_dark_mode = False
+        self._change_button_based_on_state()
+
+    @override
+    def apply_dark_mode(self):
+        self.__is_dark_mode = True
+        self._change_button_based_on_state()
 
     @staticmethod
     def build(

@@ -16,88 +16,88 @@ from modules.widgets.IconButton import IconButton
 
 
 class PlaylistCarousel(QScrollArea, ViewComponent):
-    HOVER_ANIMATION: Animation = Animation(1.0, 1.1, 250)
+    __HOVER_ANIMATION: Animation = Animation(1.0, 1.1, 250)
 
-    inner: QWidget
-    main_layout: QHBoxLayout
-    user_playlists: QHBoxLayout
-    default_playlists: QHBoxLayout
-    playlist_library: DefaultPlaylistCard
-    playlist_favourites: DefaultPlaylistCard
-    add_playlist_card: QWidget
-    btn_add_playlist: IconButton
+    __inner: QWidget
+    __main_layout: QHBoxLayout
+    __user_playlists: QHBoxLayout
+    __default_playlists: QHBoxLayout
+    __playlist_library: DefaultPlaylistCard
+    __playlist_favourites: DefaultPlaylistCard
+    __add_playlist_card: QWidget
+    __btn_add_playlist: IconButton
 
     def __init__(self, parent: Optional["QWidget"] = None):
         super(PlaylistCarousel, self).__init__(parent)
-        self.setup_ui()
-        self.playlist_library.set_label_text("Library")
-        self.playlist_favourites.set_label_text("Favourites")
+        self.__init_ui()
+        self.__playlist_library.set_label_text("Library")
+        self.__playlist_favourites.set_label_text("Favourites")
 
-    def setup_ui(self):
+    def __init_ui(self):
         self.setVerticalScrollBarPolicy(Qt.ScrollBarAlwaysOff)
         self.setHorizontalScrollBarPolicy(Qt.ScrollBarAlwaysOff)
         self.setWidgetResizable(True)
 
-        self.inner = QWidget()
-        self.setWidget(self.inner)
+        self.__inner = QWidget()
+        self.setWidget(self.__inner)
 
-        self.main_layout = QHBoxLayout(self.inner)
-        self.main_layout.setAlignment(Qt.AlignLeft)
-        self.main_layout.setSpacing(32)
+        self.__main_layout = QHBoxLayout(self.__inner)
+        self.__main_layout.setAlignment(Qt.AlignLeft)
+        self.__main_layout.setSpacing(32)
 
         # =================Library=================
-        self.playlist_library = self.__create_default_playlist_with_cover(Images.DEFAULT_PLAYLIST_COVER)
-        self.playlist_favourites = self.__create_default_playlist_with_cover(Images.FAVOURITES_PLAYLIST_COVER)
+        self.__playlist_library = self.__create_default_playlist_with_cover(Images.DEFAULT_PLAYLIST_COVER)
+        self.__playlist_favourites = self.__create_default_playlist_with_cover(Images.FAVOURITES_PLAYLIST_COVER)
 
-        self.default_playlists = QHBoxLayout()
-        self.default_playlists.setAlignment(Qt.AlignLeft)
-        self.default_playlists.addWidget(self.playlist_library)
-        self.default_playlists.addWidget(self.playlist_favourites)
+        self.__default_playlists = QHBoxLayout()
+        self.__default_playlists.setAlignment(Qt.AlignLeft)
+        self.__default_playlists.addWidget(self.__playlist_library)
+        self.__default_playlists.addWidget(self.__playlist_favourites)
 
-        self.user_playlists = QHBoxLayout()
-        self.user_playlists.setAlignment(Qt.AlignLeft)
+        self.__user_playlists = QHBoxLayout()
+        self.__user_playlists.setAlignment(Qt.AlignLeft)
 
         # =================New playlist=================
-        self.add_playlist_card = QWidget()
-        self.add_playlist_card.setFixedSize(256, 320)
+        self.__add_playlist_card = QWidget()
+        self.__add_playlist_card.setFixedSize(256, 320)
 
-        self.btn_add_playlist = IconButton.build(
+        self.__btn_add_playlist = IconButton.build(
             padding=Paddings.RELATIVE_67,
             size=Icons.LARGE,
             style=IconButtonStyle(
                 light_mode_icon=Icons.ADD.with_color(Colors.PRIMARY),
                 light_mode_background=Backgrounds.CIRCLE_HIDDEN_PRIMARY_25,
             ),
-            parent=self.add_playlist_card,
+            parent=self.__add_playlist_card,
         )
-        self.btn_add_playlist.setCursor(Cursors.HAND)
-        self.btn_add_playlist.move(self.add_playlist_card.rect().center() - self.btn_add_playlist.rect().center())
+        self.__btn_add_playlist.setCursor(Cursors.HAND)
+        self.__btn_add_playlist.move(self.__add_playlist_card.rect().center() - self.__btn_add_playlist.rect().center())
 
-        self.main_layout.addLayout(self.default_playlists)
-        self.main_layout.addLayout(self.user_playlists)
-        self.main_layout.addWidget(self.add_playlist_card)
-        self.main_layout.addStretch()
+        self.__main_layout.addLayout(self.__default_playlists)
+        self.__main_layout.addLayout(self.__user_playlists)
+        self.__main_layout.addWidget(self.__add_playlist_card)
+        self.__main_layout.addStretch()
 
     @override
     def setContentsMargins(self, left: int, top: int, right: int, bottom: int) -> None:
-        self.main_layout.setContentsMargins(left, top, right, bottom)
+        self.__main_layout.setContentsMargins(left, top, right, bottom)
 
     @override
     def apply_light_mode(self) -> None:
-        self.btn_add_playlist.apply_light_mode()
-        self.add_playlist_card.setStyleSheet(Backgrounds.CIRCLE_PRIMARY_10.to_stylesheet(border_radius_size=48))
+        self.__btn_add_playlist.apply_light_mode()
+        self.__add_playlist_card.setStyleSheet(Backgrounds.CIRCLE_PRIMARY_10.to_stylesheet(border_radius_size=48))
 
     @override
     def apply_dark_mode(self) -> None:
-        self.btn_add_playlist.apply_dark_mode()
-        self.add_playlist_card.setStyleSheet(Backgrounds.CIRCLE_WHITE_25.to_stylesheet(border_radius_size=48))
+        self.__btn_add_playlist.apply_dark_mode()
+        self.__add_playlist_card.setStyleSheet(Backgrounds.CIRCLE_WHITE_25.to_stylesheet(border_radius_size=48))
 
     @staticmethod
     def __create_default_playlist_with_cover(cover_byte: bytes) -> DefaultPlaylistCard:
         playlist = DefaultPlaylistCard(FontBuilder.build(size=16, bold=True))
         playlist.setFixedSize(256, 320)
         playlist.setCursor(Cursors.HAND)
-        playlist.set_animation(PlaylistCarousel.HOVER_ANIMATION)
+        playlist.set_animation(PlaylistCarousel.__HOVER_ANIMATION)
         playlist.set_cover(PlaylistCarousel.__get_pixmap_for_playlist_cover(cover_byte))
         return playlist
 

@@ -1,7 +1,7 @@
 from typing import Optional
 
-from PyQt5.QtCore import QMetaObject, Qt
-from PyQt5.QtWidgets import QWidget, QVBoxLayout, QHBoxLayout
+from PyQt5.QtCore import Qt
+from PyQt5.QtWidgets import QWidget
 
 from modules.helpers.types.Decorators import override
 from modules.models.view.Background import Background
@@ -9,19 +9,12 @@ from modules.statics.view.Material import ColorBoxes
 from modules.views.ViewComponent import ViewComponent
 from modules.views.body.HomeBodyView import HomeBodyView
 from modules.views.music_bar.MusicPlayerBar import MusicPlayerBar
-from modules.widgets.IconButton import IconButton
 from modules.widgets.windows.FramelessWindow import FramelessWindow
 
 
 class MainWindowView(FramelessWindow, ViewComponent):
-    music_player: MusicPlayerBar
-    main_layout: QVBoxLayout
-    home_screen: QWidget
-    title_bar: QHBoxLayout
-    background: QWidget
-    close_btn: IconButton
-    minimize_btn: IconButton
-    body: HomeBodyView
+    __body: HomeBodyView
+    __music_player: MusicPlayerBar
 
     def __init__(self, parent: Optional["QWidget"] = None, width: int = 1280, height: int = 720):
         super(MainWindowView, self).__init__(parent)
@@ -30,32 +23,31 @@ class MainWindowView(FramelessWindow, ViewComponent):
         self.__init_ui()
 
     def __init_ui(self) -> None:
-        self.body = HomeBodyView()
-        self.body.setVerticalScrollBarPolicy(Qt.ScrollBarAlwaysOff)
-        self.body.setHorizontalScrollBarPolicy(Qt.ScrollBarAlwaysOff)
-        self.body.setWidgetResizable(True)
-        self.body.setContentsMargins(72, 0, 50, 0)
+        self.__body = HomeBodyView()
+        self.__body.setVerticalScrollBarPolicy(Qt.ScrollBarAlwaysOff)
+        self.__body.setHorizontalScrollBarPolicy(Qt.ScrollBarAlwaysOff)
+        self.__body.setWidgetResizable(True)
+        self.__body.setContentsMargins(72, 0, 50, 0)
 
-        self.music_player = MusicPlayerBar()
-        self.music_player.setFixedHeight(96)
-        self.music_player.setObjectName("musicPlayer")
+        self.__music_player = MusicPlayerBar()
+        self.__music_player.setFixedHeight(96)
+        self.__music_player.setObjectName("musicPlayer")
 
-        self.addWidget(self.body)
-        self.addWidget(self.music_player, alignment=Qt.AlignBottom)
-        QMetaObject.connectSlotsByName(self)
+        self.addWidget(self.__body)
+        self.addWidget(self.__music_player, alignment=Qt.AlignBottom)
 
     @override
     def apply_light_mode(self) -> None:
         super().apply_light_mode()
         self.setStyleSheet(Background(border_radius=24, color=ColorBoxes.WHITE).to_stylesheet())
-        self.body.apply_light_mode()
-        self.music_player.setStyleSheet("QWidget#musicPlayer{border-top: 1px solid #eaeaea};border-radius:0px")
-        self.music_player.apply_light_mode()
+        self.__body.apply_light_mode()
+        self.__music_player.setStyleSheet("QWidget#musicPlayer{border-top: 1px solid #eaeaea};border-radius:0px")
+        self.__music_player.apply_light_mode()
 
     @override
     def apply_dark_mode(self) -> None:
         super().apply_dark_mode()
         self.setStyleSheet(Background(border_radius=24, color=ColorBoxes.BLACK).to_stylesheet())
-        self.body.apply_dark_mode()
-        self.music_player.setStyleSheet("QWidget#musicPlayer{border-top: 1px solid #202020};border-radius:0px")
-        self.music_player.apply_dark_mode()
+        self.__body.apply_dark_mode()
+        self.__music_player.setStyleSheet("QWidget#musicPlayer{border-top: 1px solid #202020};border-radius:0px")
+        self.__music_player.apply_dark_mode()

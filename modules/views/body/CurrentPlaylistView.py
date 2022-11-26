@@ -11,39 +11,39 @@ from modules.views.body.songs_table.SongTable import SongTable
 
 
 class CurrentPlaylistView(QWidget, ViewComponent):
-    main_layout: QHBoxLayout
-    info: PlaylistInfoView
-    menu: SongTable
+    __main_layout: QHBoxLayout
+    __info: PlaylistInfoView
+    __menu: SongTable
 
     def __init__(self, parent: Optional["QWidget"] = None):
         super(CurrentPlaylistView, self).__init__(parent)
-        self.setup_ui()
+        self.__init_ui()
 
-    def setup_ui(self) -> None:
-        self.main_layout = QHBoxLayout(self)
-        self.main_layout.setAlignment(Qt.AlignLeft)
-        self.main_layout.setSpacing(50)
-        self.main_layout.setContentsMargins(0, 0, 0, 0)
+    def __init_ui(self) -> None:
+        self.__main_layout = QHBoxLayout(self)
+        self.__main_layout.setAlignment(Qt.AlignLeft)
+        self.__main_layout.setSpacing(50)
+        self.__main_layout.setContentsMargins(0, 0, 0, 0)
 
-        self.info = PlaylistInfoView()
-        self.info.set_default_cover(Images.DEFAULT_PLAYLIST_COVER)
+        self.__info = PlaylistInfoView()
+        self.__info.set_default_cover(Images.DEFAULT_PLAYLIST_COVER)
 
-        self.menu = SongTable()
+        self.__menu = SongTable()
 
-        self.main_layout.addLayout(self.info)
-        self.main_layout.addWidget(self.menu, stretch=2)
+        self.__main_layout.addLayout(self.__info)
+        self.__main_layout.addWidget(self.__menu, stretch=2)
 
     @override
     def apply_light_mode(self) -> None:
-        self.info.apply_light_mode()
-        self.menu.apply_light_mode()
+        self.__info.apply_light_mode()
+        self.__menu.apply_light_mode()
 
     @override
     def apply_dark_mode(self) -> None:
-        self.info.apply_dark_mode()
-        self.menu.apply_dark_mode()
+        self.__info.apply_dark_mode()
+        self.__menu.apply_dark_mode()
 
-    def set_current_playlist_info(self, name: str, total_song: int, cover: bytes = None) -> None:
+    def set_current_playlist___info(self, name: str, total_song: int, cover: bytes = None) -> None:
         if cover is None:
             cover = (
                 Images.FAVOURITES_PLAYLIST_COVER
@@ -51,6 +51,6 @@ class CurrentPlaylistView(QWidget, ViewComponent):
                 else Images.DEFAULT_PLAYLIST_COVER
             )
 
-        self.info.set_cover(cover)
-        self.info.set_title(name)
-        self.info.set_total_song(total_song)
+        self.__info.set_cover(cover)
+        self.__info.set_title(name)
+        self.__info.set_total_song(total_song)

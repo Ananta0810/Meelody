@@ -18,57 +18,57 @@ from modules.widgets.StatelessIconButton import StatelessIconButton
 
 
 class MusicPlayerLeftSide(QHBoxLayout, ViewComponent):
-    song_info_layout: QVBoxLayout
-    play_buttons: QHBoxLayout
+    __song_info_layout: QVBoxLayout
+    __play_buttons: QHBoxLayout
 
-    song_cover: ImageViewer
-    song_artist: LabelWithDefaultText
-    song_title: LabelWithDefaultText
+    __song_cover: ImageViewer
+    __label_song_artist: LabelWithDefaultText
+    __label_song_title: LabelWithDefaultText
 
-    prev_song_btn: IconButton
-    play_song_btn: StatelessIconButton
-    next_song_btn: IconButton
+    __btn_prev_song: IconButton
+    __btn_play_song: StatelessIconButton
+    __btn_next_song: IconButton
 
     def __init__(self, parent: Optional["QWidget"] = None):
         super(MusicPlayerLeftSide, self).__init__(parent)
-        self.setup_ui()
+        self.__init_ui()
 
-    def setup_ui(self) -> None:
-        self.song_cover = ImageViewer()
-        self.song_cover.setFixedSize(64, 64)
-        self.addWidget(self.song_cover)
+    def __init_ui(self) -> None:
+        self.__song_cover = ImageViewer()
+        self.__song_cover.setFixedSize(64, 64)
+        self.addWidget(self.__song_cover)
 
-        self.song_title = LabelWithDefaultText.build(
+        self.__label_song_title = LabelWithDefaultText.build(
             width=128,
             font=FontBuilder.build(size=10, bold=True),
             light_mode_style=TextStyle(text_color=ColorBoxes.BLACK),
             dark_mode_style=TextStyle(text_color=ColorBoxes.WHITE)
         )
-        self.song_artist = LabelWithDefaultText.build(
+        self.__label_song_artist = LabelWithDefaultText.build(
             width=128,
             font=FontBuilder.build(size=9),
             light_mode_style=TextStyle(text_color=ColorBoxes.BLACK),
             dark_mode_style=TextStyle(text_color=ColorBoxes.WHITE)
         )
 
-        self.song_info_layout = QVBoxLayout()
-        self.song_info_layout.setContentsMargins(0, 0, 0, 0)
-        self.song_info_layout.setSpacing(0)
+        self.__song_info_layout = QVBoxLayout()
+        self.__song_info_layout.setContentsMargins(0, 0, 0, 0)
+        self.__song_info_layout.setSpacing(0)
 
-        self.addLayout(self.song_info_layout, stretch=1)
+        self.addLayout(self.__song_info_layout, stretch=1)
 
-        self.song_info_layout.addStretch(0)
-        self.song_info_layout.addWidget(self.song_title)
-        self.song_info_layout.addWidget(self.song_artist)
-        self.song_info_layout.addStretch(0)
+        self.__song_info_layout.addStretch(0)
+        self.__song_info_layout.addWidget(self.__label_song_title)
+        self.__song_info_layout.addWidget(self.__label_song_artist)
+        self.__song_info_layout.addStretch(0)
 
         # =================PREVIOUS - PLAY - NEXT=================
-        self.play_buttons = QHBoxLayout()
-        self.play_buttons.setContentsMargins(0, 0, 0, 0)
-        self.play_buttons.setSpacing(8)
-        self.addLayout(self.play_buttons)
+        self.__play_buttons = QHBoxLayout()
+        self.__play_buttons.setContentsMargins(0, 0, 0, 0)
+        self.__play_buttons.setSpacing(8)
+        self.addLayout(self.__play_buttons)
 
-        self.prev_song_btn = IconButton.build(
+        self.__btn_prev_song = IconButton.build(
             padding=Paddings.RELATIVE_50,
             size=Icons.LARGE,
             style=IconButtonStyle(
@@ -76,9 +76,9 @@ class MusicPlayerLeftSide(QHBoxLayout, ViewComponent):
                 light_mode_background=Backgrounds.CIRCLE_HIDDEN_PRIMARY_25,
             )
         )
-        self.play_buttons.addWidget(self.prev_song_btn)
+        self.__play_buttons.addWidget(self.__btn_prev_song)
 
-        self.play_song_btn = StatelessIconButton.build(
+        self.__btn_play_song = StatelessIconButton.build(
             padding=Paddings.RELATIVE_50,
             size=Icons.X_LARGE,
             children=[
@@ -96,10 +96,10 @@ class MusicPlayerLeftSide(QHBoxLayout, ViewComponent):
                 ),
             ],
         )
-        self.play_song_btn.setChecked(False)
-        self.play_buttons.addWidget(self.play_song_btn)
+        self.__btn_play_song.setChecked(False)
+        self.__play_buttons.addWidget(self.__btn_play_song)
 
-        self.next_song_btn = IconButton.build(
+        self.__btn_next_song = IconButton.build(
             padding=Paddings.RELATIVE_50,
             size=Icons.LARGE,
             style=IconButtonStyle(
@@ -107,42 +107,42 @@ class MusicPlayerLeftSide(QHBoxLayout, ViewComponent):
                 light_mode_background=Backgrounds.CIRCLE_HIDDEN_PRIMARY_25,
             )
         )
-        self.play_buttons.addWidget(self.next_song_btn)
+        self.__play_buttons.addWidget(self.__btn_next_song)
         QMetaObject.connectSlotsByName(self)
 
     @override
     def apply_light_mode(self) -> None:
-        self.next_song_btn.apply_light_mode()
-        self.prev_song_btn.apply_light_mode()
-        self.play_song_btn.apply_light_mode()
-        self.song_title.apply_light_mode()
-        self.song_artist.apply_light_mode()
+        self.__btn_next_song.apply_light_mode()
+        self.__btn_prev_song.apply_light_mode()
+        self.__btn_play_song.apply_light_mode()
+        self.__label_song_title.apply_light_mode()
+        self.__label_song_artist.apply_light_mode()
 
     @override
     def apply_dark_mode(self) -> None:
-        self.next_song_btn.apply_dark_mode()
-        self.prev_song_btn.apply_dark_mode()
-        self.play_song_btn.apply_dark_mode()
-        self.song_title.apply_dark_mode()
-        self.song_artist.apply_dark_mode()
+        self.__btn_next_song.apply_dark_mode()
+        self.__btn_prev_song.apply_dark_mode()
+        self.__btn_play_song.apply_dark_mode()
+        self.__label_song_title.apply_dark_mode()
+        self.__label_song_artist.apply_dark_mode()
 
     def set_default_cover(self, byte_pixmap: bytes) -> None:
-        self.song_cover.set_default_pixmap(self.__get_pixmap_for_song_cover(byte_pixmap))
+        self.__song_cover.set_default_pixmap(self.__get_pixmap_for_song_cover(byte_pixmap))
 
     def set_default_title(self, text: str) -> None:
-        self.song_title.set_default_text(text)
+        self.__label_song_title.set_default_text(text)
 
     def set_default_artist(self, text: str) -> None:
-        self.song_artist.set_default_text(text)
+        self.__label_song_artist.set_default_text(text)
 
     def set_cover(self, byte_pixmap: bytes) -> None:
-        self.song_cover.setPixmap(self.__get_pixmap_for_song_cover(byte_pixmap))
+        self.__song_cover.setPixmap(self.__get_pixmap_for_song_cover(byte_pixmap))
 
     def set_title(self, text: str) -> None:
-        self.song_title.setText(text)
+        self.__label_song_title.setText(text)
 
     def set_artist(self, text: str) -> None:
-        self.song_artist.setText(text)
+        self.__label_song_artist.setText(text)
 
     @staticmethod
     def __get_pixmap_for_song_cover(byte_pixmap: bytes) -> Union[QPixmap, None]:

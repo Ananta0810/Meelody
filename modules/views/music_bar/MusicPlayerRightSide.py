@@ -17,30 +17,30 @@ from modules.widgets.ToggleIconButton import ToggleIconButton
 
 
 class MusicPlayerRightSide(QHBoxLayout, ViewComponent):
-    btn_loop: ToggleIconButton
-    btn_shuffle: ToggleIconButton
-    btn_love: ToggleIconButton
-    btn_volume: StatelessIconButton
+    __btn_loop: ToggleIconButton
+    __btn_shuffle: ToggleIconButton
+    __btn_love: ToggleIconButton
+    __btn_volume: StatelessIconButton
 
-    right_boxes: QHBoxLayout
-    inputs: QWidget
-    slider_volume: HorizontalSlider
-    btn_timer: IconButton
+    __right_boxes: QHBoxLayout
+    __inputs: QWidget
+    __slider_volume: HorizontalSlider
+    __btn_timer: IconButton
 
     def __init__(self, parent: Optional["QWidget"] = None):
         super(MusicPlayerRightSide, self).__init__(parent)
-        self.setup_ui()
+        self.__init_ui()
 
-    def setup_ui(self) -> None:
-        self.btn_loop = self.__build_option_btn_with_icon(icon=Icons.LOOP)
-        self.btn_shuffle = self.__build_option_btn_with_icon(icon=Icons.SHUFFLE)
-        self.btn_love = self.__build_option_btn_with_icon(
+    def __init_ui(self) -> None:
+        self.__btn_loop = self.__build_option_btn_with_icon(icon=Icons.LOOP)
+        self.__btn_shuffle = self.__build_option_btn_with_icon(icon=Icons.SHUFFLE)
+        self.__btn_love = self.__build_option_btn_with_icon(
             icon=Icons.LOVE,
             active_icon_color=Colors.DANGER,
             active_background=Backgrounds.CIRCLE_HIDDEN_DANGER_25,
         )
 
-        self.btn_volume = StatelessIconButton.build(
+        self.__btn_volume = StatelessIconButton.build(
             size=Icons.LARGE,
             padding=Paddings.RELATIVE_50,
             children=[
@@ -58,13 +58,13 @@ class MusicPlayerRightSide(QHBoxLayout, ViewComponent):
                 ),
             ],
         )
-        self.btn_volume.set_change_state_on_pressed(False)
+        self.__btn_volume.set_change_state_on_pressed(False)
 
-        self.inputs = QWidget()
-        self.right_boxes = QHBoxLayout(self.inputs)
-        self.right_boxes.setContentsMargins(0, 0, 0, 0)
+        self.__inputs = QWidget()
+        self.__right_boxes = QHBoxLayout(self.__inputs)
+        self.__right_boxes.setContentsMargins(0, 0, 0, 0)
 
-        self.slider_volume = HorizontalSlider.build(
+        self.__slider_volume = HorizontalSlider.build(
             height=48,
             light_mode_style=SliderStyle(
                 handler_color=ColorBoxes.PRIMARY,
@@ -77,11 +77,11 @@ class MusicPlayerRightSide(QHBoxLayout, ViewComponent):
                 background=Backgrounds.ROUNDED_WHITE_25,
             ),
         )
-        self.slider_volume.setSliderPosition(100)
-        self.slider_volume.valueChanged.connect(self.__change_volume_icon)
-        self.right_boxes.addWidget(self.slider_volume)
+        self.__slider_volume.setSliderPosition(100)
+        self.__slider_volume.valueChanged.connect(self.__change_volume_icon)
+        self.__right_boxes.addWidget(self.__slider_volume)
 
-        self.btn_timer = IconButton.build(
+        self.__btn_timer = IconButton.build(
             padding=Paddings.RELATIVE_50,
             size=Icons.LARGE,
             style=IconButtonStyle(
@@ -89,36 +89,36 @@ class MusicPlayerRightSide(QHBoxLayout, ViewComponent):
                 light_mode_background=Backgrounds.CIRCLE_HIDDEN_PRIMARY_25
             )
         )
-        self.btn_volume.clicked.connect(
-            lambda signal: self.slider_volume.setVisible(not self.slider_volume.isVisible()))
+        self.__btn_volume.clicked.connect(
+            lambda signal: self.__slider_volume.setVisible(not self.__slider_volume.isVisible()))
 
-        self.addWidget(self.btn_loop)
-        self.addWidget(self.btn_shuffle)
-        self.addWidget(self.btn_love)
-        self.addWidget(self.btn_volume)
-        self.addWidget(self.inputs, 1)
-        self.addWidget(self.btn_timer)
+        self.addWidget(self.__btn_loop)
+        self.addWidget(self.__btn_shuffle)
+        self.addWidget(self.__btn_love)
+        self.addWidget(self.__btn_volume)
+        self.addWidget(self.__inputs, 1)
+        self.addWidget(self.__btn_timer)
 
     @override
     def apply_light_mode(self) -> None:
-        self.btn_loop.apply_light_mode()
-        self.btn_shuffle.apply_light_mode()
-        self.btn_love.apply_light_mode()
-        self.btn_volume.apply_light_mode()
-        self.btn_timer.apply_light_mode()
-        self.slider_volume.apply_light_mode()
+        self.__btn_loop.apply_light_mode()
+        self.__btn_shuffle.apply_light_mode()
+        self.__btn_love.apply_light_mode()
+        self.__btn_volume.apply_light_mode()
+        self.__btn_timer.apply_light_mode()
+        self.__slider_volume.apply_light_mode()
 
     @override
     def apply_dark_mode(self) -> None:
-        self.btn_loop.apply_dark_mode()
-        self.btn_shuffle.apply_dark_mode()
-        self.btn_love.apply_dark_mode()
-        self.btn_volume.apply_dark_mode()
-        self.btn_timer.apply_dark_mode()
-        self.slider_volume.apply_dark_mode()
+        self.__btn_loop.apply_dark_mode()
+        self.__btn_shuffle.apply_dark_mode()
+        self.__btn_love.apply_dark_mode()
+        self.__btn_volume.apply_dark_mode()
+        self.__btn_timer.apply_dark_mode()
+        self.__slider_volume.apply_dark_mode()
 
     def __change_volume_icon(self) -> None:
-        volume: int = self.slider_volume.value()
+        volume: int = self.__slider_volume.value()
 
         VOLUME_UP_ICON: int = 0
         VOLUME_DOWN_ICON: int = 1
@@ -129,7 +129,7 @@ class MusicPlayerRightSide(QHBoxLayout, ViewComponent):
             icon = VOLUME_DOWN_ICON
         if 33 < volume <= 100:
             icon = VOLUME_UP_ICON
-        self.btn_volume.set_state_index(icon)
+        self.__btn_volume.set_state_index(icon)
 
     @staticmethod
     def __build_option_btn_with_icon(

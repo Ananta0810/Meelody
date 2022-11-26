@@ -13,8 +13,8 @@ from modules.widgets.SmoothVerticalScrollArea import SmoothVerticalScrollArea
 class SongTableBody(SmoothVerticalScrollArea, ViewComponent):
     keyPressed = pyqtSignal(QEvent)
 
-    inner: QWidget
-    menu: QVBoxLayout
+    __inner: QWidget
+    __menu: QVBoxLayout
 
     def __init__(self, parent: Optional["QWidget"] = None):
         super(SongTableBody, self).__init__(parent)
@@ -30,12 +30,12 @@ class SongTableBody(SmoothVerticalScrollArea, ViewComponent):
         self.setWidgetResizable(True)
         self.set_item_height(104)
 
-        self.inner = QWidget(self)
-        self.setWidget(self.inner)
-        self.menu = QVBoxLayout(self.inner)
-        self.menu.setAlignment(Qt.AlignTop)
-        self.menu.setSpacing(0)
-        self.menu.setContentsMargins(8, 0, 8, 8)
+        self.__inner = QWidget(self)
+        self.setWidget(self.__inner)
+        self.__menu = QVBoxLayout(self.__inner)
+        self.__menu.setAlignment(Qt.AlignTop)
+        self.__menu.setSpacing(0)
+        self.__menu.setContentsMargins(8, 0, 8, 8)
 
     @override
     def apply_light_mode(self) -> None:
@@ -74,7 +74,7 @@ class SongTableBody(SmoothVerticalScrollArea, ViewComponent):
         self.__get_song_at(index).set_love_state(state)
 
     def get_total_songs(self) -> int:
-        return self.menu.count()
+        return self.__menu.count()
 
     def __get_song_at(self, index: int) -> SongTableRow:
         return self._songs[index]
@@ -83,11 +83,11 @@ class SongTableBody(SmoothVerticalScrollArea, ViewComponent):
         index = self.get_total_songs()
         song = self.__addSong(title, artist, length)
         self._songs.append(song)
-        self.menu.addWidget(song)
+        self.__menu.addWidget(song)
 
     def __remove_songs_in_range(self, start: int, end: int) -> None:
         for index in range(start, end):
-            self.menu.itemAt(index).widget().deleteLater()
+            self.__menu.itemAt(index).widget().deleteLater()
 
     def __addSong(self, title: str, artist: str, length: int) -> SongTableRow:
         song = SongTableRow()
@@ -96,5 +96,5 @@ class SongTableBody(SmoothVerticalScrollArea, ViewComponent):
         song.set_artist(artist)
         song.set_title(title)
         song.set_length(length)
-        self.menu.addWidget(song)
+        self.__menu.addWidget(song)
         return song

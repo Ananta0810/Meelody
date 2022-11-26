@@ -10,19 +10,25 @@ from modules.views.ViewComponent import ViewComponent
 
 
 class HorizontalSlider(QSlider, ViewComponent):
+    __light_mode_style: str
+    __dark_mode_style: str
 
     def __init__(self, parent: Optional["QWidget"] = None):
         QSlider.__init__(self, parent)
-        self.light_mode_style: str = ''
-        self.dark_mode_style: str = ''
+
+    def set_light_mode_style(self, style: str) -> None:
+        self.__light_mode_style = style
+
+    def set_dark_mode_style(self, style: str) -> None:
+        self.__dark_mode_style = style
 
     @override
     def apply_light_mode(self):
-        self.setStyleSheet(self.light_mode_style)
+        self.setStyleSheet(self.__light_mode_style)
 
     @override
     def apply_dark_mode(self):
-        self.setStyleSheet(self.dark_mode_style)
+        self.setStyleSheet(self.__dark_mode_style)
 
     @staticmethod
     def build(
@@ -34,6 +40,6 @@ class HorizontalSlider(QSlider, ViewComponent):
         slider: HorizontalSlider = HorizontalSlider(parent)
         slider.setOrientation(Qt.Horizontal)
         slider.setMaximumHeight(height)
-        slider.light_mode_style = HorizontalSliderThemeBuilder.build(style=light_mode_style, item_size=height)
-        slider.dark_mode_style = HorizontalSliderThemeBuilder.build(style=dark_mode_style, item_size=height)
+        slider.set_light_mode_style(HorizontalSliderThemeBuilder.build(style=light_mode_style, item_size=height))
+        slider.set_dark_mode_style(HorizontalSliderThemeBuilder.build(style=dark_mode_style, item_size=height))
         return slider

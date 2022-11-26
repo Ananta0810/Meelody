@@ -1,7 +1,7 @@
-from typing import Self
+from typing import Self, Optional
 
 from PyQt5.QtCore import QObject, QSize
-from PyQt5.QtWidgets import QPushButton
+from PyQt5.QtWidgets import QPushButton, QWidget
 
 from modules.helpers.types.Decorators import override
 from modules.models.view.AppIcon import AppIcon
@@ -13,34 +13,47 @@ from modules.views.ViewComponent import ViewComponent
 
 
 class IconButton(QPushButton, ViewComponent):
-    def __init__(self, parent=None):
+    __is_dark_mode: bool = False
+    __light_mode_icon: AppIcon
+    __dark_mode_icon: AppIcon
+    __light_mode_background: str
+    __dark_mode_background: str
+
+    def __init__(self, parent: Optional["QWidget"] = None):
         super().__init__(parent)
-        self.is_dark_mode = False
-        self.light_mode_icon: AppIcon = None
-        self.dark_mode_icon: AppIcon = None
-        self.light_mode_background: str = ''
-        self.dark_mode_background: str = ''
+
+    def set_light_mode_icon(self, icon: AppIcon) -> None:
+        self.__light_mode_icon = icon
+
+    def set_dark_mode_icon(self, icon: AppIcon) -> None:
+        self.__dark_mode_icon = icon
+
+    def set_light_mode_background(self, style: str) -> None:
+        self.__light_mode_background = style
+
+    def set_dark_mode_background(self, style: str) -> None:
+        self.__dark_mode_background = style
 
     @override
     def apply_light_mode(self) -> Self:
-        self.is_dark_mode = False
+        self.__is_dark_mode = False
         self.__change_icon_based_on_state()
         return self
 
     @override
     def apply_dark_mode(self) -> Self:
-        self.is_dark_mode = True
+        self.__is_dark_mode = True
         self.__change_icon_based_on_state()
         return self
 
     def __change_icon_based_on_state(self):
-        if self.is_dark_mode:
-            background: str = self.dark_mode_background or self.light_mode_background
+        if self.__is_dark_mode:
+            background: str = self.__dark_mode_background or self.__light_mode_background
             self.setStyleSheet(background)
-            self.setIcon((self.dark_mode_icon or self.light_mode_icon))
+            self.setIcon((self.__dark_mode_icon or self.__light_mode_icon))
         else:
-            self.setStyleSheet(self.light_mode_background)
-            self.setIcon(self.light_mode_icon)
+            self.setStyleSheet(self.__light_mode_background)
+            self.setIcon(self.__light_mode_icon)
 
     @staticmethod
     def build(
@@ -50,13 +63,13 @@ class IconButton(QPushButton, ViewComponent):
         parent: QObject = None,
     ) -> Self:
         button = IconButton(parent)
-        button.light_mode_icon = style.light_mode_icon
-        button.dark_mode_icon = style.dark_mode_icon
         button.setIcon(style.light_mode_icon)
         button.setIconSize(size - padding.get_width(size))
         button.setFixedSize(size)
         button.setCursor(Cursors.HAND)
 
-        button.light_mode_background = BackgroundThemeBuilder.build(BackgroundThemeBuilder.BUTTON, size.width(), style.light_mode_background)
-        button.dark_mode_background = BackgroundThemeBuilder.build(BackgroundThemeBuilder.BUTTON, size.width(), style.dark_mode_background)
+        button.set_light_mode_icon(style.light_mode_icon)
+        button.set_dark_mode_icon(style.dark_mode_icon)
+        button.set_light_mode_background(BackgroundThemeBuilder.build(BackgroundThemeBuilder.BUTTON, size.width(), style.light_mode_background))
+        button.set_dark_mode_background(BackgroundThemeBuilder.build(BackgroundThemeBuilder.BUTTON, size.width(), style.dark_mode_background))
         return button

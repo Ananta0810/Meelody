@@ -11,49 +11,49 @@ from modules.views.body.PlaylistCarousel import PlaylistCarousel
 
 
 class HomeBodyView(QScrollArea, ViewComponent):
-    inner: QWidget
-    main_layout: QVBoxLayout
-    playlist_carousel: PlaylistCarousel
-    current_playlist: CurrentPlaylistView
+    __inner: QWidget
+    __main_layout: QVBoxLayout
+    __playlist_carousel: PlaylistCarousel
+    __current_playlist: CurrentPlaylistView
 
     def __init__(self, parent: Optional["QWidget"] = None):
         super(HomeBodyView, self).__init__(parent)
-        self.setup_ui()
+        self.__init_ui()
 
-    def setup_ui(self) -> None:
+    def __init_ui(self) -> None:
         self.setStyleSheet(Backgrounds.TRANSPARENT.to_stylesheet())
-        self.inner = QWidget()
-        self.setWidget(self.inner)
+        self.__inner = QWidget()
+        self.setWidget(self.__inner)
 
-        self.main_layout = QVBoxLayout(self.inner)
-        self.main_layout.setContentsMargins(0, 0, 0, 0)
-        self.main_layout.setSpacing(50)
+        self.__main_layout = QVBoxLayout(self.__inner)
+        self.__main_layout.setContentsMargins(0, 0, 0, 0)
+        self.__main_layout.setSpacing(50)
 
-        self.playlist_carousel = PlaylistCarousel()
-        self.playlist_carousel.setFixedHeight(360)
-        self.playlist_carousel.setStyleSheet(Backgrounds.TRANSPARENT.to_stylesheet())
+        self.__playlist_carousel = PlaylistCarousel()
+        self.__playlist_carousel.setFixedHeight(360)
+        self.__playlist_carousel.setStyleSheet(Backgrounds.TRANSPARENT.to_stylesheet())
 
-        self.current_playlist = CurrentPlaylistView()
+        self.__current_playlist = CurrentPlaylistView()
 
-        self.main_layout.addWidget(self.playlist_carousel)
-        self.main_layout.addWidget(self.current_playlist)
+        self.__main_layout.addWidget(self.__playlist_carousel)
+        self.__main_layout.addWidget(self.__current_playlist)
 
     @override
     def setContentsMargins(self, left: int, top: int, right: int, bottom: int) -> None:
-        self.playlist_carousel.setContentsMargins(left, top, right, bottom)
-        self.current_playlist.setContentsMargins(left, top, right, bottom)
+        self.__playlist_carousel.setContentsMargins(left, top, right, bottom)
+        self.__current_playlist.setContentsMargins(left, top, right, bottom)
 
     @override
     def showEvent(self, a0: QShowEvent) -> None:
-        self.current_playlist.setFixedHeight(self.height())
+        self.__current_playlist.setFixedHeight(self.height())
         return super().showEvent(a0)
 
     @override
     def apply_light_mode(self) -> None:
-        self.playlist_carousel.apply_light_mode()
-        self.current_playlist.apply_light_mode()
+        self.__playlist_carousel.apply_light_mode()
+        self.__current_playlist.apply_light_mode()
 
     @override
     def apply_dark_mode(self) -> None:
-        self.playlist_carousel.apply_dark_mode()
-        self.current_playlist.apply_dark_mode()
+        self.__playlist_carousel.apply_dark_mode()
+        self.__current_playlist.apply_dark_mode()

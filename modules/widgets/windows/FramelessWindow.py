@@ -12,35 +12,36 @@ from modules.widgets.IconButton import IconButton
 
 
 class FramelessWindow(QMainWindow, ViewComponent):
-    main_layout: QVBoxLayout
-    home_screen: QWidget
-    title_bar: QHBoxLayout
-    background: QWidget
-    close_btn: IconButton
-    minimize_btn: IconButton
+    __main_layout: QVBoxLayout
+    __inner: QWidget
+    __title_bar: QHBoxLayout
+    __background: QWidget
+    __btn_close: IconButton
+    __btn_minimize: IconButton
+    __title_bar_height: int = 72
+    __offset: int = 0
 
     def __init__(self, parent: Optional["QWidget"] = None):
         super().__init__(parent)
-        self.setWindowFlags(Qt.Window | Qt.FramelessWindowHint | Qt.WindowMinMaxButtonsHint)
-        self.setAttribute(Qt.WA_TranslucentBackground)
-        self.title_bar_height: int = 72
-        self.offset: int = 0
         self.__init_component_ui()
 
     def __init_component_ui(self) -> None:
-        self.background = QWidget(self)
-        self.home_screen = QWidget(self)
-        self.setCentralWidget(self.home_screen)
+        self.setWindowFlags(Qt.Window | Qt.FramelessWindowHint | Qt.WindowMinMaxButtonsHint)
+        self.setAttribute(Qt.WA_TranslucentBackground)
 
-        self.main_layout = QVBoxLayout(self.home_screen)
-        self.main_layout.setContentsMargins(0, 0, 0, 0)
-        self.main_layout.setSpacing(0)
+        self.__background = QWidget(self)
+        self.__inner = QWidget(self)
+        self.setCentralWidget(self.__inner)
 
-        self.title_bar = QHBoxLayout()
-        self.title_bar.setContentsMargins(12, 12, 12, 12)
-        self.title_bar.setSpacing(8)
+        self.__main_layout = QVBoxLayout(self.__inner)
+        self.__main_layout.setContentsMargins(0, 0, 0, 0)
+        self.__main_layout.setSpacing(0)
 
-        self.minimize_btn = IconButton.build(
+        self.__title_bar = QHBoxLayout()
+        self.__title_bar.setContentsMargins(12, 12, 12, 12)
+        self.__title_bar.setSpacing(8)
+
+        self.__btn_minimize = IconButton.build(
             padding=Paddings.RELATIVE_50,
             size=Icons.MEDIUM,
             style=IconButtonStyle(
@@ -51,7 +52,7 @@ class FramelessWindow(QMainWindow, ViewComponent):
             )
         )
 
-        self.close_btn = IconButton.build(
+        self.__btn_close = IconButton.build(
             padding=Paddings.RELATIVE_50,
             size=Icons.MEDIUM,
             style=IconButtonStyle(
@@ -61,42 +62,42 @@ class FramelessWindow(QMainWindow, ViewComponent):
             )
         )
 
-        self.minimize_btn.clicked.connect(self.showMinimized)
+        self.__btn_minimize.clicked.connect(self.showMinimized)
 
-        self.title_bar.addStretch()
-        self.title_bar.addWidget(self.minimize_btn)
-        self.title_bar.addWidget(self.close_btn)
+        self.__title_bar.addStretch()
+        self.__title_bar.addWidget(self.__btn_minimize)
+        self.__title_bar.addWidget(self.__btn_close)
 
-        self.addLayout(self.title_bar)
+        self.addLayout(self.__title_bar)
 
     def with_title_bar_height(self, height: int) -> Self:
-        self.title_bar_height = height
+        self.__title_bar_height = height
         return self
 
     def show_minimize_button(self, enable: bool) -> None:
-        self.minimize_btn.setVisible(enable)
+        self.__btn_minimize.setVisible(enable)
 
     def show_close_button(self, enable: bool) -> None:
-        self.close_btn.setVisible(enable)
+        self.__btn_close.setVisible(enable)
 
     @override
     def apply_light_mode(self) -> None:
-        self.minimize_btn.apply_light_mode()
-        self.close_btn.apply_light_mode()
+        self.__btn_minimize.apply_light_mode()
+        self.__btn_close.apply_light_mode()
 
     @override
     def apply_dark_mode(self) -> None:
-        self.minimize_btn.apply_dark_mode()
-        self.close_btn.apply_dark_mode()
+        self.__btn_minimize.apply_dark_mode()
+        self.__btn_close.apply_dark_mode()
 
     @override
     def resizeEvent(self, event: QResizeEvent) -> None:
-        self.background.resize(self.size())
+        self.__background.resize(self.size())
         return super().resizeEvent(event)
 
     @override
     def addLayout(self, widget: QLayout) -> None:
-        self.main_layout.addLayout(widget)
+        self.__main_layout.addLayout(widget)
 
     @override
     def addWidget(
@@ -106,29 +107,29 @@ class FramelessWindow(QMainWindow, ViewComponent):
         alignment: Union[Qt.Alignment, Qt.AlignmentFlag] = None
     ) -> None:
         if alignment is None:
-            self.main_layout.addWidget(layout, stretch=stretch)
+            self.__main_layout.addWidget(layout, stretch=stretch)
             return
-        self.main_layout.addWidget(layout, stretch=stretch, alignment=alignment)
+        self.__main_layout.addWidget(layout, stretch=stretch, alignment=alignment)
 
     @override
     def setStyleSheet(self, style_sheet: str) -> None:
-        self.background.setStyleSheet(style_sheet)
+        self.__background.setStyleSheet(style_sheet)
 
     @override
     def mousePressEvent(self, event):
         super().mousePressEvent(event)
-        if event.pos().y() < self.title_bar_height and event.button() == Qt.LeftButton:
-            self.offset = event.pos()
+        if event.pos().y() < self.__title_bar_height and event.button() == Qt.LeftButton:
+            self.__offset = event.pos()
 
     @override
     def mouseReleaseEvent(self, event):
         super().mouseReleaseEvent(event)
-        self.offset = 0
+        self.__offset = 0
 
     @override
     def mouseMoveEvent(self, event):
         super().mouseMoveEvent(event)
-        if self.offset == 0:
+        if self.__offset == 0:
             return
-        delta = event.pos() - self.offset
+        delta = event.pos() - self.__offset
         self.move(self.pos() + delta)

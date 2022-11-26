@@ -8,17 +8,17 @@ from modules.helpers.types.Decorators import override
 
 
 class BackgroundWidget(QWidget):
-    background: QWidget
-    children: list[QWidget]
+    __background: QWidget
+    __children: list[QWidget]
 
     def __init__(self, parent: Optional["QWidget"] = None):
         super(BackgroundWidget, self).__init__(parent)
-        self.children = []
+        self.__children = []
         self.__init_component_ui()
 
     def __post_init__(self):
-        self.children = self.findChildren(QWidget)
-        for child in self.children:
+        self.__children = self.findChildren(QWidget)
+        for child in self.__children:
             child.installEventFilter(self)
             child.setAttribute(Qt.WA_Hover)
 
@@ -26,35 +26,35 @@ class BackgroundWidget(QWidget):
         self.setAttribute(Qt.WA_StyledBackground, True)
         self.setAttribute(Qt.WA_Hover, True)
 
-        self.background = QWidget(self)
-        self.background.setAttribute(Qt.WA_Hover, True)
+        self.__background = QWidget(self)
+        self.__background.setAttribute(Qt.WA_Hover, True)
 
     @override
     def resizeEvent(self, a0: QResizeEvent) -> None:
         self.__post_init__()
-        self.background.resize(self.size())
+        self.__background.resize(self.size())
         return super().resizeEvent(a0)
 
     @override
     def enterEvent(self, event: QEvent) -> None:
-        self.background.enterEvent(event)
+        self.__background.enterEvent(event)
         return super().enterEvent(event)
 
     @override
     def leaveEvent(self, a0: QEvent) -> None:
-        self.background.leaveEvent(a0)
-        self.background.setProperty("hovered", False)
-        self.background.style().unpolish(self.background)
-        self.background.style().polish(self.background)
+        self.__background.leaveEvent(a0)
+        self.__background.setProperty("hovered", False)
+        self.__background.style().unpolish(self.__background)
+        self.__background.style().polish(self.__background)
         return super().leaveEvent(a0)
 
     def eventFilter(self, source: QObject, event: QEvent):
-        if source in self.children and event.type() in [QEvent.HoverEnter, QEvent.HoverLeave, QEvent.HoverMove]:
-            self.background.setProperty("hovered", True)
-            self.background.style().unpolish(self.background)
-            self.background.style().polish(self.background)
+        if source in self.__children and event.type() in [QEvent.HoverEnter, QEvent.HoverLeave, QEvent.HoverMove]:
+            self.__background.setProperty("hovered", True)
+            self.__background.style().unpolish(self.__background)
+            self.__background.style().polish(self.__background)
         return super().eventFilter(source, event)
 
     @override
     def setStyleSheet(self, style_sheet: str) -> None:
-        self.background.setStyleSheet(style_sheet)
+        self.__background.setStyleSheet(style_sheet)

@@ -10,28 +10,33 @@ from modules.views.ViewComponent import ViewComponent
 
 
 class LabelWithDefaultText(QLabel, ViewComponent):
+    __default_text: str
+    __light_mode_style: str
+    __dark_mode_style: str
+
     def __init__(self, parent: Optional["QWidget"] = None):
         super().__init__(parent)
-        self.default_text: str = ""
-        self.light_mode_style: str = ''
-        self.dark_mode_style: str = ''
 
     @override
     def setText(self, text: str) -> None:
-        return super().setText(text or self.default_text)
+        return super().setText(text or self.__default_text)
 
     def set_default_text(self, text: str) -> None:
-        if self.text() == self.default_text:
-            self.setText(text)
-        self.default_text = text
+        self.__default_text = text
+
+    def set_light_mode_style(self, style: str) -> None:
+        self.__light_mode_style = style
+
+    def set_dark_mode_style(self, style: str) -> None:
+        self.__dark_mode_style = style
 
     @override
     def apply_light_mode(self):
-        self.setStyleSheet(self.light_mode_style)
+        self.setStyleSheet(self.__light_mode_style)
 
     @override
     def apply_dark_mode(self):
-        self.setStyleSheet(self.dark_mode_style)
+        self.setStyleSheet(self.__dark_mode_style)
 
     @staticmethod
     def build(
@@ -48,8 +53,8 @@ class LabelWithDefaultText(QLabel, ViewComponent):
         label.setWordWrap(allow_multiple_lines)
         if width is not None:
             label.setFixedWidth(width)
-        label.light_mode_style = LabelWithDefaultText.build_style(light_mode_style, padding, width)
-        label.dark_mode_style = LabelWithDefaultText.build_style(dark_mode_style or light_mode_style, padding, width)
+        label.set_light_mode_style(LabelWithDefaultText.build_style(light_mode_style, padding, width))
+        label.set_dark_mode_style(LabelWithDefaultText.build_style(dark_mode_style or light_mode_style, padding, width))
         return label
 
     @staticmethod

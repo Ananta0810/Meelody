@@ -10,42 +10,42 @@ from modules.views.body.songs_table.SongTableHeader import SongTableHeader
 
 
 class SongTable(QWidget, ViewComponent):
-    main_layout: QVBoxLayout
-    header: SongTableHeader
-    body: SongTableBody
+    __main_layout: QVBoxLayout
+    __header: SongTableHeader
+    __body: SongTableBody
 
     def __init__(self, parent: Optional["QWidget"] = None) -> None:
         super().__init__(parent)
         self.setup_ui()
-        self.header.set_text()
-        self.body.add_new_song()
-        self.body.add_new_song()
-        self.body.add_new_song()
-        self.body.add_new_song()
-        self.body.add_new_song()
-        self.body.add_new_song()
-        self.body.add_new_song()
+        self.__header.setText()
+        self.__body.add_new_song()
+        self.__body.add_new_song()
+        self.__body.add_new_song()
+        self.__body.add_new_song()
+        self.__body.add_new_song()
+        self.__body.add_new_song()
+        self.__body.add_new_song()
 
     def setup_ui(self):
         self.setAttribute(Qt.WA_StyledBackground, True)
-        self.main_layout = QVBoxLayout(self)
-        self.main_layout.setSpacing(4)
-        self.main_layout.setContentsMargins(0, 0, 0, 0)
+        self.__main_layout = QVBoxLayout(self)
+        self.__main_layout.setSpacing(4)
+        self.__main_layout.setContentsMargins(0, 0, 0, 0)
 
-        self.header = SongTableHeader()
-        self.header.setFixedHeight(48)
+        self.__header = SongTableHeader()
+        self.__header.setFixedHeight(48)
 
-        self.body = SongTableBody()
+        self.__body = SongTableBody()
 
-        self.main_layout.addWidget(self.header)
-        self.main_layout.addWidget(self.body)
+        self.__main_layout.addWidget(self.__header)
+        self.__main_layout.addWidget(self.__body)
 
     @override
     def apply_light_mode(self) -> None:
-        self.header.apply_light_mode()
-        self.body.apply_light_mode()
+        self.__header.apply_light_mode()
+        self.__body.apply_light_mode()
 
     @override
     def apply_dark_mode(self) -> None:
-        self.header.apply_dark_mode()
-        self.body.apply_dark_mode()
+        self.__header.apply_dark_mode()
+        self.__body.apply_dark_mode()
