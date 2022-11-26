@@ -1,7 +1,32 @@
 import string
+from locale import setlocale, LC_ALL, strxfrm
 
 
 class Strings:
+    setlocale(LC_ALL, "")
+
+    @staticmethod
+    def toLower(text: str) -> str:
+        if text is None:
+            return ''
+        return strxfrm(text.lower())
+
+    @staticmethod
+    def toUpper(text: str) -> str:
+        if text is None:
+            return ''
+        return strxfrm(text.upper())
+
+    @staticmethod
+    def compare(str1: str, str2: str) -> int:
+        str1 = Strings.toLower(str1)
+        str2 = Strings.toLower(str2)
+        if str1 < str2:
+            return -1
+        if str1 > str2:
+            return 1
+        return 0
+
     @staticmethod
     def unindent(value: str):
         return '\n'.join(map(str.lstrip, [line for line in value.splitlines() if line != "\n"]))
