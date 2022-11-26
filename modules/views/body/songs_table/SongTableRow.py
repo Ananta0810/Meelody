@@ -1,11 +1,12 @@
 from typing import Optional, Union
 
 from PyQt5.QtCore import Qt, QEvent
-from PyQt5.QtGui import QPixmap, QResizeEvent
+from PyQt5.QtGui import QPixmap, QResizeEvent, QFont
 from PyQt5.QtWidgets import QWidget, QHBoxLayout
 
 from modules.helpers.PixmapHelper import PixmapHelper
 from modules.helpers.types.Strings import Strings
+from modules.models.view.AppIcon import AppIcon
 from modules.models.view.builder.BackgroundThemeBuilder import BackgroundThemeBuilder
 from modules.models.view.builder.FontBuilder import FontBuilder
 from modules.models.view.builder.IconButtonStyle import IconButtonStyle
@@ -70,36 +71,17 @@ class SongTableRow(BackgroundWidget):
         self.cover = ImageViewer(self)
         self.cover.setFixedSize(64, 64)
 
-        self.label_title = LabelWithDefaultText.build(
-            font,
-            light_mode_style=TextStyle(text_color=ColorBoxes.BLACK),
-            dark_mode_style=TextStyle(text_color=ColorBoxes.WHITE)
-        )
+        self.label_title = self.__create_label(with_font=font, light_mode_text_color=ColorBoxes.BLACK)
         self.label_title.setFixedWidth(188)
 
-        self.label_artist = LabelWithDefaultText.build(
-            font,
-            light_mode_style=TextStyle(text_color=ColorBoxes.GRAY),
-            dark_mode_style=TextStyle(text_color=ColorBoxes.WHITE)
-        )
+        self.label_artist = self.__create_label(with_font=font)
         self.label_artist.setFixedWidth(128)
 
-        self.label_length = LabelWithDefaultText.build(
-            font,
-            light_mode_style=TextStyle(text_color=ColorBoxes.GRAY),
-            dark_mode_style=TextStyle(text_color=ColorBoxes.WHITE)
-        )
+        self.label_length = self.__create_label(with_font=font)
         self.label_length.setFixedWidth(64)
         self.label_length.setAlignment(Qt.AlignCenter)
 
-        self.btn_more = IconButton.build(
-            size=Icons.LARGE,
-            padding=Paddings.RELATIVE_50,
-            style=IconButtonStyle(
-                light_mode_icon=Icons.MORE.with_color(Colors.PRIMARY),
-                light_mode_background=Backgrounds.CIRCLE_HIDDEN_PRIMARY_25,
-            ),
-        )
+        self.btn_more = self.__create_button(with_icon=Icons.MORE)
         self.btn_more.clicked.connect(lambda: self.show_more())
 
         self.btn_love = ToggleIconButton.build(
@@ -125,32 +107,9 @@ class SongTableRow(BackgroundWidget):
             ),
         )
 
-        self.btn_add_to_playlist = IconButton.build(
-            size=Icons.LARGE,
-            padding=Paddings.RELATIVE_75,
-            style=IconButtonStyle(
-                light_mode_icon=Icons.ADD.with_color(Colors.PRIMARY),
-                light_mode_background=Backgrounds.CIRCLE_HIDDEN_PRIMARY_25,
-            ),
-        )
-
-        self.btn_edit = IconButton.build(
-            size=Icons.LARGE,
-            padding=Paddings.RELATIVE_50,
-            style=IconButtonStyle(
-                light_mode_icon=Icons.EDIT.with_color(Colors.PRIMARY),
-                light_mode_background=Backgrounds.CIRCLE_HIDDEN_PRIMARY_25,
-            ),
-        )
-
-        self.btn_delete = IconButton.build(
-            size=Icons.LARGE,
-            padding=Paddings.RELATIVE_50,
-            style=IconButtonStyle(
-                light_mode_icon=Icons.DELETE.with_color(Colors.PRIMARY),
-                light_mode_background=Backgrounds.CIRCLE_HIDDEN_PRIMARY_25,
-            ),
-        )
+        self.btn_add_to_playlist = self.__create_button(with_icon=Icons.ADD, padding=Paddings.RELATIVE_75)
+        self.btn_edit = self.__create_button(with_icon=Icons.EDIT)
+        self.btn_delete = self.__create_button(with_icon=Icons.DELETE)
 
         self.btn_close = IconButton.build(
             size=Icons.MEDIUM,
@@ -164,7 +123,7 @@ class SongTableRow(BackgroundWidget):
         self.btn_close.move(
             self.sizeHint().width() - Icons.MEDIUM.width() // 2,
             self.extra_buttons.rect().top() + 4,
-            )
+        )
         self.btn_close.clicked.connect(lambda: self.show_less())
 
         self.main_layout.addLayout(self.info)
@@ -247,6 +206,29 @@ class SongTableRow(BackgroundWidget):
 
     def clear_info(self):
         self.set_cover(None)
+
+    @staticmethod
+    def __create_button(with_icon:AppIcon, padding=Paddings.RELATIVE_50) -> IconButton:
+        return IconButton.build(
+            size=Icons.LARGE,
+            padding=padding,
+            style=IconButtonStyle(
+                light_mode_icon=with_icon.with_color(Colors.PRIMARY),
+                light_mode_background=Backgrounds.CIRCLE_HIDDEN_PRIMARY_25,
+            ),
+        )
+
+    @staticmethod
+    def __create_label(
+        with_font: QFont,
+        light_mode_text_color=ColorBoxes.GRAY,
+        dark_mode_text_color=ColorBoxes.WHITE
+    ) -> LabelWithDefaultText:
+        return LabelWithDefaultText.build(
+            with_font,
+            light_mode_style=TextStyle(text_color=light_mode_text_color),
+            dark_mode_style=TextStyle(text_color=dark_mode_text_color)
+        )
 
     @staticmethod
     def __get_cover_from_bytes(cover_byte: bytes) -> Union[QPixmap, None]:
