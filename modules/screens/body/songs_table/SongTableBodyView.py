@@ -1,9 +1,9 @@
-from typing import Optional
+from typing import Optional, Callable
 
 from PyQt5.QtCore import pyqtSignal, QEvent, Qt
 from PyQt5.QtWidgets import QWidget, QVBoxLayout
 
-from modules.helpers.types.Decorators import override
+from modules.helpers.types.Decorators import override, connector
 from modules.statics.view.Material import Images, Backgrounds
 from modules.screens.AbstractScreen import BaseView
 from modules.screens.body.songs_table.SongTableRowView import SongTableRowView
@@ -15,6 +15,8 @@ class SongTableBodyView(SmoothVerticalScrollArea, BaseView):
 
     __inner: QWidget
     __menu: QVBoxLayout
+
+    __onclick_button_fn: Callable[[int], None]
 
     def __init__(self, parent: Optional["QWidget"] = None):
         super(SongTableBodyView, self).__init__(parent)
@@ -49,6 +51,12 @@ class SongTableBodyView(SmoothVerticalScrollArea, BaseView):
         for song in self._songs:
             song.apply_dark_mode()
 
+    @connector
+    def set_onclick_play(self, fn: Callable[[int], None]) -> None:
+        self.__onclick_button_fn = fn
+        for index, song in enumerate(self._songs):
+            song.set_onclick_play(lambda: fn(index))
+
     def display_song_info_at_index(self, index: int, cover: bytes, title: str, artist: str, length: float) -> None:
         song = self.__get_song_at(index)
         song.show()
@@ -79,10 +87,16 @@ class SongTableBodyView(SmoothVerticalScrollArea, BaseView):
     def __get_song_at(self, index: int) -> SongTableRowView:
         return self._songs[index]
 
-    def add_new_song(self, title: str, artist: str, length: int = 0, cover: bytes = None) -> None:
+    def add_new_song(self, title: str, artist: str, length: int = 0, cover: bytes = None) -> SongTableRowView:
         song = self.__addSong(title, artist, length, cover)
+        index: int = len(self._songs)
         self._songs.append(song)
         self.__menu.addWidget(song)
+
+        if self.__onclick_button_fn is not None:
+            song.set_onclick_play(lambda: self.__onclick_button_fn(index))
+
+        return song
 
     def __remove_songs_in_range(self, start: int, end: int) -> None:
         for index in range(start, end):

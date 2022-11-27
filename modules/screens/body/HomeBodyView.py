@@ -1,9 +1,9 @@
-from typing import Optional
+from typing import Optional, Callable
 
 from PyQt5.QtGui import QShowEvent
 from PyQt5.QtWidgets import QScrollArea, QWidget, QVBoxLayout
 
-from modules.helpers.types.Decorators import override
+from modules.helpers.types.Decorators import override, connector
 from modules.models.Playlist import Playlist
 from modules.statics.view.Material import Backgrounds
 from modules.screens.AbstractScreen import BaseView
@@ -58,6 +58,10 @@ class HomeBodyView(QScrollArea, BaseView):
     def apply_dark_mode(self) -> None:
         self.__playlist_carousel.apply_dark_mode()
         self.__current_playlist.apply_dark_mode()
+
+    @connector
+    def set_onclick_play(self, fn: Callable[[int], None]) -> None:
+        self.__current_playlist.set_onclick_play(fn)
 
     def load_playlist(self, playlist: Playlist) -> None:
         self.__current_playlist.load_playlist(playlist)

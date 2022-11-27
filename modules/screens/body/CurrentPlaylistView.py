@@ -1,9 +1,9 @@
-from typing import Optional
+from typing import Optional, Callable
 
 from PyQt5.QtCore import Qt
 from PyQt5.QtWidgets import QWidget, QHBoxLayout
 
-from modules.helpers.types.Decorators import override
+from modules.helpers.types.Decorators import override, connector
 from modules.models.Playlist import Playlist
 from modules.statics.view.Material import Images
 from modules.screens.AbstractScreen import BaseView
@@ -43,6 +43,10 @@ class CurrentPlaylistView(QWidget, BaseView):
     def apply_dark_mode(self) -> None:
         self.__info.apply_dark_mode()
         self.__menu.apply_dark_mode()
+
+    @connector
+    def set_onclick_play(self, fn: Callable[[int], None]) -> None:
+        self.__menu.set_onclick_play(fn)
 
     def load_playlist(self, playlist: Playlist) -> None:
         self.set_current_playlist_info(

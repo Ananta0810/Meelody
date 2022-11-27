@@ -1,4 +1,4 @@
-from typing import Optional
+from typing import Optional, Callable
 
 from PyQt5.QtCore import Qt
 from PyQt5.QtWidgets import QWidget, QVBoxLayout
@@ -8,6 +8,7 @@ from modules.models.PlaylistSongs import PlaylistSongs
 from modules.screens.AbstractScreen import BaseView
 from modules.screens.body.songs_table.SongTableBodyView import SongTableBodyView
 from modules.screens.body.songs_table.SongTableHeaderView import SongTableHeaderView
+from modules.screens.body.songs_table.SongTableRowView import SongTableRowView
 
 
 class SongTableView(QWidget, BaseView):
@@ -47,11 +48,15 @@ class SongTableView(QWidget, BaseView):
         self.__header.apply_dark_mode()
         self.__body.apply_dark_mode()
 
+    def set_onclick_play(self, fn: Callable[[int], None]) -> None:
+        self.__body.set_onclick_play(fn)
+
     def load_songs(self, playlist: PlaylistSongs) -> None:
         for song in playlist.get_songs():
-            self.__body.add_new_song(song.get_title(), song.get_artist(), song.get_length(), song.get_cover())
-
-        if self.__is_dark_mode:
-            self.apply_dark_mode()
-        else:
-            self.apply_light_mode()
+            new_song: SongTableRowView = self.__body.add_new_song(
+                song.get_title(), song.get_artist(), song.get_length(), song.get_cover()
+            )
+            if self.__is_dark_mode:
+                new_song.apply_dark_mode()
+            else:
+                new_song.apply_light_mode()

@@ -7,13 +7,13 @@ from PyQt5.QtWidgets import QWidget, QHBoxLayout
 from modules.helpers.PixmapHelper import PixmapHelper
 from modules.helpers.types.Decorators import override
 from modules.helpers.types.Strings import Strings
-from modules.widgets.AppIcon import AppIcon
 from modules.models.view.builder.BackgroundThemeBuilder import BackgroundThemeBuilder
 from modules.models.view.builder.FontBuilder import FontBuilder
 from modules.models.view.builder.IconButtonStyle import IconButtonStyle
 from modules.models.view.builder.TextStyle import TextStyle
-from modules.statics.view.Material import Icons, Paddings, Colors, Backgrounds, ColorBoxes
 from modules.screens.AbstractScreen import BaseView
+from modules.statics.view.Material import Icons, Paddings, Colors, Backgrounds, ColorBoxes
+from modules.widgets.AppIcon import AppIcon
 from modules.widgets.BackgroundWidget import BackgroundWidget
 from modules.widgets.IconButton import IconButton
 from modules.widgets.ImageViewer import ImageViewer
@@ -175,6 +175,9 @@ class SongTableRowView(BackgroundWidget, BaseView):
         self.__btn_add_to_playlist.apply_dark_mode()
         self.__btn_delete.apply_dark_mode()
         self.__btn_close.apply_dark_mode()
+
+    def set_onclick_play(self, fn: callable) -> None:
+        self.__btn_play.clicked.connect(fn)
 
     def show_more(self) -> None:
         self.__buttons.hide()

@@ -24,7 +24,7 @@ class MusicPlayerControl(MusicPlayerBarView, BaseControl):
         self.set_onclick_play_song(lambda: self.play_current_song())
         self.set_onclick_pause_song(lambda: self.pause_current_song())
         self.set_onclick_next_song(lambda: self.play_next_song())
-        self.set_onchange_playing_time(lambda time: self.play_song_at(time))
+        self.set_onchange_playing_time(lambda time: self.play_song_at_time(time))
         self.set_onclick_loop(lambda: self.change_loop_state())
         self.set_onclick_shuffle(lambda: self.change_shuffle_state())
         self.set_onclick_love(lambda: self.change_love_state())
@@ -65,7 +65,7 @@ class MusicPlayerControl(MusicPlayerBarView, BaseControl):
         self.__playSong()
 
     @handler
-    def play_song_at(self, time: float) -> None:
+    def play_song_at_time(self, time: float) -> None:
         if not self.__player.has_any_song():
             return
         currentSong = self.__player.get_current_song()
@@ -73,6 +73,14 @@ class MusicPlayerControl(MusicPlayerBarView, BaseControl):
             return
         self.__player.skip_to_time(time)
         self.__thread_start_player()
+
+    @handler
+    def play_song_at(self, index: int) -> None:
+        self.pause_current_song()
+        self.__player.set_current_song_index(index)
+        self.__player.load_song_to_play()
+        self.__player.set_time_start(0)
+        self.play_current_song()
 
     @handler
     def change_loop_state(self) -> None:

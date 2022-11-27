@@ -12,8 +12,11 @@ class MainWindowControl(MainWindowView, BaseControl):
 
     @override
     def connect_signals(self) -> None:
-        pass
+        self._body.set_onclick_play(lambda index: self.play_song_at(index))
 
     def load_playlist(self, playlist: Playlist) -> None:
         self._music_player.load_playlist_songs(playlist.get_songs())
         self._body.load_playlist(playlist)
+
+    def play_song_at(self, index: int) -> None:
+        self._music_player.play_song_at(index)
