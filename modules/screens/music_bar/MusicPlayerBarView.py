@@ -74,8 +74,8 @@ class MusicPlayerBarView(QWidget, BaseView):
         self.__left.set_onclick_next_song(fn)
 
     @connector
-    def set_onchange_time_slider(self, fn: Callable[[float], None]):
-        self.__middle.set_on_released_time_slider(fn)
+    def set_onchange_playing_time(self, fn: Callable[[float], None]):
+        self.__middle.set_onchange_playing_time(fn)
 
     @connector
     def set_onclick_loop(self, fn: callable) -> None:

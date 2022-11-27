@@ -4,6 +4,7 @@ from PyQt5.QtGui import QShowEvent
 from PyQt5.QtWidgets import QScrollArea, QWidget, QVBoxLayout
 
 from modules.helpers.types.Decorators import override
+from modules.models.Playlist import Playlist
 from modules.statics.view.Material import Backgrounds
 from modules.screens.AbstractScreen import BaseView
 from modules.screens.body.CurrentPlaylistView import CurrentPlaylistView
@@ -44,9 +45,9 @@ class HomeBodyView(QScrollArea, BaseView):
         self.__current_playlist.setContentsMargins(left, top, right, bottom)
 
     @override
-    def showEvent(self, a0: QShowEvent) -> None:
+    def showEvent(self, event: QShowEvent) -> None:
         self.__current_playlist.setFixedHeight(self.height())
-        return super().showEvent(a0)
+        return super().showEvent(event)
 
     @override
     def apply_light_mode(self) -> None:
@@ -57,3 +58,6 @@ class HomeBodyView(QScrollArea, BaseView):
     def apply_dark_mode(self) -> None:
         self.__playlist_carousel.apply_dark_mode()
         self.__current_playlist.apply_dark_mode()
+
+    def load_playlist(self, playlist: Playlist) -> None:
+        self.__current_playlist.load_playlist(playlist)

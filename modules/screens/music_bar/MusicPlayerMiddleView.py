@@ -78,7 +78,7 @@ class MusicPlayerMiddleView(QHBoxLayout, BaseView):
         self.__label_total_time.apply_dark_mode()
 
     @connector
-    def set_on_released_time_slider(self, fn: Callable[[float], None]) -> None:
+    def set_onchange_playing_time(self, fn: Callable[[float], None]) -> None:
         self.__slider_time.sliderReleased.connect(
             lambda: fn(self.get_playing_time())
         )

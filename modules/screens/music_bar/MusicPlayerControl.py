@@ -1,11 +1,10 @@
 from threading import Thread
 from time import sleep
 
-from modules.helpers.types.Decorators import handler
+from modules.helpers.types.Decorators import handler, override
 from modules.helpers.types.Numbers import Numbers
 from modules.models.AudioPlayer import AudioPlayer
 from modules.models.PlaylistSongs import PlaylistSongs
-from modules.models.Song import Song
 from modules.screens.AbstractScreen import BaseControl
 from modules.screens.music_bar.MusicPlayerBarView import MusicPlayerBarView
 
@@ -17,31 +16,27 @@ class MusicPlayerControl(MusicPlayerBarView, BaseControl):
 
     def __init__(self) -> None:
         super(MusicPlayerControl, self).__init__()
-        playlist = PlaylistSongs()
-
-        playlist.insert(Song.from_file("library/Abandoned Temple.mp3"))
-        playlist.insert(Song.from_file("library/Graze The Roof.mp3"))
-        playlist.insert(Song.from_file("library/Ship Battle.mp3"))
-        playlist.insert(Song.from_file("library/Tom Tom.mp3"))
-
-        self.__player.load_playlist(playlist)
-        self.__player.set_current_song_index(0)
-        self.__player.load_song_to_play()
-        self.__display_current_song_info()
-        if self.is_shuffle():
-            self.__player.shuffle()
         self.connect_signals()
 
+    @override
     def connect_signals(self) -> None:
         self.set_onclick_prev_song(lambda: self.play_previous_song())
         self.set_onclick_play_song(lambda: self.play_current_song())
         self.set_onclick_pause_song(lambda: self.pause_current_song())
         self.set_onclick_next_song(lambda: self.play_next_song())
-        self.set_onchange_time_slider(lambda time: self.play_song_at(time))
+        self.set_onchange_playing_time(lambda time: self.play_song_at(time))
         self.set_onclick_loop(lambda: self.change_loop_state())
         self.set_onclick_shuffle(lambda: self.change_shuffle_state())
         self.set_onclick_love(lambda: self.change_love_state())
         self.set_onchange_volume(lambda volume: self.change_volume(volume))
+
+    def load_playlist_songs(self, playlist: PlaylistSongs, song_index: int = 0) -> None:
+        self.__player.load_playlist(playlist)
+        self.__player.set_current_song_index(song_index)
+        self.__player.load_song_to_play()
+        self.__display_current_song_info()
+        if self.is_shuffle():
+            self.__player.shuffle()
 
     @handler
     def play_previous_song(self) -> None:

@@ -79,9 +79,8 @@ class SongTableBodyView(SmoothVerticalScrollArea, BaseView):
     def __get_song_at(self, index: int) -> SongTableRowView:
         return self._songs[index]
 
-    def add_new_song(self, title: str = "Title", artist: str = "Artist", length: int = 0) -> None:
-        index = self.get_total_songs()
-        song = self.__addSong(title, artist, length)
+    def add_new_song(self, title: str, artist: str, length: int = 0, cover: bytes = None) -> None:
+        song = self.__addSong(title, artist, length, cover)
         self._songs.append(song)
         self.__menu.addWidget(song)
 
@@ -89,9 +88,10 @@ class SongTableBodyView(SmoothVerticalScrollArea, BaseView):
         for index in range(start, end):
             self.__menu.itemAt(index).widget().deleteLater()
 
-    def __addSong(self, title: str, artist: str, length: int) -> SongTableRowView:
+    def __addSong(self, title: str, artist: str, length: int, cover: bytes) -> SongTableRowView:
         song = SongTableRowView()
         song.set_default_cover(Images.DEFAULT_SONG_COVER)
+        song.set_cover(cover)
         song.set_default_artist(artist)
         song.set_artist(artist)
         song.set_title(title)

@@ -17,6 +17,10 @@ class PlaylistSongs:
         self.__order_by = order_by
         self.__is_sorted = True
 
+    @staticmethod
+    def create_empty() -> 'PlaylistSongs':
+        return PlaylistSongs()
+
     @override
     def __str__(self):
         string = ""

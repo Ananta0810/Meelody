@@ -4,6 +4,7 @@ from PyQt5.QtCore import Qt
 from PyQt5.QtWidgets import QWidget, QHBoxLayout
 
 from modules.helpers.types.Decorators import override
+from modules.models.Playlist import Playlist
 from modules.statics.view.Material import Images
 from modules.screens.AbstractScreen import BaseView
 from modules.screens.body.PlaylistInfoView import PlaylistInfoView
@@ -43,7 +44,13 @@ class CurrentPlaylistView(QWidget, BaseView):
         self.__info.apply_dark_mode()
         self.__menu.apply_dark_mode()
 
-    def set_current_playlist___info(self, name: str, total_song: int, cover: bytes = None) -> None:
+    def load_playlist(self, playlist: Playlist) -> None:
+        self.set_current_playlist_info(
+            playlist.get_info().name, playlist.get_info().cover, playlist.size()
+        )
+        self.__menu.load_songs(playlist.get_songs())
+
+    def set_current_playlist_info(self, name: str, cover: bytes = None, total_song: int = 0) -> None:
         if cover is None:
             cover = (
                 Images.FAVOURITES_PLAYLIST_COVER
