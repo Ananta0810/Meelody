@@ -1,5 +1,3 @@
-from typing import Self
-
 from PyQt5.QtGui import QIcon, QPainter, QPixmap
 
 from modules.models.view.Color import Color
@@ -7,7 +5,7 @@ from modules.models.view.Color import Color
 
 class AppIcon(QIcon):
 
-    def __or__(self, other: Self) -> Self:
+    def __or__(self, other: 'AppIcon') -> 'AppIcon':
         return self if self is not None else other
 
     def with_color(self, color: Color):

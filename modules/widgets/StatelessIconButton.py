@@ -1,15 +1,15 @@
-from typing import Self, Optional
+from typing import Optional
 
 from PyQt5.QtCore import QSize, QObject
 from PyQt5.QtWidgets import QPushButton, QWidget
 
 from modules.helpers.types.Decorators import override
-from modules.widgets.AppIcon import AppIcon
 from modules.models.view.Padding import Padding
 from modules.models.view.builder.BackgroundThemeBuilder import BackgroundThemeBuilder
 from modules.models.view.builder.IconButtonStyle import IconButtonStyle
-from modules.statics.view.Material import Cursors, Paddings
 from modules.screens.AbstractScreen import BaseView
+from modules.statics.view.Material import Cursors, Paddings
+from modules.widgets.AppIcon import AppIcon
 
 
 class StatelessIconButtonThemeData:
@@ -32,7 +32,7 @@ class StatelessIconButtonThemeData:
         self.dark_mode_background = dark_mode_background or light_mode_background
 
     @staticmethod
-    def of(data: IconButtonStyle, icon_size: float) -> Self:
+    def of(data: IconButtonStyle, icon_size: float) -> 'StatelessIconButtonThemeData':
         return StatelessIconButtonThemeData(
             data.light_mode_icon,
             BackgroundThemeBuilder.build(BackgroundThemeBuilder.BUTTON, icon_size, data.light_mode_background),
@@ -101,7 +101,7 @@ class StatelessIconButton(QPushButton, BaseView):
         children: list[IconButtonStyle],
         padding: Padding = Paddings.DEFAULT,
         parent: QObject = None,
-    ) -> Self:
+    ) -> 'StatelessIconButton':
         button = StatelessIconButton(parent)
 
         button.set_children([StatelessIconButtonThemeData.of(child, size.width()) for child in children])

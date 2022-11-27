@@ -1,5 +1,3 @@
-from typing import Self
-
 from eyed3 import id3, load, mp3
 
 
@@ -10,7 +8,7 @@ class AudioExtractor:
         self.__data = load(file)
 
     @staticmethod
-    def load_from(file: str) -> Self:
+    def load_from(file: str) -> 'AudioExtractor':
         return AudioExtractor(file)
 
     def get_artist(self) -> str:

@@ -1,4 +1,4 @@
-from typing import Self, Optional
+from typing import Optional
 
 from PyQt5.QtCore import QSize, QObject
 from PyQt5.QtWidgets import QWidget
@@ -49,7 +49,7 @@ class ToggleIconButton(StatelessIconButton):
         inactive_btn: IconButtonStyle,
         padding: Padding = Paddings.DEFAULT,
         parent: QObject = None,
-    ) -> Self:
+    ) -> 'ToggleIconButton':
         button = ToggleIconButton(parent)
 
         button.set_children([StatelessIconButtonThemeData.of(child, size.width()) for child in [active_btn, inactive_btn]])

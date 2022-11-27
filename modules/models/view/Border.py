@@ -1,5 +1,3 @@
-from typing import Self
-
 from modules.helpers.types.Decorators import override
 from modules.models.view.ColorBox import ColorBox
 from modules.models.view.StylesheetElement import StylesheetElement
@@ -11,24 +9,24 @@ class Border(StylesheetElement):
         self.style = style
         self.color = color
 
-    def with_size(self, size: int) -> Self:
+    def with_size(self, size: int) -> 'Border':
         return Border(size, self.style, self.color)
 
-    def with_style(self, style: str) -> Self:
+    def with_style(self, style: str) -> 'Border':
         return Border(self.size, style, self.color)
 
-    def with_color(self, color: ColorBox) -> Self:
+    def with_color(self, color: ColorBox) -> 'Border':
         return Border(self.size, self.style, color)
 
-    def and_size(self, size: int) -> Self:
+    def and_size(self, size: int) -> 'Border':
         self.size = size
         return self
 
-    def and_style(self, style: str) -> Self:
+    def and_style(self, style: str) -> 'Border':
         self.style = style
         return self
 
-    def and_color(self, color: ColorBox) -> Self:
+    def and_color(self, color: ColorBox) -> 'Border':
         self.color = color
         return self
 

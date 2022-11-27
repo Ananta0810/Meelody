@@ -1,5 +1,4 @@
 import os
-from typing import Self
 
 from modules.helpers.types.Decorators import override
 from modules.models.AudioExtractor import AudioExtractor
@@ -34,7 +33,7 @@ class Song:
         return f"Song({self.__title}, {self.__artist}, {self.__length}, {self.__is_loved})"
 
     @override
-    def __eq__(self, other: Self) -> bool:
+    def __eq__(self, other: 'Song') -> bool:
         """
         Check if two songs is the same one.
         """

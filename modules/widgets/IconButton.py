@@ -1,4 +1,4 @@
-from typing import Self, Optional
+from typing import Optional
 
 from PyQt5.QtCore import QObject, QSize
 from PyQt5.QtWidgets import QPushButton, QWidget
@@ -35,16 +35,14 @@ class IconButton(QPushButton, BaseView):
         self.__dark_mode_background = style
 
     @override
-    def apply_light_mode(self) -> Self:
+    def apply_light_mode(self) -> None:
         self.__is_dark_mode = False
         self.__change_icon_based_on_state()
-        return self
 
     @override
-    def apply_dark_mode(self) -> Self:
+    def apply_dark_mode(self) -> None:
         self.__is_dark_mode = True
         self.__change_icon_based_on_state()
-        return self
 
     def __change_icon_based_on_state(self):
         if self.__is_dark_mode:
@@ -61,7 +59,7 @@ class IconButton(QPushButton, BaseView):
         padding: Padding,
         style: IconButtonStyle,
         parent: QObject = None,
-    ) -> Self:
+    ) -> 'IconButton':
         button = IconButton(parent)
         button.setIcon(style.light_mode_icon)
         button.setIconSize(size - padding.get_width(size))

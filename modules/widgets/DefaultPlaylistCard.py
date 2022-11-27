@@ -1,4 +1,4 @@
-from typing import Self, Optional
+from typing import Optional
 
 from PyQt5.QtCore import pyqtSignal, QEvent
 from PyQt5.QtGui import QFont, QCursor, QPixmap, QResizeEvent

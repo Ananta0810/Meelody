@@ -1,4 +1,4 @@
-from typing import Self, Optional
+from typing import Optional
 
 from PyQt5.QtCore import Qt
 from PyQt5.QtWidgets import QSlider, QWidget
@@ -36,7 +36,7 @@ class HorizontalSlider(QSlider, BaseView):
         dark_mode_style: SliderStyle,
         height: int,
         parent: Optional["QWidget"] = None,
-    ) -> Self:
+    ) -> 'HorizontalSlider':
         slider: HorizontalSlider = HorizontalSlider(parent)
         slider.setOrientation(Qt.Horizontal)
         slider.setMaximumHeight(height)

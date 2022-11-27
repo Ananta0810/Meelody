@@ -1,4 +1,4 @@
-from typing import Self, Union, Optional
+from typing import Union, Optional
 
 from PyQt5.QtCore import Qt
 from PyQt5.QtGui import QResizeEvent
@@ -6,8 +6,8 @@ from PyQt5.QtWidgets import QMainWindow, QWidget, QVBoxLayout, QHBoxLayout, QLay
 
 from modules.helpers.types.Decorators import override
 from modules.models.view.builder.IconButtonStyle import IconButtonStyle
-from modules.statics.view.Material import Paddings, Icons, Colors, Backgrounds
 from modules.screens.AbstractScreen import BaseView
+from modules.statics.view.Material import Paddings, Icons, Colors, Backgrounds
 from modules.widgets.IconButton import IconButton
 
 
@@ -70,7 +70,7 @@ class FramelessWindow(QMainWindow, BaseView):
 
         self.addLayout(self.__title_bar)
 
-    def with_title_bar_height(self, height: int) -> Self:
+    def with_title_bar_height(self, height: int) -> 'FramelessWindow':
         self.__title_bar_height = height
         return self
 
