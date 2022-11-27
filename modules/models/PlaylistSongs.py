@@ -80,7 +80,8 @@ class PlaylistSongs:
         random.shuffle(self.__songs)
 
     def unshuffle(self):
-        self.__songs = self.__backup_songs.copy()
+        if len(self.__songs) == len(self.__backup_songs):
+            self.__songs = self.__backup_songs.copy()
         self.__is_sorted = True
         self.__backup_songs.clear()
 

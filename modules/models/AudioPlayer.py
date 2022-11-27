@@ -68,7 +68,10 @@ class AudioPlayer:
         self.set_current_song_index((self.__current_song_index + 1) % self.__playlist.size())
         self.load_song_to_play()
 
-    def get_playlist(self) -> list[Song]:
+    def get_playlist(self) -> PlaylistSongs:
+        return self.__playlist
+
+    def get_songs(self) -> list[Song]:
         return self.__playlist.get_songs()
 
     def set_current_song_index(self, index: int) -> None:

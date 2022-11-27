@@ -70,5 +70,8 @@ class HomeBodyView(QScrollArea, BaseView):
     def select_song_at(self, index: int) -> None:
         self.__current_playlist.select_song_at(index)
 
+    def refresh_menu(self) -> None:
+        self.__current_playlist.refresh_menu()
+
     def load_playlist(self, playlist: Playlist) -> None:
         self.__current_playlist.load_playlist(playlist)

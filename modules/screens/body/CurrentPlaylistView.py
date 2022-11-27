@@ -5,16 +5,16 @@ from PyQt5.QtWidgets import QWidget, QHBoxLayout
 
 from modules.helpers.types.Decorators import override, connector
 from modules.models.Playlist import Playlist
-from modules.statics.view.Material import Images
 from modules.screens.AbstractScreen import BaseView
 from modules.screens.body.PlaylistInfoView import PlaylistInfoView
-from modules.screens.body.songs_table.SongTableView import SongTableView
+from modules.screens.body.songs_table.SongTableControl import SongTableControl
+from modules.statics.view.Material import Images
 
 
 class CurrentPlaylistView(QWidget, BaseView):
     __main_layout: QHBoxLayout
     __info: PlaylistInfoView
-    __menu: SongTableView
+    __menu: SongTableControl
 
     def __init__(self, parent: Optional["QWidget"] = None):
         super(CurrentPlaylistView, self).__init__(parent)
@@ -29,7 +29,7 @@ class CurrentPlaylistView(QWidget, BaseView):
         self.__info = PlaylistInfoView()
         self.__info.set_default_cover(Images.DEFAULT_PLAYLIST_COVER)
 
-        self.__menu = SongTableView()
+        self.__menu = SongTableControl()
 
         self.__main_layout.addLayout(self.__info)
         self.__main_layout.addWidget(self.__menu, stretch=2)
@@ -51,6 +51,9 @@ class CurrentPlaylistView(QWidget, BaseView):
     @connector
     def set_on_keypress(self, fn: Callable[[str], int]) -> None:
         self.__menu.set_on_keypress(fn)
+
+    def refresh_menu(self) -> None:
+        self.__menu.refresh()
 
     def select_song_at(self, index: int) -> None:
         self.__menu.select_song_at(index)

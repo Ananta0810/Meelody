@@ -71,9 +71,6 @@ class SongTableBodyView(SmoothVerticalScrollArea, BaseView):
         self.__on_keypress(event)
         return super().keyPressEvent(event)
 
-    def select_song_at(self, index: int) -> None:
-        self._scroll_to_item_at(index)
-
     def __on_keypress(self, event: QKeyEvent) -> None:
         is_holding_alt = int(event.modifiers()) == Qt.AltModifier
         if not is_holding_alt:
@@ -86,7 +83,7 @@ class SongTableBodyView(SmoothVerticalScrollArea, BaseView):
             pass
 
     def display_song_info_at_index(self, index: int, cover: bytes, title: str, artist: str, length: float) -> None:
-        song = self.__get_song_at(index)
+        song = self.get_song_at(index)
         song.show()
         song.show_less()
         song.set_cover(cover)
@@ -95,25 +92,22 @@ class SongTableBodyView(SmoothVerticalScrollArea, BaseView):
         song.set_length(length)
 
     def set_song_cover_at_index(self, index: int, cover: bytes) -> None:
-        self.__get_song_at(index).set_cover(cover)
+        self.get_song_at(index).set_cover(cover)
 
     def set_song_title_at_index(self, index: int, title: str) -> None:
-        self.__get_song_at(index).set_title(title)
+        self.get_song_at(index).set_title(title)
 
     def set_song_artist_at_index(self, index: int, artist: str) -> None:
-        self.__get_song_at(index).set_artist(artist)
+        self.get_song_at(index).set_artist(artist)
 
     def set_song_length_at_index(self, index: int, length: float) -> None:
-        self.__get_song_at(index).set_length(length)
+        self.get_song_at(index).set_length(length)
 
     def set_song_love_state_at_index(self, index: int, state: bool) -> None:
-        self.__get_song_at(index).set_love_state(state)
+        self.get_song_at(index).set_love_state(state)
 
     def get_total_songs(self) -> int:
         return self.__menu.count()
-
-    def __get_song_at(self, index: int) -> SongTableRowView:
-        return self._songs[index]
 
     def add_new_song(self, title: str, artist: str, length: int = 0, cover: bytes = None) -> SongTableRowView:
         song = self.__addSong(title, artist, length, cover)
@@ -123,6 +117,12 @@ class SongTableBodyView(SmoothVerticalScrollArea, BaseView):
         song.set_onclick_play(lambda: self.__onclick_play_btn(index))
 
         return song
+
+    def select_song_at(self, index: int) -> None:
+        self._scroll_to_item_at(index)
+
+    def get_song_at(self, index: int) -> SongTableRowView:
+        return self._songs[index]
 
     def __remove_songs_in_range(self, start: int, end: int) -> None:
         for index in range(start, end):

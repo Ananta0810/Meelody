@@ -55,6 +55,7 @@ class ToggleIconButton(StatelessIconButton):
         button.set_children([StatelessIconButtonThemeData.of(child, size.width()) for child in [active_btn, inactive_btn]])
         button.set_state_index(0)
         button.setCheckable(True)
+        button.set_active(False)
         button.setIconSize(size - padding.get_width(size))
         button.setFixedSize(size)
         button.setCursor(Cursors.HAND)

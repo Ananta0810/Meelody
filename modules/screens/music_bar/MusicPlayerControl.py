@@ -14,10 +14,12 @@ class MusicPlayerControl(MusicPlayerBarView, BaseControl):
 
     __player: AudioPlayer = AudioPlayer.get_instance()
     __thread_id: int = 0
-    __onclick_play_fn: Callable[[int], None]
 
-    def __init__(self) -> None:
-        super(MusicPlayerControl, self).__init__()
+    __onclick_play_fn: Callable[[int], None]
+    __on_shuffle: callable
+
+    def __init__(self):
+        super().__init__()
         self.connect_signals()
 
     @override
@@ -28,7 +30,7 @@ class MusicPlayerControl(MusicPlayerBarView, BaseControl):
         self.set_onclick_next_song(lambda: self.play_next_song())
         self.set_onchange_playing_time(lambda time: self.play_song_at_time(time))
         self.set_onclick_loop(lambda: self.change_loop_state())
-        self.set_onclick_shuffle(lambda: self.change_shuffle_state())
+        self._set_onclick_shuffle(lambda: self.change_shuffle_state())
         self.set_onclick_love(lambda: self.change_love_state())
         self.set_onchange_volume(lambda volume: self.change_volume(volume))
 
@@ -36,13 +38,16 @@ class MusicPlayerControl(MusicPlayerBarView, BaseControl):
     def set_onclick_play(self, fn: Callable[[int], None]) -> None:
         self.__onclick_play_fn = fn
 
+    @connector
+    def set_onclick_shuffle(self, fn: callable) -> None:
+        self.__on_shuffle = fn
+
     def load_playlist_songs(self, playlist: PlaylistSongs, song_index: int = 0) -> None:
         self.__player.load_playlist(playlist)
         self.__player.set_current_song_index(song_index)
         self.__player.load_song_to_play()
         self.__display_current_song_info()
-        if self.is_shuffle():
-            self.__player.shuffle()
+        self.change_shuffle_state()
 
     @handler
     def play_previous_song(self) -> None:
@@ -98,6 +103,15 @@ class MusicPlayerControl(MusicPlayerBarView, BaseControl):
             self.__player.shuffle()
         else:
             self.__player.unshuffle()
+
+        playlist: PlaylistSongs = self.__player.get_playlist()
+        new_index = playlist.find_song_index_by_title(self.__player.get_current_song().get_title())
+        if new_index < 0:
+            new_index = 0
+        self.__player.set_current_song_index(new_index)
+
+        if self.__on_shuffle is not None:
+            self.__on_shuffle()
 
     @handler
     def change_love_state(self) -> None:

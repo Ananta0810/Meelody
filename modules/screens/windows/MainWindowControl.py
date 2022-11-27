@@ -14,6 +14,7 @@ class MainWindowControl(MainWindowView, BaseControl):
     @override
     def connect_signals(self) -> None:
         self._music_player.set_onclick_play(lambda index: self._body.select_song_at(index))
+        self._music_player.set_onclick_shuffle(lambda: self._body.refresh_menu())
         self._body.set_onclick_play(lambda index: self.play_song_at(index))
         self._body.set_on_keypress(lambda key: self.go_to_song_that_title_start_with(key))
 
