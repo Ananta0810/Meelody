@@ -1,4 +1,4 @@
-from typing import Optional
+from typing import Optional, Callable
 
 from PyQt5.QtCore import Qt
 from PyQt5.QtGui import QFont
@@ -22,8 +22,11 @@ class MusicPlayerMiddleView(QHBoxLayout, BaseView):
 
     def __init__(self, parent: Optional["QWidget"] = None) -> None:
         super(MusicPlayerMiddleView, self).__init__(parent)
-        self._total_time: int = 0
+        self.__total_time: int = 0
+        self.__can_run_slider: bool = True
         self.__init_ui()
+        self.__slider_time.sliderPressed.connect(lambda: self.__set_can_run_time_slider(False))
+        self.__slider_time.sliderReleased.connect(lambda: self.__set_can_run_time_slider(True))
 
     def __init_ui(self) -> None:
         font: QFont = FontBuilder.build(size=9)
@@ -74,9 +77,27 @@ class MusicPlayerMiddleView(QHBoxLayout, BaseView):
         self.__slider_time.apply_dark_mode()
         self.__label_total_time.apply_dark_mode()
 
+    def set_on_released_time_slider(self, fn: Callable[[float], None]) -> None:
+        self.__slider_time.sliderReleased.connect(
+            lambda: fn(self.get_playing_time())
+        )
+
     def set_playing_time(self, time: float) -> None:
         self.__label_playing_time.setText(Strings.float_to_clock_time(time))
+        self.__run_time_slider(time)
 
     def set_total_time(self, time: float) -> None:
-        self._total_time = time
+        self.__total_time = time
         self.__label_total_time.setText(Strings.float_to_clock_time(time))
+
+    def get_playing_time(self) -> float:
+        return self.__slider_time.sliderPosition() * self.__total_time / 100
+
+    def __set_can_run_time_slider(self, enable: bool) -> None:
+        self.__can_run_slider = enable
+
+    def __run_time_slider(self, current_time: float) -> None:
+        if not self.__can_run_slider:
+            return
+        position = 0 if self.__total_time == 0 else int(current_time * 100 / self.__total_time)
+        self.__slider_time.setSliderPosition(position)

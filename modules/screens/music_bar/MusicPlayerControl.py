@@ -26,6 +26,7 @@ class MusicPlayerControl(MusicPlayerBarView, BaseControl):
         self.__player.load_playlist(playlist)
         self.__player.set_current_song_index(0)
         self.__player.load_song_to_play()
+        self.__display_current_song_info()
         self.connect_signals()
 
     def connect_signals(self) -> None:
@@ -33,6 +34,7 @@ class MusicPlayerControl(MusicPlayerBarView, BaseControl):
         self.set_onclick_play_song(lambda: self.play_current_song())
         self.set_onclick_pause_song(lambda: self.pause_current_song())
         self.set_onclick_next_song(lambda: self.play_next_song())
+        self.set_on_released_time_slider(lambda time: self.play_song_at(time))
 
     def play_previous_song(self) -> None:
         if not self.__player.has_any_song():
@@ -54,6 +56,15 @@ class MusicPlayerControl(MusicPlayerBarView, BaseControl):
         self.__player.stop()
         self.__player.select_next_song()
         self.__playSong()
+
+    def play_song_at(self, time: float) -> None:
+        if not self.__player.has_any_song():
+            return
+        currentSong = self.__player.get_current_song()
+        if currentSong is None:
+            return
+        self.__player.skip_to_time(time)
+        self.__thread_start_player()
 
     def __playSong(self) -> None:
         if self.__player.get_current_song() is None:
@@ -95,6 +106,7 @@ class MusicPlayerControl(MusicPlayerBarView, BaseControl):
 
     def __do_after_song_finished(self) -> None:
         if self.is_looping():
+            self.__player.skip_to_time(0)
             self.__thread_start_player()
             return
         self.play_next_song()

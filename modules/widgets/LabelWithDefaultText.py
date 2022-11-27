@@ -10,7 +10,7 @@ from modules.screens.AbstractScreen import BaseView
 
 
 class LabelWithDefaultText(QLabel, BaseView):
-    __default_text: str
+    __default_text: str = ""
     __light_mode_style: str
     __dark_mode_style: str
 

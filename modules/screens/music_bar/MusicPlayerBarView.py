@@ -1,4 +1,4 @@
-from typing import Optional
+from typing import Optional, Callable
 
 from PyQt5.QtCore import Qt
 from PyQt5.QtWidgets import QHBoxLayout, QWidget
@@ -21,13 +21,6 @@ class MusicPlayerBarView(QWidget, BaseView):
         super(MusicPlayerBarView, self).__init__(parent)
         self._totalTime = 0
         self.__init_ui()
-
-        self.__left.set_default_title("Song Title")
-        self.__left.set_default_artist("Song Artist")
-        self.__left.set_title("Song Title")
-        self.__left.set_artist("Song Artist")
-        self.__middle.set_total_time(60)
-        self.__middle.set_playing_time(0)
 
     def __init_ui(self) -> None:
         self.setAttribute(Qt.WA_StyledBackground, True)
@@ -76,6 +69,9 @@ class MusicPlayerBarView(QWidget, BaseView):
     def set_onclick_next_song(self, fn: callable) -> None:
         self.__left.set_onclick_next_song(fn)
 
+    def set_on_released_time_slider(self, fn: Callable[[float], None]):
+        self.__middle.set_on_released_time_slider(fn)
+
     def set_playing_time(self, time: float) -> None:
         self.__middle.set_playing_time(time)
 
@@ -88,17 +84,12 @@ class MusicPlayerBarView(QWidget, BaseView):
     def is_playing(self) -> bool:
         return self.__left.is_playing()
 
-    def set_is_playing(self, enable: bool) -> None:
-        return self.__left.set_is_playing(enable)
-
     def is_looping(self) -> bool:
         return self.__right.is_looping()
 
     def display_song_info(
         self, cover: bytes = None, title: str = None, artist: str = None, love_state: bool = False
     ) -> None:
-        if artist is None and title is not None:
-            artist = ""
         self.__left.set_cover(cover)
         self.__left.set_title(title)
         self.__left.set_artist(artist)
