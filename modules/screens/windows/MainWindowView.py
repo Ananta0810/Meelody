@@ -5,6 +5,7 @@ from PyQt5.QtWidgets import QWidget
 
 from modules.helpers.types.Decorators import override
 from modules.models.view.Background import Background
+from modules.screens.music_bar.MusicPlayerControl import MusicPlayerControl
 from modules.statics.view.Material import ColorBoxes
 from modules.screens.AbstractScreen import BaseView
 from modules.screens.body.HomeBodyView import HomeBodyView
@@ -14,7 +15,7 @@ from modules.widgets.FramelessWindow import FramelessWindow
 
 class MainWindowView(FramelessWindow, BaseView):
     __body: HomeBodyView
-    __music_player: MusicPlayerBarView
+    __music_player: MusicPlayerControl
 
     def __init__(self, parent: Optional["QWidget"] = None, width: int = 1280, height: int = 720):
         super(MainWindowView, self).__init__(parent)
@@ -29,7 +30,7 @@ class MainWindowView(FramelessWindow, BaseView):
         self.__body.setWidgetResizable(True)
         self.__body.setContentsMargins(72, 0, 50, 0)
 
-        self.__music_player = MusicPlayerBarView()
+        self.__music_player = MusicPlayerControl()
         self.__music_player.setFixedHeight(96)
         self.__music_player.setObjectName("musicPlayer")
 

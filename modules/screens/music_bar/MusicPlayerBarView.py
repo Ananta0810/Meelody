@@ -63,3 +63,43 @@ class MusicPlayerBarView(QWidget, BaseView):
         self.__left.apply_dark_mode()
         self.__middle.apply_dark_mode()
         self.__right.apply_dark_mode()
+
+    def set_onclick_prev_song(self, fn: callable) -> None:
+        self.__left.set_onclick_prev_song(fn)
+
+    def set_onclick_play_song(self, fn: callable) -> None:
+        self.__left.set_onclick_play_song(fn)
+
+    def set_onclick_pause_song(self, fn: callable) -> None:
+        self.__left.set_onclick_pause_song(fn)
+
+    def set_onclick_next_song(self, fn: callable) -> None:
+        self.__left.set_onclick_next_song(fn)
+
+    def set_playing_time(self, time: float) -> None:
+        self.__middle.set_playing_time(time)
+
+    def set_total_time(self, time: float) -> None:
+        self.__middle.set_total_time(time)
+
+    def set_is_playing(self, enable: bool) -> None:
+        return self.__left.set_is_playing(enable)
+
+    def is_playing(self) -> bool:
+        return self.__left.is_playing()
+
+    def set_is_playing(self, enable: bool) -> None:
+        return self.__left.set_is_playing(enable)
+
+    def is_looping(self) -> bool:
+        return self.__right.is_looping()
+
+    def display_song_info(
+        self, cover: bytes = None, title: str = None, artist: str = None, love_state: bool = False
+    ) -> None:
+        if artist is None and title is not None:
+            artist = ""
+        self.__left.set_cover(cover)
+        self.__left.set_title(title)
+        self.__left.set_artist(artist)
+        self.__right.set_love_state(love_state)

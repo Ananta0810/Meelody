@@ -117,6 +117,12 @@ class MusicPlayerRightSideView(QHBoxLayout, BaseView):
         self.__btn_timer.apply_dark_mode()
         self.__slider_volume.apply_dark_mode()
 
+    def set_love_state(self, is_loved: bool) -> None:
+        self.__btn_love.set_active(is_loved)
+
+    def is_looping(self) -> bool:
+        return self.__btn_loop.is_active()
+
     def __change_volume_icon(self) -> None:
         volume: int = self.__slider_volume.value()
 

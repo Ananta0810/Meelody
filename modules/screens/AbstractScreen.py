@@ -21,5 +21,5 @@ class BaseView(metaclass=MixinMeta):
 class BaseControl:
 
     @abstractmethod
-    def connect_to_view(self) -> None:
+    def connect_signals(self) -> None:
         pass
