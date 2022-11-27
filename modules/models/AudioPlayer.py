@@ -1,17 +1,17 @@
+from modules.helpers.types.Metas import SingletonMeta
 from modules.models.PlaylistSongs import PlaylistSongs
 from modules.models.Song import Song
 
 from pygame import mixer
 
 
-class AudioPlayer:
+class AudioPlayer(metaclass=SingletonMeta):
     __playlist: PlaylistSongs
     __current_song: Song
     __current_song_index: int = 0
     __time_start_in_sec: float = 0
     __sample_rate_offset: float = 1
     __loaded: bool = False
-    __instance: 'AudioPlayer'
 
     def __init__(self):
         mixer.pre_init()
@@ -19,7 +19,6 @@ class AudioPlayer:
 
     @staticmethod
     def get_instance() -> 'AudioPlayer':
-        # Refactor: Use Pythonic way
         return AudioPlayer()
 
     def has_any_song(self):
@@ -45,7 +44,7 @@ class AudioPlayer:
     def load_song_to_play(self):
         if self.__loaded:
             return
-        self.__current_song = self.__playlist.get_song(self.__current_song_index)
+        self.__current_song = self.__playlist.get_song_at(self.__current_song_index)
         if self.__current_song is None:
             return
         self.reset_time()
