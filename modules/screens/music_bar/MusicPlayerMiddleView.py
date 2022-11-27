@@ -4,7 +4,7 @@ from PyQt5.QtCore import Qt
 from PyQt5.QtGui import QFont
 from PyQt5.QtWidgets import QHBoxLayout, QWidget
 
-from modules.helpers.types.Decorators import override
+from modules.helpers.types.Decorators import override, connector
 from modules.helpers.types.Strings import Strings
 from modules.models.view.builder.FontBuilder import FontBuilder
 from modules.models.view.builder.SliderStyle import SliderStyle
@@ -77,6 +77,7 @@ class MusicPlayerMiddleView(QHBoxLayout, BaseView):
         self.__slider_time.apply_dark_mode()
         self.__label_total_time.apply_dark_mode()
 
+    @connector
     def set_on_released_time_slider(self, fn: Callable[[float], None]) -> None:
         self.__slider_time.sliderReleased.connect(
             lambda: fn(self.get_playing_time())

@@ -1,8 +1,8 @@
-from typing import Optional
+from typing import Optional, Callable
 
 from PyQt5.QtWidgets import QHBoxLayout, QWidget
 
-from modules.helpers.types.Decorators import override
+from modules.helpers.types.Decorators import override, connector
 from modules.widgets.AppIcon import AppIcon
 from modules.models.view.Background import Background
 from modules.models.view.Color import Color
@@ -78,7 +78,6 @@ class MusicPlayerRightSideView(QHBoxLayout, BaseView):
             ),
         )
         self.__slider_volume.setSliderPosition(100)
-        self.__slider_volume.valueChanged.connect(self.__change_volume_icon)
         self.__right_boxes.addWidget(self.__slider_volume)
 
         self.__btn_timer = IconButton.build(
@@ -117,15 +116,43 @@ class MusicPlayerRightSideView(QHBoxLayout, BaseView):
         self.__btn_timer.apply_dark_mode()
         self.__slider_volume.apply_dark_mode()
 
+    @connector
+    def set_onclick_loop(self, fn: callable) -> None:
+        self.__btn_loop.clicked.connect(lambda: fn())
+
+    @connector
+    def set_onclick_shuffle(self, fn: callable) -> None:
+        self.__btn_shuffle.clicked.connect(lambda: fn())
+
+    @connector
+    def set_onclick_love(self, fn: callable) -> None:
+        self.__btn_love.clicked.connect(lambda: fn())
+
+    @connector
+    def set_onchange_volume(self, fn: Callable[[int], None]) -> None:
+        self.__slider_volume.valueChanged.connect(lambda: self.__onchange_volume(fn))
+
+    def set_loop(self, enable: bool) -> None:
+        return self.__btn_loop.set_active(enable)
+
+    def set_shuffle(self, enable: bool) -> None:
+        return self.__btn_shuffle.set_active(enable)
+
     def set_love_state(self, is_loved: bool) -> None:
         self.__btn_love.set_active(is_loved)
 
     def is_looping(self) -> bool:
         return self.__btn_loop.is_active()
 
-    def __change_volume_icon(self) -> None:
-        volume: int = self.__slider_volume.value()
+    def is_shuffle(self) -> bool:
+        return self.__btn_shuffle.is_active()
 
+    def __onchange_volume(self, fn: Callable[[int], None]) -> None:
+        volume: int = self.__slider_volume.value()
+        self.__change_volume_icon_based_on(volume)
+        fn(volume)
+
+    def __change_volume_icon_based_on(self, volume: int) -> None:
         VOLUME_UP_ICON: int = 0
         VOLUME_DOWN_ICON: int = 1
         SILENT_ICON: int = 2

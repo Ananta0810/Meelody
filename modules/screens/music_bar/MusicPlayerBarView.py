@@ -3,7 +3,7 @@ from typing import Optional, Callable
 from PyQt5.QtCore import Qt
 from PyQt5.QtWidgets import QHBoxLayout, QWidget
 
-from modules.helpers.types.Decorators import override
+from modules.helpers.types.Decorators import override, connector
 from modules.statics.view.Material import Images
 from modules.screens.AbstractScreen import BaseView
 from modules.screens.music_bar.MusicPlayerLeftSideView import MusicPlayerLeftSideView
@@ -57,20 +57,41 @@ class MusicPlayerBarView(QWidget, BaseView):
         self.__middle.apply_dark_mode()
         self.__right.apply_dark_mode()
 
+    @connector
     def set_onclick_prev_song(self, fn: callable) -> None:
         self.__left.set_onclick_prev_song(fn)
 
+    @connector
     def set_onclick_play_song(self, fn: callable) -> None:
         self.__left.set_onclick_play_song(fn)
 
+    @connector
     def set_onclick_pause_song(self, fn: callable) -> None:
         self.__left.set_onclick_pause_song(fn)
 
+    @connector
     def set_onclick_next_song(self, fn: callable) -> None:
         self.__left.set_onclick_next_song(fn)
 
-    def set_on_released_time_slider(self, fn: Callable[[float], None]):
+    @connector
+    def set_onchange_time_slider(self, fn: Callable[[float], None]):
         self.__middle.set_on_released_time_slider(fn)
+
+    @connector
+    def set_onclick_loop(self, fn: callable) -> None:
+        self.__right.set_onclick_loop(fn)
+
+    @connector
+    def set_onclick_shuffle(self, fn: callable) -> None:
+        self.__right.set_onclick_shuffle(fn)
+
+    @connector
+    def set_onclick_love(self, fn: callable) -> None:
+        self.__right.set_onclick_love(fn)
+
+    @connector
+    def set_onchange_volume(self, fn: Callable[[int], None]) -> None:
+        self.__right.set_onchange_volume(fn)
 
     def set_playing_time(self, time: float) -> None:
         self.__middle.set_playing_time(time)
@@ -81,11 +102,20 @@ class MusicPlayerBarView(QWidget, BaseView):
     def set_is_playing(self, enable: bool) -> None:
         return self.__left.set_is_playing(enable)
 
+    def set_loop(self, enable: bool) -> None:
+        return self.__right.set_loop(enable)
+
+    def set_shuffle(self, enable: bool) -> None:
+        return self.__right.set_shuffle(enable)
+
     def is_playing(self) -> bool:
         return self.__left.is_playing()
 
     def is_looping(self) -> bool:
         return self.__right.is_looping()
+
+    def is_shuffle(self) -> bool:
+        return self.__right.is_shuffle()
 
     def display_song_info(
         self, cover: bytes = None, title: str = None, artist: str = None, love_state: bool = False

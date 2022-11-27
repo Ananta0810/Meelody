@@ -5,7 +5,7 @@ from PyQt5.QtGui import QPixmap
 from PyQt5.QtWidgets import QHBoxLayout, QWidget, QVBoxLayout
 
 from modules.helpers.PixmapHelper import PixmapHelper
-from modules.helpers.types.Decorators import override
+from modules.helpers.types.Decorators import override, connector
 from modules.models.view.builder.FontBuilder import FontBuilder
 from modules.models.view.builder.IconButtonStyle import IconButtonStyle
 from modules.models.view.builder.TextStyle import TextStyle
@@ -125,15 +125,19 @@ class MusicPlayerLeftSideView(QHBoxLayout, BaseView):
         self.__label_song_title.apply_dark_mode()
         self.__label_song_artist.apply_dark_mode()
 
+    @connector
     def set_onclick_prev_song(self, fn: callable) -> None:
         self.__btn_prev_song.clicked.connect(lambda: fn())
 
+    @connector
     def set_onclick_play_song(self, fn:  callable) -> None:
         self.__btn_play_song.clicked.connect(lambda: fn())
 
+    @connector
     def set_onclick_pause_song(self, fn:  callable) -> None:
         self.__btn_play_song.clicked.connect(lambda: fn())
 
+    @connector
     def set_onclick_next_song(self, fn:  callable) -> None:
         self.__btn_next_song.clicked.connect(lambda: fn())
 
