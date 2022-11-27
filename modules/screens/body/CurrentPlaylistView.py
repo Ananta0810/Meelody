@@ -49,11 +49,18 @@ class CurrentPlaylistView(QWidget, BaseView):
         self.__menu.set_onclick_play(fn)
 
     @connector
+    def set_onclick_love(self, fn: Callable[[int], None]) -> None:
+        self.__menu.set_onclick_love(fn)
+
+    @connector
     def set_on_keypress(self, fn: Callable[[str], int]) -> None:
         self.__menu.set_on_keypress(fn)
 
     def refresh_menu(self) -> None:
         self.__menu.refresh()
+
+    def love_song(self, is_loved: bool) -> None:
+        self.__menu.love_song(is_loved)
 
     def select_song_at(self, index: int) -> None:
         self.__menu.select_song_at(index)

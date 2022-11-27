@@ -49,7 +49,7 @@ class PlaylistSongs:
     def set_order_by(self, prop: str) -> None:
         self.__order_by = prop
 
-    def get_song(self, index: int) -> Song:
+    def get_song_at(self, index: int) -> Song:
         """
         Get the song at the given index
         """

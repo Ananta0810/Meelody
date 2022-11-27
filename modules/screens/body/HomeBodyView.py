@@ -64,6 +64,10 @@ class HomeBodyView(QScrollArea, BaseView):
         self.__current_playlist.set_onclick_play(fn)
 
     @connector
+    def set_onclick_love(self, fn: Callable[[int], None]) -> None:
+        self.__current_playlist.set_onclick_love(fn)
+
+    @connector
     def set_on_keypress(self, fn: Callable[[str], int]) -> None:
         self.__current_playlist.set_on_keypress(fn)
 
@@ -72,6 +76,9 @@ class HomeBodyView(QScrollArea, BaseView):
 
     def refresh_menu(self) -> None:
         self.__current_playlist.refresh_menu()
+
+    def love_song(self, is_loved: bool) -> None:
+        self.__current_playlist.love_song(is_loved)
 
     def load_playlist(self, playlist: Playlist) -> None:
         self.__current_playlist.load_playlist(playlist)

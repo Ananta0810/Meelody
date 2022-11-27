@@ -39,6 +39,7 @@ class MusicPlayerRightSideView(QHBoxLayout, BaseView):
             active_icon_color=Colors.DANGER,
             active_background=Backgrounds.CIRCLE_HIDDEN_DANGER_10,
         )
+        self.__btn_love.set_change_state_on_pressed(False)
 
         self.__btn_volume = StatelessIconButton.build(
             size=Icons.LARGE,

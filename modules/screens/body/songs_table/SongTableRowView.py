@@ -89,12 +89,12 @@ class SongTableRowView(BackgroundWidget, BaseView):
             size=Icons.LARGE,
             padding=Paddings.RELATIVE_50,
             active_btn=IconButtonStyle(
-                light_mode_icon=Icons.LOVE.with_color(Colors.PRIMARY),
-                light_mode_background=Backgrounds.CIRCLE_HIDDEN_PRIMARY_10,
-            ),
-            inactive_btn=IconButtonStyle(
                 light_mode_icon=Icons.LOVE.with_color(Colors.DANGER),
                 light_mode_background=Backgrounds.CIRCLE_HIDDEN_DANGER_10,
+            ),
+            inactive_btn=IconButtonStyle(
+                light_mode_icon=Icons.LOVE.with_color(Colors.GRAY),
+                light_mode_background=Backgrounds.CIRCLE_HIDDEN_GRAY_10,
             )
         )
 
@@ -179,6 +179,9 @@ class SongTableRowView(BackgroundWidget, BaseView):
     def set_onclick_play(self, fn: callable) -> None:
         self.__btn_play.clicked.connect(fn)
 
+    def set_onclick_love(self, fn: callable) -> None:
+        self.__btn_love.clicked.connect(fn)
+
     def show_more(self) -> None:
         self.__buttons.hide()
         self.__btn_close.show()
@@ -202,7 +205,7 @@ class SongTableRowView(BackgroundWidget, BaseView):
         self.__label_length.setText(Strings.float_to_clock_time(length))
 
     def set_love_state(self, state: bool) -> None:
-        self.__btn_love.setChecked(state)
+        self.__btn_love.set_active(state)
 
     def set_default_cover(self, cover: bytes) -> None:
         self.__cover.set_default_pixmap(self.__get_cover_from_bytes(cover))

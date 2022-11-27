@@ -16,6 +16,7 @@ class SongTableBodyView(SmoothVerticalScrollArea, BaseView):
     __menu: QVBoxLayout
 
     __onclick_button_fn: Callable[[int], None]
+    __onclick_love_fn: Callable[[int], None]
     __on_keypress_fn: Callable[[str], int]
 
     def __init__(self, parent: Optional["QWidget"] = None):
@@ -57,10 +58,20 @@ class SongTableBodyView(SmoothVerticalScrollArea, BaseView):
         for index, song in enumerate(self._songs):
             song.set_onclick_play(lambda: self.__onclick_play_btn(index))
 
+    @connector
+    def set_onclick_love(self, fn: Callable[[int], None]) -> None:
+        self.__onclick_love_fn = fn
+        for index, song in enumerate(self._songs):
+            song.set_onclick_love(lambda: self._onclick_love_btn(index))
+
     def __onclick_play_btn(self, index: int) -> None:
         self.select_song_at(index)
         if self.__onclick_button_fn is not None:
             self.__onclick_button_fn(index)
+
+    def _onclick_love_btn(self, index: int) -> None:
+        if self.__onclick_love_fn is not None:
+            self.__onclick_love_fn(index)
 
     @connector
     def set_on_keypress(self, fn: Callable[[str], int]) -> None:
@@ -115,6 +126,7 @@ class SongTableBodyView(SmoothVerticalScrollArea, BaseView):
         self._songs.append(song)
         self.__menu.addWidget(song)
         song.set_onclick_play(lambda: self.__onclick_play_btn(index))
+        song.set_onclick_love(lambda: self._onclick_love_btn(index))
 
         return song
 

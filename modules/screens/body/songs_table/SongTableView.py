@@ -52,6 +52,10 @@ class SongTableView(QWidget, BaseView):
         self._body.set_onclick_play(fn)
 
     @connector
+    def set_onclick_love(self, fn: Callable[[int], None]) -> None:
+        self._body.set_onclick_love(fn)
+
+    @connector
     def set_on_keypress(self, fn: Callable[[str], int]) -> None:
         self._body.set_on_keypress(fn)
 

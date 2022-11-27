@@ -6,6 +6,7 @@ from modules.helpers.types.Decorators import handler, override, connector
 from modules.helpers.types.Numbers import Numbers
 from modules.models.AudioPlayer import AudioPlayer
 from modules.models.PlaylistSongs import PlaylistSongs
+from modules.models.Song import Song
 from modules.screens.AbstractScreen import BaseControl
 from modules.screens.music_bar.MusicPlayerBarView import MusicPlayerBarView
 
@@ -16,7 +17,8 @@ class MusicPlayerControl(MusicPlayerBarView, BaseControl):
     __thread_id: int = 0
 
     __onclick_play_fn: Callable[[int], None]
-    __on_shuffle: callable
+    __on_shuffle: Callable[[], None]
+    __on_love: Callable[[bool], None]
 
     def __init__(self):
         super().__init__()
@@ -24,23 +26,27 @@ class MusicPlayerControl(MusicPlayerBarView, BaseControl):
 
     @override
     def connect_signals(self) -> None:
-        self.set_onclick_prev_song(lambda: self.play_previous_song())
-        self.set_onclick_play_song(lambda: self.play_current_song())
-        self.set_onclick_pause_song(lambda: self.pause_current_song())
-        self.set_onclick_next_song(lambda: self.play_next_song())
-        self.set_onchange_playing_time(lambda time: self.play_song_at_time(time))
-        self.set_onclick_loop(lambda: self.change_loop_state())
+        self._set_onclick_prev_song(lambda: self.play_previous_song())
+        self._set_onclick_play_song(lambda: self.play_current_song())
+        self._set_onclick_pause_song(lambda: self.pause_current_song())
+        self._set_onclick_next_song(lambda: self.play_next_song())
+        self._set_onchange_playing_time(lambda time: self.play_song_at_time(time))
+        self._set_onclick_loop(lambda: self.change_loop_state())
         self._set_onclick_shuffle(lambda: self.change_shuffle_state())
-        self.set_onclick_love(lambda: self.change_love_state())
-        self.set_onchange_volume(lambda volume: self.change_volume(volume))
+        self._set_onclick_love(lambda: self.change_love_state())
+        self._set_onchange_volume(lambda volume: self.change_volume(volume))
 
     @connector
     def set_onclick_play(self, fn: Callable[[int], None]) -> None:
         self.__onclick_play_fn = fn
 
     @connector
-    def set_onclick_shuffle(self, fn: callable) -> None:
+    def set_onclick_shuffle(self, fn: Callable[[], None]) -> None:
         self.__on_shuffle = fn
+
+    @connector
+    def set_onclick_love(self, fn: Callable[[bool], None]) -> None:
+        self.__on_love = fn
 
     def load_playlist_songs(self, playlist: PlaylistSongs, song_index: int = 0) -> None:
         self.__player.load_playlist(playlist)
@@ -116,8 +122,12 @@ class MusicPlayerControl(MusicPlayerBarView, BaseControl):
     @handler
     def change_love_state(self) -> None:
         song = self.__player.get_current_song()
-        if song is not None:
-            song.reverse_love_state()
+        if song is None:
+            return
+        song.reverse_love_state()
+        self.set_love_state(song.is_loved())
+        if self.__on_love is not None:
+            self.__on_love(song.is_loved())
 
     @handler
     def change_volume(self, volume: int) -> None:
@@ -171,7 +181,7 @@ class MusicPlayerControl(MusicPlayerBarView, BaseControl):
         self.play_next_song()
 
     def __display_current_song_info(self) -> None:
-        song = self.__player.get_current_song()
+        song: Song = self.__player.get_current_song()
         if song is None:
             self.display_song_info(None, "Artist", None, False)
             self.set_playing_time(0)

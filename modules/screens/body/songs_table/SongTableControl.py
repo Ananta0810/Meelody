@@ -1,4 +1,5 @@
-from modules.helpers.types.Decorators import override
+from modules.helpers.types.Decorators import override, connector
+from modules.models.AudioPlayer import AudioPlayer
 from modules.models.PlaylistSongs import PlaylistSongs
 from modules.screens.AbstractScreen import BaseControl
 from modules.screens.body.songs_table.SongTableView import SongTableView
@@ -6,6 +7,7 @@ from modules.screens.body.songs_table.SongTableView import SongTableView
 
 class SongTableControl(SongTableView, BaseControl):
     __playlist: PlaylistSongs = None
+    __player: AudioPlayer = AudioPlayer()
 
     def __init__(self) -> None:
         super().__init__()
@@ -30,3 +32,7 @@ class SongTableControl(SongTableView, BaseControl):
 
     def select_song_at(self, index: int) -> None:
         self._body.select_song_at(index)
+
+    def love_song(self, is_loved: bool) -> None:
+        index = self.__player.get_current_song_index()
+        self._body.set_song_love_state_at_index(index, is_loved)

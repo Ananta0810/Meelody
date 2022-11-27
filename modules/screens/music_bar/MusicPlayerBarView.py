@@ -58,27 +58,27 @@ class MusicPlayerBarView(QWidget, BaseView):
         self.__right.apply_dark_mode()
 
     @connector
-    def set_onclick_prev_song(self, fn: callable) -> None:
+    def _set_onclick_prev_song(self, fn: callable) -> None:
         self.__left.set_onclick_prev_song(fn)
 
     @connector
-    def set_onclick_play_song(self, fn: callable) -> None:
+    def _set_onclick_play_song(self, fn: callable) -> None:
         self.__left.set_onclick_play_song(fn)
 
     @connector
-    def set_onclick_pause_song(self, fn: callable) -> None:
+    def _set_onclick_pause_song(self, fn: callable) -> None:
         self.__left.set_onclick_pause_song(fn)
 
     @connector
-    def set_onclick_next_song(self, fn: callable) -> None:
+    def _set_onclick_next_song(self, fn: callable) -> None:
         self.__left.set_onclick_next_song(fn)
 
     @connector
-    def set_onchange_playing_time(self, fn: Callable[[float], None]):
+    def _set_onchange_playing_time(self, fn: Callable[[float], None]):
         self.__middle.set_onchange_playing_time(fn)
 
     @connector
-    def set_onclick_loop(self, fn: callable) -> None:
+    def _set_onclick_loop(self, fn: callable) -> None:
         self.__right.set_onclick_loop(fn)
 
     @connector
@@ -86,11 +86,11 @@ class MusicPlayerBarView(QWidget, BaseView):
         self.__right.set_onclick_shuffle(fn)
 
     @connector
-    def set_onclick_love(self, fn: callable) -> None:
+    def _set_onclick_love(self, fn: callable) -> None:
         self.__right.set_onclick_love(fn)
 
     @connector
-    def set_onchange_volume(self, fn: Callable[[int], None]) -> None:
+    def _set_onchange_volume(self, fn: Callable[[int], None]) -> None:
         self.__right.set_onchange_volume(fn)
 
     def set_playing_time(self, time: float) -> None:
@@ -107,6 +107,9 @@ class MusicPlayerBarView(QWidget, BaseView):
 
     def set_shuffle(self, enable: bool) -> None:
         return self.__right.set_shuffle(enable)
+
+    def set_love_state(self, enable: bool) -> None:
+        return self.__right.set_love_state(enable)
 
     def is_playing(self) -> bool:
         return self.__left.is_playing()

@@ -20,6 +20,7 @@ class Application:
         songs.insert(Song.from_file("library/Galadriel.mp3"))
         songs.insert(Song.from_file("library/Graze The Roof.mp3"))
         songs.insert(Song.from_file("library/Journey to the West.mp3"))
+        songs.insert(Song.from_file("library/Shepherd.mp3"))
         songs.insert(Song.from_file("library/Ship Battle.mp3"))
         songs.insert(Song.from_file("library/The Call.mp3"))
         songs.insert(Song.from_file("library/Tom Tom.mp3"))
