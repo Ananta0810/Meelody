@@ -37,9 +37,9 @@ class SmoothVerticalScrollArea(QScrollArea):
     def set_animation_easing_curve(self, easing_curve: QEasingCurve) -> None:
         self.__animation.setEasingCurve(easing_curve)
 
-    def scroll_to_item(self, item: int) -> None:
+    def _scroll_to_item_at(self, index: int) -> None:
         maxValue: int = self.verticalScrollBar().maximum()
-        endValue: int = Numbers.clamp_int(item * self.__itemHeight, 0, maxValue)
+        endValue: int = Numbers.clamp_int(index * self.__itemHeight, 0, maxValue)
         self.__animation.stop()
         self.__animation.setStartValue(self.verticalScrollBar().value())
         self.__animation.setEndValue(endValue)

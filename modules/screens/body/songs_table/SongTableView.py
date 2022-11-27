@@ -3,7 +3,7 @@ from typing import Optional, Callable
 from PyQt5.QtCore import Qt
 from PyQt5.QtWidgets import QWidget, QVBoxLayout
 
-from modules.helpers.types.Decorators import override
+from modules.helpers.types.Decorators import override, connector
 from modules.models.PlaylistSongs import PlaylistSongs
 from modules.screens.AbstractScreen import BaseView
 from modules.screens.body.songs_table.SongTableBodyView import SongTableBodyView
@@ -48,8 +48,16 @@ class SongTableView(QWidget, BaseView):
         self.__header.apply_dark_mode()
         self.__body.apply_dark_mode()
 
+    @connector
     def set_onclick_play(self, fn: Callable[[int], None]) -> None:
         self.__body.set_onclick_play(fn)
+
+    @connector
+    def set_on_keypress(self, fn: Callable[[str], int]) -> None:
+        self.__body.set_on_keypress(fn)
+
+    def select_song_at(self, index: int) -> None:
+        self.__body.select_song_at(index)
 
     def load_songs(self, playlist: PlaylistSongs) -> None:
         for song in playlist.get_songs():

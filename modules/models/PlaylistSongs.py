@@ -62,11 +62,12 @@ class PlaylistSongs:
         Add song to the list of songs. If added successfully, it will return the position of the song in the playlist
         """
         # TODO: Refactor this
-        if len(self.__songs) != 0 and self.__is_sorted and self.__order_by == "title":
+        if self.__is_sorted and self.__order_by == "title":
             position: int = Lists.string_binary_search(
                 self.__songs,
                 search_value=song.get_title(),
-                key_provider=lambda s: s.get_title()
+                key_provider=lambda s: s.get_title(),
+                find_nearest=True
             )
             self.__songs.insert(position, song)
             return position
@@ -83,10 +84,17 @@ class PlaylistSongs:
         self.__is_sorted = True
         self.__backup_songs.clear()
 
-    def find_song_by_title(self, title):
+    def find_song_index_by_title(self, title) -> int:
         if self.__is_sorted and self.__order_by == "title":
             return Lists.string_binary_search(self.__songs, search_value=title, key_provider=lambda s: s.get_title())
         return Lists.string_linear_search(self.__songs, search_value=title, key_provider=lambda s: s.get_title())
+
+    def find_nearest_song_index_by_title(self, title) -> int:
+        if self.__is_sorted and self.__order_by == "title":
+            return Lists.string_binary_search(
+                self.__songs, search_value=title, key_provider=lambda s: s.get_title(), find_nearest=True
+            )
+        return Lists.string_nearest_linear_search(self.__songs, search_value=title, key_provider=lambda s: s.get_title())
 
     def find(self, song: Song) -> int:
         """

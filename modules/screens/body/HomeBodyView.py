@@ -63,5 +63,12 @@ class HomeBodyView(QScrollArea, BaseView):
     def set_onclick_play(self, fn: Callable[[int], None]) -> None:
         self.__current_playlist.set_onclick_play(fn)
 
+    @connector
+    def set_on_keypress(self, fn: Callable[[str], int]) -> None:
+        self.__current_playlist.set_on_keypress(fn)
+
+    def select_song_at(self, index: int) -> None:
+        self.__current_playlist.select_song_at(index)
+
     def load_playlist(self, playlist: Playlist) -> None:
         self.__current_playlist.load_playlist(playlist)

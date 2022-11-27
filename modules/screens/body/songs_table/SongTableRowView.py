@@ -214,7 +214,7 @@ class SongTableRowView(BackgroundWidget, BaseView):
         self.set_cover(None)
 
     @staticmethod
-    def __create_button(with_icon:AppIcon, padding=Paddings.RELATIVE_50) -> IconButton:
+    def __create_button(with_icon: AppIcon, padding=Paddings.RELATIVE_50) -> IconButton:
         return IconButton.build(
             size=Icons.LARGE,
             padding=padding,

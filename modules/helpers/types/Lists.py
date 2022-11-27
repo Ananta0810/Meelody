@@ -24,7 +24,8 @@ class Lists:
     def string_binary_search(
         _list: list[Generic[T]],
         search_value: str,
-        key_provider: Callable[[T], str] = lambda x: x
+        key_provider: Callable[[T], str] = lambda x: x,
+        find_nearest: bool = False
     ) -> int:
         low, high = 0, len(_list) - 1
         mid: int = 0
@@ -43,7 +44,7 @@ class Lists:
                 continue
             return mid
         # Not found
-        return -1
+        return low if find_nearest else -1
 
     @staticmethod
     def linear_search(
@@ -68,3 +69,19 @@ class Lists:
                 return index
         # Not found
         return -1
+
+    @staticmethod
+    def string_nearest_linear_search(
+        _list: list[Generic[T]],
+        search_value: str = '',
+        key_provider: Callable[[T], str] = lambda x: x
+    ) -> int:
+        first_letter: str = search_value[0]
+        nearest_post = 0
+        for index, item in enumerate(_list):
+            if Strings.compare(search_value, key_provider(item)) == 0:
+                return index
+            if key_provider(item)[0] <= first_letter:
+                nearest_post = index
+        # Not found
+        return nearest_post

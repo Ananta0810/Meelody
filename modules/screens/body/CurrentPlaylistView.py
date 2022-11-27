@@ -48,6 +48,13 @@ class CurrentPlaylistView(QWidget, BaseView):
     def set_onclick_play(self, fn: Callable[[int], None]) -> None:
         self.__menu.set_onclick_play(fn)
 
+    @connector
+    def set_on_keypress(self, fn: Callable[[str], int]) -> None:
+        self.__menu.set_on_keypress(fn)
+
+    def select_song_at(self, index: int) -> None:
+        self.__menu.select_song_at(index)
+
     def load_playlist(self, playlist: Playlist) -> None:
         self.set_current_playlist_info(
             playlist.get_info().name, playlist.get_info().cover, playlist.size()

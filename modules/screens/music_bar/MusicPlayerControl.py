@@ -1,7 +1,8 @@
 from threading import Thread
 from time import sleep
+from typing import Callable
 
-from modules.helpers.types.Decorators import handler, override
+from modules.helpers.types.Decorators import handler, override, connector
 from modules.helpers.types.Numbers import Numbers
 from modules.models.AudioPlayer import AudioPlayer
 from modules.models.PlaylistSongs import PlaylistSongs
@@ -13,6 +14,7 @@ class MusicPlayerControl(MusicPlayerBarView, BaseControl):
 
     __player: AudioPlayer = AudioPlayer.get_instance()
     __thread_id: int = 0
+    __onclick_play_fn: Callable[[int], None]
 
     def __init__(self) -> None:
         super(MusicPlayerControl, self).__init__()
@@ -29,6 +31,10 @@ class MusicPlayerControl(MusicPlayerBarView, BaseControl):
         self.set_onclick_shuffle(lambda: self.change_shuffle_state())
         self.set_onclick_love(lambda: self.change_love_state())
         self.set_onchange_volume(lambda volume: self.change_volume(volume))
+
+    @connector
+    def set_onclick_play(self, fn: Callable[[int], None]) -> None:
+        self.__onclick_play_fn = fn
 
     def load_playlist_songs(self, playlist: PlaylistSongs, song_index: int = 0) -> None:
         self.__player.load_playlist(playlist)
@@ -106,6 +112,8 @@ class MusicPlayerControl(MusicPlayerBarView, BaseControl):
     def __playSong(self) -> None:
         if self.__player.get_current_song() is None:
             return
+        if self.__onclick_play_fn is not None:
+            self.__onclick_play_fn(self.__player.get_current_song_index())
         self.__display_current_song_info()
         self.__thread_start_player()
 

@@ -15,8 +15,13 @@ class Application:
 
         songs = PlaylistSongs()
         songs.insert(Song.from_file("library/Abandoned Temple.mp3"))
+        songs.insert(Song.from_file("library/Desire.mp3"))
+        songs.insert(Song.from_file("library/Dragonmancer.mp3"))
+        songs.insert(Song.from_file("library/Galadriel.mp3"))
         songs.insert(Song.from_file("library/Graze The Roof.mp3"))
+        songs.insert(Song.from_file("library/Journey to the West.mp3"))
         songs.insert(Song.from_file("library/Ship Battle.mp3"))
+        songs.insert(Song.from_file("library/The Call.mp3"))
         songs.insert(Song.from_file("library/Tom Tom.mp3"))
 
         playlist = Playlist.create(name="Library", songs=songs)

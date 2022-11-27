@@ -76,7 +76,7 @@ class AudioPlayer:
         self.__loaded = False
 
     def set_current_song(self, title: str) -> None:
-        song_index = self.__playlist.find_song_by_title(title)
+        song_index = self.__playlist.find_song_index_by_title(title)
         if song_index < 0 or song_index >= self.__playlist.size():
             song_index = 0
         self.__current_song_index = song_index

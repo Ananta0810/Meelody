@@ -1,22 +1,22 @@
 from typing import Optional, Callable
 
-from PyQt5.QtCore import pyqtSignal, QEvent, Qt
+from PyQt5.QtCore import Qt
+from PyQt5.QtGui import QKeyEvent
 from PyQt5.QtWidgets import QWidget, QVBoxLayout
 
 from modules.helpers.types.Decorators import override, connector
-from modules.statics.view.Material import Images, Backgrounds
 from modules.screens.AbstractScreen import BaseView
 from modules.screens.body.songs_table.SongTableRowView import SongTableRowView
+from modules.statics.view.Material import Images, Backgrounds
 from modules.widgets.SmoothVerticalScrollArea import SmoothVerticalScrollArea
 
 
 class SongTableBodyView(SmoothVerticalScrollArea, BaseView):
-    keyPressed = pyqtSignal(QEvent)
-
     __inner: QWidget
     __menu: QVBoxLayout
 
     __onclick_button_fn: Callable[[int], None]
+    __on_keypress_fn: Callable[[str], int]
 
     def __init__(self, parent: Optional["QWidget"] = None):
         super(SongTableBodyView, self).__init__(parent)
@@ -55,7 +55,35 @@ class SongTableBodyView(SmoothVerticalScrollArea, BaseView):
     def set_onclick_play(self, fn: Callable[[int], None]) -> None:
         self.__onclick_button_fn = fn
         for index, song in enumerate(self._songs):
-            song.set_onclick_play(lambda: fn(index))
+            song.set_onclick_play(lambda: self.__onclick_play_btn(index))
+
+    def __onclick_play_btn(self, index: int) -> None:
+        self.select_song_at(index)
+        if self.__onclick_button_fn is not None:
+            self.__onclick_button_fn(index)
+
+    @connector
+    def set_on_keypress(self, fn: Callable[[str], int]) -> None:
+        self.__on_keypress_fn = fn
+
+    @override
+    def keyPressEvent(self, event: QKeyEvent) -> None:
+        self.__on_keypress(event)
+        return super().keyPressEvent(event)
+
+    def select_song_at(self, index: int) -> None:
+        self._scroll_to_item_at(index)
+
+    def __on_keypress(self, event: QKeyEvent) -> None:
+        is_holding_alt = int(event.modifiers()) == Qt.AltModifier
+        if not is_holding_alt:
+            return
+        try:
+            key = chr(event.key())
+            index = self.__on_keypress_fn(key)
+            self._scroll_to_item_at(index)
+        except ValueError:
+            pass
 
     def display_song_info_at_index(self, index: int, cover: bytes, title: str, artist: str, length: float) -> None:
         song = self.__get_song_at(index)
@@ -92,9 +120,7 @@ class SongTableBodyView(SmoothVerticalScrollArea, BaseView):
         index: int = len(self._songs)
         self._songs.append(song)
         self.__menu.addWidget(song)
-
-        if self.__onclick_button_fn is not None:
-            song.set_onclick_play(lambda: self.__onclick_button_fn(index))
+        song.set_onclick_play(lambda: self.__onclick_play_btn(index))
 
         return song
 
