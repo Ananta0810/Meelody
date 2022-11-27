@@ -1,6 +1,7 @@
 import os
 
 from modules.helpers.types.Decorators import override
+from modules.helpers.types.Strings import Strings
 from modules.models.AudioExtractor import AudioExtractor
 
 
@@ -28,6 +29,12 @@ class Song:
         self.__length = length
         self.__is_loved = loved
 
+    @staticmethod
+    def from_file(location: str) -> 'Song':
+        song = Song(location)
+        song.__load_info_from(location)
+        return song
+
     @override
     def __str__(self):
         return f"Song({self.__title}, {self.__artist}, {self.__length}, {self.__is_loved})"
@@ -52,11 +59,12 @@ class Song:
         """
         return AudioExtractor.load_from(self.__location).get_sample_rate()
 
-    def load_info(self) -> None:
+    def __load_info_from(self, location: str) -> None:
         """
         Load the information of the song when having the audio file
         """
-        (artist, cover, length) = self.__get_info_from_audio(self.__location)
+        (artist, cover, length) = self.__get_info_from_audio(location)
+        self.__title = Strings.get_file_basename(location)
         self.__artist = artist
         self.__cover = cover
         self.__length = length
@@ -94,6 +102,24 @@ class Song:
             self.__cover = cover
         return change_successfully
 
+    def get_title(self) -> str:
+        return self.__title
+
+    def get_location(self) -> str:
+        return self.__location
+
+    def get_artist(self) -> str:
+        return self.__artist
+
+    def get_cover(self) -> bytes:
+        return self.__cover
+
+    def get_length(self) -> float:
+        return self.__length
+
+    def is_loved(self) -> bool:
+        return self.__is_loved
+
     def delete(self) -> bool:
         """
         Delete audio file.
@@ -116,4 +142,4 @@ class Song:
         Extract information of song from its file.
         """
         audio = AudioExtractor.load_from(file_name)
-        return audio.getArtist(), audio.getCover(), audio.getLength()
+        return audio.get_artist(), audio.get_cover(), audio.get_length()

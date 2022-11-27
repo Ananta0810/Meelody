@@ -1,3 +1,4 @@
+import os
 import string
 from locale import setlocale, LC_ALL, strxfrm
 
@@ -18,14 +19,18 @@ class Strings:
         return strxfrm(text.upper())
 
     @staticmethod
-    def compare(str1: str, str2: str) -> int:
-        str1 = Strings.toLower(str1)
-        str2 = Strings.toLower(str2)
-        if str1 < str2:
+    def compare(text: str, other: str) -> int:
+        text = Strings.toLower(text)
+        other = Strings.toLower(other)
+        if text < other:
             return -1
-        if str1 > str2:
+        if text > other:
             return 1
         return 0
+
+    @staticmethod
+    def equals(text: str, other: str) -> bool:
+        return Strings.compare(text, other) == 0
 
     @staticmethod
     def unindent(value: str):
@@ -48,3 +53,19 @@ class Strings:
         mm = time // 60
         ss = time % 60
         return ":".join([str(mm).zfill(2), str(ss).zfill(2)])
+
+    @staticmethod
+    def get_full_path(directory: str, name: str, extension: str) -> str:
+        return "".join([directory, "/", name, extension])
+
+    @staticmethod
+    def get_filename(file_path: str):
+        return file_path.split("/")[-1]
+
+    @staticmethod
+    def get_dir_from(file_path: str) -> str:
+        return file_path.replace(os.path.basename(file_path), "")
+
+    @staticmethod
+    def get_file_basename(file_path: str) -> str:
+        return os.path.basename(file_path).split(".")[0]

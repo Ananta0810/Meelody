@@ -4,17 +4,23 @@ from modules.models.Song import Song
 from pygame import mixer
 
 
-class Player:
+class AudioPlayer:
     __playlist: PlaylistSongs
     __current_song: Song
     __current_song_index: int = 0
     __time_start_in_sec: float = 0
     __sample_rate_offset: float = 1
     __loaded: bool = False
+    __instance: 'AudioPlayer'
 
     def __init__(self):
         mixer.pre_init()
         mixer.init()
+
+    @staticmethod
+    def get_instance() -> 'AudioPlayer':
+        # Refactor: Use Pythonic way
+        return AudioPlayer()
 
     def has_any_song(self):
         return self.__playlist is not None and self.__playlist.has_any_song()
@@ -54,11 +60,13 @@ class Player:
     def play(self):
         mixer.music.play(start=self.get_playing_time())
 
-    def previous(self):
+    def select_previous_song(self):
         self.set_current_song_index((self.__current_song_index - 1) % self.__playlist.size())
+        self.load_song_to_play()
 
-    def next(self):
+    def select_next_song(self):
         self.set_current_song_index((self.__current_song_index + 1) % self.__playlist.size())
+        self.load_song_to_play()
 
     def get_playlist(self) -> list[Song]:
         return self.__playlist.get_songs()
@@ -74,10 +82,10 @@ class Player:
         self.__current_song_index = song_index
         self.__loaded = False
 
-    def get_current_song(self):
+    def get_current_song(self) -> Song:
         return self.__current_song
 
-    def get_current_song_index(self):
+    def get_current_song_index(self) -> int:
         return self.__current_song_index
 
     def skip_to_time(self, time: float) -> None:
