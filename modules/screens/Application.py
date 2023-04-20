@@ -1,5 +1,6 @@
 from logging import getLogger
 
+from modules.helpers import LibraryHelper
 from modules.helpers.Files import Files
 from modules.models.Playlist import Playlist
 from modules.models.PlaylistSongs import PlaylistSongs
@@ -16,7 +17,7 @@ class Application:
         self.window = MainWindowControl()
         self.window.apply_light_mode()
 
-        songs: PlaylistSongs = Application.get_playlist_from_dir("library", with_extension="mp3")
+        songs: PlaylistSongs = SongResolver.load_songs_from_dir("library", with_extension="mp3")
         playlist = Playlist.create(name="Library", songs=songs)
         self.window.load_playlist(playlist)
 

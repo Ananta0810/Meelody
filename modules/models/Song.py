@@ -1,10 +1,11 @@
+import dataclasses
 import os
 
 from modules.helpers.types.Decorators import override
 from modules.helpers.types.Strings import Strings
 from modules.models.AudioExtractor import AudioExtractor
 
-
+@dataclasses.dataclass
 class Song:
     __location: str
     __title: str
@@ -33,6 +34,13 @@ class Song:
     def from_file(location: str) -> 'Song':
         song = Song(location)
         song.__load_info_from(location)
+        return song
+
+    @staticmethod
+    def from_json(json: dict) -> 'Song':
+        song = Song()
+        for key in json.keys():
+            song.__dict__[key] = json[key]
         return song
 
     @override
