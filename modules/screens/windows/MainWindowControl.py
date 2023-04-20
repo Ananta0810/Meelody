@@ -21,6 +21,7 @@ class MainWindowControl(MainWindowView, BaseControl):
         self._body.set_onclick_play(lambda index: self.play_song_at(index))
         self._body.set_onclick_love(lambda index: self.love_song_at(index))
         self._body.set_on_keypress(lambda key: self.go_to_song_that_title_start_with(key))
+        self.set_onclick_close(lambda: self._music_player.pause_current_song())
 
     def love_song_at(self, index: int) -> None:
         if self.__player.get_current_song_index() == index:

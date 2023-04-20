@@ -1,3 +1,6 @@
+from logging import getLogger
+
+from modules.helpers.Files import Files
 from modules.models.Playlist import Playlist
 from modules.models.PlaylistSongs import PlaylistSongs
 from modules.models.Song import Song
@@ -13,20 +16,18 @@ class Application:
         self.window = MainWindowControl()
         self.window.apply_light_mode()
 
-        songs = PlaylistSongs()
-        songs.insert(Song.from_file("library/Abandoned Temple.mp3"))
-        songs.insert(Song.from_file("library/Desire.mp3"))
-        songs.insert(Song.from_file("library/Dragonmancer.mp3"))
-        songs.insert(Song.from_file("library/Galadriel.mp3"))
-        songs.insert(Song.from_file("library/Graze The Roof.mp3"))
-        songs.insert(Song.from_file("library/Journey to the West.mp3"))
-        songs.insert(Song.from_file("library/Shepherd.mp3"))
-        songs.insert(Song.from_file("library/Ship Battle.mp3"))
-        songs.insert(Song.from_file("library/The Call.mp3"))
-        songs.insert(Song.from_file("library/Tom Tom.mp3"))
-
+        songs: PlaylistSongs = Application.get_playlist_from_dir("library", with_extension="mp3")
         playlist = Playlist.create(name="Library", songs=songs)
         self.window.load_playlist(playlist)
 
     def run(self) -> None:
         self.window.show()
+
+    @staticmethod
+    def get_playlist_from_dir(directory: str, with_extension: str) -> PlaylistSongs:
+        getLogger().setLevel("ERROR")
+        playlist = PlaylistSongs()
+        files: set = Files.get_files_from(directory, with_extension)
+        for file in files:
+            playlist.insert(Song.from_file(location=file))
+        return playlist

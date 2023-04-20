@@ -59,8 +59,12 @@ class Strings:
         return "".join([directory, "/", name, extension])
 
     @staticmethod
-    def get_filename(file_path: str):
+    def get_filename(file_path: str) -> str:
         return file_path.split("/")[-1]
+
+    @staticmethod
+    def join_path(directory: str, file_path: str) -> str:
+        return f"{directory}/{file_path}"
 
     @staticmethod
     def get_dir_from(file_path: str) -> str:
