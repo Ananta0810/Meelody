@@ -21,7 +21,7 @@ class MainWindowControl(MainWindowView, BaseControl):
         self._music_player.set_onclick_shuffle(lambda: self._body.refresh_menu())
         self._music_player.set_onclick_love(lambda song: self.love_song_from_player(song))
         self._body.set_onclick_play(lambda index: self.play_song_at(index))
-        self._body.set_onclick_love(lambda index: self.love_song_at(index))
+        self._body.set_onclick_love(lambda index: self.love_song_from_menu(index))
         self._body.set_on_keypress(lambda key: self.go_to_song_that_title_start_with(key))
         self.set_onclick_close(lambda: self._music_player.pause_current_song())
 
@@ -35,6 +35,10 @@ class MainWindowControl(MainWindowView, BaseControl):
     def love_song_from_player(self, song: Song) -> None:
         self._body.love_song(song.is_loved())
         LibraryHelper.update_love_state_of(song)
+
+    def love_song_from_menu(self, index: int) -> None:
+        self.love_song_at(index)
+        LibraryHelper.update_love_state_of(self.__player.get_songs()[index])
 
     def load_playlist(self, playlist: Playlist) -> None:
         self.__playlist = playlist
