@@ -37,6 +37,9 @@ class PlaylistSongs:
     def has_any_song(self) -> bool:
         return len(self.__songs) > 0
 
+    def has_song(self, song: Song) -> bool:
+        return any(song.get_title() == song_.get_title() for song_ in self.__songs)
+
     def move_song(self, from_index: int, to_index: int) -> None:
         Lists.move_element(self.__songs, from_index, to_index)
 
@@ -74,6 +77,11 @@ class PlaylistSongs:
         self.__songs.append(song)
         return len(self.__songs) - 1
 
+    def insertAll(self, songs: list[Song]):
+        if songs is not None:
+            for song in songs:
+                self.insert(song)
+
     def shuffle(self):
         self.__backup_songs = self.__songs.copy()
         self.__is_sorted = False
@@ -96,6 +104,10 @@ class PlaylistSongs:
                 self.__songs, search_value=title, key_provider=lambda s: s.get_title(), find_nearest=True
             )
         return Lists.string_nearest_linear_search(self.__songs, search_value=title, key_provider=lambda s: s.get_title())
+
+    def remove_song(self, song: Song) -> None:
+        index: int = self.find(song)
+        self.__songs.remove(self.__songs[index])
 
     def find(self, song: Song) -> int:
         """

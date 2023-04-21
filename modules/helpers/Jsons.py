@@ -27,7 +27,7 @@ class Jsons:
         if not file.endswith(".json"):
             raise IOError("File should ends with json.")
         with open(file, 'w') as outfile:
-            json.dump(obj , outfile)
+            json.dump(obj, outfile)
 
     @staticmethod
     def read_from_file(file: str) -> any:

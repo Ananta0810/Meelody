@@ -1,12 +1,12 @@
-import dataclasses
 import os
+import uuid
 
 from modules.helpers.types.Decorators import override
 from modules.helpers.types.Strings import Strings
 from modules.models.AudioExtractor import AudioExtractor
 
-@dataclasses.dataclass
 class Song:
+    __id: str
     __location: str
     __title: str
     __artist: str
@@ -33,6 +33,7 @@ class Song:
     @staticmethod
     def from_file(location: str) -> 'Song':
         song = Song(location)
+        song.__id = str(uuid.uuid4())
         song.__load_info_from(location)
         return song
 
@@ -110,6 +111,9 @@ class Song:
             self.__cover = cover
         return change_successfully
 
+    def get_id(self) -> str:
+        return self.__id
+
     def get_title(self) -> str:
         return self.__title
 
@@ -122,8 +126,8 @@ class Song:
     def get_cover(self) -> bytes:
         return self.__cover
 
-    def get_length(self) -> float:
-        return self.__length
+    def get_length(self) -> int:
+        return int(self.__length)
 
     def is_loved(self) -> bool:
         return self.__is_loved
