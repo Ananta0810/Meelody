@@ -106,10 +106,10 @@ class PlaylistSongs:
         return Lists.string_nearest_linear_search(self.__songs, search_value=title, key_provider=lambda s: s.get_title())
 
     def remove_song(self, song: Song) -> None:
-        index: int = self.find(song)
+        index: int = self.index_of(song)
         self.__songs.remove(self.__songs[index])
 
-    def find(self, song: Song) -> int:
+    def index_of(self, song: Song) -> int:
         """
         Find the index Of song in the list
         """

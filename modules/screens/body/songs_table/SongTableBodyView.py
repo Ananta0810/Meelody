@@ -5,6 +5,7 @@ from PyQt5.QtGui import QKeyEvent
 from PyQt5.QtWidgets import QWidget, QVBoxLayout
 
 from modules.helpers.types.Decorators import override, connector
+from modules.models.Song import Song
 from modules.screens.AbstractScreen import BaseView
 from modules.screens.body.songs_table.SongTableRowView import SongTableRowView
 from modules.statics.view.Material import Images, Backgrounds
@@ -120,15 +121,15 @@ class SongTableBodyView(SmoothVerticalScrollArea, BaseView):
     def get_total_songs(self) -> int:
         return self.__menu.count()
 
-    def add_new_song(self, title: str, artist: str, length: int = 0, cover: bytes = None) -> SongTableRowView:
-        song = self.__addSong(title, artist, length, cover)
+    def add_new_song(self, song: Song) -> SongTableRowView:
+        songView = self.__addSong(song)
         index: int = len(self._songs)
-        self._songs.append(song)
-        self.__menu.addWidget(song)
-        song.set_onclick_play(lambda: self.__onclick_play_btn(index))
-        song.set_onclick_love(lambda: self._onclick_love_btn(index))
+        self._songs.append(songView)
+        self.__menu.addWidget(songView)
+        songView.set_onclick_play(lambda: self.__onclick_play_btn(index))
+        songView.set_onclick_love(lambda: self._onclick_love_btn(index))
 
-        return song
+        return songView
 
     def select_song_at(self, index: int) -> None:
         self._scroll_to_item_at(index)
@@ -140,13 +141,14 @@ class SongTableBodyView(SmoothVerticalScrollArea, BaseView):
         for index in range(start, end):
             self.__menu.itemAt(index).widget().deleteLater()
 
-    def __addSong(self, title: str, artist: str, length: int, cover: bytes) -> SongTableRowView:
-        song = SongTableRowView()
-        song.set_default_cover(Images.DEFAULT_SONG_COVER)
-        song.set_cover(cover)
-        song.set_default_artist(artist)
-        song.set_artist(artist)
-        song.set_title(title)
-        song.set_length(length)
-        self.__menu.addWidget(song)
-        return song
+    def __addSong(self, song: Song) -> SongTableRowView:
+        song_view = SongTableRowView()
+        song_view.set_default_cover(Images.DEFAULT_SONG_COVER)
+        song_view.set_cover(song.get_cover())
+        song_view.set_default_artist(song.get_artist())
+        song_view.set_artist(song.get_artist())
+        song_view.set_title(song.get_title())
+        song_view.set_love_state(song.is_loved())
+        song_view.set_length(song.get_length())
+        self.__menu.addWidget(song_view)
+        return song_view

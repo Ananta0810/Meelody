@@ -20,6 +20,5 @@ class Application:
 
     def load_playlist(self):
         songs: PlaylistSongs = LibraryHelper.load_songs_from_dir("library", with_extension="mp3")
-        loved_songs: PlaylistSongs = LibraryHelper.load_favourite_songs(songs)
         playlist = Playlist.create(name="Library", songs=songs)
         self.window.load_playlist(playlist)

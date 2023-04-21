@@ -142,11 +142,17 @@ class Song:
         except FileNotFoundError:
             return False
 
-    def reverse_love_state(self):
+    def reverse_love_state(self) -> None:
         """
         Reverse the current love state to the opposite.
         """
         self.__is_loved = not self.__is_loved
+
+    def set_love_state(self, state: bool) -> None:
+        """
+        Reverse the current love state to the opposite.
+        """
+        self.__is_loved = state
 
     @staticmethod
     def __get_info_from_audio(file_name: str) -> tuple:

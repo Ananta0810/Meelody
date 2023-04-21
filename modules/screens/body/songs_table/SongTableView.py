@@ -4,6 +4,7 @@ from PyQt5.QtCore import Qt
 from PyQt5.QtWidgets import QWidget, QVBoxLayout
 
 from modules.helpers.types.Decorators import override, connector
+from modules.models.Song import Song
 from modules.screens.AbstractScreen import BaseView
 from modules.screens.body.songs_table.SongTableBodyView import SongTableBodyView
 from modules.screens.body.songs_table.SongTableHeaderView import SongTableHeaderView
@@ -59,16 +60,16 @@ class SongTableView(QWidget, BaseView):
     def set_on_keypress(self, fn: Callable[[str], int]) -> None:
         self._body.set_on_keypress(fn)
 
-    def _add_song(self, title: str, artist: str, length: int, cover: bytes) -> None:
-        new_song: SongTableRowView = self._body.add_new_song(title, artist, length, cover)
+    def _add_song(self, song: Song) -> None:
+        new_song: SongTableRowView = self._body.add_new_song(song)
         if self.__is_dark_mode:
             new_song.apply_dark_mode()
         else:
             new_song.apply_light_mode()
 
-    def _update_song_at(self, index: int, title: str, artist: str, length: int, cover: bytes) -> None:
-        song: SongTableRowView = self._body.get_song_at(index)
-        song.set_title(title)
-        song.set_artist(artist)
-        song.set_length(length)
-        song.set_cover(cover)
+    def _update_song_at(self, index: int, song: Song) -> None:
+        song_view: SongTableRowView = self._body.get_song_at(index)
+        song_view.set_title(song.get_title())
+        song_view.set_artist(song.get_artist())
+        song_view.set_length(song.get_length())
+        song_view.set_cover(song.get_cover())

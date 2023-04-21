@@ -18,7 +18,7 @@ class MusicPlayerControl(MusicPlayerBarView, BaseControl):
 
     __onclick_play_fn: Callable[[int], None]
     __on_shuffle: Callable[[], None]
-    __on_love: Callable[[bool], None]
+    __on_love: Callable[[Song], None]
 
     def __init__(self):
         super().__init__()
@@ -45,7 +45,7 @@ class MusicPlayerControl(MusicPlayerBarView, BaseControl):
         self.__on_shuffle = fn
 
     @connector
-    def set_onclick_love(self, fn: Callable[[bool], None]) -> None:
+    def set_onclick_love(self, fn: Callable[[Song], None]) -> None:
         self.__on_love = fn
 
     def load_playlist_songs(self, playlist: PlaylistSongs, song_index: int = 0) -> None:
@@ -127,7 +127,7 @@ class MusicPlayerControl(MusicPlayerBarView, BaseControl):
         song.reverse_love_state()
         self.set_love_state(song.is_loved())
         if self.__on_love is not None:
-            self.__on_love(song.is_loved())
+            self.__on_love(song)
 
     @handler
     def change_volume(self, volume: int) -> None:

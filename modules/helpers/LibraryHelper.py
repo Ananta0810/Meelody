@@ -7,28 +7,13 @@ from modules.models.PlaylistSongs import PlaylistSongs
 from modules.models.Song import Song
 
 library_path: str = "library/library.json"
-favourite_path: str = "library/favourites.json"
 
 
 def load_songs_from_dir(directory: str, with_extension: str) -> PlaylistSongs:
-    return get_songs_from_json(library_path) \
+    return get_library_songs_from_json(library_path) \
         if os.path.exists(library_path) \
         else get_songs_from_files(directory, library_path, with_extension)
 
-
-def load_favourite_songs(library_songs: PlaylistSongs) -> PlaylistSongs:
-    favourite_ids: set[str] = set(__get_favourite_ids())
-    favourite_songs: list[Song] = list(filter(lambda song_: song_.get_id() in favourite_ids, library_songs.get_songs()))
-    playlist = PlaylistSongs()
-    playlist.insertAll(favourite_songs)
-    return playlist
-
-
-def __get_favourite_ids() -> list[str]:
-    if os.path.exists(favourite_path):
-        return Jsons.read_from_file(favourite_path) or []
-    Jsons.write_to_file(favourite_path, [])
-    return []
 
 
 def get_songs_from_files(directory, file_path, with_extension):
@@ -53,7 +38,7 @@ def dict_of(obj: any) -> dict:
                 not isinstance(value, bytes))
 
 
-def get_songs_from_json(file_path) -> PlaylistSongs:
+def get_library_songs_from_json(file_path) -> PlaylistSongs:
     playlist = PlaylistSongs()
     songs: list[dict] = Jsons.read_from_file(file_path) or []
     for song in songs:
@@ -61,17 +46,9 @@ def get_songs_from_json(file_path) -> PlaylistSongs:
     return playlist
 
 
-def like_song(song: Song) -> None:
-    love_ids = __get_favourite_ids()
-    if song.get_id() in love_ids:
-        raise Exception("You have already liked this song.")
-    love_ids.append(song.get_id())
-    Jsons.write_to_file(favourite_path, love_ids)
+def update_love_state_of(song: Song) -> None:
+    playlist = get_library_songs_from_json(library_path)
+    saved_song = playlist.get_song_at(playlist.index_of(song))
+    saved_song.set_love_state(song.is_loved())
+    write_songs_to_file(library_path, playlist.get_songs())
 
-
-def dislike_song(song: Song) -> None:
-    love_ids = __get_favourite_ids()
-    if song.get_id() not in love_ids:
-        raise Exception("You haven't like this song.")
-    love_ids.remove(song.get_id())
-    Jsons.write_to_file(favourite_path, love_ids)
