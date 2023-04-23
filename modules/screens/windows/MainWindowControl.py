@@ -2,12 +2,14 @@ from modules.helpers import LibraryHelper
 from modules.helpers.types.Decorators import override
 from modules.models.AudioPlayer import AudioPlayer
 from modules.models.Playlist import Playlist
+from modules.models.PlaylistSongs import PlaylistSongs
 from modules.models.Song import Song
 from modules.screens.AbstractScreen import BaseControl
 from modules.screens.windows.MainWindowView import MainWindowView
 
 
 class MainWindowControl(MainWindowView, BaseControl):
+    __library: Playlist
     __playlist: Playlist
     __player: AudioPlayer = AudioPlayer()
 
@@ -23,7 +25,27 @@ class MainWindowControl(MainWindowView, BaseControl):
         self._body.set_onclick_play(lambda index: self.play_song_at(index))
         self._body.set_onclick_love(lambda index: self.love_song_from_menu(index))
         self._body.set_on_keypress(lambda key: self.go_to_song_that_title_start_with(key))
+        self._body.set_onclick_library(self.choose_library)
+        self._body.set_onclick_favourites(self.choose_favourites)
         self.set_onclick_close(lambda: self._music_player.pause_current_song())
+
+    def load_library(self, playlist: Playlist) -> None:
+        self.__library = playlist
+        self.choose_library()
+        self._music_player.load_playing_song()
+
+    def choose_library(self) -> None:
+        self.__load_playlist(self.__library)
+
+    def choose_favourites(self) -> None:
+        favourite_songs: list[Song] = list(filter(lambda song: song.is_loved(), self.__library.get_songs().get_songs()))
+        playlist = Playlist.create(name="Favourites", songs=PlaylistSongs(favourite_songs))
+        self.__load_playlist(playlist)
+
+    def __load_playlist(self, playlist: Playlist) -> None:
+        self.__playlist = playlist
+        self._music_player.load_playlist_songs(playlist.get_songs())
+        self._body.load_playlist(playlist)
 
     def love_song_at(self, index: int) -> None:
         if self.__player.get_current_song_index() == index:
@@ -39,11 +61,6 @@ class MainWindowControl(MainWindowView, BaseControl):
     def love_song_from_menu(self, index: int) -> None:
         self.love_song_at(index)
         LibraryHelper.update_love_state_of(self.__player.get_songs()[index])
-
-    def load_playlist(self, playlist: Playlist) -> None:
-        self.__playlist = playlist
-        self._music_player.load_playlist_songs(playlist.get_songs())
-        self._body.load_playlist(playlist)
 
     def play_song_at(self, index: int) -> None:
         self._music_player.play_song_at(index)

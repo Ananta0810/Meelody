@@ -25,8 +25,7 @@ class SongTableControl(SongTableView, BaseControl):
 
     def load_songs(self, playlist: PlaylistSongs) -> None:
         self.__playlist = playlist
-        for song in playlist.get_songs():
-            self._add_song(song)
+        self._load_songs(playlist.get_songs())
 
     def select_song_at(self, index: int) -> None:
         self._body.select_song_at(index)

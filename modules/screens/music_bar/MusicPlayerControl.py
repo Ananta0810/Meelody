@@ -48,12 +48,14 @@ class MusicPlayerControl(MusicPlayerBarView, BaseControl):
     def set_onclick_love(self, fn: Callable[[Song], None]) -> None:
         self.__on_love = fn
 
-    def load_playlist_songs(self, playlist: PlaylistSongs, song_index: int = 0) -> None:
+    def load_playlist_songs(self, playlist: PlaylistSongs) -> None:
         self.__player.load_playlist(playlist)
+
+    def load_playing_song(self, song_index: int = 0) -> None:
         self.__player.set_current_song_index(song_index)
         self.__player.load_song_to_play()
         self.__display_current_song_info()
-        self.change_shuffle_state()
+            # self.change_shuffle_state()
 
     @handler
     def play_previous_song(self) -> None:

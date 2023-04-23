@@ -11,11 +11,13 @@ class PlaylistSongs:
     __order_by: str
     __is_sorted: bool
 
-    def __init__(self, order_by: str = "title"):
+    def __init__(self, songs=None, order_by: str = "title"):
         self.__songs = []
         self.__backup_songs = []
         self.__order_by = order_by
         self.__is_sorted = True
+        if songs is not None:
+            self.insertAll(songs)
 
     @staticmethod
     def create_empty() -> 'PlaylistSongs':

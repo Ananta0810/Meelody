@@ -1,6 +1,6 @@
-from typing import Optional
+from typing import Optional, Callable
 
-from PyQt5.QtCore import pyqtSignal, QEvent
+from PyQt5.QtCore import pyqtSignal, QEvent, Qt
 from PyQt5.QtGui import QFont, QCursor, QPixmap, QResizeEvent
 from PyQt5.QtWidgets import QWidget, QVBoxLayout
 
@@ -16,6 +16,7 @@ class DefaultPlaylistCard(QWidget):
     __main_layout: QVBoxLayout
     __label: LabelWithDefaultText
     __cover: ImageViewer
+    __onclick_fn: Callable[[], None]
 
     def __init__(self, font: QFont, parent: Optional["QWidget"] = None):
         super().__init__(parent)
@@ -53,13 +54,16 @@ class DefaultPlaylistCard(QWidget):
     @override
     def mousePressEvent(self, event) -> None:
         super().mousePressEvent(event)
-        # if event.button() == Qt.LeftButton:
-        #     self.clicked.emit()
+        if event.button() == Qt.LeftButton and self.__onclick_fn is not None:
+            self.__onclick_fn()
 
     @override
     def setCursor(self, cursor: QCursor) -> None:
         super().setCursor(cursor)
         self.__label.setCursor(cursor)
+
+    def set_onclick_fn(self, fn: Callable[[], None]) -> None:
+        self.__onclick_fn = fn
 
     def set_cover(self, pixmap: QPixmap) -> None:
         self.__cover.setPixmap(pixmap)

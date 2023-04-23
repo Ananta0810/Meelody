@@ -1,11 +1,11 @@
-from typing import Optional, Union
+from typing import Optional, Union, Callable
 
 from PyQt5.QtCore import Qt
 from PyQt5.QtGui import QPixmap
 from PyQt5.QtWidgets import QScrollArea, QWidget, QHBoxLayout
 
 from modules.helpers.PixmapHelper import PixmapHelper
-from modules.helpers.types.Decorators import override
+from modules.helpers.types.Decorators import override, connector
 from modules.models.view.Animation import Animation
 from modules.models.view.builder.FontBuilder import FontBuilder
 from modules.models.view.builder.IconButtonStyle import IconButtonStyle
@@ -106,3 +106,11 @@ class PlaylistCarouselView(QScrollArea, BaseView):
         if cover_byte is None:
             return None
         return PixmapHelper.get_edited_pixmap_from_bytes(cover_byte, width=256, height=320, radius=24)
+
+    @connector
+    def set_onclick_library(self, fn: Callable[[], None]) -> None:
+        self.__playlist_library.set_onclick_fn(fn)
+
+    @connector
+    def set_onclick_favourites(self, fn: Callable[[], None]) -> None:
+        self.__playlist_favourites.set_onclick_fn(fn)
