@@ -1,4 +1,3 @@
-
 from modules.helpers import LibraryHelper
 from modules.models.Playlist import Playlist
 from modules.models.PlaylistSongs import PlaylistSongs
@@ -20,6 +19,5 @@ class Application:
 
     def load_playlist(self):
         songs: PlaylistSongs = LibraryHelper.load_songs_from_dir("library", with_extension="mp3")
-        playlist = Playlist.create(name="Library", songs=songs)
-        self.window.load_library(playlist)
-        # self.window.choose_library()
+        self.window.load_library(Playlist.create(name="Library", songs=songs))
+        self.window.load_playlists(LibraryHelper.load_playlists())

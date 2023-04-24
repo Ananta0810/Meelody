@@ -14,6 +14,7 @@ from modules.statics.view.Material import Images
 class MainWindowControl(MainWindowView, BaseControl):
     __library: Playlist
     __playlist: Playlist
+    __playlists: list[PlaylistInformation]
     __player: AudioPlayer = AudioPlayer()
 
     def __init__(self) -> None:
@@ -31,9 +32,9 @@ class MainWindowControl(MainWindowView, BaseControl):
         self._body.set_onclick_play(lambda index: self.play_song_from_menu_at(index))
         self._body.set_onclick_love(lambda index: self.love_song_from_menu(index))
         self._body.set_on_keypress(lambda key: self.go_to_song_that_title_start_with(key))
-        self._body.set_onclick_library(self.choose_library)
-        self._body.set_onclick_favourites(self.choose_favourites)
-        self._body.set_onclick_add_playlist(self.create_empty_playlist)
+        self._body.set_onclick_library(self.__choose_library)
+        self._body.set_onclick_favourites(self.__choose_favourites)
+        self._body.set_onclick_add_playlist(self.__create_empty_playlist)
 
         self.set_onclick_close(lambda: self._music_player.pause_current_song())
         self.set_onclick_play_on_tray(lambda: self._music_player.play_current_song())
@@ -43,27 +44,44 @@ class MainWindowControl(MainWindowView, BaseControl):
 
     def load_library(self, playlist: Playlist) -> None:
         self.__library = playlist
-        self.choose_library()
+        self.__choose_library()
         self._music_player.load_playing_song()
 
-    def choose_library(self) -> None:
+    def load_playlists(self, playlists: list[PlaylistInformation]) -> None:
+        self.__playlists = playlists
+        for playlist in playlists:
+            playlist.cover = playlist.cover or Images.DEFAULT_PLAYLIST_COVER
+            playlist = PlaylistCardData(playlist, onclick=None)
+            playlist.set_ondelete(lambda: self.__delete_playlist(playlist))
+            playlist.set_onchange_title(lambda title: self.__update_playlist_name(playlist, title))
+            self._body.add_playlist(playlist)
+
+    def __choose_library(self) -> None:
         self.__load_playlist(self.__library)
 
-    def choose_favourites(self) -> None:
+    def __choose_favourites(self) -> None:
         favourite_songs: list[Song] = list(filter(lambda song: song.is_loved(), self.__library.get_songs().get_songs()))
         playlist = Playlist.create(name="Favourites", songs=PlaylistSongs(favourite_songs))
         self.__load_playlist(playlist)
 
-    def create_empty_playlist(self) -> None:
+    def __create_empty_playlist(self) -> None:
         content = PlaylistInformation(name="Untitled", cover=Images.DEFAULT_PLAYLIST_COVER)
         playlist = PlaylistCardData(content, onclick=None)
         playlist.set_ondelete(lambda: self._body.delete_playlist(playlist))
-        playlist.set_onchange_title(lambda title: self.update_playlist_name())
-        self._body.add_playlist(playlist)
+        playlist.set_onchange_title(lambda title: self.__update_playlist_name(playlist, title))
 
-    def update_playlist_name(self, playlist: PlaylistCardData, title: str) -> None:
+        self._body.add_playlist(playlist)
+        self.__playlists.append(playlist.content)
+        LibraryHelper.save_playlists(self.__playlists)
+
+    def __update_playlist_name(self, playlist: PlaylistCardData, title: str) -> None:
         playlist.content.name = title
-        return self._body.update_playlist(playlist)
+        LibraryHelper.save_playlists(self.__playlists)
+
+    def __delete_playlist(self, playlist: PlaylistCardData) -> None:
+        self._body.delete_playlist(playlist)
+        self.__playlists.remove(playlist.content)
+        LibraryHelper.save_playlists(self.__playlists)
 
     def __load_playlist(self, playlist: Playlist) -> None:
         self.__playlist = playlist

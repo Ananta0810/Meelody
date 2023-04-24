@@ -73,7 +73,11 @@ class DoubleClickedEditableLabel(QLineEdit, BaseView):
     __default_text: str = ""
     __light_mode_style: str
     __dark_mode_style: str
-    __onchange_text: Callable[[], None]
+    __onchange_text: Callable[[str], None]
+
+    def __init__(self, parent: Optional["QWidget"] = None):
+        super().__init__(parent)
+        self.__onchange_text = None
 
     def mouseDoubleClickEvent(self, event):
         super().mouseDoubleClickEvent(event)
@@ -85,11 +89,9 @@ class DoubleClickedEditableLabel(QLineEdit, BaseView):
             return
         self.setReadOnly(True)
         try:
-            self.__onchange_text()
+            self.__onchange_text(self.text())
         except AttributeError:
             print("Please assign onchange_text for DoubleClickedEditableLabel.")
-            pass
-        except TypeError:
             pass
 
     @handler
