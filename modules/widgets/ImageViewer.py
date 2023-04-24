@@ -6,6 +6,7 @@ from PyQt5.QtWidgets import QLabel, QWidget
 
 from modules.helpers.PixmapHelper import PixmapHelper
 from modules.helpers.types.Decorators import override
+from modules.widgets.MeelodyPixmap import MeelodyPixmap
 
 
 class ImageViewer(QLabel):
@@ -20,19 +21,28 @@ class ImageViewer(QLabel):
     def __init__(self, parent: Optional["QWidget"] = None):
         QLabel.__init__(self, parent)
 
-    def set_default_pixmap(self, pixmap: QPixmap) -> None:
-        self.__default_pixmap = pixmap
-        self.setPixmap(pixmap)
+    def set_default_pixmap(self, pixmap: MeelodyPixmap) -> None:
+        if isinstance(pixmap, MeelodyPixmap):
+            self.__default_pixmap = pixmap.pixmap()
+            self.setPixmap(pixmap.pixmap())
+        else:
+            self.__default_pixmap = pixmap
+            self.setPixmap(pixmap)
 
     def set_radius(self, radius: int) -> None:
         self.__radius = radius
 
     @override
-    def setPixmap(self, pixmap: QPixmap) -> None:
+    def setPixmap(self, pixmap: MeelodyPixmap) -> None:
         if pixmap is None:
             pixmap = self.__default_pixmap
-        self.__current_pixmap = pixmap
-        super().setPixmap(pixmap)
+        if isinstance(pixmap, MeelodyPixmap):
+            self.__current_pixmap = pixmap.pixmap()
+            self.set_radius(pixmap.radius())
+            super().setPixmap(pixmap.pixmap())
+        else:
+            self.__current_pixmap = pixmap
+            super().setPixmap(pixmap)
 
     def set_animation(self, duration: float, start: float, end: float, on_value_changed: Callable) -> None:
         self.__start = start

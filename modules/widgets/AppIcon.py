@@ -8,7 +8,7 @@ class AppIcon(QIcon):
     def __or__(self, other: 'AppIcon') -> 'AppIcon':
         return self if self is not None else other
 
-    def with_color(self, color: Color):
+    def with_color(self, color: Color) -> 'AppIcon':
         icon_pixmap: QPixmap = self.pixmap(self.availableSizes()[0])
         painter = QPainter(icon_pixmap)
         painter.setCompositionMode(QPainter.CompositionMode_SourceIn)

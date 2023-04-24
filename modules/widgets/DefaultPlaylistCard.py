@@ -10,6 +10,7 @@ from modules.models.view.builder.TextStyle import TextStyle
 from modules.statics.view.Material import ColorBoxes
 from modules.widgets.ImageViewer import ImageViewer
 from modules.widgets.LabelWithDefaultText import LabelWithDefaultText
+from modules.widgets.MeelodyPixmap import MeelodyPixmap
 
 
 class DefaultPlaylistCard(QWidget):
@@ -65,7 +66,7 @@ class DefaultPlaylistCard(QWidget):
     def set_onclick_fn(self, fn: Callable[[], None]) -> None:
         self.__onclick_fn = fn
 
-    def set_cover(self, pixmap: QPixmap) -> None:
+    def set_cover(self, pixmap: MeelodyPixmap) -> None:
         self.__cover.setPixmap(pixmap)
 
     def set_default_cover(self, pixmap: QPixmap) -> None:

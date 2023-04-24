@@ -13,6 +13,7 @@ from modules.statics.view.Material import Icons, Colors, Cursors, Paddings, Back
 from modules.screens.AbstractScreen import BaseView
 from modules.widgets.DefaultPlaylistCard import DefaultPlaylistCard
 from modules.widgets.IconButton import IconButton
+from modules.widgets.MeelodyPixmap import MeelodyPixmap
 
 
 class PlaylistCarouselView(QScrollArea, BaseView):
@@ -105,7 +106,9 @@ class PlaylistCarouselView(QScrollArea, BaseView):
     def __get_pixmap_for_playlist_cover(cover_byte: bytes) -> Union[QPixmap, None]:
         if cover_byte is None:
             return None
-        return PixmapHelper.get_edited_pixmap_from_bytes(cover_byte, width=256, height=320, radius=24)
+        return MeelodyPixmap(
+            pixmap=PixmapHelper.get_edited_pixmap_from_bytes(cover_byte, width=256, height=320, radius=24), radius=24
+        )
 
     @connector
     def set_onclick_library(self, fn: Callable[[], None]) -> None:

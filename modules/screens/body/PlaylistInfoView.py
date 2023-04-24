@@ -11,6 +11,7 @@ from modules.statics.view.Material import ColorBoxes
 from modules.screens.AbstractScreen import BaseView
 from modules.widgets.ImageViewer import ImageViewer
 from modules.widgets.LabelWithDefaultText import LabelWithDefaultText
+from modules.widgets.MeelodyPixmap import MeelodyPixmap
 
 
 class PlaylistInfoView(QVBoxLayout, BaseView):
@@ -80,7 +81,10 @@ class PlaylistInfoView(QVBoxLayout, BaseView):
         self.__label_total_song.apply_dark_mode()
 
     @staticmethod
-    def __get_cover_pixmap(pixmap_byte: bytes) -> Union[QPixmap, None]:
+    def __get_cover_pixmap(pixmap_byte: bytes) -> Union[MeelodyPixmap, None]:
         if pixmap_byte is None:
             return None
-        return PixmapHelper.get_edited_pixmap_from_bytes(pixmap_byte, width=320, height=320, radius=24)
+        return MeelodyPixmap(
+            pixmap=PixmapHelper.get_edited_pixmap_from_bytes(pixmap_byte, width=320, height=320, radius=24),
+            radius=24
+        )
