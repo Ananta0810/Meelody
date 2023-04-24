@@ -11,22 +11,22 @@ from modules.models.view.builder.IconButtonStyle import IconButtonStyle
 from modules.screens.AbstractScreen import BaseView
 from modules.statics.view.Material import Icons, Colors, Cursors, Paddings, Backgrounds, Images
 from modules.widgets.Cover import Cover
-from modules.widgets.EditablePlaylistCard import EditablePlaylistCard
 from modules.widgets.IconButton import IconButton
-from modules.widgets.PlaylistCard import PlaylistCard
+from modules.widgets.PlaylistCards import PlaylistCard, EditablePlaylistCard
 
 
 class PlaylistCardData:
     def __init__(self,
                  playlist: PlaylistInformation,
                  onclick: Callable[[], None],
-                 ondelete: Callable[[], None],
                  onchange_title: Callable[[], None]
                  ):
         self.content: PlaylistInformation = playlist
         self.onclick: Callable[[], None] = onclick
-        self.ondelete: Callable[[], None] = ondelete
         self.onchange_title: Callable[[], None] = onchange_title
+
+    def set_ondelete(self, ondelete: Callable[[], None]) -> None:
+        self.ondelete = ondelete
 
 
 class PlaylistCarouselView(QScrollArea, BaseView):
@@ -135,7 +135,13 @@ class PlaylistCarouselView(QScrollArea, BaseView):
         playlist_view.set_label_default_text(playlist.content.name)
         playlist_view.set_label_text(playlist.content.name)
         playlist_view.set_onclick_fn(playlist.onclick)
+        playlist_view.set_ondelete(playlist.ondelete)
         self.__user_playlists.addWidget(playlist_view)
+
+    def delete_playlist(self, playlist: PlaylistCardData) -> None:
+        index = self.__playlists.index(playlist)
+        self.__user_playlists.itemAt(index).widget().deleteLater()
+        self.__playlists.remove(self.__playlists[index])
 
     @staticmethod
     def __create_default_playlist_with_cover(cover_byte: bytes) -> PlaylistCard:
@@ -147,7 +153,7 @@ class PlaylistCarouselView(QScrollArea, BaseView):
         return playlist
 
     @staticmethod
-    def __create_user_playlist_with_cover(cover_byte: bytes) -> PlaylistCard:
+    def __create_user_playlist_with_cover(cover_byte: bytes) -> EditablePlaylistCard:
         playlist = EditablePlaylistCard(FontBuilder.build(size=16, bold=True))
         playlist.setFixedSize(256, 320)
         playlist.setCursor(Cursors.HAND)

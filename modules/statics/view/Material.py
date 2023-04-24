@@ -2,11 +2,11 @@ from PyQt5.QtCore import QSize, Qt
 from PyQt5.QtGui import QCursor
 
 from modules.helpers.types.Bytes import Bytes
-from modules.widgets.AppIcon import AppIcon
 from modules.models.view.Background import Background
 from modules.models.view.Color import Color
 from modules.models.view.ColorBox import ColorBox
 from modules.models.view.Padding import Padding
+from modules.widgets.AppIcon import AppIcon
 
 
 class Paddings:
@@ -84,6 +84,7 @@ class ColorBoxes:
     HOVERABLE_DANGER_75 = ColorBox(normal=Colors.DANGER.with_opacity(75), active=Colors.DANGER)
     HOVERABLE_DANGER_50 = ColorBox(normal=Colors.DANGER.with_opacity(50), active=Colors.DANGER.with_opacity(75))
     HOVERABLE_DANGER_25 = ColorBox(normal=Colors.DANGER.with_opacity(25), active=Colors.DANGER.with_opacity(50))
+    HOVERABLE_DANGER_10 = ColorBox(normal=Colors.DANGER.with_opacity(12), active=Colors.DANGER.with_opacity(25))
     HOVERABLE_DANGER_HIDDEN = ColorBox(normal=Colors.TRANSPARENT, active=Colors.DANGER)
     HOVERABLE_DANGER_HIDDEN_75 = ColorBox(normal=Colors.TRANSPARENT, active=Colors.DANGER.with_opacity(75))
     HOVERABLE_DANGER_HIDDEN_50 = ColorBox(normal=Colors.TRANSPARENT, active=Colors.DANGER.with_opacity(50))
@@ -198,6 +199,7 @@ class Backgrounds:
     CIRCLE_HIDDEN_DANGER_50 = Background(border_radius=0.5, color=ColorBoxes.HOVERABLE_DANGER_HIDDEN_50)
     CIRCLE_HIDDEN_DANGER_25 = Background(border_radius=0.5, color=ColorBoxes.HOVERABLE_DANGER_HIDDEN_25)
     CIRCLE_HIDDEN_DANGER_10 = Background(border_radius=0.5, color=ColorBoxes.HOVERABLE_DANGER_HIDDEN_10)
+    CIRCLE_DANGER_10 = Background(border_radius=0.5, color=ColorBoxes.HOVERABLE_DANGER_10)
 
     ROUNDED_HIDDEN_DANGER = Background(border_radius=12, color=ColorBoxes.HOVERABLE_DANGER_HIDDEN)
     ROUNDED_HIDDEN_DANGER_75 = Background(border_radius=12, color=ColorBoxes.HOVERABLE_DANGER_HIDDEN_75)

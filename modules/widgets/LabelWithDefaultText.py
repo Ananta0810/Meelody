@@ -66,3 +66,27 @@ class LabelWithDefaultText(QLabel, BaseView):
             text_color=style.text_color,
             padding=padding
         )
+
+
+class EditableLabelWithDefaultText(LabelWithDefaultText):
+    def __init__(self, parent: Optional["QWidget"] = None):
+        super().__init__(parent)
+
+    @staticmethod
+    def build(
+        font: QFont,
+        light_mode_style: TextStyle,
+        dark_mode_style: TextStyle = None,
+        width: Union[int, None] = None,
+        padding: int = 0,
+        allow_multiple_lines: bool = True,
+        parent: Optional["QWidget"] = None,
+    ) -> 'EditableLabelWithDefaultText':
+        label = EditableLabelWithDefaultText(parent)
+        label.setFont(font)
+        label.setWordWrap(allow_multiple_lines)
+        if width is not None:
+            label.setFixedWidth(width)
+        label.set_light_mode_style(LabelWithDefaultText.build_style(light_mode_style, padding, width))
+        label.set_dark_mode_style(LabelWithDefaultText.build_style(dark_mode_style or light_mode_style, padding, width))
+        return label
