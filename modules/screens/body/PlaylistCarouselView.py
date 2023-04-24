@@ -1,19 +1,17 @@
 from typing import Optional, Union, Callable
 
 from PyQt5.QtCore import Qt
-from PyQt5.QtGui import QPixmap
 from PyQt5.QtWidgets import QScrollArea, QWidget, QHBoxLayout
 
-from modules.helpers.PixmapHelper import PixmapHelper
 from modules.helpers.types.Decorators import override, connector
 from modules.models.view.Animation import Animation
 from modules.models.view.builder.FontBuilder import FontBuilder
 from modules.models.view.builder.IconButtonStyle import IconButtonStyle
-from modules.statics.view.Material import Icons, Colors, Cursors, Paddings, Backgrounds, Images
 from modules.screens.AbstractScreen import BaseView
+from modules.statics.view.Material import Icons, Colors, Cursors, Paddings, Backgrounds, Images
+from modules.widgets.Cover import Cover
 from modules.widgets.DefaultPlaylistCard import DefaultPlaylistCard
 from modules.widgets.IconButton import IconButton
-from modules.widgets.MeelodyPixmap import MeelodyPixmap
 
 
 class PlaylistCarouselView(QScrollArea, BaseView):
@@ -103,12 +101,10 @@ class PlaylistCarouselView(QScrollArea, BaseView):
         return playlist
 
     @staticmethod
-    def __get_pixmap_for_playlist_cover(cover_byte: bytes) -> Union[QPixmap, None]:
+    def __get_pixmap_for_playlist_cover(cover_byte: bytes) -> Union[Cover, None]:
         if cover_byte is None:
             return None
-        return MeelodyPixmap(
-            pixmap=PixmapHelper.get_edited_pixmap_from_bytes(cover_byte, width=256, height=320, radius=24), radius=24
-        )
+        return Cover.from_bytes(cover_byte, width=256, height=320, radius=24)
 
     @connector
     def set_onclick_library(self, fn: Callable[[], None]) -> None:

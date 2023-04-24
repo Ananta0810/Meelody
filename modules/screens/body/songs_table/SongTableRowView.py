@@ -1,10 +1,9 @@
 from typing import Optional, Union
 
 from PyQt5.QtCore import Qt
-from PyQt5.QtGui import QPixmap, QFont
+from PyQt5.QtGui import QFont
 from PyQt5.QtWidgets import QWidget, QHBoxLayout
 
-from modules.helpers.PixmapHelper import PixmapHelper
 from modules.helpers.types.Decorators import override
 from modules.helpers.types.Strings import Strings
 from modules.models.view.builder.BackgroundThemeBuilder import BackgroundThemeBuilder
@@ -15,6 +14,7 @@ from modules.screens.AbstractScreen import BaseView
 from modules.statics.view.Material import Icons, Paddings, Colors, Backgrounds, ColorBoxes
 from modules.widgets.AppIcon import AppIcon
 from modules.widgets.BackgroundWidget import BackgroundWidget
+from modules.widgets.Cover import Cover
 from modules.widgets.IconButton import IconButton
 from modules.widgets.ImageViewer import ImageViewer
 from modules.widgets.LabelWithDefaultText import LabelWithDefaultText
@@ -193,7 +193,7 @@ class SongTableRowView(BackgroundWidget, BaseView):
         self.__extra_buttons.hide()
 
     def set_cover(self, cover: Union[bytes, None]) -> None:
-        self.__cover.setPixmap(self.__get_cover_from_bytes(cover))
+        self.__cover.set_cover(self.__get_cover_from_bytes(cover))
 
     def set_title(self, title: str = "Song Title") -> None:
         self.__label_title.setText(title)
@@ -208,7 +208,7 @@ class SongTableRowView(BackgroundWidget, BaseView):
         self.__btn_love.set_active(state)
 
     def set_default_cover(self, cover: bytes) -> None:
-        self.__cover.set_default_pixmap(self.__get_cover_from_bytes(cover))
+        self.__cover.set_default_cover(self.__get_cover_from_bytes(cover))
 
     def set_default_artist(self, artist: str) -> None:
         self.default_artist = artist
@@ -240,7 +240,7 @@ class SongTableRowView(BackgroundWidget, BaseView):
         )
 
     @staticmethod
-    def __get_cover_from_bytes(cover_byte: bytes) -> Union[QPixmap, None]:
+    def __get_cover_from_bytes(cover_byte: bytes) -> Union[Cover, None]:
         if cover_byte is None:
             return None
-        return PixmapHelper.get_edited_pixmap_from_bytes(cover_byte, width=64, height=64, radius=12)
+        return Cover.from_bytes(cover_byte, width=64, height=64, radius=12)

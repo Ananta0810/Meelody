@@ -1,17 +1,15 @@
 from typing import Optional, Union
 
-from PyQt5.QtGui import QPixmap
 from PyQt5.QtWidgets import QVBoxLayout, QWidget
 
-from modules.helpers.PixmapHelper import PixmapHelper
 from modules.helpers.types.Decorators import override
 from modules.models.view.builder.FontBuilder import FontBuilder
 from modules.models.view.builder.TextStyle import TextStyle
-from modules.statics.view.Material import ColorBoxes
 from modules.screens.AbstractScreen import BaseView
+from modules.statics.view.Material import ColorBoxes
+from modules.widgets.Cover import Cover
 from modules.widgets.ImageViewer import ImageViewer
 from modules.widgets.LabelWithDefaultText import LabelWithDefaultText
-from modules.widgets.MeelodyPixmap import MeelodyPixmap
 
 
 class PlaylistInfoView(QVBoxLayout, BaseView):
@@ -59,10 +57,10 @@ class PlaylistInfoView(QVBoxLayout, BaseView):
         self.set_total_song(song_count)
 
     def set_cover(self, cover: bytes) -> None:
-        self.__cover.setPixmap(self.__get_cover_pixmap(cover))
+        self.__cover.set_cover(self.__create_cover(cover))
 
     def set_default_cover(self, cover: bytes) -> None:
-        self.__cover.set_default_pixmap(self.__get_cover_pixmap(cover))
+        self.__cover.set_default_cover(self.__create_cover(cover))
 
     def set_title(self, name: str) -> None:
         self.__label_title.setText(name)
@@ -81,10 +79,7 @@ class PlaylistInfoView(QVBoxLayout, BaseView):
         self.__label_total_song.apply_dark_mode()
 
     @staticmethod
-    def __get_cover_pixmap(pixmap_byte: bytes) -> Union[MeelodyPixmap, None]:
+    def __create_cover(pixmap_byte: bytes) -> Union[Cover, None]:
         if pixmap_byte is None:
             return None
-        return MeelodyPixmap(
-            pixmap=PixmapHelper.get_edited_pixmap_from_bytes(pixmap_byte, width=320, height=320, radius=24),
-            radius=24
-        )
+        return Cover.from_bytes(pixmap_byte, width=320, height=320, radius=24)

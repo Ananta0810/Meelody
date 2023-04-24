@@ -76,29 +76,3 @@ class PixmapHelper:
         painter.drawPixmap(0, 0, pixmap)
         painter.end()
         return target
-
-    @staticmethod
-    def get_rounded_squared_pixmap_from_bytes(byte_image: bytes, edge: int, radius: int) -> Union[QPixmap, None]:
-        pixmap = PixmapHelper.get_pixmap_from_bytes(byte_image)
-        if pixmap.isNull():
-            return None
-        pixmap = PixmapHelper.scale_pixmap_keeping_ratio(pixmap, edge)
-        pixmap = PixmapHelper.square_pixmap(pixmap)
-        pixmap = PixmapHelper.round_pixmap(pixmap, radius)
-        return pixmap
-
-    @staticmethod
-    def get_edited_pixmap_from_bytes(
-        image_byte: bytes,
-        width: int,
-        height: int,
-        radius: int = 0,
-        crop_center: bool = True,
-    ) -> Union[QPixmap, None]:
-        pixmap = PixmapHelper.get_pixmap_from_bytes(image_byte)
-        if pixmap.isNull():
-            return None
-        pixmap = PixmapHelper.scale_pixmap_keeping_ratio(pixmap, max(width, height))
-        pixmap = PixmapHelper.crop_pixmap(pixmap, width, height, crop_center)
-        pixmap = PixmapHelper.round_pixmap(pixmap, radius)
-        return pixmap

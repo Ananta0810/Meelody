@@ -1,16 +1,16 @@
 from typing import Optional, Callable
 
 from PyQt5.QtCore import pyqtSignal, QEvent, Qt
-from PyQt5.QtGui import QFont, QCursor, QPixmap, QResizeEvent
+from PyQt5.QtGui import QFont, QCursor, QResizeEvent
 from PyQt5.QtWidgets import QWidget, QVBoxLayout
 
 from modules.helpers.types.Decorators import override
 from modules.models.view.Animation import Animation
 from modules.models.view.builder.TextStyle import TextStyle
 from modules.statics.view.Material import ColorBoxes
+from modules.widgets.Cover import Cover
 from modules.widgets.ImageViewer import ImageViewer
 from modules.widgets.LabelWithDefaultText import LabelWithDefaultText
-from modules.widgets.MeelodyPixmap import MeelodyPixmap
 
 
 class DefaultPlaylistCard(QWidget):
@@ -66,11 +66,11 @@ class DefaultPlaylistCard(QWidget):
     def set_onclick_fn(self, fn: Callable[[], None]) -> None:
         self.__onclick_fn = fn
 
-    def set_cover(self, pixmap: MeelodyPixmap) -> None:
-        self.__cover.setPixmap(pixmap)
+    def set_cover(self, pixmap: Cover) -> None:
+        self.__cover.set_cover(pixmap)
 
-    def set_default_cover(self, pixmap: QPixmap) -> None:
-        self.__cover.set_default_pixmap(pixmap)
+    def set_default_cover(self, pixmap: Cover) -> None:
+        self.__cover.set_default_cover(pixmap)
 
     def set_label_text(self, text: str) -> None:
         self.__label.setText(text)

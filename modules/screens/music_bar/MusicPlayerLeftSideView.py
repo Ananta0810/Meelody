@@ -1,16 +1,15 @@
 from typing import Optional, Union
 
 from PyQt5.QtCore import QMetaObject
-from PyQt5.QtGui import QPixmap
 from PyQt5.QtWidgets import QHBoxLayout, QWidget, QVBoxLayout
 
-from modules.helpers.PixmapHelper import PixmapHelper
 from modules.helpers.types.Decorators import override, connector
 from modules.models.view.builder.FontBuilder import FontBuilder
 from modules.models.view.builder.IconButtonStyle import IconButtonStyle
 from modules.models.view.builder.TextStyle import TextStyle
 from modules.screens.AbstractScreen import BaseView
 from modules.statics.view.Material import Paddings, Icons, Colors, Backgrounds, ColorBoxes
+from modules.widgets.Cover import Cover
 from modules.widgets.IconButton import IconButton
 from modules.widgets.ImageViewer import ImageViewer
 from modules.widgets.LabelWithDefaultText import LabelWithDefaultText
@@ -130,19 +129,20 @@ class MusicPlayerLeftSideView(QHBoxLayout, BaseView):
         self.__btn_prev_song.clicked.connect(lambda: fn())
 
     @connector
-    def set_onclick_play_song(self, fn:  callable) -> None:
+    def set_onclick_play_song(self, fn: callable) -> None:
         self.__btn_play_song.clicked.connect(lambda: fn())
 
     @connector
-    def set_onclick_pause_song(self, fn:  callable) -> None:
+    def set_onclick_pause_song(self, fn: callable) -> None:
         self.__btn_play_song.clicked.connect(lambda: fn())
 
     @connector
-    def set_onclick_next_song(self, fn:  callable) -> None:
+    def set_onclick_next_song(self, fn: callable) -> None:
         self.__btn_next_song.clicked.connect(lambda: fn())
 
     def set_default_cover(self, byte_pixmap: bytes) -> None:
-        self.__song_cover.set_default_pixmap(self.__get_pixmap_for_song_cover(byte_pixmap))
+        cover = self.__get_pixmap_for_song_cover(byte_pixmap)
+        self.__song_cover.set_default_cover(cover)
 
     def set_default_title(self, text: str) -> None:
         self.__label_song_title.set_default_text(text)
@@ -151,7 +151,7 @@ class MusicPlayerLeftSideView(QHBoxLayout, BaseView):
         self.__label_song_artist.set_default_text(text)
 
     def set_cover(self, byte_pixmap: bytes) -> None:
-        self.__song_cover.setPixmap(self.__get_pixmap_for_song_cover(byte_pixmap))
+        self.__song_cover.set_cover(self.__get_pixmap_for_song_cover(byte_pixmap))
 
     def set_title(self, text: str) -> None:
         self.__label_song_title.setText(text)
@@ -166,8 +166,7 @@ class MusicPlayerLeftSideView(QHBoxLayout, BaseView):
         return self.__btn_play_song.is_active()
 
     @staticmethod
-    def __get_pixmap_for_song_cover(byte_pixmap: bytes) -> Union[QPixmap, None]:
+    def __get_pixmap_for_song_cover(byte_pixmap: bytes) -> Union[Cover, None]:
         if byte_pixmap is None:
             return None
-        pixmap = PixmapHelper.get_rounded_squared_pixmap_from_bytes(byte_pixmap, edge=64, radius=12)
-        return pixmap
+        return Cover.from_bytes(byte_pixmap, width=64, height=64, radius=12)
