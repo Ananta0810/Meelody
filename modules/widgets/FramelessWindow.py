@@ -25,6 +25,12 @@ class FramelessWindow(QMainWindow, BaseView):
     __onclick_close_fn: Callable[[], None] = None
     __onclick_minimize_fn: Callable[[], None] = None
     __icon_tray: QSystemTrayIcon
+    __play_action_btn: QAction
+    __onclick_play_fn: Callable[[], None]
+    __onclick_pause_fn: Callable[[], None]
+    __onclick_prev_fn: Callable[[], None]
+    __onclick_next_fn: Callable[[], None]
+    __is_playing: bool = False
 
     def __init__(self, parent: Optional["QWidget"] = None):
         super().__init__(parent)
@@ -91,24 +97,64 @@ class FramelessWindow(QMainWindow, BaseView):
         self.__icon_tray.setIcon(Icons.LOGO)
         self.__icon_tray.setVisible(False)
 
-        show_action = QAction("Show", self)
-        pause_action = QAction("Pause", self)
-        prev_action = QAction("Play previous song", self)
-        next_action = QAction("Play next song", self)
-
-        show_action.triggered.connect(lambda: self.__set_collapse(False))
-        # pause_action.triggered.connect(self.hide)
-        # prev_action.triggered.connect(app.quit)
-        # next_action.triggered.connect(app.quit)
-
         tray_menu = QMenu()
+
+        show_action = QAction("Show", self)
+        show_action.triggered.connect(lambda: self.__set_collapse(False))
         tray_menu.addAction(show_action)
-        # tray_menu.addAction(hide_action)
-        # tray_menu.addAction(quit_action)
+
+        self.__play_action_btn = QAction(self)
+        self.__play_action_btn.triggered.connect(lambda: self.__onclick_pause())
+        tray_menu.addAction(self.__play_action_btn)
+
+        prev_action = QAction("Previous song", self)
+        prev_action.triggered.connect(lambda: self.__onclick_prev_fn())
+        tray_menu.addAction(prev_action)
+
+        next_action = QAction("Next song", self)
+        next_action.triggered.connect(lambda: self.__onclick_next_fn())
+        tray_menu.addAction(next_action)
+
         self.__icon_tray.setContextMenu(tray_menu)
         self.__icon_tray.show()
 
         self.addLayout(self.__title_bar)
+
+    def set_is_playing(self, is_playing: bool) -> None:
+        self.__is_playing = is_playing
+        self.__set_play_btn_text(is_playing)
+
+    def __onclick_pause(self) -> None:
+        if self.__is_playing:
+            self.__is_playing = False
+            self.__onclick_pause_fn()
+        else:
+            self.__is_playing = True
+            self.__onclick_play_fn()
+        self.__set_play_btn_text(self.__is_playing)
+
+    def __set_play_btn_text(self, is_playing: bool) -> None:
+        self.__play_action_btn.setText("Pause" if is_playing else "Play")
+
+    @connector
+    def __onclick_play(self) -> None:
+        self.__onclick_play_fn()
+
+    @connector
+    def set_onclick_play_on_tray(self, fn: Callable[[], None]) -> None:
+        self.__onclick_play_fn = fn
+
+    @connector
+    def set_onclick_pause_on_tray(self, fn: Callable[[], None]) -> None:
+        self.__onclick_pause_fn = fn
+
+    @connector
+    def set_onclick_prev_on_tray(self, fn: Callable[[], None]) -> None:
+        self.__onclick_prev_fn = fn
+
+    @connector
+    def set_onclick_next_on_tray(self, fn: Callable[[], None]) -> None:
+        self.__onclick_next_fn = fn
 
     def with_title_bar_height(self, height: int) -> 'FramelessWindow':
         self.__title_bar_height = height

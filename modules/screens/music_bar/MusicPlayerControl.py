@@ -17,6 +17,7 @@ class MusicPlayerControl(MusicPlayerBarView, BaseControl):
     __thread_id: int = 0
 
     __onclick_play_fn: Callable[[int], None]
+    __onclick_pause_fn: Callable[[int], None]
     __on_shuffle: Callable[[], None]
     __on_love: Callable[[Song], None]
 
@@ -41,6 +42,10 @@ class MusicPlayerControl(MusicPlayerBarView, BaseControl):
         self.__onclick_play_fn = fn
 
     @connector
+    def set_onclick_pause(self, fn: Callable[[int], None]) -> None:
+        self.__onclick_pause_fn = fn
+
+    @connector
     def set_onclick_shuffle(self, fn: Callable[[], None]) -> None:
         self.__on_shuffle = fn
 
@@ -55,7 +60,6 @@ class MusicPlayerControl(MusicPlayerBarView, BaseControl):
         self.__player.set_current_song_index(song_index)
         self.__player.load_song_to_play()
         self.__display_current_song_info()
-            # self.change_shuffle_state()
 
     @handler
     def play_previous_song(self) -> None:
