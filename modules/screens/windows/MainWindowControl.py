@@ -2,10 +2,13 @@ from modules.helpers import LibraryHelper
 from modules.helpers.types.Decorators import override
 from modules.models.AudioPlayer import AudioPlayer
 from modules.models.Playlist import Playlist
+from modules.models.PlaylistInformation import PlaylistInformation
 from modules.models.PlaylistSongs import PlaylistSongs
 from modules.models.Song import Song
 from modules.screens.AbstractScreen import BaseControl
+from modules.screens.body.PlaylistCarouselView import PlaylistCardData
 from modules.screens.windows.MainWindowView import MainWindowView
+from modules.statics.view.Material import Images
 
 
 class MainWindowControl(MainWindowView, BaseControl):
@@ -30,6 +33,7 @@ class MainWindowControl(MainWindowView, BaseControl):
         self._body.set_on_keypress(lambda key: self.go_to_song_that_title_start_with(key))
         self._body.set_onclick_library(self.choose_library)
         self._body.set_onclick_favourites(self.choose_favourites)
+        self._body.set_onclick_add_playlist(self.create_empty_playlist)
 
         self.set_onclick_close(lambda: self._music_player.pause_current_song())
         self.set_onclick_play_on_tray(lambda: self._music_player.play_current_song())
@@ -49,6 +53,11 @@ class MainWindowControl(MainWindowView, BaseControl):
         favourite_songs: list[Song] = list(filter(lambda song: song.is_loved(), self.__library.get_songs().get_songs()))
         playlist = Playlist.create(name="Favourites", songs=PlaylistSongs(favourite_songs))
         self.__load_playlist(playlist)
+
+    def create_empty_playlist(self) -> None:
+        content = PlaylistInformation(name="Untitled", cover=Images.DEFAULT_PLAYLIST_COVER)
+        playlist = PlaylistCardData(content, onclick=None, ondelete=None, onchange_title=None)
+        self._body.add_playlist(playlist)
 
     def __load_playlist(self, playlist: Playlist) -> None:
         self.__playlist = playlist

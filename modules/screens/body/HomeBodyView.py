@@ -5,10 +5,10 @@ from PyQt5.QtWidgets import QScrollArea, QWidget, QVBoxLayout
 
 from modules.helpers.types.Decorators import override, connector
 from modules.models.Playlist import Playlist
-from modules.statics.view.Material import Backgrounds
 from modules.screens.AbstractScreen import BaseView
 from modules.screens.body.CurrentPlaylistView import CurrentPlaylistView
-from modules.screens.body.PlaylistCarouselView import PlaylistCarouselView
+from modules.screens.body.PlaylistCarouselView import PlaylistCarouselView, PlaylistCardData
+from modules.statics.view.Material import Backgrounds
 
 
 class HomeBodyView(QScrollArea, BaseView):
@@ -78,6 +78,16 @@ class HomeBodyView(QScrollArea, BaseView):
     @connector
     def set_onclick_favourites(self, fn: Callable[[], None]) -> None:
         self.__playlist_carousel.set_onclick_favourites(fn)
+
+    @connector
+    def set_onclick_add_playlist(self, fn: Callable[[], None]) -> None:
+        self.__playlist_carousel.set_onclick_add_playlist(fn)
+
+    def load_playlists(self, playlists: list[PlaylistCardData]) -> None:
+        self.__playlist_carousel.load_playlists(playlists)
+
+    def add_playlist(self, playlist: PlaylistCardData) -> None:
+        self.__playlist_carousel.add_playlist(playlist)
 
     def select_song_at(self, index: int) -> None:
         self.__current_playlist.select_song_at(index)

@@ -13,14 +13,14 @@ from modules.widgets.ImageViewer import ImageViewer
 from modules.widgets.LabelWithDefaultText import LabelWithDefaultText
 
 
-class DefaultPlaylistCard(QWidget):
+class PlaylistCard(QWidget):
     __main_layout: QVBoxLayout
     __label: LabelWithDefaultText
     __cover: ImageViewer
-    __onclick_fn: Callable[[], None]
 
     def __init__(self, font: QFont, parent: Optional["QWidget"] = None):
         super().__init__(parent)
+        self.__onclick_fn = None
         self.clicked: pyqtSignal = pyqtSignal()
         self.__init_component_ui(font)
 

@@ -32,7 +32,7 @@ class PlaylistInfoView(QVBoxLayout, BaseView):
         self.__text_area = QVBoxLayout()
         self.__text_area.setSpacing(0)
         self.__label_title = LabelWithDefaultText.build(
-            width=128,
+            width=320,
             font=FontBuilder.build(size=20, bold=True),
             light_mode_style=TextStyle(text_color=ColorBoxes.BLACK),
             dark_mode_style=TextStyle(text_color=ColorBoxes.WHITE)

@@ -31,4 +31,4 @@ class Cover:
         pixmap = PixmapHelper.scale_pixmap_keeping_ratio(pixmap, max(width, height))
         pixmap = PixmapHelper.crop_pixmap(pixmap, width, height, crop_center)
         pixmap = PixmapHelper.round_pixmap(pixmap, radius)
-        return Cover(pixmap, radius=12)
+        return Cover(pixmap, radius)
