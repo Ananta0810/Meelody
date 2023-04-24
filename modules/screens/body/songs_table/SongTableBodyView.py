@@ -127,6 +127,7 @@ class SongTableBodyView(SmoothVerticalScrollArea, BaseView):
 
     def clear_table(self):
         self.__remove_songs_in_range(0, self.get_total_songs())
+        self._songs.clear()
 
     def add_new_song(self, song: Song) -> SongTableRowView:
         songView = self.__addSong(song)
