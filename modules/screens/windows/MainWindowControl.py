@@ -56,9 +56,14 @@ class MainWindowControl(MainWindowView, BaseControl):
 
     def create_empty_playlist(self) -> None:
         content = PlaylistInformation(name="Untitled", cover=Images.DEFAULT_PLAYLIST_COVER)
-        playlist = PlaylistCardData(content, onclick=None, onchange_title=None)
+        playlist = PlaylistCardData(content, onclick=None)
         playlist.set_ondelete(lambda: self._body.delete_playlist(playlist))
+        playlist.set_onchange_title(lambda title: self.update_playlist_name())
         self._body.add_playlist(playlist)
+
+    def update_playlist_name(self, playlist: PlaylistCardData, title: str) -> None:
+        playlist.content.name = title
+        return self._body.update_playlist(playlist)
 
     def __load_playlist(self, playlist: Playlist) -> None:
         self.__playlist = playlist

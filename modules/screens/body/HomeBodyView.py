@@ -92,6 +92,9 @@ class HomeBodyView(QScrollArea, BaseView):
     def delete_playlist(self, playlist: PlaylistCardData) -> None:
         self.__playlist_carousel.delete_playlist(playlist)
 
+    def update_playlist(self, playlist: PlaylistCardData) -> None:
+        self.__playlist_carousel.update_playlist(playlist)
+
     def select_song_at(self, index: int) -> None:
         self.__current_playlist.select_song_at(index)
 

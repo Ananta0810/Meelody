@@ -2,7 +2,7 @@ from typing import Optional, Callable
 
 from PyQt5.QtCore import pyqtSignal, QEvent, Qt
 from PyQt5.QtGui import QFont, QCursor, QResizeEvent
-from PyQt5.QtWidgets import QWidget, QVBoxLayout, QHBoxLayout
+from PyQt5.QtWidgets import QWidget, QVBoxLayout, QHBoxLayout, QSizePolicy
 
 from modules.helpers.types.Decorators import override
 from modules.models.view.Animation import Animation
@@ -12,7 +12,7 @@ from modules.statics.view.Material import ColorBoxes, Paddings, Icons, Colors, B
 from modules.widgets.Cover import Cover
 from modules.widgets.IconButton import IconButton
 from modules.widgets.ImageViewer import ImageViewer
-from modules.widgets.LabelWithDefaultText import LabelWithDefaultText, EditableLabelWithDefaultText
+from modules.widgets.LabelWithDefaultText import LabelWithDefaultText, DoubleClickedEditableLabel
 
 
 class PlaylistCard(QWidget):
@@ -90,6 +90,12 @@ class PlaylistCard(QWidget):
 
 
 class EditablePlaylistCard(PlaylistCard):
+    _main_layout: QVBoxLayout
+    _buttons: QHBoxLayout
+    _delete_btn: IconButton
+    _cover: ImageViewer
+    _label: DoubleClickedEditableLabel
+
     def __init__(self, font: QFont, parent: Optional["QWidget"] = None):
         super().__init__(font, parent)
 
@@ -113,12 +119,13 @@ class EditablePlaylistCard(PlaylistCard):
         self._buttons.addWidget(self._delete_btn)
 
         self._cover = ImageViewer(self)
-        self._label = EditableLabelWithDefaultText.build(
+        self._label = DoubleClickedEditableLabel.build(
             font=font,
             light_mode_style=TextStyle(text_color=ColorBoxes.BLACK),
             parent=self,
         )
-        self._label.setFixedSize(160, 32)
+        self._label.setFixedHeight(32)
+        self._label.setSizePolicy(QSizePolicy(QSizePolicy.Expanding, QSizePolicy.Fixed))
 
         self._main_layout.addLayout(self._buttons)
         self._main_layout.addStretch()
@@ -127,5 +134,5 @@ class EditablePlaylistCard(PlaylistCard):
     def set_ondelete(self, fn: Callable[[], None]) -> None:
         self._delete_btn.clicked.connect(lambda: fn())
 
-    # def set_onchange_title(self, fn: Callable[[], None]) -> None:
-    #     self._delete_btn.clicked.connect(lambda: fn())
+    def set_onchange_title(self, fn: Callable[[], None]) -> None:
+        self._label.set_onchange_text(fn)

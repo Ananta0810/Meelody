@@ -18,15 +18,18 @@ from modules.widgets.PlaylistCards import PlaylistCard, EditablePlaylistCard
 class PlaylistCardData:
     def __init__(self,
                  playlist: PlaylistInformation,
-                 onclick: Callable[[], None],
-                 onchange_title: Callable[[], None]
+                 onclick: Callable[[], None]
                  ):
         self.content: PlaylistInformation = playlist
         self.onclick: Callable[[], None] = onclick
-        self.onchange_title: Callable[[], None] = onchange_title
+        self.ondelete: Callable[[], None] = None
+        self.onchange_title: Callable[[str], None] = None
 
-    def set_ondelete(self, ondelete: Callable[[], None]) -> None:
-        self.ondelete = ondelete
+    def set_ondelete(self, fn: Callable[[], None]) -> None:
+        self.ondelete = fn
+
+    def set_onchange_title(self, fn: Callable[[str], None]) -> None:
+        self.onchange_title = fn
 
 
 class PlaylistCarouselView(QScrollArea, BaseView):
@@ -44,6 +47,7 @@ class PlaylistCarouselView(QScrollArea, BaseView):
     def __init__(self, parent: Optional["QWidget"] = None):
         super(PlaylistCarouselView, self).__init__(parent)
         self.__playlists: list[PlaylistCardData] = []
+        self.__playlist_view_map_to_playlist: dict[PlaylistCardData, EditablePlaylistCard] = {}
         self.__init_ui()
         self.__playlist_library.set_label_text("Library")
         self.__playlist_favourites.set_label_text("Favourites")
@@ -128,20 +132,33 @@ class PlaylistCarouselView(QScrollArea, BaseView):
         for index in range(0, len(self.__playlists)):
             self.__user_playlists.itemAt(index).widget().deleteLater()
         self.__playlists.clear()
+        self.__playlist_view_map_to_playlist.clear()
 
     def add_playlist(self, playlist: PlaylistCardData) -> None:
-        self.__playlists.append(playlist)
         playlist_view = self.__create_user_playlist_with_cover(playlist.content.cover)
-        playlist_view.set_label_default_text(playlist.content.name)
-        playlist_view.set_label_text(playlist.content.name)
-        playlist_view.set_onclick_fn(playlist.onclick)
-        playlist_view.set_ondelete(playlist.ondelete)
+        self.attach_data_to(playlist_view, src=playlist)
         self.__user_playlists.addWidget(playlist_view)
+
+        self.__playlists.append(playlist)
+        self.__playlist_view_map_to_playlist[playlist] = playlist_view
+
+    @staticmethod
+    def attach_data_to(playlist_view: EditablePlaylistCard, src: PlaylistCardData) -> None:
+        playlist_view.set_label_default_text(src.content.name)
+        playlist_view.set_label_text(src.content.name)
+        playlist_view.set_onclick_fn(src.onclick)
+        playlist_view.set_ondelete(src.ondelete)
+        playlist_view.set_onchange_title(src.onchange_title)
 
     def delete_playlist(self, playlist: PlaylistCardData) -> None:
         index = self.__playlists.index(playlist)
         self.__user_playlists.itemAt(index).widget().deleteLater()
         self.__playlists.remove(self.__playlists[index])
+        self.__playlist_view_map_to_playlist.pop(playlist)
+
+    def update_playlist(self, playlist: PlaylistCardData) -> None:
+        playlist_view = self.__playlist_view_map_to_playlist[playlist]
+        self.attach_data_to(playlist_view, src=playlist)
 
     @staticmethod
     def __create_default_playlist_with_cover(cover_byte: bytes) -> PlaylistCard:
