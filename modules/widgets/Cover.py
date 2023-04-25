@@ -17,6 +17,8 @@ class Cover:
     def content(self) -> QPixmap:
         return self.__pixmap
 
+    __covers: dict[str, 'Cover'] = {}
+
     @staticmethod
     def from_bytes(
         image_byte: bytes,
@@ -25,10 +27,15 @@ class Cover:
         radius: int = 0,
         crop_center: bool = True,
     ) -> Union['Cover', None]:
+        key = str(image_byte)
+        if key in Cover.__covers:
+            return Cover.__covers[key]
         pixmap = PixmapHelper.get_pixmap_from_bytes(image_byte)
         if pixmap.isNull():
             return None
         pixmap = PixmapHelper.scale_pixmap_keeping_ratio(pixmap, max(width, height))
         pixmap = PixmapHelper.crop_pixmap(pixmap, width, height, crop_center)
         pixmap = PixmapHelper.round_pixmap(pixmap, radius)
-        return Cover(pixmap, radius)
+        cover = Cover(pixmap, radius)
+        Cover.__covers[key] = cover
+        return cover

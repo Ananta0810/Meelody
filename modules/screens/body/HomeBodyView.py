@@ -83,6 +83,9 @@ class HomeBodyView(QScrollArea, BaseView):
     def set_onclick_add_playlist(self, fn: Callable[[], None]) -> None:
         self.__playlist_carousel.set_onclick_add_playlist(fn)
 
+    def set_default_playlist_cover(self, cover: bytes) -> None:
+        self.__playlist_carousel.set_default_playlist_cover(cover)
+
     def load_playlists(self, playlists: list[PlaylistCardData]) -> None:
         self.__playlist_carousel.load_playlists(playlists)
 

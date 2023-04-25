@@ -19,6 +19,8 @@ class MainWindowControl(MainWindowView, BaseControl):
 
     def __init__(self) -> None:
         super().__init__()
+        self.__playlists = []
+        self.set_default_playlist_cover(Images.DEFAULT_PLAYLIST_COVER)
         self.connect_signals()
         self.set_is_playing(False)
 
@@ -48,16 +50,15 @@ class MainWindowControl(MainWindowView, BaseControl):
         self._music_player.load_playing_song()
 
     def load_playlists(self, playlists: list[Playlist]) -> None:
-        self.__playlists = playlists
+        self.__playlists.clear()
         for playlist in playlists:
-            playlist.get_info().cover = playlist.get_info().cover or Images.DEFAULT_PLAYLIST_COVER
-            card = PlaylistCardData(playlist.get_info(), onclick=None)
-            card.set_ondelete(lambda: self.__delete_playlist(card))
-            card.set_onchange_title(lambda title: self.__update_playlist_name(card, title))
-            self._body.add_playlist(card)
+            self.__create_playlist(playlist)
 
     def __choose_library(self) -> None:
         self.__load_playlist(self.__library)
+
+    def __choose_playlist(self, playlist: Playlist) -> None:
+        self.__load_playlist(playlist)
 
     def __choose_favourites(self) -> None:
         favourite_songs: list[Song] = list(filter(lambda song: song.is_loved(), self.__library.get_songs().get_songs()))
@@ -65,23 +66,29 @@ class MainWindowControl(MainWindowView, BaseControl):
         self.__load_playlist(playlist)
 
     def __create_empty_playlist(self) -> None:
-        info = PlaylistInformation(name="Untitled", cover=Images.DEFAULT_PLAYLIST_COVER)
-        card = PlaylistCardData(info, onclick=None)
-        card.set_ondelete(lambda: self._body.delete_playlist(card))
-        card.set_onchange_title(lambda title: self.__update_playlist_name(card, title))
-        self._body.add_playlist(card)
+        empty_playlist = Playlist(
+            info=PlaylistInformation(name="Untitled", cover=Images.DEFAULT_PLAYLIST_COVER),
+            songs=PlaylistSongs()
+        )
+        self.__create_playlist(empty_playlist)
 
-        playlist: Playlist = Playlist(info=info, songs=PlaylistSongs())
+    def __create_playlist(self, playlist: Playlist) -> None:
+        card = PlaylistCardData(playlist.get_info())
+        card.set_ondelete(lambda: self.__delete_playlist(card))
+        card.set_onchange_title(lambda title: self.__update_playlist_name(card, title))
+        card.set_onclick(lambda: self.__choose_playlist(playlist))
+        self._body.add_playlist(card)
+        playlist: Playlist = Playlist(info=playlist.get_info(), songs=playlist.get_songs())
         self.__playlists.append(playlist)
-        LibraryHelper.save_playlists(self.__playlists)
 
     def __update_playlist_name(self, playlist: PlaylistCardData, title: str) -> None:
-        playlist.content.name = title
+        playlist.content().name = title
         LibraryHelper.save_playlists(self.__playlists)
 
     def __delete_playlist(self, playlist: PlaylistCardData) -> None:
         self._body.delete_playlist(playlist)
-        self.__playlists.remove(playlist.content)
+        item_to_delete = next(playlist_ for playlist_ in self.__playlists if playlist_.get_info().id == playlist.content().id)
+        self.__playlists.remove(item_to_delete)
         LibraryHelper.save_playlists(self.__playlists)
 
     def __load_playlist(self, playlist: Playlist) -> None:

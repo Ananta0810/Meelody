@@ -356,6 +356,7 @@ class Images:
     DEFAULT_SONG_COVER: bytes = Bytes.get_bytes_from_file("assets\images\defaults\song_cover.jpg")
     DEFAULT_PLAYLIST_COVER: bytes = Bytes.get_bytes_from_file("assets\images\defaults\playlist_cover.jpg")
     FAVOURITES_PLAYLIST_COVER: bytes = Bytes.get_bytes_from_file("assets\images\defaults\playlist_favourite_cover.jpg")
+    NULL_IMAGE: bytes = Bytes.get_bytes_from_file("assets\images\defaults\playlist_cover.jpg")
 
 
 class Cursors:
