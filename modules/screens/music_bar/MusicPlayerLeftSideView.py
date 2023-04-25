@@ -1,4 +1,4 @@
-from typing import Optional, Union
+from typing import Optional
 
 from PyQt5.QtCore import QMetaObject
 from PyQt5.QtWidgets import QHBoxLayout, QWidget, QVBoxLayout
@@ -141,7 +141,7 @@ class MusicPlayerLeftSideView(QHBoxLayout, BaseView):
         self.__btn_next_song.clicked.connect(lambda: fn())
 
     def set_default_cover(self, byte_pixmap: bytes) -> None:
-        cover = self.__get_pixmap_for_song_cover(byte_pixmap)
+        cover = self.__create_cover(byte_pixmap)
         self.__song_cover.set_default_cover(cover)
 
     def set_default_title(self, text: str) -> None:
@@ -151,7 +151,7 @@ class MusicPlayerLeftSideView(QHBoxLayout, BaseView):
         self.__label_song_artist.set_default_text(text)
 
     def set_cover(self, byte_pixmap: bytes) -> None:
-        self.__song_cover.set_cover(self.__get_pixmap_for_song_cover(byte_pixmap))
+        self.__song_cover.set_cover(self.__create_cover(byte_pixmap))
 
     def set_title(self, text: str) -> None:
         self.__label_song_title.setText(text)
@@ -166,7 +166,5 @@ class MusicPlayerLeftSideView(QHBoxLayout, BaseView):
         return self.__btn_play_song.is_active()
 
     @staticmethod
-    def __get_pixmap_for_song_cover(byte_pixmap: bytes) -> Union[Cover, None]:
-        if byte_pixmap is None:
-            return None
-        return Cover.from_bytes(byte_pixmap, width=64, height=64, radius=12)
+    def __create_cover(byte_pixmap: bytes) -> Cover:
+        return Cover.from_bytes(byte_pixmap, width=64, height=64, radius=16)

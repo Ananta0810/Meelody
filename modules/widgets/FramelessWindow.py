@@ -58,8 +58,8 @@ class FramelessWindow(QMainWindow, BaseView):
             style=IconButtonStyle(
                 light_mode_icon=Icons.MINIMIZE.with_color(Colors.PRIMARY),
                 dark_mode_icon=Icons.MINIMIZE.with_color(Colors.WHITE),
-                light_mode_background=Backgrounds.ROUNDED_HIDDEN_PRIMARY_25.with_border_radius(8),
-                dark_mode_background=Backgrounds.ROUNDED_HIDDEN_WHITE_50.with_border_radius(8),
+                light_mode_background=Backgrounds.ROUNDED_HIDDEN_PRIMARY_25,
+                dark_mode_background=Backgrounds.ROUNDED_HIDDEN_WHITE_50,
             )
         )
 
@@ -69,8 +69,8 @@ class FramelessWindow(QMainWindow, BaseView):
             style=IconButtonStyle(
                 light_mode_icon=Icons.MINIMIZE.with_color(Colors.PRIMARY),
                 dark_mode_icon=Icons.MINIMIZE.with_color(Colors.WHITE),
-                light_mode_background=Backgrounds.ROUNDED_HIDDEN_PRIMARY_25.with_border_radius(8),
-                dark_mode_background=Backgrounds.ROUNDED_HIDDEN_WHITE_50.with_border_radius(8),
+                light_mode_background=Backgrounds.ROUNDED_HIDDEN_PRIMARY_25,
+                dark_mode_background=Backgrounds.ROUNDED_HIDDEN_WHITE_50,
             )
         )
 
@@ -79,8 +79,8 @@ class FramelessWindow(QMainWindow, BaseView):
             size=Icons.MEDIUM,
             style=IconButtonStyle(
                 light_mode_icon=Icons.CLOSE.with_color(Colors.DANGER),
-                light_mode_background=Backgrounds.ROUNDED_DANGER_25.with_border_radius(8),
-                dark_mode_background=Backgrounds.ROUNDED_DANGER_25.with_border_radius(8),
+                light_mode_background=Backgrounds.ROUNDED_DANGER_25,
+                dark_mode_background=Backgrounds.ROUNDED_DANGER_25,
             )
         )
 

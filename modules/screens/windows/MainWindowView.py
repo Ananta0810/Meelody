@@ -39,7 +39,7 @@ class MainWindowView(FramelessWindow, BaseView):
     @override
     def apply_light_mode(self) -> None:
         super().apply_light_mode()
-        self.setStyleSheet(Background(border_radius=24, color=ColorBoxes.WHITE).to_stylesheet())
+        self.setStyleSheet(Background(border_radius=32, color=ColorBoxes.WHITE).to_stylesheet())
         self._body.apply_light_mode()
         self._music_player.setStyleSheet("QWidget#musicPlayer{border-top: 1px solid #eaeaea};border-radius:0px")
         self._music_player.apply_light_mode()
@@ -47,7 +47,7 @@ class MainWindowView(FramelessWindow, BaseView):
     @override
     def apply_dark_mode(self) -> None:
         super().apply_dark_mode()
-        self.setStyleSheet(Background(border_radius=24, color=ColorBoxes.BLACK).to_stylesheet())
+        self.setStyleSheet(Background(border_radius=32, color=ColorBoxes.BLACK).to_stylesheet())
         self._body.apply_dark_mode()
         self._music_player.setStyleSheet("QWidget#musicPlayer{border-top: 1px solid #202020};border-radius:0px")
         self._music_player.apply_dark_mode()

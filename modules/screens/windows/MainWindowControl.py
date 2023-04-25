@@ -14,8 +14,8 @@ from modules.statics.view.Material import Images
 
 class MainWindowControl(MainWindowView, BaseControl):
     __library: Playlist
-    __displaying_playlist: Playlist
-    __playing_playlist: Playlist
+    __displaying_playlist: Playlist = None
+    __playing_playlist: Playlist = None
     __playlists: list[Playlist]
     __player: AudioPlayer = AudioPlayer()
     __selecting_playlist_songs: set[int]
