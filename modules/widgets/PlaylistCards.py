@@ -134,5 +134,5 @@ class EditablePlaylistCard(PlaylistCard):
     def set_ondelete(self, fn: Callable[[], None]) -> None:
         self._delete_btn.clicked.connect(lambda: fn())
 
-    def set_onchange_title(self, fn: Callable[[], None]) -> None:
+    def set_onchange_title(self, fn: Callable[[str], None]) -> None:
         self._label.set_onchange_text(fn)

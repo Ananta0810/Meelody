@@ -59,14 +59,17 @@ class MainWindowControl(MainWindowView, BaseControl):
 
     def __choose_library(self) -> None:
         self.__load_playlist(self.__library)
+        self._body.enable_add_new_song(False)
 
     def __choose_favourites(self) -> None:
         favourite_songs: list[Song] = list(filter(lambda song: song.is_loved(), self.__library.get_songs().get_songs()))
         playlist = Playlist.create(name="Favourites", songs=PlaylistSongs(favourite_songs))
         self.__load_playlist(playlist)
+        self._body.enable_add_new_song(False)
 
     def __choose_playlist(self, playlist: Playlist) -> None:
         self.__load_playlist(playlist)
+        self._body.enable_add_new_song(True)
 
     def __load_playlist(self, playlist: Playlist) -> None:
         self.__playlist = playlist
@@ -96,7 +99,8 @@ class MainWindowControl(MainWindowView, BaseControl):
 
     def __delete_playlist(self, playlist: PlaylistCardData) -> None:
         self._body.delete_playlist(playlist)
-        item_to_delete = next(playlist_ for playlist_ in self.__playlists if playlist_.get_info().id == playlist.content().id)
+        item_to_delete = next(
+            playlist_ for playlist_ in self.__playlists if playlist_.get_info().id == playlist.content().id)
         self.__playlists.remove(item_to_delete)
         LibraryHelper.save_playlists(self.__playlists)
 

@@ -77,7 +77,6 @@ class DoubleClickedEditableLabel(QLineEdit, BaseView):
 
     def __init__(self, parent: Optional["QWidget"] = None):
         super().__init__(parent)
-        self.__onchange_text = None
 
     def mouseDoubleClickEvent(self, event):
         super().mouseDoubleClickEvent(event)
@@ -95,7 +94,7 @@ class DoubleClickedEditableLabel(QLineEdit, BaseView):
             pass
 
     @handler
-    def set_onchange_text(self, fn: Callable[[], None]) -> None:
+    def set_onchange_text(self, fn: Callable[[str], None]) -> None:
         self.__onchange_text = fn
 
     @override

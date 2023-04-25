@@ -5,13 +5,13 @@ from PyQt5.QtGui import QFont
 from PyQt5.QtWidgets import QWidget, QHBoxLayout
 
 from modules.helpers.types.Decorators import override
-from modules.widgets.AppIcon import AppIcon
 from modules.models.view.Padding import Padding
 from modules.models.view.builder.FontBuilder import FontBuilder
 from modules.models.view.builder.IconButtonStyle import IconButtonStyle
 from modules.models.view.builder.TextStyle import TextStyle
-from modules.statics.view.Material import ColorBoxes, Icons, Paddings, Colors, Backgrounds
 from modules.screens.AbstractScreen import BaseView
+from modules.statics.view.Material import ColorBoxes, Icons, Paddings, Colors, Backgrounds
+from modules.widgets.AppIcon import AppIcon
 from modules.widgets.IconButton import IconButton
 from modules.widgets.LabelWithDefaultText import LabelWithDefaultText
 
@@ -79,7 +79,7 @@ class SongTableHeaderView(QWidget, BaseView):
         self.__btn_add_songs.clicked.connect(lambda: self.__onclick_add_song_fn())
         self.__buttons_layout.addWidget(self.__btn_add_songs)
 
-        self.__btn_apply_add_songs = self.__create_button(Icons.APPLY, Paddings.RELATIVE_75)
+        self.__btn_apply_add_songs = self.__create_button(Icons.APPLY, Paddings.RELATIVE_50)
         self.__btn_apply_add_songs.clicked.connect(lambda: self.__onclick_apply_add_song_fn())
         self.__btn_apply_add_songs.hide()
         self.__buttons_layout.addWidget(self.__btn_apply_add_songs)
@@ -118,6 +118,14 @@ class SongTableHeaderView(QWidget, BaseView):
     def set_choosing_song(self, is_choosing: bool) -> None:
         self.__btn_apply_add_songs.setVisible(is_choosing)
         self.__btn_add_songs.setVisible(not is_choosing)
+
+    def enable_add_new_song(self, visible: bool) -> None:
+        if visible:
+            self.__btn_add_songs.setVisible(True)
+            self.__btn_apply_add_songs.setVisible(False)
+        else:
+            self.__btn_add_songs.setVisible(False)
+            self.__btn_apply_add_songs.setVisible(False)
 
     def set_onclick_add_song_fn(self, fn: Callable[[], None]) -> None:
         self.__onclick_add_song_fn = fn
