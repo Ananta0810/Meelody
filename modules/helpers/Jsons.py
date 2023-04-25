@@ -1,8 +1,6 @@
 import json
 from json import JSONDecodeError
 
-from modules.statics.Properties import Languages
-
 
 class Jsons:
 
@@ -11,7 +9,6 @@ class Jsons:
         with open(json_file, "r+") as json_file:
             data = json.load(json_file)
 
-            # The change
             data[key] = value
 
             json_file.seek(0)

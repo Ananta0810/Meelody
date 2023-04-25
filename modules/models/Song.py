@@ -1,6 +1,7 @@
 import os
 import uuid
 
+from modules.helpers.types.Bytes import Bytes
 from modules.helpers.types.Decorators import override
 from modules.helpers.types.Strings import Strings
 from modules.models.AudioExtractor import AudioExtractor
@@ -40,9 +41,15 @@ class Song:
 
     @staticmethod
     def from_json(json: dict) -> 'Song':
-        song = Song()
-        for key in json.keys():
-            song.__dict__[key] = json[key]
+        song = Song(
+            location=json['location'],
+            title=json['title'],
+            artist=json['artist'],
+            cover=Bytes.encode(json['cover']),
+            length=json['length'],
+            loved=json['is_loved'],
+        )
+        song.__id = json['id']
         return song
 
     def clone(self) -> 'Song':
@@ -50,6 +57,17 @@ class Song:
                     length=self.__length, loved=self.__is_loved, )
         song.__id = self.__id
         return song
+
+    def to_dict(self) -> dict:
+        return {
+            'id': self.__id,
+            'location': self.__location,
+            'title': self.__title,
+            'artist': self.__artist,
+            'cover': Bytes.decode(self.__cover),
+            'length': self.__length,
+            'is_loved': self.__is_loved,
+        }
 
     @override
     def __str__(self):

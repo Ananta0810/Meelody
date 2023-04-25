@@ -1,3 +1,4 @@
+from modules.helpers.types.Bytes import Bytes
 from modules.models.PlaylistInformation import PlaylistInformation
 from modules.models.PlaylistSongs import PlaylistSongs
 from modules.models.Song import Song
@@ -50,7 +51,7 @@ class PlaylistJson:
 
     @staticmethod
     def from_json(json: dict) -> 'PlaylistJson':
-        info = PlaylistInformation(name=json['__info']['name'])
+        info = PlaylistInformation(name=json['__info']['name'], cover=Bytes.encode(json['__info']['cover']))
         info.id = json['__info']['id']
         return PlaylistJson(info, json['__ids'])
 
@@ -61,8 +62,9 @@ class PlaylistJson:
     def to_json(self) -> dict:
         return {
             '__info': {
-                'name': self.__info.name,
                 'id': self.__info.id,
+                'name': self.__info.name,
+                'cover': Bytes.decode(self.__info.cover)
             },
             '__ids': self.__ids
         }
