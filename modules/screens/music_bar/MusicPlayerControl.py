@@ -12,7 +12,6 @@ from modules.screens.music_bar.MusicPlayerBarView import MusicPlayerBarView
 
 
 class MusicPlayerControl(MusicPlayerBarView, BaseControl):
-
     __player: AudioPlayer = AudioPlayer.get_instance()
     __thread_id: int = 0
 
@@ -76,6 +75,12 @@ class MusicPlayerControl(MusicPlayerBarView, BaseControl):
     @handler
     def pause_current_song(self) -> None:
         self.__player.pause()
+        self.set_is_playing(False)
+
+    @handler
+    def stop_current_song(self) -> None:
+        self.__player.stop()
+        self.set_playing_time(0)
         self.set_is_playing(False)
 
     @handler
