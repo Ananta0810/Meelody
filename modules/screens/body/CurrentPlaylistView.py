@@ -92,7 +92,6 @@ class CurrentPlaylistView(QWidget, BaseView):
         self.__menu.load_songs(playlist.get_songs())
 
     def load_choosing_playlist(self, playlist: Playlist) -> None:
-        self.set_current_playlist_info(playlist)
         self.__menu.load_choosing_playlist(playlist.get_songs())
 
     def set_current_playlist_info(self, playlist: Playlist) -> None:

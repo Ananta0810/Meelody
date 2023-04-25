@@ -269,7 +269,7 @@ class SongTableRowView(BackgroundWidget, BaseView):
             self.__extra_buttons.hide()
         else:
             self.__choosing_playlist_buttons.hide()
-            self.show_more()
+            self.show_less()
 
     @staticmethod
     def __create_button(with_icon: AppIcon,

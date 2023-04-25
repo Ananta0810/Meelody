@@ -8,6 +8,7 @@ from modules.screens.body.songs_table.SongTableView import SongTableView
 class SongTableControl(SongTableView, BaseControl):
     __playlist: PlaylistSongs = None
     __player: AudioPlayer = AudioPlayer()
+    __is_choosing_song: bool = False
 
     def __init__(self) -> None:
         super().__init__()
@@ -28,11 +29,13 @@ class SongTableControl(SongTableView, BaseControl):
         self._load_songs(playlist.get_songs())
 
     def load_choosing_playlist(self, playlist: PlaylistSongs) -> None:
+        self.__is_choosing_song = True
         self.__playlist = playlist
         self._load_choosing_playlist(playlist.get_songs())
 
     def select_song_at(self, index: int) -> None:
-        self._body.select_song_at(index)
+        if not self.__is_choosing_song:
+            self._body.select_song_at(index)
 
     def love_song(self, is_loved: bool) -> None:
         index = self.__player.get_current_song_index()

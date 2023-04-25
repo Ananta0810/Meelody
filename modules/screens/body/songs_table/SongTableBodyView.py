@@ -166,7 +166,7 @@ class SongTableBodyView(SmoothVerticalScrollArea, BaseView):
         songView.set_onclick_love(lambda: self.__onclick_love_btn(index))
         songView.set_onclick_add_to_playlist(lambda: self.__onclick_add_to_playlist_fn(index))
         songView.set_onclick_remove_from_playlist(lambda: self.__onclick_remove_from_playlist_fn(index))
-
+        songView.enable_choosing(False)
         return songView
 
     def select_song_at(self, index: int) -> None:

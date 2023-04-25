@@ -54,6 +54,7 @@ class MainWindowControl(MainWindowView, BaseControl):
     def load_library(self, playlist: Playlist) -> None:
         self.__library = playlist
         self.__choose_library()
+        self._music_player.load_playlist_songs(self.__current_playlist.get_songs())
         self._music_player.load_playing_song()
 
     def load_playlists(self, playlists: list[Playlist]) -> None:
@@ -80,8 +81,8 @@ class MainWindowControl(MainWindowView, BaseControl):
         self.__select_playlist(playlist)
 
     def __select_playlist(self, playlist: Playlist) -> None:
+        self.__selecting_playlist_songs.clear()
         self.__current_playlist = playlist
-        self._music_player.load_playlist_songs(playlist.get_songs())
         self._body.load_playlist(playlist)
 
     def __create_empty_playlist(self) -> None:
@@ -163,6 +164,7 @@ class MainWindowControl(MainWindowView, BaseControl):
         self.set_is_playing(True)
 
     def __play_song_from_menu_at(self, index: int) -> None:
+        self._music_player.load_playlist_songs(self.__current_playlist.get_songs())
         self._music_player.play_song_at(index)
         self.set_is_playing(True)
 
