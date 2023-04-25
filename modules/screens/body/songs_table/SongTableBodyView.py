@@ -18,6 +18,8 @@ class SongTableBodyView(SmoothVerticalScrollArea, BaseView):
 
     __onclick_button_fn: Callable[[int], None]
     __onclick_love_fn: Callable[[int], None]
+    __onclick_add_to_playlist_fn: Callable[[int], None]
+    __onclick_remove_from_playlist_fn: Callable[[int], None]
     __on_keypress_fn: Callable[[str], int]
 
     def __init__(self, parent: Optional["QWidget"] = None):
@@ -63,14 +65,26 @@ class SongTableBodyView(SmoothVerticalScrollArea, BaseView):
     def set_onclick_love(self, fn: Callable[[int], None]) -> None:
         self.__onclick_love_fn = fn
         for index, song in enumerate(self._songs):
-            song.set_onclick_love(lambda: self._onclick_love_btn(index))
+            song.set_onclick_love(lambda: self.__onclick_love_btn(index))
+
+    @connector
+    def set_onclick_add_to_playlist(self, fn: Callable[[int], None]) -> None:
+        self.__onclick_add_to_playlist_fn = fn
+        for index, song in enumerate(self._songs):
+            song.set_onclick_play(lambda: self.__onclick_add_to_playlist_fn(index))
+
+    @connector
+    def set_onclick_remove_from_playlist(self, fn: Callable[[int], None]) -> None:
+        self.__onclick_remove_from_playlist_fn = fn
+        for index, song in enumerate(self._songs):
+            song.set_onclick_love(lambda: self.__onclick_remove_from_playlist_fn(index))
 
     def __onclick_play_btn(self, index: int) -> None:
         self.select_song_at(index)
         if self.__onclick_button_fn is not None:
             self.__onclick_button_fn(index)
 
-    def _onclick_love_btn(self, index: int) -> None:
+    def __onclick_love_btn(self, index: int) -> None:
         if self.__onclick_love_fn is not None:
             self.__onclick_love_fn(index)
 
@@ -139,7 +153,9 @@ class SongTableBodyView(SmoothVerticalScrollArea, BaseView):
         self._songs.append(songView)
         self.__menu.addWidget(songView)
         songView.set_onclick_play(lambda: self.__onclick_play_btn(index))
-        songView.set_onclick_love(lambda: self._onclick_love_btn(index))
+        songView.set_onclick_love(lambda: self.__onclick_love_btn(index))
+        songView.set_onclick_add_to_playlist(lambda: self.__onclick_add_to_playlist_fn(index))
+        songView.set_onclick_remove_from_playlist(lambda: self.__onclick_remove_from_playlist_fn(index))
 
         return songView
 

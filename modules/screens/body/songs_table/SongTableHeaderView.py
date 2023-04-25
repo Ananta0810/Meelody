@@ -127,7 +127,7 @@ class SongTableHeaderView(QWidget, BaseView):
             self.__btn_add_songs.setVisible(False)
             self.__btn_apply_add_songs.setVisible(False)
 
-    def set_onclick_add_song_fn(self, fn: Callable[[], None]) -> None:
+    def set_onclick_select_songs_fn(self, fn: Callable[[], None]) -> None:
         self.__onclick_add_song_fn = fn
 
     def set_onclick_apply_add_song_fn(self, fn: Callable[[], None]) -> None:

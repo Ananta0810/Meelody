@@ -69,6 +69,11 @@ class SongTableRowView(BackgroundWidget, BaseView):
         self.__extra_buttons_layout.setSpacing(8)
         self.__extra_buttons_layout.setContentsMargins(8, 8, 8, 8)
 
+        self.__choosing_playlist_buttons = QWidget()
+        self.__choosing_playlist_buttons_layout = QHBoxLayout(self.__choosing_playlist_buttons)
+        self.__choosing_playlist_buttons_layout.setSpacing(8)
+        self.__choosing_playlist_buttons_layout.setContentsMargins(8, 8, 8, 8)
+
         self.__cover = ImageViewer(self)
         self.__cover.setFixedSize(64, 64)
 
@@ -109,6 +114,13 @@ class SongTableRowView(BackgroundWidget, BaseView):
         )
 
         self.__btn_add_to_playlist = self.__create_button(with_icon=Icons.ADD, padding=Paddings.RELATIVE_75)
+        self.__btn_choose_to_playlist = self.__create_button(with_icon=Icons.ADD, padding=Paddings.RELATIVE_67)
+        self.__btn_remove_from_playlist = self.__create_button(with_icon=Icons.MINUS,
+                                                               padding=Paddings.RELATIVE_33,
+                                                               color=Colors.DANGER,
+                                                               background=Backgrounds.CIRCLE_HIDDEN_DANGER_10)
+        self.__btn_remove_from_playlist.hide()
+
         self.__btn_edit = self.__create_button(with_icon=Icons.EDIT)
         self.__btn_delete = self.__create_button(with_icon=Icons.DELETE)
 
@@ -130,6 +142,7 @@ class SongTableRowView(BackgroundWidget, BaseView):
         self.__main_layout.addLayout(self.__info)
         self.__main_layout.addWidget(self.__buttons)
         self.__main_layout.addWidget(self.__extra_buttons)
+        self.__main_layout.addWidget(self.__choosing_playlist_buttons)
 
         self.__info.addWidget(self.__cover)
         self.__info.addWidget(self.__label_title, 1)
@@ -143,6 +156,10 @@ class SongTableRowView(BackgroundWidget, BaseView):
         self.__extra_buttons_layout.addWidget(self.__btn_add_to_playlist)
         self.__extra_buttons_layout.addWidget(self.__btn_edit)
         self.__extra_buttons_layout.addWidget(self.__btn_delete)
+
+        self.__choosing_playlist_buttons_layout.addStretch(0)
+        self.__choosing_playlist_buttons_layout.addWidget(self.__btn_choose_to_playlist)
+        self.__choosing_playlist_buttons_layout.addWidget(self.__btn_remove_from_playlist)
 
         self.show_less()
 
@@ -160,6 +177,8 @@ class SongTableRowView(BackgroundWidget, BaseView):
         self.__btn_add_to_playlist.apply_light_mode()
         self.__btn_delete.apply_light_mode()
         self.__btn_close.apply_light_mode()
+        self.__btn_choose_to_playlist.apply_light_mode()
+        self.__btn_remove_from_playlist.apply_light_mode()
 
     @override
     def apply_dark_mode(self) -> None:
@@ -175,12 +194,30 @@ class SongTableRowView(BackgroundWidget, BaseView):
         self.__btn_add_to_playlist.apply_dark_mode()
         self.__btn_delete.apply_dark_mode()
         self.__btn_close.apply_dark_mode()
+        self.__btn_choose_to_playlist.apply_dark_mode()
+        self.__btn_remove_from_playlist.apply_dark_mode()
 
     def set_onclick_play(self, fn: callable) -> None:
         self.__btn_play.clicked.connect(fn)
 
     def set_onclick_love(self, fn: callable) -> None:
         self.__btn_love.clicked.connect(fn)
+
+    def set_onclick_add_to_playlist(self, fn: callable) -> None:
+        self.__btn_choose_to_playlist.clicked.connect(lambda: self.__clicked_add_btn(fn))
+
+    def set_onclick_remove_from_playlist(self, fn: callable) -> None:
+        self.__btn_remove_from_playlist.clicked.connect(lambda: self.__clicked_remove_btn(fn))
+
+    def __clicked_add_btn(self, fn: callable) -> None:
+        self.__btn_remove_from_playlist.show()
+        self.__btn_choose_to_playlist.hide()
+        fn()
+
+    def __clicked_remove_btn(self, fn: callable) -> None:
+        self.__btn_choose_to_playlist.show()
+        self.__btn_remove_from_playlist.hide()
+        fn()
 
     def show_more(self) -> None:
         self.__buttons.hide()
@@ -218,18 +255,25 @@ class SongTableRowView(BackgroundWidget, BaseView):
 
     def set_is_choosing(self, is_choosing: bool) -> None:
         if is_choosing:
-            self.show_more()
+            self.__choosing_playlist_buttons.show()
+            self.__buttons.hide()
+            self.__btn_close.hide()
+            self.__extra_buttons.hide()
         else:
-            self.show_less()
+            self.__choosing_playlist_buttons.hide()
+            self.show_more()
 
     @staticmethod
-    def __create_button(with_icon: AppIcon, padding=Paddings.RELATIVE_50) -> IconButton:
+    def __create_button(with_icon: AppIcon,
+                        padding=Paddings.RELATIVE_50,
+                        color=Colors.PRIMARY,
+                        background=Backgrounds.CIRCLE_HIDDEN_PRIMARY_10) -> IconButton:
         return IconButton.build(
             size=Icons.LARGE,
             padding=padding,
             style=IconButtonStyle(
-                light_mode_icon=with_icon.with_color(Colors.PRIMARY),
-                light_mode_background=Backgrounds.CIRCLE_HIDDEN_PRIMARY_10,
+                light_mode_icon=with_icon.with_color(color),
+                light_mode_background=background,
             ),
         )
 
