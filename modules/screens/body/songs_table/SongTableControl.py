@@ -1,4 +1,4 @@
-from modules.helpers.types.Decorators import override, connector
+from modules.helpers.types.Decorators import override
 from modules.models.AudioPlayer import AudioPlayer
 from modules.models.PlaylistSongs import PlaylistSongs
 from modules.screens.AbstractScreen import BaseControl
@@ -26,6 +26,10 @@ class SongTableControl(SongTableView, BaseControl):
     def load_songs(self, playlist: PlaylistSongs) -> None:
         self.__playlist = playlist
         self._load_songs(playlist.get_songs())
+
+    def load_choosing_playlist(self, playlist: PlaylistSongs) -> None:
+        self.__playlist = playlist
+        self._load_choosing_playlist(playlist.get_songs())
 
     def select_song_at(self, index: int) -> None:
         self._body.select_song_at(index)

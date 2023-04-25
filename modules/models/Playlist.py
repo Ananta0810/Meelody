@@ -28,7 +28,7 @@ class Playlist:
         """
         return 0 if self.__songs is None else self.__songs.size()
 
-    def equals(self, other):
+    def equals(self, other) -> bool:
         """
         Check if two playlists are the same one
         """
@@ -66,4 +66,3 @@ class PlaylistJson:
             },
             '__ids': self.__ids
         }
-

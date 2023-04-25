@@ -13,7 +13,7 @@ from modules.statics.view.Material import Images
 
 class MainWindowControl(MainWindowView, BaseControl):
     __library: Playlist
-    __playlist: Playlist
+    __current_playlist: Playlist
     __playlists: list[Playlist]
     __player: AudioPlayer = AudioPlayer()
     __selecting_playlist_songs: set[int]
@@ -34,12 +34,12 @@ class MainWindowControl(MainWindowView, BaseControl):
         self._music_player.set_onclick_love(lambda song: self.__love_song_from_player(song))
 
         self._body.set_onclick_play(lambda index: self.__play_song_from_menu_at(index))
-        self._body.set_onclick_love(lambda index: self.love_song_from_menu(index))
-        self._body.set_onclick_add_to_playlist_on_menu(lambda index: self.__add_song_from_menu_at(index))
-        self._body.set_onclick_remove_from_playlist_on_menu(lambda index: self.__remove_song_from_menu_at(index))
+        self._body.set_onclick_love(lambda index: self.__love_song_from_menu(index))
+        self._body.set_onclick_add_to_playlist(lambda index: self.__add_song_from_menu_at(index))
+        self._body.set_onclick_remove_from_playlist(lambda index: self.__remove_song_from_menu_at(index))
+        self._body.set_onclick_select_songs_fn(lambda: self.__start_select_songs_from_library_to_playlist())
+        self._body.set_onclick_apply_select_songs_fn(lambda: self.__finish_select_songs_from_library_to_playlist())
         self._body.set_on_keypress(lambda key: self.__go_to_song_that_title_start_with(key))
-        self._body.set_onclick_select_songs_fn(lambda: self.__start_add_songs_from_library_to_playlist())
-        self._body.set_onclick_apply_add_song_fn(lambda: self.__finish_add_songs_from_library_to_playlist())
 
         self._body.set_onclick_library(self.__choose_library)
         self._body.set_onclick_favourites(self.__choose_favourites)
@@ -62,12 +62,12 @@ class MainWindowControl(MainWindowView, BaseControl):
             self.__create_playlist(playlist)
 
     def __choose_library(self) -> None:
-        self._body.set_choosing_song(False)
+        self._body.enable_choosing_song(False)
         self._body.enable_add_new_song(False)
         self.__select_playlist(self.__library)
 
     def __choose_favourites(self) -> None:
-        self._body.set_choosing_song(False)
+        self._body.enable_choosing_song(False)
         self._body.enable_add_new_song(False)
 
         favourite_songs: list[Song] = list(filter(lambda song: song.is_loved(), self.__library.get_songs().get_songs()))
@@ -75,12 +75,12 @@ class MainWindowControl(MainWindowView, BaseControl):
         self.__select_playlist(playlist)
 
     def __choose_playlist(self, playlist: Playlist) -> None:
-        self._body.set_choosing_song(False)
+        self._body.enable_choosing_song(False)
         self._body.enable_add_new_song(True)
         self.__select_playlist(playlist)
 
     def __select_playlist(self, playlist: Playlist) -> None:
-        self.__playlist = playlist
+        self.__current_playlist = playlist
         self._music_player.load_playlist_songs(playlist.get_songs())
         self._body.load_playlist(playlist)
 
@@ -112,32 +112,50 @@ class MainWindowControl(MainWindowView, BaseControl):
         self.__playlists.remove(item_to_delete)
         LibraryHelper.save_playlists(self.__playlists)
 
-    def __start_add_songs_from_library_to_playlist(self) -> None:
-        self._body.load_playlist(self.__library)
-        self._body.set_choosing_song(True)
+    def __start_select_songs_from_library_to_playlist(self) -> None:
+        current_playlist_songs_ids: list[str] = [song.get_id() for song in
+                                                 self.__current_playlist.get_songs().get_songs()]
+        temp_songs = [song.clone() for song in self.__library.get_songs().get_songs()]
+        """
+            We will consider loved songs as the existing songs
+        """
+        for index, song in enumerate(temp_songs):
+            is_existing = song.get_id() in current_playlist_songs_ids
+            song.set_love_state(is_existing)
+            if is_existing:
+                self.__selecting_playlist_songs.add(index)
 
-    def __finish_add_songs_from_library_to_playlist(self) -> None:
-        self._body.set_choosing_song(False)
+        self._body.enable_choosing_song(True)
+        temp_playlist: Playlist = Playlist(info=self.__current_playlist.get_info(), songs=PlaylistSongs(temp_songs))
+
+        self._body.load_choosing_playlist(temp_playlist)
+
+    def __finish_select_songs_from_library_to_playlist(self) -> None:
         playlist_songs = [song for index, song in enumerate(self.__library.get_songs().get_songs()) if
                           index in self.__selecting_playlist_songs]
         self.__selecting_playlist_songs.clear()
-        self.__playlist.get_songs().insertAll(playlist_songs)
-        LibraryHelper.save_playlists(self.__playlists)
-        self.__select_playlist(self.__playlist)
 
-    def love_song_at(self, index: int) -> None:
-        if self.__player.get_current_song_index() == index:
-            self._music_player.change_love_state()
-            return
-        song = self.__playlist.get_songs().get_song_at(index)
-        song.reverse_love_state()
+        self.__current_playlist.get_songs().get_songs().clear()
+        self.__current_playlist.get_songs().insertAll(playlist_songs)
+        LibraryHelper.save_playlists(self.__playlists)
+        self.__choose_playlist(self.__current_playlist)
+
+    def __add_song_from_menu_at(self, index: int) -> None:
+        self.__selecting_playlist_songs.add(index)
+
+    def __remove_song_from_menu_at(self, index: int) -> None:
+        self.__selecting_playlist_songs.remove(index)
 
     def __love_song_from_player(self, song: Song) -> None:
         self._body.love_song(song.is_loved())
         LibraryHelper.update_love_state_of(song)
 
-    def love_song_from_menu(self, index: int) -> None:
-        self.love_song_at(index)
+    def __love_song_from_menu(self, index: int) -> None:
+        if self.__player.get_current_song_index() == index:
+            self._music_player.change_love_state()
+            return
+        song = self.__current_playlist.get_songs().get_song_at(index)
+        song.reverse_love_state()
         LibraryHelper.update_love_state_of(self.__player.get_songs()[index])
 
     def __play_song_from_player_at(self, index: int) -> None:
@@ -148,11 +166,5 @@ class MainWindowControl(MainWindowView, BaseControl):
         self._music_player.play_song_at(index)
         self.set_is_playing(True)
 
-    def __add_song_from_menu_at(self, index: int) -> None:
-        self.__selecting_playlist_songs.add(index)
-
-    def __remove_song_from_menu_at(self, index: int) -> None:
-        self.__selecting_playlist_songs.remove(index)
-
     def __go_to_song_that_title_start_with(self, title: str) -> int:
-        return self.__playlist.get_songs().find_nearest_song_index_by_title(title)
+        return self.__current_playlist.get_songs().find_nearest_song_index_by_title(title)

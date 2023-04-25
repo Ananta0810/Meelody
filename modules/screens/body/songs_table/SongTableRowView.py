@@ -255,6 +255,14 @@ class SongTableRowView(BackgroundWidget, BaseView):
 
     def set_is_choosing(self, is_choosing: bool) -> None:
         if is_choosing:
+            self.__btn_remove_from_playlist.show()
+            self.__btn_choose_to_playlist.hide()
+        else:
+            self.__btn_remove_from_playlist.hide()
+            self.__btn_choose_to_playlist.show()
+
+    def enable_choosing(self, is_choosing: bool) -> None:
+        if is_choosing:
             self.__choosing_playlist_buttons.show()
             self.__buttons.hide()
             self.__btn_close.hide()

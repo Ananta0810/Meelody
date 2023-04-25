@@ -5,6 +5,7 @@ from modules.helpers.types.Decorators import override
 from modules.helpers.types.Strings import Strings
 from modules.models.AudioExtractor import AudioExtractor
 
+
 class Song:
     __id: str
     __location: str
@@ -42,6 +43,12 @@ class Song:
         song = Song()
         for key in json.keys():
             song.__dict__[key] = json[key]
+        return song
+
+    def clone(self) -> 'Song':
+        song = Song(location=self.__location, title=self.__title, artist=self.__artist, cover=self.__cover,
+                    length=self.__length, loved=self.__is_loved, )
+        song.__id = self.__id
         return song
 
     @override

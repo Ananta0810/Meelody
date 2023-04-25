@@ -27,9 +27,9 @@ class SongTableHeaderView(QWidget, BaseView):
     __buttons: QWidget
     __buttons_layout: QHBoxLayout
     __btn_download_songs: IconButton
-    __btn_add_songs: IconButton
+    __btn_select_songs: IconButton
 
-    __onclick_add_song_fn: Callable[[], None]
+    __onclick_select_songs_fn: Callable[[], None]
     __onclick_apply_add_song_fn: Callable[[], None]
 
     def __init__(self, parent: Optional["QWidget"] = None):
@@ -75,9 +75,9 @@ class SongTableHeaderView(QWidget, BaseView):
         self.__btn_download_songs = self.__create_button(Icons.DOWNLOAD, Paddings.RELATIVE_50)
         self.__buttons_layout.addWidget(self.__btn_download_songs)
 
-        self.__btn_add_songs = self.__create_button(Icons.ADD, Paddings.RELATIVE_75)
-        self.__btn_add_songs.clicked.connect(lambda: self.__onclick_add_song_fn())
-        self.__buttons_layout.addWidget(self.__btn_add_songs)
+        self.__btn_select_songs = self.__create_button(Icons.EDIT, Paddings.RELATIVE_67)
+        self.__btn_select_songs.clicked.connect(lambda: self.__onclick_select_songs_fn())
+        self.__buttons_layout.addWidget(self.__btn_select_songs)
 
         self.__btn_apply_add_songs = self.__create_button(Icons.APPLY, Paddings.RELATIVE_50)
         self.__btn_apply_add_songs.clicked.connect(lambda: self.__onclick_apply_add_song_fn())
@@ -97,7 +97,7 @@ class SongTableHeaderView(QWidget, BaseView):
         self.__label_artist.apply_light_mode()
         self.__label_length.apply_light_mode()
         self.__btn_download_songs.apply_light_mode()
-        self.__btn_add_songs.apply_light_mode()
+        self.__btn_select_songs.apply_light_mode()
         self.__btn_apply_add_songs.apply_light_mode()
 
     @override
@@ -106,7 +106,7 @@ class SongTableHeaderView(QWidget, BaseView):
         self.__label_artist.apply_dark_mode()
         self.__label_length.apply_dark_mode()
         self.__btn_download_songs.apply_dark_mode()
-        self.__btn_add_songs.apply_dark_mode()
+        self.__btn_select_songs.apply_dark_mode()
         self.__btn_apply_add_songs.apply_dark_mode()
 
     @override
@@ -115,20 +115,20 @@ class SongTableHeaderView(QWidget, BaseView):
         self.__label_artist.setText(artist)
         self.__label_length.setText(length)
 
-    def set_choosing_song(self, is_choosing: bool) -> None:
+    def enable_choosing_song(self, is_choosing: bool) -> None:
         self.__btn_apply_add_songs.setVisible(is_choosing)
-        self.__btn_add_songs.setVisible(not is_choosing)
+        self.__btn_select_songs.setVisible(not is_choosing)
 
     def enable_add_new_song(self, visible: bool) -> None:
         if visible:
-            self.__btn_add_songs.setVisible(True)
+            self.__btn_select_songs.setVisible(True)
             self.__btn_apply_add_songs.setVisible(False)
         else:
-            self.__btn_add_songs.setVisible(False)
+            self.__btn_select_songs.setVisible(False)
             self.__btn_apply_add_songs.setVisible(False)
 
     def set_onclick_select_songs_fn(self, fn: Callable[[], None]) -> None:
-        self.__onclick_add_song_fn = fn
+        self.__onclick_select_songs_fn = fn
 
     def set_onclick_apply_add_song_fn(self, fn: Callable[[], None]) -> None:
         self.__onclick_apply_add_song_fn = fn

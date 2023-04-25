@@ -76,9 +76,9 @@ class SongTableView(QWidget, BaseView):
     def set_onclick_apply_add_song_fn(self, fn: Callable[[], None]) -> None:
         self._header.set_onclick_apply_add_song_fn(fn)
 
-    def set_choosing_song(self, is_choosing: bool) -> None:
-        self._header.set_choosing_song(is_choosing)
-        self._body.set_choosing_song(is_choosing)
+    def enable_choosing_song(self, is_choosing: bool) -> None:
+        self._header.enable_choosing_song(is_choosing)
+        self._body.enable_choosing_song(is_choosing)
 
     def enable_add_new_song(self, visible: bool) -> None:
         self._header.enable_add_new_song(visible)
@@ -92,6 +92,15 @@ class SongTableView(QWidget, BaseView):
 
     def _load_songs(self, songs: list[Song]) -> None:
         song_views: list[SongTableRowView] = self._body.load_songs(songs)
+        if self.__is_dark_mode:
+            for song_view in song_views:
+                song_view.apply_dark_mode()
+        else:
+            for song_view in song_views:
+                song_view.apply_light_mode()
+
+    def _load_choosing_playlist(self, songs: list[Song]) -> None:
+        song_views: list[SongTableRowView] = self._body.load_choosing_playlist(songs)
         if self.__is_dark_mode:
             for song_view in song_views:
                 song_view.apply_dark_mode()

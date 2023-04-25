@@ -72,8 +72,8 @@ class CurrentPlaylistView(QWidget, BaseView):
     def set_onclick_apply_add_song_fn(self, fn: Callable[[], None]) -> None:
         self.__menu.set_onclick_apply_add_song_fn(fn)
 
-    def set_choosing_song(self, is_choosing: bool) -> None:
-        self.__menu.set_choosing_song(is_choosing)
+    def enable_choosing_song(self, is_choosing: bool) -> None:
+        self.__menu.enable_choosing_song(is_choosing)
 
     def enable_add_new_song(self, visible: bool) -> None:
         self.__menu.enable_add_new_song(visible)
@@ -88,19 +88,14 @@ class CurrentPlaylistView(QWidget, BaseView):
         self.__menu.select_song_at(index)
 
     def load_playlist(self, playlist: Playlist) -> None:
-        self.set_current_playlist_info(
-            playlist.get_info().name, playlist.get_info().cover, playlist.size()
-        )
+        self.set_current_playlist_info(playlist)
         self.__menu.load_songs(playlist.get_songs())
 
-    def set_current_playlist_info(self, name: str, cover: bytes = None, total_song: int = 0) -> None:
-        if cover is None:
-            cover = (
-                Images.FAVOURITES_PLAYLIST_COVER
-                if name.lower() == "favourites"
-                else Images.DEFAULT_PLAYLIST_COVER
-            )
+    def load_choosing_playlist(self, playlist: Playlist) -> None:
+        self.set_current_playlist_info(playlist)
+        self.__menu.load_choosing_playlist(playlist.get_songs())
 
-        self.__info.set_cover(cover)
-        self.__info.set_title(name)
-        self.__info.set_total_song(total_song)
+    def set_current_playlist_info(self, playlist: Playlist) -> None:
+        self.__info.set_cover(playlist.get_info().cover)
+        self.__info.set_title(playlist.get_info().name)
+        self.__info.set_total_song(playlist.size())

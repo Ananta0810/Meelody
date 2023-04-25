@@ -68,11 +68,11 @@ class HomeBodyView(QScrollArea, BaseView):
         self.__current_playlist.set_onclick_love(fn)
 
     @connector
-    def set_onclick_add_to_playlist_on_menu(self, fn: Callable[[int], None]) -> None:
+    def set_onclick_add_to_playlist(self, fn: Callable[[int], None]) -> None:
         self.__current_playlist.set_onclick_add_to_playlist_on_menu(fn)
 
     @connector
-    def set_onclick_remove_from_playlist_on_menu(self, fn: Callable[[int], None]) -> None:
+    def set_onclick_remove_from_playlist(self, fn: Callable[[int], None]) -> None:
         self.__current_playlist.set_onclick_remove_from_playlist_on_menu(fn)
 
     @connector
@@ -84,7 +84,7 @@ class HomeBodyView(QScrollArea, BaseView):
         self.__current_playlist.set_onclick_select_songs_fn(fn)
 
     @connector
-    def set_onclick_apply_add_song_fn(self, fn: Callable[[], None]) -> None:
+    def set_onclick_apply_select_songs_fn(self, fn: Callable[[], None]) -> None:
         self.__current_playlist.set_onclick_apply_add_song_fn(fn)
 
     @connector
@@ -99,8 +99,8 @@ class HomeBodyView(QScrollArea, BaseView):
     def set_onclick_add_playlist(self, fn: Callable[[], None]) -> None:
         self.__playlist_carousel.set_onclick_add_playlist(fn)
 
-    def set_choosing_song(self, is_choosing: bool) -> None:
-        self.__current_playlist.set_choosing_song(is_choosing)
+    def enable_choosing_song(self, is_choosing: bool) -> None:
+        self.__current_playlist.enable_choosing_song(is_choosing)
 
     def enable_add_new_song(self, visible: bool) -> None:
         self.__current_playlist.enable_add_new_song(visible)
@@ -131,3 +131,6 @@ class HomeBodyView(QScrollArea, BaseView):
 
     def load_playlist(self, playlist: Playlist) -> None:
         self.__current_playlist.load_playlist(playlist)
+
+    def load_choosing_playlist(self, playlist: Playlist) -> None:
+        self.__current_playlist.load_choosing_playlist(playlist)

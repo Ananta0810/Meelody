@@ -139,9 +139,19 @@ class SongTableBodyView(SmoothVerticalScrollArea, BaseView):
         self.clear_table()
         return [self.add_new_song(song) for song in songs]
 
-    def set_choosing_song(self, is_choosing: bool) -> None:
+    def load_choosing_playlist(self, songs: list[Song]) -> list[SongTableRowView]:
+        self.clear_table()
+        result = []
+        for song in songs:
+            song_view = self.add_new_song(song)
+            song_view.set_is_choosing(song.is_loved())
+            song_view.enable_choosing(True)
+            result.append(song_view)
+        return result
+
+    def enable_choosing_song(self, is_choosing: bool) -> None:
         for song in self._songs:
-            song.set_is_choosing(is_choosing)
+            song.enable_choosing(is_choosing)
 
     def clear_table(self):
         self.__remove_songs_in_range(0, self.get_total_songs())
