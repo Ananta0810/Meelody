@@ -72,6 +72,14 @@ class HomeBodyView(QScrollArea, BaseView):
         self.__current_playlist.set_on_keypress(fn)
 
     @connector
+    def set_onclick_add_song_fn(self, fn: Callable[[], None]) -> None:
+        self.__current_playlist.set_onclick_add_song_fn(fn)
+
+    @connector
+    def set_onclick_apply_add_song_fn(self, fn: Callable[[], None]) -> None:
+        self.__current_playlist.set_onclick_apply_add_song_fn(fn)
+
+    @connector
     def set_onclick_library(self, fn: Callable[[], None]) -> None:
         self.__playlist_carousel.set_onclick_library(fn)
 
@@ -82,6 +90,9 @@ class HomeBodyView(QScrollArea, BaseView):
     @connector
     def set_onclick_add_playlist(self, fn: Callable[[], None]) -> None:
         self.__playlist_carousel.set_onclick_add_playlist(fn)
+
+    def set_choosing_song(self, is_choosing: bool) -> None:
+        self.__current_playlist.set_choosing_song(is_choosing)
 
     def set_default_playlist_cover(self, cover: bytes) -> None:
         self.__playlist_carousel.set_default_playlist_cover(cover)

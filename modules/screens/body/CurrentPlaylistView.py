@@ -56,6 +56,18 @@ class CurrentPlaylistView(QWidget, BaseView):
     def set_on_keypress(self, fn: Callable[[str], int]) -> None:
         self.__menu.set_on_keypress(fn)
 
+    @connector
+    def set_choosing_song(self, is_choosing: bool) -> None:
+        self.__menu.set_choosing_song(is_choosing)
+
+    @connector
+    def set_onclick_add_song_fn(self, fn: Callable[[], None]) -> None:
+        self.__menu.set_onclick_add_song_fn(fn)
+
+    @connector
+    def set_onclick_apply_add_song_fn(self, fn: Callable[[], None]) -> None:
+        self.__menu.set_onclick_apply_add_song_fn(fn)
+
     def refresh_menu(self) -> None:
         self.__menu.refresh()
 

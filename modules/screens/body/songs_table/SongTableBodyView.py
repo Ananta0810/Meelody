@@ -125,6 +125,10 @@ class SongTableBodyView(SmoothVerticalScrollArea, BaseView):
         self.clear_table()
         return [self.add_new_song(song) for song in songs]
 
+    def set_choosing_song(self, is_choosing: bool) -> None:
+        for song in self._songs:
+            song.set_is_choosing(is_choosing)
+
     def clear_table(self):
         self.__remove_songs_in_range(0, self.get_total_songs())
         self._songs.clear()

@@ -1,4 +1,4 @@
-from typing import Optional
+from typing import Optional, Callable
 
 from PyQt5.QtCore import Qt
 from PyQt5.QtGui import QFont
@@ -28,6 +28,9 @@ class SongTableHeaderView(QWidget, BaseView):
     __buttons_layout: QHBoxLayout
     __btn_download_songs: IconButton
     __btn_add_songs: IconButton
+
+    __onclick_add_song_fn: Callable[[], None]
+    __onclick_apply_add_song_fn: Callable[[], None]
 
     def __init__(self, parent: Optional["QWidget"] = None):
         super(SongTableHeaderView, self).__init__(parent)
@@ -70,10 +73,16 @@ class SongTableHeaderView(QWidget, BaseView):
         self.__buttons_layout.addSpacing(8)
 
         self.__btn_download_songs = self.__create_button(Icons.DOWNLOAD, Paddings.RELATIVE_50)
-        self.__btn_add_songs = self.__create_button(Icons.ADD, Paddings.RELATIVE_75)
-
         self.__buttons_layout.addWidget(self.__btn_download_songs)
+
+        self.__btn_add_songs = self.__create_button(Icons.ADD, Paddings.RELATIVE_75)
+        self.__btn_add_songs.clicked.connect(lambda: self.__onclick_add_song_fn())
         self.__buttons_layout.addWidget(self.__btn_add_songs)
+
+        self.__btn_apply_add_songs = self.__create_button(Icons.APPLY, Paddings.RELATIVE_75)
+        self.__btn_apply_add_songs.clicked.connect(lambda: self.__onclick_apply_add_song_fn())
+        self.__btn_apply_add_songs.hide()
+        self.__buttons_layout.addWidget(self.__btn_apply_add_songs)
 
         self.__info.addWidget(self.__label_track)
         self.__info.addStretch(1)
@@ -89,6 +98,7 @@ class SongTableHeaderView(QWidget, BaseView):
         self.__label_length.apply_light_mode()
         self.__btn_download_songs.apply_light_mode()
         self.__btn_add_songs.apply_light_mode()
+        self.__btn_apply_add_songs.apply_light_mode()
 
     @override
     def apply_dark_mode(self) -> None:
@@ -97,12 +107,23 @@ class SongTableHeaderView(QWidget, BaseView):
         self.__label_length.apply_dark_mode()
         self.__btn_download_songs.apply_dark_mode()
         self.__btn_add_songs.apply_dark_mode()
+        self.__btn_apply_add_songs.apply_dark_mode()
 
     @override
     def setText(self, track: str = "TRACK", artist: str = "ARTIST", length: str = "LENGTH") -> None:
         self.__label_track.setText(track)
         self.__label_artist.setText(artist)
         self.__label_length.setText(length)
+
+    def set_choosing_song(self, is_choosing: bool) -> None:
+        self.__btn_apply_add_songs.setVisible(is_choosing)
+        self.__btn_add_songs.setVisible(not is_choosing)
+
+    def set_onclick_add_song_fn(self, fn: Callable[[], None]) -> None:
+        self.__onclick_add_song_fn = fn
+
+    def set_onclick_apply_add_song_fn(self, fn: Callable[[], None]) -> None:
+        self.__onclick_apply_add_song_fn = fn
 
     @staticmethod
     def __create_label(font: QFont) -> LabelWithDefaultText:

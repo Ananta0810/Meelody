@@ -60,6 +60,19 @@ class SongTableView(QWidget, BaseView):
     def set_on_keypress(self, fn: Callable[[str], int]) -> None:
         self._body.set_on_keypress(fn)
 
+    @connector
+    def set_choosing_song(self, is_choosing: bool) -> None:
+        self._header.set_choosing_song(is_choosing)
+        self._body.set_choosing_song(is_choosing)
+
+    @connector
+    def set_onclick_add_song_fn(self, fn: Callable[[], None]) -> None:
+        self._header.set_onclick_add_song_fn(fn)
+
+    @connector
+    def set_onclick_apply_add_song_fn(self, fn: Callable[[], None]) -> None:
+        self._header.set_onclick_apply_add_song_fn(fn)
+
     def _add_song(self, song: Song) -> None:
         new_song: SongTableRowView = self._body.add_new_song(song)
         if self.__is_dark_mode:

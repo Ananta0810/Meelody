@@ -216,6 +216,12 @@ class SongTableRowView(BackgroundWidget, BaseView):
     def clear_info(self):
         self.set_cover(None)
 
+    def set_is_choosing(self, is_choosing: bool) -> None:
+        if is_choosing:
+            self.show_more()
+        else:
+            self.show_less()
+
     @staticmethod
     def __create_button(with_icon: AppIcon, padding=Paddings.RELATIVE_50) -> IconButton:
         return IconButton.build(
