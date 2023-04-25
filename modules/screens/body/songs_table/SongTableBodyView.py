@@ -42,6 +42,7 @@ class SongTableBodyView(SmoothVerticalScrollArea, BaseView):
         self.__menu.setAlignment(Qt.AlignTop)
         self.__menu.setSpacing(0)
         self.__menu.setContentsMargins(8, 0, 8, 8)
+        self.setVerticalScrollBarPolicy(Qt.ScrollBarPolicy.ScrollBarAlwaysOn)
 
     @override
     def apply_light_mode(self) -> None:
@@ -111,7 +112,6 @@ class SongTableBodyView(SmoothVerticalScrollArea, BaseView):
     def display_song_info_at_index(self, index: int, cover: bytes, title: str, artist: str, length: float) -> None:
         song = self.get_song_at(index)
         song.show()
-        song.show_less()
         song.set_cover(cover)
         song.set_title(title)
         song.set_artist(artist)
@@ -160,13 +160,14 @@ class SongTableBodyView(SmoothVerticalScrollArea, BaseView):
     def add_new_song(self, song: Song) -> SongTableRowView:
         songView = self.__addSong(song)
         index: int = len(self._songs)
-        self._songs.append(songView)
-        self.__menu.addWidget(songView)
         songView.set_onclick_play(lambda: self.__onclick_play_btn(index))
         songView.set_onclick_love(lambda: self.__onclick_love_btn(index))
         songView.set_onclick_add_to_playlist(lambda: self.__onclick_add_to_playlist_fn(index))
         songView.set_onclick_remove_from_playlist(lambda: self.__onclick_remove_from_playlist_fn(index))
         songView.enable_choosing(False)
+
+        self._songs.append(songView)
+        self.__menu.addWidget(songView)
         return songView
 
     def select_song_at(self, index: int) -> None:

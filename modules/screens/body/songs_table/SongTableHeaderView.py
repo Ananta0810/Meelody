@@ -64,6 +64,7 @@ class SongTableHeaderView(QWidget, BaseView):
         self.__label_length.setAlignment(Qt.AlignCenter)
 
         self.__buttons = QWidget()
+        self.__buttons.setMinimumWidth(185)
         self.__buttons_layout = QHBoxLayout(self.__buttons)
         self.__buttons_layout.setAlignment(Qt.AlignRight)
         self.__buttons_layout.setSpacing(8)
