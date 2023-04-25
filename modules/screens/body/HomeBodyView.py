@@ -132,5 +132,8 @@ class HomeBodyView(QScrollArea, BaseView):
     def load_playlist(self, playlist: Playlist) -> None:
         self.__current_playlist.load_playlist(playlist)
 
+    def set_playlist_info(self, playlist: Playlist) -> None:
+        self.__current_playlist.set_current_playlist_info(playlist)
+
     def load_choosing_playlist(self, playlist: Playlist) -> None:
         self.__current_playlist.load_choosing_playlist(playlist)

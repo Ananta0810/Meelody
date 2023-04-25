@@ -1,4 +1,5 @@
 from modules.helpers import LibraryHelper
+from modules.helpers.types.Bytes import Bytes
 from modules.helpers.types.Decorators import override
 from modules.models.AudioPlayer import AudioPlayer
 from modules.models.Playlist import Playlist
@@ -94,24 +95,40 @@ class MainWindowControl(MainWindowView, BaseControl):
 
     def __create_playlist(self, playlist: Playlist) -> None:
         card = PlaylistCardData(playlist.get_info())
-        card.set_ondelete(lambda: self.__delete_playlist(card))
-        card.set_onchange_title(lambda title: self.__update_playlist_name(card, title))
         card.set_onclick(lambda: self.__choose_playlist(playlist))
+        card.set_onchange_title(lambda title: self.__update_playlist_name(card, title))
+        card.set_onchange_cover(lambda cover_path: self.__update_playlist_cover(card, cover_path))
+        card.set_ondelete(lambda: self.__delete_playlist(card))
         self._body.add_playlist(card)
 
         playlist: Playlist = Playlist(info=playlist.get_info(), songs=playlist.get_songs())
         self.__playlists.append(playlist)
 
-    def __update_playlist_name(self, playlist: PlaylistCardData, title: str) -> None:
-        playlist.content().name = title
+    def __update_playlist_name(self, card: PlaylistCardData, name: str) -> None:
+        card.content().name = name
+        self.__update_current_playlist_info_if_updating(card)
         LibraryHelper.save_playlists(self.__playlists)
 
-    def __delete_playlist(self, playlist: PlaylistCardData) -> None:
-        self._body.delete_playlist(playlist)
-        item_to_delete = next(
-            playlist_ for playlist_ in self.__playlists if playlist_.get_info().id == playlist.content().id)
+    def __update_playlist_cover(self, card: PlaylistCardData, cover_path: str) -> None:
+        card.content().cover = Bytes.get_bytes_from_file(cover_path)
+        self._body.update_playlist(card)
+        self.__update_current_playlist_info_if_updating(card)
+        LibraryHelper.save_playlists(self.__playlists)
+
+    def __update_current_playlist_info_if_updating(self, card):
+        updating_playlist: Playlist = self.find_playlist_of(card)
+        if updating_playlist == self.__current_playlist:
+            self._body.set_playlist_info(self.__current_playlist)
+
+    def __delete_playlist(self, card: PlaylistCardData) -> None:
+        # TODO: Add behaviour if we delete current playing playlist.
+        self._body.delete_playlist(card)
+        item_to_delete: Playlist = self.find_playlist_of(card)
         self.__playlists.remove(item_to_delete)
         LibraryHelper.save_playlists(self.__playlists)
+
+    def find_playlist_of(self, card: PlaylistCardData) -> Playlist:
+        return next(playlist_ for playlist_ in self.__playlists if playlist_.get_info().id == card.content().id)
 
     def __start_select_songs_from_library_to_playlist(self) -> None:
         current_playlist_songs_ids: list[str] = [song.get_id() for song in

@@ -20,22 +20,26 @@ class PlaylistCardData:
         self.__content: PlaylistInformation = playlist
         self.__onclick: Callable[[], None] = None
         self.__ondelete: Callable[[], None] = None
+        self.__onchange_cover: Callable[[str], None] = None
         self.__onchange_title: Callable[[str], None] = None
         self.__default_cover: Cover = None
 
-    def onchange_title(self):
-        return self.__onchange_title
-
-    def content(self):
+    def content(self) -> PlaylistInformation:
         return self.__content
 
-    def ondelete(self):
+    def onchange_title(self) -> Callable[[str], None]:
+        return self.__onchange_title
+
+    def onchange_cover(self) -> Callable[[str], None]:
+        return self.__onchange_cover
+
+    def ondelete(self) -> Callable[[], None]:
         return self.__ondelete
 
-    def default_cover(self):
+    def default_cover(self) -> Cover:
         return self.__default_cover
 
-    def onclick(self):
+    def onclick(self) -> Callable[[], None]:
         return self.__onclick
 
     def set_onclick(self, fn: Callable[[], None]) -> None:
@@ -46,6 +50,9 @@ class PlaylistCardData:
 
     def set_onchange_title(self, fn: Callable[[str], None]) -> None:
         self.__onchange_title = fn
+
+    def set_onchange_cover(self, fn: Callable[[str], None]) -> None:
+        self.__onchange_cover = fn
 
 
 class PlaylistCarouselView(QScrollArea, BaseView):
@@ -177,8 +184,9 @@ class PlaylistCarouselView(QScrollArea, BaseView):
         playlist_view.set_label_default_text(content.name)
         playlist_view.set_label_text(content.name)
         playlist_view.set_onclick_fn(src.onclick())
-        playlist_view.set_ondelete(src.ondelete())
         playlist_view.set_onchange_title(src.onchange_title())
+        playlist_view.set_onchange_cover(src.onchange_cover())
+        playlist_view.set_ondelete(src.ondelete())
         playlist_view.set_cover(
             src.default_cover()
             if content.cover is None

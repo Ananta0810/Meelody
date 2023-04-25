@@ -2,7 +2,7 @@ from typing import Optional, Callable
 
 from PyQt5.QtCore import pyqtSignal, QEvent, Qt
 from PyQt5.QtGui import QFont, QCursor, QResizeEvent
-from PyQt5.QtWidgets import QWidget, QVBoxLayout, QHBoxLayout, QSizePolicy
+from PyQt5.QtWidgets import QWidget, QVBoxLayout, QHBoxLayout, QSizePolicy, QFileDialog
 
 from modules.helpers.types.Decorators import override
 from modules.models.view.Animation import Animation
@@ -92,18 +92,32 @@ class PlaylistCard(QWidget):
 class EditablePlaylistCard(PlaylistCard):
     _main_layout: QVBoxLayout
     _buttons: QHBoxLayout
-    _delete_btn: IconButton
+    __delete_btn: IconButton
     _cover: ImageViewer
     _label: DoubleClickedEditableLabel
 
     def __init__(self, font: QFont, parent: Optional["QWidget"] = None):
         super().__init__(font, parent)
+        self.__delete_fn = None
+        self.__onchange_cover_fn = None
 
     def _init_ui(self, font: QFont) -> None:
         self._main_layout = QVBoxLayout(self)
         self._main_layout.setContentsMargins(20, 20, 20, 20)
 
-        self._delete_btn = IconButton.build(
+        self.__edit_cover_btn = IconButton.build(
+            padding=Paddings.RELATIVE_50,
+            size=Icons.MEDIUM,
+            style=IconButtonStyle(
+                light_mode_icon=Icons.EDIT.with_color(Colors.PRIMARY),
+                light_mode_background=Backgrounds.CIRCLE_PRIMARY_10
+            ),
+        )
+        self.__edit_cover_btn.apply_light_mode()
+        self.__edit_cover_btn.clicked.connect(
+            lambda: self.__onclick_select_cover() if self.__onchange_cover_fn is not None else None)
+
+        self.__delete_btn = IconButton.build(
             padding=Paddings.RELATIVE_50,
             size=Icons.MEDIUM,
             style=IconButtonStyle(
@@ -111,12 +125,14 @@ class EditablePlaylistCard(PlaylistCard):
                 light_mode_background=Backgrounds.CIRCLE_DANGER_10
             ),
         )
-        self._delete_btn.apply_light_mode()
+        self.__delete_btn.apply_light_mode()
+        self.__delete_btn.clicked.connect(lambda: self.__delete_fn() if self.__delete_fn is not None else None)
 
         self._buttons = QHBoxLayout()
         self._buttons.setContentsMargins(0, 0, 0, 0)
         self._buttons.addStretch()
-        self._buttons.addWidget(self._delete_btn)
+        self._buttons.addWidget(self.__edit_cover_btn)
+        self._buttons.addWidget(self.__delete_btn)
 
         self._cover = ImageViewer(self)
         self._label = DoubleClickedEditableLabel.build(
@@ -131,8 +147,16 @@ class EditablePlaylistCard(PlaylistCard):
         self._main_layout.addStretch()
         self._main_layout.addWidget(self._label)
 
+    def set_onchange_cover(self, fn: Callable[[str], None]) -> None:
+        self.__onchange_cover_fn = fn
+
     def set_ondelete(self, fn: Callable[[], None]) -> None:
-        self._delete_btn.clicked.connect(lambda: fn())
+        self.__delete_fn = fn
 
     def set_onchange_title(self, fn: Callable[[str], None]) -> None:
         self._label.set_onchange_text(fn)
+
+    def __onclick_select_cover(self) -> None:
+        path = QFileDialog.getOpenFileName(self, filter="JPEG, PNG (*.JPEG *.jpeg *.JPG *.jpg *.JPE *.jpe)")[0]
+        if path is not None and path != '':
+            self.__onchange_cover_fn(path)
