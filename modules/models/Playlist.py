@@ -1,5 +1,6 @@
 from modules.models.PlaylistInformation import PlaylistInformation
 from modules.models.PlaylistSongs import PlaylistSongs
+from modules.models.Song import Song
 
 
 class Playlist:
@@ -32,3 +33,37 @@ class Playlist:
         Check if two playlists are the same one
         """
         return self.__info == other.__info
+
+
+class PlaylistJson:
+    __info: PlaylistInformation
+    __ids: list[str]
+
+    def __init__(self, info: PlaylistInformation, ids: list[str]):
+        self.__info = info
+        self.__ids = ids
+
+    @staticmethod
+    def from_playlist(playlist: Playlist) -> 'PlaylistJson':
+        ids: list[str] = [song.get_id() for song in playlist.get_songs().get_songs()]
+        return PlaylistJson(info=playlist.get_info(), ids=ids)
+
+    @staticmethod
+    def from_json(json: dict) -> 'PlaylistJson':
+        info = PlaylistInformation(name=json['__info']['name'])
+        info.id = json['__info']['id']
+        return PlaylistJson(info, json['__ids'])
+
+    def to_playlist(self, songs: list[Song]) -> Playlist:
+        ids = set(self.__ids)
+        return Playlist(info=self.__info, songs=PlaylistSongs(songs=[song for song in songs if song.get_id() in ids]))
+
+    def to_json(self) -> dict:
+        return {
+            '__info': {
+                'name': self.__info.name,
+                'id': self.__info.id,
+            },
+            '__ids': self.__ids
+        }
+

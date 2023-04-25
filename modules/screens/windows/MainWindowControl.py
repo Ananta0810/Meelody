@@ -14,7 +14,7 @@ from modules.statics.view.Material import Images
 class MainWindowControl(MainWindowView, BaseControl):
     __library: Playlist
     __playlist: Playlist
-    __playlists: list[PlaylistInformation]
+    __playlists: list[Playlist]
     __player: AudioPlayer = AudioPlayer()
 
     def __init__(self) -> None:
@@ -47,14 +47,14 @@ class MainWindowControl(MainWindowView, BaseControl):
         self.__choose_library()
         self._music_player.load_playing_song()
 
-    def load_playlists(self, playlists: list[PlaylistInformation]) -> None:
+    def load_playlists(self, playlists: list[Playlist]) -> None:
         self.__playlists = playlists
         for playlist in playlists:
-            playlist.cover = playlist.cover or Images.DEFAULT_PLAYLIST_COVER
-            playlist = PlaylistCardData(playlist, onclick=None)
-            playlist.set_ondelete(lambda: self.__delete_playlist(playlist))
-            playlist.set_onchange_title(lambda title: self.__update_playlist_name(playlist, title))
-            self._body.add_playlist(playlist)
+            playlist.get_info().cover = playlist.get_info().cover or Images.DEFAULT_PLAYLIST_COVER
+            card = PlaylistCardData(playlist.get_info(), onclick=None)
+            card.set_ondelete(lambda: self.__delete_playlist(card))
+            card.set_onchange_title(lambda title: self.__update_playlist_name(card, title))
+            self._body.add_playlist(card)
 
     def __choose_library(self) -> None:
         self.__load_playlist(self.__library)
@@ -65,13 +65,14 @@ class MainWindowControl(MainWindowView, BaseControl):
         self.__load_playlist(playlist)
 
     def __create_empty_playlist(self) -> None:
-        content = PlaylistInformation(name="Untitled", cover=Images.DEFAULT_PLAYLIST_COVER)
-        playlist = PlaylistCardData(content, onclick=None)
-        playlist.set_ondelete(lambda: self._body.delete_playlist(playlist))
-        playlist.set_onchange_title(lambda title: self.__update_playlist_name(playlist, title))
+        info = PlaylistInformation(name="Untitled", cover=Images.DEFAULT_PLAYLIST_COVER)
+        card = PlaylistCardData(info, onclick=None)
+        card.set_ondelete(lambda: self._body.delete_playlist(card))
+        card.set_onchange_title(lambda title: self.__update_playlist_name(card, title))
+        self._body.add_playlist(card)
 
-        self._body.add_playlist(playlist)
-        self.__playlists.append(playlist.content)
+        playlist: Playlist = Playlist(info=info, songs=PlaylistSongs())
+        self.__playlists.append(playlist)
         LibraryHelper.save_playlists(self.__playlists)
 
     def __update_playlist_name(self, playlist: PlaylistCardData, title: str) -> None:

@@ -3,6 +3,7 @@ from logging import getLogger
 
 from modules.helpers.Files import Files
 from modules.helpers.Jsons import Jsons
+from modules.models.Playlist import Playlist, PlaylistJson
 from modules.models.PlaylistInformation import PlaylistInformation
 from modules.models.PlaylistSongs import PlaylistSongs
 from modules.models.Song import Song
@@ -54,29 +55,30 @@ def update_love_state_of(song: Song) -> None:
     write_songs_to_file(library_path, playlist.get_songs())
 
 
-def load_playlists() -> list[PlaylistInformation]:
-    return get_library_playlists_from_json(playlists_path) \
+def load_playlists(songs: list[Song]) -> list[Playlist]:
+    return get_library_playlists_from_json(playlists_path, songs) \
         if os.path.exists(playlists_path) \
         else _create_empty_playlist(playlists_path)
 
 
-def _create_empty_playlist(file_path: str) -> list[PlaylistInformation]:
+def _create_empty_playlist(file_path: str) -> list[Playlist]:
     write_playlists_to_file([], file_path)
     return []
 
 
-def write_playlists_to_file(playlists, file_path) -> None:
-    data = [dict_of(playlist) for playlist in playlists]
+def write_playlists_to_file(playlists: list[Playlist], file_path: str) -> None:
+    playlist_jsons: list[PlaylistJson] = [PlaylistJson.from_playlist(playlist) for playlist in playlists]
+    data = [playlist.to_json() for playlist in playlist_jsons]
     Jsons.write_to_file(file_path, data)
 
 
-def save_playlists(playlists) -> None:
+def save_playlists(playlists: list[Playlist]) -> None:
     write_playlists_to_file(playlists, playlists_path)
 
 
-def get_library_playlists_from_json(file_path) -> list[PlaylistInformation]:
+def get_library_playlists_from_json(file_path: str, songs: list[Song]) -> list[Playlist]:
     playlists: list[dict] = Jsons.read_from_file(file_path) or []
-    return [PlaylistInformation.from_json(playlist) for playlist in playlists]
+    return [PlaylistJson.from_json(playlist).to_playlist(songs) for playlist in playlists]
 
 
 def dict_of(obj: any) -> dict:

@@ -171,6 +171,8 @@ class PlaylistCarouselView(QScrollArea, BaseView):
 
     @staticmethod
     def __create_user_playlist_with_cover(cover_byte: bytes) -> EditablePlaylistCard:
+        if cover_byte is None:
+            raise Exception("Cover must be non-null.")
         playlist = EditablePlaylistCard(FontBuilder.build(size=16, bold=True))
         playlist.setFixedSize(256, 320)
         playlist.setCursor(Cursors.HAND)
