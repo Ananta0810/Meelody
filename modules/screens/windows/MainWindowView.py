@@ -52,5 +52,5 @@ class MainWindowView(FramelessWindow, BaseView):
         self._music_player.setStyleSheet("QWidget#musicPlayer{border-top: 1px solid #202020};border-radius:0px")
         self._music_player.apply_dark_mode()
 
-    def set_default_playlist_cover(self, cover: bytes):
+    def _set_default_playlist_cover(self, cover: bytes):
         self._body.set_default_playlist_cover(cover)

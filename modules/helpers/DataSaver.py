@@ -4,12 +4,18 @@ from logging import getLogger
 
 from modules.helpers.Files import Files
 from modules.helpers.Jsons import Jsons
+from modules.models.AppSettings import AppSettings
 from modules.models.Playlist import Playlist, PlaylistJson
 from modules.models.PlaylistSongs import PlaylistSongs
 from modules.models.Song import Song
 
 library_path: str = "library/library.json"
 playlists_path: str = "library/playlists.json"
+settings_path: str = "configuration/settings.json"
+
+"""
+    For songs
+"""
 
 
 def load_songs_from_dir(directory: str, with_extension: str) -> PlaylistSongs:
@@ -52,6 +58,11 @@ def update_love_state_of(song: Song) -> None:
     write_songs_to_file(library_path, playlist.get_songs())
 
 
+"""
+    For playlists
+"""
+
+
 def load_playlists(songs: list[Song]) -> list[Playlist]:
     return get_library_playlists_from_json(playlists_path, songs) \
         if os.path.exists(playlists_path) \
@@ -80,3 +91,39 @@ def get_library_playlists_from_json(file_path: str, songs: list[Song]) -> list[P
     except KeyError:
         print("Extract song from json failed.")
         return []
+
+
+"""
+    For appsettings
+"""
+
+
+def load_settings() -> AppSettings:
+    return _get_settings_from_json(settings_path) \
+        if os.path.exists(settings_path) \
+        else _create_empty_settings(settings_path)
+
+
+def _create_empty_settings(file_path: str) -> AppSettings:
+    settings = AppSettings()
+    _write_settings_to_file(settings, file_path)
+    return settings
+
+
+def _write_settings_to_file(settings: AppSettings, file_path: str) -> None:
+    Jsons.write_to_file(file_path, settings.to_json())
+
+
+def save_settings(settings: AppSettings) -> None:
+    _write_settings_to_file(settings, settings_path)
+
+
+def _get_settings_from_json(file_path: str) -> AppSettings:
+    json: dict = Jsons.read_from_file(file_path) or {}
+    try:
+        return AppSettings.from_json(json)
+    except KeyError:
+        print("Extract song from json failed.")
+        return AppSettings()
+
+

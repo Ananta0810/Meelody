@@ -1,4 +1,5 @@
-from modules.helpers import LibraryHelper
+from modules.helpers import DataSaver
+from modules.models.AppSettings import AppSettings
 from modules.models.Playlist import Playlist
 from modules.models.PlaylistSongs import PlaylistSongs
 from modules.screens.windows.MainWindowControl import MainWindowControl
@@ -19,6 +20,8 @@ class Application:
         self.window.show()
 
     def load_playlist(self):
-        songs: PlaylistSongs = LibraryHelper.load_songs_from_dir("library", with_extension="mp3")
+        songs: PlaylistSongs = DataSaver.load_songs_from_dir("library", with_extension="mp3")
+        settings: AppSettings = DataSaver.load_settings()
+        self.window.set_appsettings(settings)
         self.window.load_library(Playlist.create(name="Library", songs=songs, cover=Images.DEFAULT_PLAYLIST_COVER))
-        self.window.load_playlists(LibraryHelper.load_playlists(songs.get_songs()))
+        self.window.load_playlists(DataSaver.load_playlists(songs.get_songs()))

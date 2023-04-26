@@ -8,6 +8,17 @@ R = TypeVar('R')
 
 class Lists:
     @staticmethod
+    def index_of(
+        condition: Callable[[Generic[T]], bool],
+        collection: list[Generic[T]],
+        index_if_not_found: int = -1
+    ) -> int:
+        for index, item in enumerate(collection):
+            if condition(item):
+                return index
+        return index_if_not_found
+
+    @staticmethod
     def move_element(list_: list[Generic[T]], from_index: int, to_index: int) -> None:
         start: int = from_index
         end: int = to_index

@@ -9,17 +9,17 @@ from modules.models.PlaylistSongs import PlaylistSongs
 from modules.models.Song import Song
 from modules.screens.AbstractScreen import BaseControl
 from modules.screens.music_bar.MusicPlayerBarView import MusicPlayerBarView
-from modules.statics.view.Material import Images
 
 
 class MusicPlayerControl(MusicPlayerBarView, BaseControl):
     __player: AudioPlayer = AudioPlayer.get_instance()
     __thread_id: int = 0
 
-    __onclick_play_fn: Callable[[int], None]
-    __onclick_pause_fn: Callable[[int], None]
-    __on_shuffle: Callable[[], None]
-    __on_love: Callable[[Song], None]
+    __onclick_play_fn: Callable[[int], None] = None
+    __onclick_pause_fn: Callable[[int], None] = None
+    __on_shuffle: Callable[[bool], None] = None
+    __on_loop: Callable[[bool], None] = None
+    __on_love: Callable[[Song], None] = None
 
     def __init__(self):
         super().__init__()
@@ -46,8 +46,12 @@ class MusicPlayerControl(MusicPlayerBarView, BaseControl):
         self.__onclick_pause_fn = fn
 
     @connector
-    def set_onclick_shuffle(self, fn: Callable[[], None]) -> None:
+    def set_onclick_shuffle(self, fn: Callable[[bool], None]) -> None:
         self.__on_shuffle = fn
+
+    @connector
+    def set_onclick_loop(self, fn: Callable[[bool], None]) -> None:
+        self.__on_loop = fn
 
     @connector
     def set_onclick_love(self, fn: Callable[[Song], None]) -> None:
@@ -115,7 +119,8 @@ class MusicPlayerControl(MusicPlayerBarView, BaseControl):
 
     @handler
     def change_loop_state(self) -> None:
-        pass
+        if self.__on_loop is not None:
+            self.__on_loop(self.is_looping())
 
     @handler
     def change_shuffle_state(self) -> None:
@@ -133,7 +138,7 @@ class MusicPlayerControl(MusicPlayerBarView, BaseControl):
         self.__player.set_current_song_index(new_index)
 
         if self.__on_shuffle is not None:
-            self.__on_shuffle()
+            self.__on_shuffle(self.is_shuffle())
 
     @handler
     def change_love_state(self) -> None:

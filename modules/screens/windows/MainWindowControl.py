@@ -1,6 +1,10 @@
-from modules.helpers import LibraryHelper
+from typing import Callable
+
+from modules.helpers import DataSaver
 from modules.helpers.types.Bytes import Bytes
 from modules.helpers.types.Decorators import override
+from modules.helpers.types.Lists import Lists
+from modules.models.AppSettings import AppSettings
 from modules.models.AudioPlayer import AudioPlayer
 from modules.models.Playlist import Playlist
 from modules.models.PlaylistInformation import PlaylistInformation
@@ -16,13 +20,14 @@ class MainWindowControl(MainWindowView, BaseControl):
     __library: Playlist
     __displaying_playlist: Playlist = None
     __playing_playlist: Playlist = None
+    __settings: AppSettings = None
     __playlists: list[Playlist] = []
     __player: AudioPlayer = AudioPlayer()
     __selecting_playlist_songs: set[int] = set()
 
     def __init__(self) -> None:
         super().__init__()
-        self.set_default_playlist_cover(Images.DEFAULT_PLAYLIST_COVER)
+        self._set_default_playlist_cover(Images.DEFAULT_PLAYLIST_COVER)
         self.connect_signals()
         self.set_is_playing(False)
 
@@ -30,7 +35,8 @@ class MainWindowControl(MainWindowView, BaseControl):
     def connect_signals(self) -> None:
         self._music_player.set_onclick_play(lambda index: self.__play_song_from_player_at(index))
         self._music_player.set_onclick_pause(lambda index: self.set_is_playing(False))
-        self._music_player.set_onclick_shuffle(lambda: self._body.refresh_menu())
+        self._music_player.set_onclick_shuffle(lambda shuffled: self.__shuffle(shuffled))
+        self._music_player.set_onclick_loop(lambda looping: self.__loop(looping))
         self._music_player.set_onclick_love(lambda song: self.__love_song_from_player(song))
 
         self._body.set_onclick_play(lambda index: self.__play_song_from_menu_at(index))
@@ -51,6 +57,9 @@ class MainWindowControl(MainWindowView, BaseControl):
         self.set_onclick_prev_on_tray(lambda: self._music_player.play_previous_song())
         self.set_onclick_next_on_tray(lambda: self._music_player.play_next_song())
 
+    def set_appsettings(self, settings: AppSettings) -> None:
+        self.__settings = settings
+
     def load_library(self, playlist: Playlist) -> None:
         self.__library = playlist
         self.__show_library_on_menu_and_player()
@@ -70,7 +79,9 @@ class MainWindowControl(MainWindowView, BaseControl):
         self._body.enable_add_new_song(False)
 
         favourite_songs: list[Song] = list(filter(lambda song: song.is_loved(), self.__library.get_songs().get_songs()))
-        playlist = Playlist.create(name="Favourites", songs=PlaylistSongs(favourite_songs))
+        playlist = Playlist.create(name="Favourites",
+                                   songs=PlaylistSongs(favourite_songs),
+                                   cover=Images.FAVOURITES_PLAYLIST_COVER)
         self.__select_playlist(playlist)
 
     def __choose_playlist(self, playlist: Playlist) -> None:
@@ -104,13 +115,13 @@ class MainWindowControl(MainWindowView, BaseControl):
     def __update_playlist_name(self, card: PlaylistCardData, name: str) -> None:
         card.content().name = name
         self.__update_display_playlist_info_if_updating(card)
-        LibraryHelper.save_playlists(self.__playlists)
+        DataSaver.save_playlists(self.__playlists)
 
     def __update_playlist_cover(self, card: PlaylistCardData, cover_path: str) -> None:
         card.content().cover = Bytes.get_bytes_from_file(cover_path)
         self._body.update_playlist(card)
         self.__update_display_playlist_info_if_updating(card)
-        LibraryHelper.save_playlists(self.__playlists)
+        DataSaver.save_playlists(self.__playlists)
 
     def __update_display_playlist_info_if_updating(self, card):
         updating_playlist: Playlist = self.find_playlist_of(card)
@@ -129,12 +140,17 @@ class MainWindowControl(MainWindowView, BaseControl):
             self.__show_library_on_menu_and_player()
             self._music_player.stop_current_song()
 
-        LibraryHelper.save_playlists(self.__playlists)
+        DataSaver.save_playlists(self.__playlists)
 
     def __show_library_on_menu_and_player(self):
         self.__choose_library()
         self._music_player.load_playlist_songs(self.__displaying_playlist.get_songs())
-        self._music_player.load_playing_song()
+        song_index = Lists.index_of(
+            condition=lambda song: song.get_id() == self.__settings.playing_song_id,
+            collection=self.__displaying_playlist.get_songs().get_songs(),
+            index_if_not_found=0
+        )
+        self._music_player.load_playing_song(song_index)
 
     def find_playlist_of(self, card: PlaylistCardData) -> Playlist:
         return next(playlist_ for playlist_ in self.__playlists if playlist_.get_info().id == card.content().id)
@@ -164,7 +180,7 @@ class MainWindowControl(MainWindowView, BaseControl):
 
         self.__displaying_playlist.get_songs().get_songs().clear()
         self.__displaying_playlist.get_songs().insertAll(playlist_songs)
-        LibraryHelper.save_playlists(self.__playlists)
+        DataSaver.save_playlists(self.__playlists)
         self.__choose_playlist(self.__displaying_playlist)
 
     def __add_song_from_menu_at(self, index: int) -> None:
@@ -175,7 +191,7 @@ class MainWindowControl(MainWindowView, BaseControl):
 
     def __love_song_from_player(self, song: Song) -> None:
         self._body.love_song(song.is_loved())
-        LibraryHelper.update_love_state_of(song)
+        DataSaver.update_love_state_of(song)
 
     def __love_song_from_menu(self, index: int) -> None:
         if self.__player.get_current_song_index() == index:
@@ -183,17 +199,39 @@ class MainWindowControl(MainWindowView, BaseControl):
             return
         song = self.__displaying_playlist.get_songs().get_song_at(index)
         song.reverse_love_state()
-        LibraryHelper.update_love_state_of(self.__player.get_songs()[index])
+        DataSaver.update_love_state_of(self.__player.get_songs()[index])
 
     def __play_song_from_player_at(self, index: int) -> None:
+        if self.__playing_playlist is None:
+            self.__playing_playlist = self.__displaying_playlist
+
         self._body.select_song_at(index)
         self.set_is_playing(True)
 
+        self.__settings.set_playing_song_id(self.__song_at(index).get_id())
+        DataSaver.save_settings(self.__settings)
+
     def __play_song_from_menu_at(self, index: int) -> None:
-        self._music_player.load_playlist_songs(self.__displaying_playlist.get_songs())
         self.__playing_playlist = self.__displaying_playlist
+
+        self._music_player.load_playlist_songs(self.__displaying_playlist.get_songs())
         self._music_player.play_song_at(index)
         self.set_is_playing(True)
 
+        self.__settings.set_playing_song_id(self.__song_at(index).get_id())
+        DataSaver.save_settings(self.__settings)
+
+    def __shuffle(self, shuffled: bool) -> None:
+        self._body.refresh_menu()
+        self.__settings.set_is_shuffle(shuffled)
+        DataSaver.save_settings(self.__settings)
+
+    def __loop(self, looping: bool) -> None:
+        self.__settings.set_is_looping(looping)
+        DataSaver.save_settings(self.__settings)
+
     def __go_to_song_that_title_start_with(self, title: str) -> int:
         return self.__displaying_playlist.get_songs().find_nearest_song_index_by_title(title)
+
+    def __song_at(self, index: int) -> Song:
+        return self.__playing_playlist.get_songs().get_song_at(index)
