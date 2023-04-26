@@ -8,7 +8,8 @@ from modules.screens.Application import Application
 def run_application():
     app = QApplication(argv)
     application = Application()
-    Timers.measure(lambda: application.run(), message="Time to start application: {}")
+    time_to_run = Timers.measure(lambda: application.run())
+    print(f"Time to start application: {time_to_run}")
     exit(app.exec_())
 
 

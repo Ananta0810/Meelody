@@ -1,7 +1,9 @@
+import sys
 from threading import Thread
 from time import sleep
 from typing import Callable
 
+from modules.helpers import Timers
 from modules.helpers.types.Decorators import handler, override, connector
 from modules.helpers.types.Numbers import Numbers
 from modules.models.AudioPlayer import AudioPlayer
@@ -193,11 +195,18 @@ class MusicPlayerControl(MusicPlayerBarView, BaseControl):
     def __startPlayer(self) -> None:
         thread_id: int = self.__thread_id
         interval: float = self.__calculate_refresh_ui_interval()
-        self.set_is_playing(True)
+        if not self.is_playing():
+            self.set_is_playing(True)
         self.__player.play()
 
+        played_duration = Timers.measure(lambda: self.do_after_played(interval, thread_id))
+        if played_duration < interval * 2:
+            self.play_song_at_time(self.__player.get_playing_time())
+
+    def do_after_played(self, interval, thread_id):
         while thread_id == self.__thread_id and self.__player.is_playing():
             self.__do_while_playing_music()
+            sys.stdout.flush()
             sleep(interval)
 
         playing_this_song: bool = thread_id == self.__thread_id

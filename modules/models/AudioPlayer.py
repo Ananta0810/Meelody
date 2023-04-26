@@ -131,3 +131,4 @@ class AudioPlayer(metaclass=SingletonMeta):
         if mixer.get_init() is None:
             return False
         return mixer.music.get_busy()
+
