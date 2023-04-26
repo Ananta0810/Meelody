@@ -65,6 +65,10 @@ class SongTableView(QWidget, BaseView):
         self._body.set_onclick_remove_from_playlist(fn)
 
     @connector
+    def set_on_doubleclick_cover_from_playlist(self, fn: Callable[[int], None]) -> None:
+        self._body.set_on_doubleclick_cover_from_playlist(fn)
+
+    @connector
     def set_on_keypress(self, fn: Callable[[str], int]) -> None:
         self._body.set_on_keypress(fn)
 

@@ -1,4 +1,3 @@
-import logging
 import os.path
 from logging import getLogger
 
@@ -31,11 +30,11 @@ def get_songs_from_files(directory: str, file_path: str, with_extension: str) ->
     for file in files:
         playlist.insert(Song.from_file(location=file))
     songs: list[Song] = playlist.get_songs()
-    write_songs_to_file(file_path, songs)
+    save_songs(songs, file_path)
     return playlist
 
 
-def write_songs_to_file(file_path: str, songs: list[Song]) -> None:
+def save_songs(songs: list[Song], file_path: str = library_path) -> None:
     Jsons.write_to_file(file_path, [song.to_dict() for song in songs])
 
 
@@ -55,7 +54,7 @@ def update_love_state_of(song: Song) -> None:
     playlist = get_library_songs_from_json(library_path)
     saved_song = playlist.get_song_at(playlist.index_of(song))
     saved_song.set_love_state(song.is_loved())
-    write_songs_to_file(library_path, playlist.get_songs())
+    save_songs(playlist.get_songs(), library_path)
 
 
 """
@@ -125,5 +124,3 @@ def _get_settings_from_json(file_path: str) -> AppSettings:
     except KeyError:
         print("Extract song from json failed.")
         return AppSettings()
-
-

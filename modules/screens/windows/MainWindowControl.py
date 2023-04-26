@@ -1,4 +1,4 @@
-from typing import Callable
+from PyQt5.QtWidgets import QFileDialog
 
 from modules.helpers import DataSaver
 from modules.helpers.types.Bytes import Bytes
@@ -43,6 +43,7 @@ class MainWindowControl(MainWindowView, BaseControl):
         self._body.set_onclick_love(lambda index: self.__love_song_from_menu(index))
         self._body.set_onclick_add_to_playlist(lambda index: self.__add_song_from_menu_at(index))
         self._body.set_onclick_remove_from_playlist(lambda index: self.__remove_song_from_menu_at(index))
+        self._body.set_on_doubleclick_cover_from_playlist(lambda index: self.__select_cover_for_song_at(index))
         self._body.set_onclick_select_songs_fn(lambda: self.__start_select_songs_from_library_to_playlist())
         self._body.set_onclick_apply_select_songs_fn(lambda: self.__finish_select_songs_from_library_to_playlist())
         self._body.set_on_keypress(lambda key: self.__go_to_song_that_title_start_with(key))
@@ -195,6 +196,15 @@ class MainWindowControl(MainWindowView, BaseControl):
 
     def __remove_song_from_menu_at(self, index: int) -> None:
         self.__selecting_playlist_songs.remove(index)
+
+    def __select_cover_for_song_at(self, index: int) -> None:
+        path = QFileDialog.getOpenFileName(self, filter="JPEG, PNG (*.JPEG *.jpeg *.JPG *.jpg *.JPE *.jpe)")[0]
+        if path is not None and path != '':
+            byte_data: bytes = Bytes.get_bytes_from_file(path)
+            song = self.__displaying_playlist.get_songs().get_song_at(index)
+            song.set_cover(byte_data)
+            self.__choose_playlist(self.__displaying_playlist)
+            DataSaver.save_songs(self.__library.get_songs().get_songs())
 
     def __love_song_from_player(self, song: Song) -> None:
         self._body.love_song(song.is_loved())

@@ -134,6 +134,8 @@ class Song:
         change_successfully: bool = AudioExtractor.load_from(self.__location).set_cover(cover)
         if change_successfully:
             self.__cover = cover
+        else:
+            print("Save cover failed.")
         return change_successfully
 
     def get_id(self) -> str:

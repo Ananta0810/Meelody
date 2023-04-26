@@ -61,6 +61,10 @@ class CurrentPlaylistView(QWidget, BaseView):
         self.__menu.set_onclick_remove_from_playlist(fn)
 
     @connector
+    def set_on_doubleclick_cover_from_playlist(self, fn: Callable[[int], None]) -> None:
+        self.__menu.set_on_doubleclick_cover_from_playlist(fn)
+
+    @connector
     def set_on_keypress(self, fn: Callable[[str], int]) -> None:
         self.__menu.set_on_keypress(fn)
 

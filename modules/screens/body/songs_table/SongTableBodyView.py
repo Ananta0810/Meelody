@@ -16,11 +16,12 @@ class SongTableBodyView(SmoothVerticalScrollArea, BaseView):
     __inner: QWidget
     __menu: QVBoxLayout
 
-    __onclick_button_fn: Callable[[int], None]
-    __onclick_love_fn: Callable[[int], None]
-    __onclick_add_to_playlist_fn: Callable[[int], None]
-    __onclick_remove_from_playlist_fn: Callable[[int], None]
-    __on_keypress_fn: Callable[[str], int]
+    __onclick_button_fn: Callable[[int], None] = None
+    __onclick_love_fn: Callable[[int], None] = None
+    __onclick_add_to_playlist_fn: Callable[[int], None] = None
+    __onclick_remove_from_playlist_fn: Callable[[int], None] = None
+    __on_doubleclick_cover_from_playlist_fn: Callable[[int], None] = None
+    __on_keypress_fn: Callable[[str], int] = None
 
     def __init__(self, parent: Optional["QWidget"] = None):
         super(SongTableBodyView, self).__init__(parent)
@@ -72,13 +73,19 @@ class SongTableBodyView(SmoothVerticalScrollArea, BaseView):
     def set_onclick_add_to_playlist(self, fn: Callable[[int], None]) -> None:
         self.__onclick_add_to_playlist_fn = fn
         for index, song in enumerate(self._songs):
-            song.set_onclick_play(lambda: self.__onclick_add_to_playlist_fn(index))
+            song.set_onclick_add_to_playlist(lambda: self.__onclick_add_to_playlist_fn(index))
 
     @connector
     def set_onclick_remove_from_playlist(self, fn: Callable[[int], None]) -> None:
         self.__onclick_remove_from_playlist_fn = fn
         for index, song in enumerate(self._songs):
-            song.set_onclick_love(lambda: self.__onclick_remove_from_playlist_fn(index))
+            song.set_onclick_remove_from_playlist(lambda: self.__onclick_remove_from_playlist_fn(index))
+
+    @connector
+    def set_on_doubleclick_cover_from_playlist(self, fn: Callable[[int], None]) -> None:
+        self.__on_doubleclick_cover_from_playlist_fn = fn
+        for index, song in enumerate(self._songs):
+            song.set_on_doubleclick_cover(lambda: self.__on_doubleclick_cover_from_playlist_fn(index))
 
     def __onclick_play_btn(self, index: int) -> None:
         self.select_song_at(index)
@@ -164,6 +171,8 @@ class SongTableBodyView(SmoothVerticalScrollArea, BaseView):
         songView.set_onclick_love(lambda: self.__onclick_love_btn(index))
         songView.set_onclick_add_to_playlist(lambda: self.__onclick_add_to_playlist_fn(index))
         songView.set_onclick_remove_from_playlist(lambda: self.__onclick_remove_from_playlist_fn(index))
+        songView.set_on_doubleclick_cover(lambda: self.__on_doubleclick_cover_from_playlist_fn(index))
+
         songView.enable_choosing(False)
 
         self._songs.append(songView)

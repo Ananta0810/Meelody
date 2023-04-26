@@ -12,11 +12,12 @@ from modules.models.view.builder.IconButtonStyle import IconButtonStyle
 from modules.models.view.builder.TextStyle import TextStyle
 from modules.screens.AbstractScreen import BaseView
 from modules.statics.view.Material import Icons, Paddings, Colors, Backgrounds, ColorBoxes
-from modules.widgets.Icons import AppIcon
-from modules.widgets.Widgets import BackgroundWidget
-from modules.widgets.Cover import Cover, CoverProp
-from modules.widgets.Labels import LabelWithDefaultText
+from modules.widgets import Observers
 from modules.widgets.Buttons import ToggleIconButton, IconButton
+from modules.widgets.Cover import Cover, CoverProp
+from modules.widgets.Icons import AppIcon
+from modules.widgets.Labels import LabelWithDefaultText
+from modules.widgets.Widgets import BackgroundWidget
 
 
 class SongTableRowView(BackgroundWidget, BaseView):
@@ -35,6 +36,7 @@ class SongTableRowView(BackgroundWidget, BaseView):
     __btn_add_to_playlist: IconButton
     __btn_delete: IconButton
     __btn_close: IconButton
+    __cover_observer: Observers.ClickObserver
 
     def __init__(self, parent: Optional["QWidget"] = None):
         super(SongTableRowView, self).__init__(parent)
@@ -67,6 +69,7 @@ class SongTableRowView(BackgroundWidget, BaseView):
 
         self.__cover = Cover(self)
         self.__cover.setFixedSize(64, 64)
+        self.__cover_observer = Observers.observe_click_of(self.__cover)
 
         self.__label_title = self.__create_label(with_font=font, light_mode_text_color=ColorBoxes.BLACK)
         self.__label_title.setFixedWidth(188)
@@ -161,6 +164,9 @@ class SongTableRowView(BackgroundWidget, BaseView):
 
     def set_onclick_remove_from_playlist(self, fn: callable) -> None:
         self.__btn_remove_from_playlist.clicked.connect(lambda: self.__clicked_remove_btn(fn))
+
+    def set_on_doubleclick_cover(self, fn: callable) -> None:
+        self.__cover_observer.set_on_doubleclick_fn(fn)
 
     def __clicked_add_btn(self, fn: callable) -> None:
         self.__btn_remove_from_playlist.show()
