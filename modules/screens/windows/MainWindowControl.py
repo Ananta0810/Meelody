@@ -143,6 +143,7 @@ class MainWindowControl(MainWindowView, BaseControl):
         DataSaver.save_playlists(self.__playlists)
 
     def __show_library_on_menu_and_player(self):
+        self.__apply_settings_to_music_player_and_menu()
         self.__choose_library()
         self._music_player.load_playlist_songs(self.__displaying_playlist.get_songs())
         song_index = Lists.index_of(
@@ -151,6 +152,12 @@ class MainWindowControl(MainWindowView, BaseControl):
             index_if_not_found=0
         )
         self._music_player.load_playing_song(song_index)
+
+    def __apply_settings_to_music_player_and_menu(self):
+        self._music_player.set_shuffle(self.__settings.is_shuffle)
+        self._music_player.set_loop(self.__settings.is_looping)
+        if self.__settings.is_shuffle:
+            self.__library.get_songs().shuffle()
 
     def find_playlist_of(self, card: PlaylistCardData) -> Playlist:
         return next(playlist_ for playlist_ in self.__playlists if playlist_.get_info().id == card.content().id)

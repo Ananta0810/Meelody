@@ -33,7 +33,7 @@ class MusicPlayerControl(MusicPlayerBarView, BaseControl):
         self._set_onclick_next_song(lambda: self.play_next_song())
         self._set_onchange_playing_time(lambda time: self.play_song_at_time(time))
         self._set_onclick_loop(lambda: self.change_loop_state())
-        self._set_onclick_shuffle(lambda: self.change_shuffle_state())
+        self._set_onclick_shuffle(lambda shuffle: self.change_shuffle_state(shuffle))
         self._set_onclick_love(lambda: self.change_love_state())
         self._set_onchange_volume(lambda volume: self.change_volume(volume))
 
@@ -123,8 +123,8 @@ class MusicPlayerControl(MusicPlayerBarView, BaseControl):
             self.__on_loop(self.is_looping())
 
     @handler
-    def change_shuffle_state(self) -> None:
-        if self.is_shuffle():
+    def change_shuffle_state(self, shuffle: bool) -> None:
+        if shuffle:
             self.__player.shuffle()
         else:
             self.__player.unshuffle()
@@ -153,6 +153,30 @@ class MusicPlayerControl(MusicPlayerBarView, BaseControl):
     @handler
     def change_volume(self, volume: int) -> None:
         self.__player.set_volume(volume)
+
+    @override
+    def set_loop(self, enable: bool) -> None:
+        super().set_loop(enable)
+
+    @override
+    def set_shuffle(self, enable: bool) -> None:
+        if self.__player.get_playlist() is None:
+            super().set_shuffle(enable)
+            return
+
+        if enable:
+            self.__player.shuffle()
+        else:
+            self.__player.unshuffle()
+
+        playlist: PlaylistSongs = self.__player.get_playlist()
+        if not playlist.has_any_song():
+            return
+        new_index = playlist.find_song_index_by_title(self.__player.get_current_song().get_title())
+        if new_index < 0:
+            new_index = 0
+        self.__player.set_current_song_index(new_index)
+        super().set_shuffle(enable)
 
     def __playSong(self) -> None:
         if self.__player.get_current_song() is None:

@@ -120,8 +120,8 @@ class MusicPlayerRightSideView(QHBoxLayout, BaseView):
         self.__btn_loop.clicked.connect(lambda: fn())
 
     @connector
-    def set_onclick_shuffle(self, fn: callable) -> None:
-        self.__btn_shuffle.clicked.connect(lambda: fn())
+    def set_onclick_shuffle(self, fn: Callable[[bool], None]) -> None:
+        self.__btn_shuffle.clicked.connect(lambda: fn(self.is_shuffle()))
 
     @connector
     def set_onclick_love(self, fn: callable) -> None:

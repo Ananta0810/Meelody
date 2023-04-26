@@ -82,7 +82,7 @@ class MusicPlayerBarView(QWidget, BaseView):
         self.__right.set_onclick_loop(fn)
 
     @connector
-    def _set_onclick_shuffle(self, fn: callable) -> None:
+    def _set_onclick_shuffle(self, fn: Callable[[bool], None]) -> None:
         self.__right.set_onclick_shuffle(fn)
 
     @connector
