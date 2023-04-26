@@ -200,7 +200,13 @@ class MusicPlayerControl(MusicPlayerBarView, BaseControl):
         self.__player.play()
 
         played_duration = Timers.measure(lambda: self.do_after_played(interval, thread_id))
-        if played_duration < interval * 2:
+
+        """
+            There is a bug of pygame where play first time not working.
+            So, we have to check if the player stop right away to replay.
+        """
+        stop_right_after_play_due_to_bug = played_duration < interval * 2
+        if stop_right_after_play_due_to_bug:
             self.play_song_at_time(self.__player.get_playing_time())
 
     def do_after_played(self, interval, thread_id):
