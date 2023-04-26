@@ -26,8 +26,6 @@ class CoverProp:
     def content(self) -> QPixmap:
         return self.__pixmap
 
-    __covers: dict[str, 'CoverProp'] = {}
-
     @staticmethod
     def from_bytes(
         image_byte: bytes,
@@ -60,6 +58,9 @@ class Cover(QLabel):
     def set_default_cover(self, cover: CoverProp) -> None:
         self.__default_cover = cover
         self.set_cover(cover)
+
+    def current_cover(self) -> QPixmap:
+        return self.__current_cover.content()
 
     def set_radius(self, radius: int) -> None:
         self.__radius = radius
@@ -105,5 +106,3 @@ class Cover(QLabel):
 
     def __set_hover_pixmap(self, pixmap: QPixmap) -> None:
         super().setPixmap(pixmap)
-
-

@@ -1,9 +1,10 @@
 from typing import Optional, Callable
 
-from PyQt5.QtCore import pyqtSignal, QEvent, Qt
-from PyQt5.QtGui import QFont, QCursor, QResizeEvent
+from PyQt5.QtCore import pyqtSignal, QEvent, Qt, QRect
+from PyQt5.QtGui import QFont, QCursor, QResizeEvent, QPixmap
 from PyQt5.QtWidgets import QWidget, QVBoxLayout, QHBoxLayout, QSizePolicy, QFileDialog
 
+from modules.helpers.PixmapHelper import PixmapHelper
 from modules.helpers.types.Decorators import override
 from modules.models.view.Animation import Animation
 from modules.models.view.builder.IconButtonStyle import IconButtonStyle
@@ -19,11 +20,13 @@ class PlaylistCard(QWidget):
     _label: LabelWithDefaultText
     _cover: Cover
 
+    __onclick_fn: Callable[[], None] = None
+
     def __init__(self, font: QFont, parent: Optional["QWidget"] = None):
         super().__init__(parent)
-        self.__onclick_fn: Callable[[], None] = None
         self.clicked: pyqtSignal = pyqtSignal()
         self._init_ui(font)
+        self.installEventFilter(self)
 
     def _init_ui(self, font: QFont) -> None:
         self._main_layout = QVBoxLayout(self)
@@ -32,6 +35,7 @@ class PlaylistCard(QWidget):
         self._label = LabelWithDefaultText.build(
             font=font,
             light_mode_style=TextStyle(text_color=ColorBoxes.BLACK),
+            dark_mode_style=TextStyle(text_color=ColorBoxes.WHITE),
             parent=self,
         )
         self._label.setFixedSize(160, 32)
@@ -41,6 +45,7 @@ class PlaylistCard(QWidget):
     @override
     def resizeEvent(self, event: QResizeEvent) -> None:
         self._cover.setFixedSize(self.size())
+        self._adapt_theme_to_cover(self._cover.current_cover())
         return super().resizeEvent(event)
 
     @override
@@ -69,6 +74,21 @@ class PlaylistCard(QWidget):
 
     def set_cover(self, pixmap: CoverProp) -> None:
         self._cover.set_cover(pixmap)
+        self._adapt_theme_to_cover(pixmap.content())
+
+    def _adapt_theme_to_cover(self, pixmap: QPixmap):
+        rect = self.__get_label_rect()
+        should_dark_mode_for_label = PixmapHelper.check_contrast_at(pixmap, rect)
+        if should_dark_mode_for_label:
+            self._label.apply_dark_mode()
+        else:
+            self._label.apply_light_mode()
+
+    def __get_label_rect(self):
+        return QRect(self._label.pos().x(),
+                     self._label.pos().y(),
+                     self._label.rect().width(),
+                     self._label.rect().height())
 
     def set_default_cover(self, pixmap: CoverProp) -> None:
         self._cover.set_default_cover(pixmap)
@@ -97,7 +117,6 @@ class EditablePlaylistCard(PlaylistCard):
     __onchange_cover_fn: Callable[[str], None]
     __delete_fn: Callable[[], None]
 
-
     def __init__(self, font: QFont, parent: Optional["QWidget"] = None):
         super().__init__(font, parent)
 
@@ -110,7 +129,9 @@ class EditablePlaylistCard(PlaylistCard):
             size=Icons.MEDIUM,
             style=IconButtonStyle(
                 light_mode_icon=Icons.EDIT.with_color(Colors.PRIMARY),
-                light_mode_background=Backgrounds.CIRCLE_PRIMARY_10
+                light_mode_background=Backgrounds.CIRCLE_PRIMARY_10,
+                dark_mode_icon=Icons.EDIT.with_color(Colors.WHITE),
+                dark_mode_background=Backgrounds.CIRCLE_PRIMARY_75,
             ),
         )
         self.__edit_cover_btn.apply_light_mode()
@@ -122,7 +143,9 @@ class EditablePlaylistCard(PlaylistCard):
             size=Icons.MEDIUM,
             style=IconButtonStyle(
                 light_mode_icon=Icons.DELETE.with_color(Colors.DANGER),
-                light_mode_background=Backgrounds.CIRCLE_DANGER_10
+                light_mode_background=Backgrounds.CIRCLE_DANGER_10,
+                dark_mode_icon=Icons.DELETE.with_color(Colors.WHITE),
+                dark_mode_background=Backgrounds.CIRCLE_DANGER_75,
             ),
         )
         self.__delete_btn.apply_light_mode()
@@ -138,6 +161,7 @@ class EditablePlaylistCard(PlaylistCard):
         self._label = DoubleClickedEditableLabel.build(
             font=font,
             light_mode_style=TextStyle(text_color=ColorBoxes.BLACK),
+            dark_mode_style=TextStyle(text_color=ColorBoxes.WHITE),
             parent=self,
         )
         self._label.setFixedHeight(32)
@@ -160,3 +184,21 @@ class EditablePlaylistCard(PlaylistCard):
         path = QFileDialog.getOpenFileName(self, filter="JPEG, PNG (*.JPEG *.jpeg *.JPG *.jpg *.JPE *.jpe)")[0]
         if path is not None and path != '':
             self.__onchange_cover_fn(path)
+
+    @override
+    def _adapt_theme_to_cover(self, pixmap: QPixmap) -> None:
+        super()._adapt_theme_to_cover(pixmap)
+        rect = self.__get_button_rect()
+        should_dark_mode_for_buttons = PixmapHelper.check_contrast_at(pixmap, rect)
+        if should_dark_mode_for_buttons:
+            self.__delete_btn.apply_dark_mode()
+            self.__edit_cover_btn.apply_dark_mode()
+        else:
+            self.__delete_btn.apply_light_mode()
+            self.__edit_cover_btn.apply_light_mode()
+
+    def __get_button_rect(self) -> QRect:
+        return QRect(self.__edit_cover_btn.pos().x(),
+                     self.__edit_cover_btn.pos().y(),
+                     self.__edit_cover_btn.rect().width() + self.__delete_btn.rect().width(),
+                     self.__edit_cover_btn.rect().height())

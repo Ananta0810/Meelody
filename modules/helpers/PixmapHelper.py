@@ -1,5 +1,7 @@
+from io import BytesIO
 from typing import Union
 
+from PIL import Image
 from PyQt5.QtCore import QByteArray, QBuffer, QIODevice, QRect, Qt
 from PyQt5.QtGui import QPixmap, QPainter, QPainterPath
 
@@ -76,3 +78,22 @@ class PixmapHelper:
         painter.drawPixmap(0, 0, pixmap)
         painter.end()
         return target
+
+    @staticmethod
+    def get_luminance(pixmap: QPixmap) -> float:
+        pixmap_bytes: bytes = PixmapHelper.get_bytes_from_pixmap(pixmap)
+        image: Image = Image.open(BytesIO(pixmap_bytes))
+        BLURRED_IMAGE_SIZE: int = 100
+
+        image.thumbnail((BLURRED_IMAGE_SIZE, BLURRED_IMAGE_SIZE))
+
+        image_palette = image.convert("P", palette=Image.ADAPTIVE, colors=16)
+
+        color_count = sorted(image_palette.getcolors(), reverse=True)
+        palette_index = color_count[0][1]
+        red, green, blue = image_palette.getpalette()[palette_index * 3: palette_index * 3 + 3]
+        return red * 0.2126 + green * 0.7152 + blue * 0.0722
+
+    @staticmethod
+    def check_contrast_at(pixmap: QPixmap, rect: QRect) -> bool:
+        return PixmapHelper.get_luminance(pixmap.copy(rect)) < 140

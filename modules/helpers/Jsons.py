@@ -1,5 +1,8 @@
 import json
+import os.path
 from json import JSONDecodeError
+
+from modules.helpers.types.Strings import Strings
 
 
 class Jsons:
@@ -23,7 +26,12 @@ class Jsons:
     def write_to_file(file: str, obj: any) -> None:
         if not file.endswith(".json"):
             raise IOError("File should ends with json.")
-        with open(file, 'w') as outfile:
+
+        directory = Strings.get_dir_from(file)
+        if not os.path.exists(directory):
+            os.makedirs(directory, exist_ok=True)
+
+        with open(file, 'w+') as outfile:
             file_content: str = json.dumps(obj, indent=4)
             outfile.write(file_content)
 
