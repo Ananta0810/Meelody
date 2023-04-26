@@ -3,7 +3,6 @@ from threading import Thread
 from time import sleep
 from typing import Callable
 
-from modules.helpers import Timers
 from modules.helpers.types.Decorators import handler, override, connector
 from modules.helpers.types.Numbers import Numbers
 from modules.models.AudioPlayer import AudioPlayer
@@ -18,6 +17,8 @@ class MusicPlayerControl(MusicPlayerBarView, BaseControl):
     __thread_id: int = 0
 
     __onclick_play_fn: Callable[[int], None] = None
+    __onclick_next_fn: Callable[[int], None] = None
+    __onclick_prev_fn: Callable[[int], None] = None
     __onclick_pause_fn: Callable[[int], None] = None
     __on_shuffle: Callable[[bool], None] = None
     __on_loop: Callable[[bool], None] = None
@@ -42,6 +43,14 @@ class MusicPlayerControl(MusicPlayerBarView, BaseControl):
     @connector
     def set_onclick_play(self, fn: Callable[[int], None]) -> None:
         self.__onclick_play_fn = fn
+
+    @connector
+    def set_onclick_prev(self, fn: Callable[[int], None]) -> None:
+        self.__onclick_prev_fn = fn
+
+    @connector
+    def set_onclick_next(self, fn: Callable[[int], None]) -> None:
+        self.__onclick_next_fn = fn
 
     @connector
     def set_onclick_pause(self, fn: Callable[[int], None]) -> None:
@@ -76,6 +85,7 @@ class MusicPlayerControl(MusicPlayerBarView, BaseControl):
         self.__player.stop()
         self.__player.select_previous_song()
         self.__playSong()
+        self.__onclick_prev_fn(self.__player.get_current_song_index())
 
     @handler
     def play_current_song(self) -> None:
@@ -100,6 +110,7 @@ class MusicPlayerControl(MusicPlayerBarView, BaseControl):
         self.__player.stop()
         self.__player.select_next_song()
         self.__playSong()
+        self.__onclick_next_fn(self.__player.get_current_song_index())
 
     @handler
     def play_song_at_time(self, time: float) -> None:

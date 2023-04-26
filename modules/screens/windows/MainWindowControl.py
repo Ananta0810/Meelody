@@ -22,7 +22,6 @@ class MainWindowControl(MainWindowView, BaseControl):
     __playlists: list[Playlist] = []
     __player: AudioPlayer = AudioPlayer()
     __selecting_playlist_songs: set[int] = set()
-    __selecting_song_index = 0
     __is_selecting_library: bool = False
 
     def __init__(self) -> None:
@@ -33,6 +32,8 @@ class MainWindowControl(MainWindowView, BaseControl):
 
     @override
     def connect_signals(self) -> None:
+        self._music_player.set_onclick_next(lambda index: self.__disable_edit_song_at(index))
+        self._music_player.set_onclick_prev(lambda index: self.__disable_edit_song_at(index))
         self._music_player.set_onclick_play(lambda index: self.__play_song_from_player_at(index))
         self._music_player.set_onclick_pause(lambda index: self.set_is_playing(False))
         self._music_player.set_onclick_shuffle(lambda shuffled: self.__shuffle(shuffled))
@@ -56,8 +57,18 @@ class MainWindowControl(MainWindowView, BaseControl):
         self.set_onclick_close(lambda: self._music_player.pause_current_song())
         self.set_onclick_play_on_tray(lambda: self._music_player.play_current_song())
         self.set_onclick_pause_on_tray(lambda: self._music_player.pause_current_song())
-        self.set_onclick_prev_on_tray(lambda: self._music_player.play_previous_song())
-        self.set_onclick_next_on_tray(lambda: self._music_player.play_next_song())
+        self.set_onclick_prev_on_tray(lambda: self.play_previous_song())
+        self.set_onclick_next_on_tray(lambda: self.play_next_song())
+
+    def play_previous_song(self) -> None:
+        self._music_player.play_previous_song()
+        if self.__is_selecting_library:
+            self.__disable_edit_song_at(self.__player.get_current_song_index())
+
+    def play_next_song(self) -> None:
+        self._music_player.play_next_song()
+        if self.__is_selecting_library:
+            self.__disable_edit_song_at(self.__player.get_current_song_index())
 
     def set_appsettings(self, settings: AppSettings) -> None:
         self.__settings = settings
@@ -249,15 +260,16 @@ class MainWindowControl(MainWindowView, BaseControl):
         self._music_player.load_playlist_songs(self.__displaying_playlist.get_songs())
         self._music_player.play_song_at(index)
         self.set_is_playing(True)
-        self.disable_edit_song_at(index)
+        self.__disable_edit_song_at(index)
 
         self.__settings.set_playing_song_id(self.__song_at(index).get_id())
         DataSaver.save_settings(self.__settings)
 
-    def disable_edit_song_at(self, index):
-        if self.__is_selecting_library and self.__selecting_song_index != index:
-            self._body.enable_edit_of_song_at(self.__selecting_song_index, True)
-            self.__selecting_song_index = index
+    def __disable_edit_song_at(self, index):
+        if self.__is_selecting_library:
+            total = range(0, self.__library.get_songs().size())
+            for index_ in total:
+                self._body.enable_edit_of_song_at(index_, True)
             self._body.enable_edit_of_song_at(index, False)
 
     def __shuffle(self, shuffled: bool) -> None:
