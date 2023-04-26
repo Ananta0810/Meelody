@@ -3,17 +3,15 @@ from typing import Optional, Callable
 from PyQt5.QtWidgets import QHBoxLayout, QWidget
 
 from modules.helpers.types.Decorators import override, connector
-from modules.widgets.AppIcon import AppIcon
+from modules.widgets.Icons import AppIcon
 from modules.models.view.Background import Background
 from modules.models.view.Color import Color
 from modules.models.view.builder.IconButtonStyle import IconButtonStyle
 from modules.models.view.builder.SliderStyle import SliderStyle
 from modules.statics.view.Material import Icons, Paddings, Colors, Backgrounds, ColorBoxes
 from modules.screens.AbstractScreen import BaseView
-from modules.widgets.HorizontalSlider import HorizontalSlider
-from modules.widgets.IconButton import IconButton
-from modules.widgets.StatelessIconButton import StatelessIconButton
-from modules.widgets.ToggleIconButton import ToggleIconButton
+from modules.widgets.Sliders import HorizontalSlider
+from modules.widgets.Buttons import ToggleIconButton, StatelessIconButton, IconButton
 
 
 class MusicPlayerRightSideView(QHBoxLayout, BaseView):

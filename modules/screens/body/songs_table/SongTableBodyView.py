@@ -9,7 +9,7 @@ from modules.models.Song import Song
 from modules.screens.AbstractScreen import BaseView
 from modules.screens.body.songs_table.SongTableRowView import SongTableRowView
 from modules.statics.view.Material import Images, Backgrounds
-from modules.widgets.SmoothVerticalScrollArea import SmoothVerticalScrollArea
+from modules.widgets.ScrollAreas import SmoothVerticalScrollArea
 
 
 class SongTableBodyView(SmoothVerticalScrollArea, BaseView):

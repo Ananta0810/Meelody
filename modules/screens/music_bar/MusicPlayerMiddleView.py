@@ -11,8 +11,8 @@ from modules.models.view.builder.SliderStyle import SliderStyle
 from modules.models.view.builder.TextStyle import TextStyle
 from modules.statics.view.Material import ColorBoxes
 from modules.screens.AbstractScreen import BaseView
-from modules.widgets.HorizontalSlider import HorizontalSlider
-from modules.widgets.LabelWithDefaultText import LabelWithDefaultText
+from modules.widgets.Sliders import HorizontalSlider
+from modules.widgets.Labels import LabelWithDefaultText
 
 
 class MusicPlayerMiddleView(QHBoxLayout, BaseView):

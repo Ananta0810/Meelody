@@ -9,16 +9,15 @@ from modules.models.view.Animation import Animation
 from modules.models.view.builder.IconButtonStyle import IconButtonStyle
 from modules.models.view.builder.TextStyle import TextStyle
 from modules.statics.view.Material import ColorBoxes, Paddings, Icons, Colors, Backgrounds
-from modules.widgets.Cover import Cover
-from modules.widgets.IconButton import IconButton
-from modules.widgets.ImageViewer import ImageViewer
-from modules.widgets.LabelWithDefaultText import LabelWithDefaultText, DoubleClickedEditableLabel
+from modules.widgets.Buttons import IconButton
+from modules.widgets.Cover import Cover, CoverProp
+from modules.widgets.Labels import LabelWithDefaultText, DoubleClickedEditableLabel
 
 
 class PlaylistCard(QWidget):
     _main_layout: QVBoxLayout
     _label: LabelWithDefaultText
-    _cover: ImageViewer
+    _cover: Cover
 
     def __init__(self, font: QFont, parent: Optional["QWidget"] = None):
         super().__init__(parent)
@@ -29,7 +28,7 @@ class PlaylistCard(QWidget):
     def _init_ui(self, font: QFont) -> None:
         self._main_layout = QVBoxLayout(self)
         self._main_layout.setContentsMargins(20, 20, 20, 20)
-        self._cover = ImageViewer(self)
+        self._cover = Cover(self)
         self._label = LabelWithDefaultText.build(
             font=font,
             light_mode_style=TextStyle(text_color=ColorBoxes.BLACK),
@@ -68,10 +67,10 @@ class PlaylistCard(QWidget):
     def set_onclick_fn(self, fn: Callable[[], None]) -> None:
         self.__onclick_fn = fn
 
-    def set_cover(self, pixmap: Cover) -> None:
+    def set_cover(self, pixmap: CoverProp) -> None:
         self._cover.set_cover(pixmap)
 
-    def set_default_cover(self, pixmap: Cover) -> None:
+    def set_default_cover(self, pixmap: CoverProp) -> None:
         self._cover.set_default_cover(pixmap)
 
     def set_label_text(self, text: str) -> None:
@@ -93,7 +92,7 @@ class EditablePlaylistCard(PlaylistCard):
     _main_layout: QVBoxLayout
     _buttons: QHBoxLayout
     __delete_btn: IconButton
-    _cover: ImageViewer
+    _cover: Cover
     _label: DoubleClickedEditableLabel
     __onchange_cover_fn: Callable[[str], None]
     __delete_fn: Callable[[], None]
@@ -135,7 +134,7 @@ class EditablePlaylistCard(PlaylistCard):
         self._buttons.addWidget(self.__edit_cover_btn)
         self._buttons.addWidget(self.__delete_btn)
 
-        self._cover = ImageViewer(self)
+        self._cover = Cover(self)
         self._label = DoubleClickedEditableLabel.build(
             font=font,
             light_mode_style=TextStyle(text_color=ColorBoxes.BLACK),

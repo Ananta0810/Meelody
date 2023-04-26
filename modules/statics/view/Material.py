@@ -6,7 +6,7 @@ from modules.models.view.Background import Background
 from modules.models.view.Color import Color
 from modules.models.view.ColorBox import ColorBox
 from modules.models.view.Padding import Padding
-from modules.widgets.AppIcon import AppIcon
+from modules.widgets.Icons import AppIcon
 
 
 class Paddings:

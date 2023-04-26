@@ -9,7 +9,7 @@ from modules.screens.AbstractScreen import BaseView
 from modules.screens.body.HomeBodyView import HomeBodyView
 from modules.screens.music_bar.MusicPlayerControl import MusicPlayerControl
 from modules.statics.view.Material import ColorBoxes
-from modules.widgets.FramelessWindow import FramelessWindow
+from modules.widgets.Windows import FramelessWindow
 
 
 class MainWindowView(FramelessWindow, BaseView):

@@ -10,8 +10,8 @@ from modules.models.view.builder.FontBuilder import FontBuilder
 from modules.models.view.builder.IconButtonStyle import IconButtonStyle
 from modules.screens.AbstractScreen import BaseView
 from modules.statics.view.Material import Icons, Colors, Cursors, Paddings, Backgrounds, Images
-from modules.widgets.Cover import Cover
-from modules.widgets.IconButton import IconButton
+from modules.widgets.Cover import CoverProp
+from modules.widgets.Buttons import IconButton
 from modules.widgets.PlaylistCards import PlaylistCard, EditablePlaylistCard
 
 
@@ -20,7 +20,7 @@ class PlaylistCardData:
     __ondelete: Callable[[], None] = None
     __onchange_cover: Callable[[str], None] = None
     __onchange_title: Callable[[str], None] = None
-    __default_cover: Cover = None
+    __default_cover: CoverProp = None
 
     def __init__(self, playlist: PlaylistInformation):
         self.__content: PlaylistInformation = playlist
@@ -37,7 +37,7 @@ class PlaylistCardData:
     def ondelete(self) -> Callable[[], None]:
         return self.__ondelete
 
-    def default_cover(self) -> Cover:
+    def default_cover(self) -> CoverProp:
         return self.__default_cover
 
     def onclick(self) -> Callable[[], None]:
@@ -68,7 +68,7 @@ class PlaylistCarouselView(QScrollArea, BaseView):
     __add_playlist_card: QWidget
     __btn_add_playlist: IconButton
 
-    __default_cover: Cover = None
+    __default_cover: CoverProp = None
     __playlists: list[PlaylistCardData] = []
     __playlist_view_map_to_playlist: dict[PlaylistCardData, EditablePlaylistCard] = {}
 
@@ -224,7 +224,7 @@ class PlaylistCarouselView(QScrollArea, BaseView):
         return playlist
 
     @staticmethod
-    def __create_cover(cover_byte: bytes) -> Union[Cover, None]:
+    def __create_cover(cover_byte: bytes) -> Union[CoverProp, None]:
         if cover_byte is None:
             return None
-        return Cover.from_bytes(cover_byte, width=256, height=320, radius=24)
+        return CoverProp.from_bytes(cover_byte, width=256, height=320, radius=24)

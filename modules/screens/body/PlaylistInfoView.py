@@ -7,13 +7,12 @@ from modules.models.view.builder.FontBuilder import FontBuilder
 from modules.models.view.builder.TextStyle import TextStyle
 from modules.screens.AbstractScreen import BaseView
 from modules.statics.view.Material import ColorBoxes
-from modules.widgets.Cover import Cover
-from modules.widgets.ImageViewer import ImageViewer
-from modules.widgets.LabelWithDefaultText import LabelWithDefaultText
+from modules.widgets.Cover import Cover, CoverProp
+from modules.widgets.Labels import LabelWithDefaultText
 
 
 class PlaylistInfoView(QVBoxLayout, BaseView):
-    __cover: ImageViewer
+    __cover: Cover
     __text_area: QVBoxLayout
     __label_title: LabelWithDefaultText
     __label_total_song: LabelWithDefaultText
@@ -26,7 +25,7 @@ class PlaylistInfoView(QVBoxLayout, BaseView):
 
     def __init_ui(self):
         self.setSpacing(12)
-        self.__cover = ImageViewer()
+        self.__cover = Cover()
         self.__cover.setFixedSize(320, 320)
 
         self.__text_area = QVBoxLayout()
@@ -79,7 +78,7 @@ class PlaylistInfoView(QVBoxLayout, BaseView):
         self.__label_total_song.apply_dark_mode()
 
     @staticmethod
-    def __create_cover(pixmap_byte: bytes) -> Union[Cover, None]:
+    def __create_cover(pixmap_byte: bytes) -> Union[CoverProp, None]:
         if pixmap_byte is None:
             return None
-        return Cover.from_bytes(pixmap_byte, width=320, height=320, radius=24)
+        return CoverProp.from_bytes(pixmap_byte, width=320, height=320, radius=24)

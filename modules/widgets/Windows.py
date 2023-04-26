@@ -8,7 +8,7 @@ from modules.helpers.types.Decorators import override, connector
 from modules.models.view.builder.IconButtonStyle import IconButtonStyle
 from modules.screens.AbstractScreen import BaseView
 from modules.statics.view.Material import Paddings, Icons, Colors, Backgrounds
-from modules.widgets.IconButton import IconButton
+from modules.widgets.Buttons import IconButton
 
 
 class FramelessWindow(QMainWindow, BaseView):

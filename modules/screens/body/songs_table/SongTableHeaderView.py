@@ -11,9 +11,9 @@ from modules.models.view.builder.IconButtonStyle import IconButtonStyle
 from modules.models.view.builder.TextStyle import TextStyle
 from modules.screens.AbstractScreen import BaseView
 from modules.statics.view.Material import ColorBoxes, Icons, Paddings, Colors, Backgrounds
-from modules.widgets.AppIcon import AppIcon
-from modules.widgets.IconButton import IconButton
-from modules.widgets.LabelWithDefaultText import LabelWithDefaultText
+from modules.widgets.Icons import AppIcon
+from modules.widgets.Buttons import IconButton
+from modules.widgets.Labels import LabelWithDefaultText
 
 
 class SongTableHeaderView(QWidget, BaseView):

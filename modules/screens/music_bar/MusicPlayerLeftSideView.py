@@ -9,18 +9,16 @@ from modules.models.view.builder.IconButtonStyle import IconButtonStyle
 from modules.models.view.builder.TextStyle import TextStyle
 from modules.screens.AbstractScreen import BaseView
 from modules.statics.view.Material import Paddings, Icons, Colors, Backgrounds, ColorBoxes
-from modules.widgets.Cover import Cover
-from modules.widgets.IconButton import IconButton
-from modules.widgets.ImageViewer import ImageViewer
-from modules.widgets.LabelWithDefaultText import LabelWithDefaultText
-from modules.widgets.ToggleIconButton import ToggleIconButton
+from modules.widgets.Cover import Cover, CoverProp
+from modules.widgets.Labels import LabelWithDefaultText
+from modules.widgets.Buttons import ToggleIconButton, IconButton
 
 
 class MusicPlayerLeftSideView(QHBoxLayout, BaseView):
     __song_info_layout: QVBoxLayout = None
     __play_buttons: QHBoxLayout = None
 
-    __song_cover: ImageViewer = None
+    __song_cover: Cover = None
     __label_song_artist: LabelWithDefaultText = None
     __label_song_title: LabelWithDefaultText = None
 
@@ -33,7 +31,7 @@ class MusicPlayerLeftSideView(QHBoxLayout, BaseView):
         self.__init_ui()
 
     def __init_ui(self) -> None:
-        self.__song_cover = ImageViewer()
+        self.__song_cover = Cover()
         self.__song_cover.setFixedSize(64, 64)
         self.addWidget(self.__song_cover)
 
@@ -166,7 +164,7 @@ class MusicPlayerLeftSideView(QHBoxLayout, BaseView):
         return self.__btn_play_song.is_active()
 
     @staticmethod
-    def __create_cover(byte_pixmap: bytes) -> Union[Cover, None]:
+    def __create_cover(byte_pixmap: bytes) -> Union[CoverProp, None]:
         if byte_pixmap is None:
             return None
-        return Cover.from_bytes(byte_pixmap, width=64, height=64, radius=16)
+        return CoverProp.from_bytes(byte_pixmap, width=64, height=64, radius=16)

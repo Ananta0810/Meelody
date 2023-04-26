@@ -12,13 +12,11 @@ from modules.models.view.builder.IconButtonStyle import IconButtonStyle
 from modules.models.view.builder.TextStyle import TextStyle
 from modules.screens.AbstractScreen import BaseView
 from modules.statics.view.Material import Icons, Paddings, Colors, Backgrounds, ColorBoxes
-from modules.widgets.AppIcon import AppIcon
-from modules.widgets.BackgroundWidget import BackgroundWidget
-from modules.widgets.Cover import Cover
-from modules.widgets.IconButton import IconButton
-from modules.widgets.ImageViewer import ImageViewer
-from modules.widgets.LabelWithDefaultText import LabelWithDefaultText
-from modules.widgets.ToggleIconButton import ToggleIconButton
+from modules.widgets.Icons import AppIcon
+from modules.widgets.Widgets import BackgroundWidget
+from modules.widgets.Cover import Cover, CoverProp
+from modules.widgets.Labels import LabelWithDefaultText
+from modules.widgets.Buttons import ToggleIconButton, IconButton
 
 
 class SongTableRowView(BackgroundWidget, BaseView):
@@ -26,7 +24,7 @@ class SongTableRowView(BackgroundWidget, BaseView):
     __info: QHBoxLayout
     __buttons: QWidget
     __buttons_layout: QHBoxLayout
-    __cover: ImageViewer
+    __cover: Cover
     __label_title: LabelWithDefaultText
     __label_artist: LabelWithDefaultText
     __label_length: LabelWithDefaultText
@@ -67,7 +65,7 @@ class SongTableRowView(BackgroundWidget, BaseView):
         self.__choosing_playlist_buttons_layout.setSpacing(8)
         self.__choosing_playlist_buttons_layout.setContentsMargins(8, 8, 8, 8)
 
-        self.__cover = ImageViewer(self)
+        self.__cover = Cover(self)
         self.__cover.setFixedSize(64, 64)
 
         self.__label_title = self.__create_label(with_font=font, light_mode_text_color=ColorBoxes.BLACK)
@@ -241,7 +239,7 @@ class SongTableRowView(BackgroundWidget, BaseView):
         )
 
     @staticmethod
-    def __get_cover_from_bytes(cover_byte: bytes) -> Union[Cover, None]:
+    def __get_cover_from_bytes(cover_byte: bytes) -> Union[CoverProp, None]:
         if cover_byte is None:
             return None
-        return Cover.from_bytes(cover_byte, width=64, height=64, radius=12)
+        return CoverProp.from_bytes(cover_byte, width=64, height=64, radius=12)
