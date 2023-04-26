@@ -1,3 +1,4 @@
+import logging
 import os.path
 from logging import getLogger
 
@@ -36,7 +37,11 @@ def get_library_songs_from_json(file_path: str) -> PlaylistSongs:
     playlist = PlaylistSongs()
     songs: list[dict] = Jsons.read_from_file(file_path) or []
     for song in songs:
-        playlist.insert(Song.from_json(song))
+        try:
+            playlist.insert(Song.from_json(song))
+        except KeyError:
+            print("Extract song from json failed.")
+            pass
     return playlist
 
 
@@ -70,4 +75,8 @@ def save_playlists(playlists: list[Playlist]) -> None:
 
 def get_library_playlists_from_json(file_path: str, songs: list[Song]) -> list[Playlist]:
     playlists: list[dict] = Jsons.read_from_file(file_path) or []
-    return [PlaylistJson.from_json(playlist).to_playlist(songs) for playlist in playlists]
+    try:
+        return [PlaylistJson.from_json(playlist).to_playlist(songs) for playlist in playlists]
+    except KeyError:
+        print("Extract song from json failed.")
+        return []

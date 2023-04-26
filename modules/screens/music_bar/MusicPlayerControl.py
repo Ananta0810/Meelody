@@ -9,6 +9,7 @@ from modules.models.PlaylistSongs import PlaylistSongs
 from modules.models.Song import Song
 from modules.screens.AbstractScreen import BaseControl
 from modules.screens.music_bar.MusicPlayerBarView import MusicPlayerBarView
+from modules.statics.view.Material import Images
 
 
 class MusicPlayerControl(MusicPlayerBarView, BaseControl):
@@ -56,8 +57,10 @@ class MusicPlayerControl(MusicPlayerBarView, BaseControl):
         self.__player.load_playlist(playlist)
 
     def load_playing_song(self, song_index: int = 0) -> None:
-        self.__player.set_current_song_index(song_index)
-        self.__player.load_song_to_play()
+        if self.__player.has_any_song():
+            self.__player.set_current_song_index(song_index)
+            self.__player.load_song_to_play()
+
         self.__display_current_song_info()
 
     @handler
@@ -122,6 +125,8 @@ class MusicPlayerControl(MusicPlayerBarView, BaseControl):
             self.__player.unshuffle()
 
         playlist: PlaylistSongs = self.__player.get_playlist()
+        if not playlist.has_any_song():
+            return
         new_index = playlist.find_song_index_by_title(self.__player.get_current_song().get_title())
         if new_index < 0:
             new_index = 0

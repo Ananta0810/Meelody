@@ -3,6 +3,7 @@ from modules.models.Playlist import Playlist
 from modules.models.PlaylistSongs import PlaylistSongs
 from modules.screens.windows.MainWindowControl import MainWindowControl
 from modules.statics.view import Material
+from modules.statics.view.Material import Images
 
 
 class Application:
@@ -19,5 +20,5 @@ class Application:
 
     def load_playlist(self):
         songs: PlaylistSongs = LibraryHelper.load_songs_from_dir("library", with_extension="mp3")
-        self.window.load_library(Playlist.create(name="Library", songs=songs))
+        self.window.load_library(Playlist.create(name="Library", songs=songs, cover=Images.DEFAULT_PLAYLIST_COVER))
         self.window.load_playlists(LibraryHelper.load_playlists(songs.get_songs()))

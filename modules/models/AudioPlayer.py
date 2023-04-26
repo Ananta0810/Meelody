@@ -6,8 +6,8 @@ from pygame import mixer
 
 
 class AudioPlayer(metaclass=SingletonMeta):
-    __playlist: PlaylistSongs
-    __current_song: Song
+    __playlist: PlaylistSongs = None
+    __current_song: Song = None
     __current_song_index: int = 0
     __time_start_in_sec: float = 0
     __sample_rate_offset: float = 1

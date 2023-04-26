@@ -1,4 +1,4 @@
-from typing import Optional
+from typing import Optional, Union
 
 from PyQt5.QtCore import QMetaObject
 from PyQt5.QtWidgets import QHBoxLayout, QWidget, QVBoxLayout
@@ -17,16 +17,16 @@ from modules.widgets.ToggleIconButton import ToggleIconButton
 
 
 class MusicPlayerLeftSideView(QHBoxLayout, BaseView):
-    __song_info_layout: QVBoxLayout
-    __play_buttons: QHBoxLayout
+    __song_info_layout: QVBoxLayout = None
+    __play_buttons: QHBoxLayout = None
 
-    __song_cover: ImageViewer
-    __label_song_artist: LabelWithDefaultText
-    __label_song_title: LabelWithDefaultText
+    __song_cover: ImageViewer = None
+    __label_song_artist: LabelWithDefaultText = None
+    __label_song_title: LabelWithDefaultText = None
 
-    __btn_prev_song: IconButton
-    __btn_play_song: ToggleIconButton
-    __btn_next_song: IconButton
+    __btn_prev_song: IconButton = None
+    __btn_play_song: ToggleIconButton = None
+    __btn_next_song: IconButton = None
 
     def __init__(self, parent: Optional["QWidget"] = None):
         super(MusicPlayerLeftSideView, self).__init__(parent)
@@ -166,5 +166,7 @@ class MusicPlayerLeftSideView(QHBoxLayout, BaseView):
         return self.__btn_play_song.is_active()
 
     @staticmethod
-    def __create_cover(byte_pixmap: bytes) -> Cover:
+    def __create_cover(byte_pixmap: bytes) -> Union[Cover, None]:
+        if byte_pixmap is None:
+            return None
         return Cover.from_bytes(byte_pixmap, width=64, height=64, radius=16)
