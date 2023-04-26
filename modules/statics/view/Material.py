@@ -361,7 +361,9 @@ class Images:
 
 class Cursors:
     HAND: QCursor = None
+    DEFAULT: QCursor = None
 
     @staticmethod
     def init_value():
         Cursors.HAND = QCursor(Qt.PointingHandCursor)
+        Cursors.DEFAULT = QCursor(Qt.ArrowCursor)

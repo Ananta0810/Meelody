@@ -61,7 +61,7 @@ class CurrentPlaylistView(QWidget, BaseView):
         self.__menu.set_onclick_remove_from_playlist(fn)
 
     @connector
-    def set_on_doubleclick_cover_from_playlist(self, fn: Callable[[int], None]) -> None:
+    def set_on_doubleclick_cover_from_playlist(self, fn: Callable[[int, str], None]) -> None:
         self.__menu.set_on_doubleclick_cover_from_playlist(fn)
 
     @connector
@@ -90,6 +90,12 @@ class CurrentPlaylistView(QWidget, BaseView):
 
     def select_song_at(self, index: int) -> None:
         self.__menu.select_song_at(index)
+
+    def enable_edit_songs(self, enabled: bool) -> None:
+        self.__menu.enable_edit_songs(enabled)
+
+    def enable_edit_of_song_at(self, index: int, enabled: bool) -> None:
+        self.__menu.enable_edit_of_song_at(index, enabled)
 
     def load_playlist(self, playlist: Playlist) -> None:
         self.set_current_playlist_info(playlist)

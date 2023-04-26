@@ -1,5 +1,3 @@
-from PyQt5.QtWidgets import QFileDialog
-
 from modules.helpers import DataSaver
 from modules.helpers.types.Bytes import Bytes, BytesModifier
 from modules.helpers.types.Decorators import override
@@ -24,6 +22,8 @@ class MainWindowControl(MainWindowView, BaseControl):
     __playlists: list[Playlist] = []
     __player: AudioPlayer = AudioPlayer()
     __selecting_playlist_songs: set[int] = set()
+    __selecting_song_index = 0
+    __is_selecting_library: bool = False
 
     def __init__(self) -> None:
         super().__init__()
@@ -43,7 +43,8 @@ class MainWindowControl(MainWindowView, BaseControl):
         self._body.set_onclick_love(lambda index: self.__love_song_from_menu(index))
         self._body.set_onclick_add_to_playlist(lambda index: self.__add_song_from_menu_at(index))
         self._body.set_onclick_remove_from_playlist(lambda index: self.__remove_song_from_menu_at(index))
-        self._body.set_on_doubleclick_cover_from_playlist(lambda index: self.__select_cover_for_song_at(index))
+        self._body.set_on_doubleclick_cover_from_playlist(
+            lambda index, path: self.__change_cover_for_song_at(index, path))
         self._body.set_onclick_select_songs_fn(lambda: self.__start_select_songs_from_library_to_playlist())
         self._body.set_onclick_apply_select_songs_fn(lambda: self.__finish_select_songs_from_library_to_playlist())
         self._body.set_on_keypress(lambda key: self.__go_to_song_that_title_start_with(key))
@@ -74,6 +75,12 @@ class MainWindowControl(MainWindowView, BaseControl):
         self._body.enable_choosing_song(False)
         self._body.enable_add_new_song(False)
         self.__select_playlist(self.__library)
+        self._body.enable_edit_songs(True)
+        self.__is_selecting_library = True
+        song = self.__player.get_current_song()
+        if song is not None:
+            index = self.__library.get_songs().index_of(song)
+            self._body.enable_edit_of_song_at(index, False)
 
     def __choose_favourites(self) -> None:
         self._body.enable_choosing_song(False)
@@ -84,11 +91,15 @@ class MainWindowControl(MainWindowView, BaseControl):
                                    songs=PlaylistSongs(favourite_songs),
                                    cover=Images.FAVOURITES_PLAYLIST_COVER)
         self.__select_playlist(playlist)
+        self._body.enable_edit_songs(False)
+        self.__is_selecting_library = False
 
     def __choose_playlist(self, playlist: Playlist) -> None:
         self._body.enable_choosing_song(False)
         self._body.enable_add_new_song(True)
         self.__select_playlist(playlist)
+        self._body.enable_edit_songs(False)
+        self.__is_selecting_library = False
 
     def __select_playlist(self, playlist: Playlist) -> None:
         self.__selecting_playlist_songs.clear()
@@ -153,6 +164,7 @@ class MainWindowControl(MainWindowView, BaseControl):
             index_if_not_found=0
         )
         self._music_player.load_playing_song(song_index)
+        self._body.enable_edit_of_song_at(song_index, False)
 
     def __apply_settings_to_music_player_and_menu(self):
         self._music_player.set_shuffle(self.__settings.is_shuffle)
@@ -197,18 +209,16 @@ class MainWindowControl(MainWindowView, BaseControl):
     def __remove_song_from_menu_at(self, index: int) -> None:
         self.__selecting_playlist_songs.remove(index)
 
-    def __select_cover_for_song_at(self, index: int) -> None:
-        path = QFileDialog.getOpenFileName(self, filter="JPEG, PNG (*.JPEG *.jpeg *.JPG *.jpg *.JPE *.jpe)")[0]
-        if path is not None and path != '':
-            bytes_data = BytesModifier \
-                .of(Bytes.get_bytes_from_file(path)) \
-                .square() \
-                .resize(256, 256) \
-                .to_bytes()
-            song = self.__displaying_playlist.get_songs().get_song_at(index)
-            song.set_cover(bytes_data)
-            self.__choose_playlist(self.__displaying_playlist)
-            DataSaver.save_songs(self.__library.get_songs().get_songs())
+    def __change_cover_for_song_at(self, index: int, path: str) -> None:
+        bytes_data = BytesModifier \
+            .of(Bytes.get_bytes_from_file(path)) \
+            .square() \
+            .resize(256, 256) \
+            .to_bytes()
+        song = self.__displaying_playlist.get_songs().get_song_at(index)
+        song.set_cover(bytes_data)
+        self.__choose_library()
+        DataSaver.save_songs(self.__library.get_songs().get_songs())
 
     def __love_song_from_player(self, song: Song) -> None:
         self._body.love_song(song.is_loved())
@@ -228,6 +238,7 @@ class MainWindowControl(MainWindowView, BaseControl):
 
         self._body.select_song_at(index)
         self.set_is_playing(True)
+        self._body.enable_edit_of_song_at(index, False)
 
         self.__settings.set_playing_song_id(self.__song_at(index).get_id())
         DataSaver.save_settings(self.__settings)
@@ -238,9 +249,16 @@ class MainWindowControl(MainWindowView, BaseControl):
         self._music_player.load_playlist_songs(self.__displaying_playlist.get_songs())
         self._music_player.play_song_at(index)
         self.set_is_playing(True)
+        self.disable_edit_song_at(index)
 
         self.__settings.set_playing_song_id(self.__song_at(index).get_id())
         DataSaver.save_settings(self.__settings)
+
+    def disable_edit_song_at(self, index):
+        if self.__is_selecting_library and self.__selecting_song_index != index:
+            self._body.enable_edit_of_song_at(self.__selecting_song_index, True)
+            self.__selecting_song_index = index
+            self._body.enable_edit_of_song_at(index, False)
 
     def __shuffle(self, shuffled: bool) -> None:
         self._body.refresh_menu()

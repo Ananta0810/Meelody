@@ -2,7 +2,7 @@ from typing import Optional, Callable
 
 from PyQt5.QtCore import Qt
 from PyQt5.QtGui import QKeyEvent
-from PyQt5.QtWidgets import QWidget, QVBoxLayout
+from PyQt5.QtWidgets import QWidget, QVBoxLayout, QFileDialog
 
 from modules.helpers.types.Decorators import override, connector
 from modules.models.Song import Song
@@ -20,7 +20,7 @@ class SongTableBodyView(SmoothVerticalScrollArea, BaseView):
     __onclick_love_fn: Callable[[int], None] = None
     __onclick_add_to_playlist_fn: Callable[[int], None] = None
     __onclick_remove_from_playlist_fn: Callable[[int], None] = None
-    __on_doubleclick_cover_from_playlist_fn: Callable[[int], None] = None
+    __on_doubleclick_cover_from_playlist_fn: Callable[[int, str], None] = None
     __on_keypress_fn: Callable[[str], int] = None
 
     def __init__(self, parent: Optional["QWidget"] = None):
@@ -82,10 +82,15 @@ class SongTableBodyView(SmoothVerticalScrollArea, BaseView):
             song.set_onclick_remove_from_playlist(lambda: self.__onclick_remove_from_playlist_fn(index))
 
     @connector
-    def set_on_doubleclick_cover_from_playlist(self, fn: Callable[[int], None]) -> None:
+    def set_on_doubleclick_cover_from_playlist(self, fn: Callable[[int, str], None]) -> None:
         self.__on_doubleclick_cover_from_playlist_fn = fn
         for index, song in enumerate(self._songs):
-            song.set_on_doubleclick_cover(lambda: self.__on_doubleclick_cover_from_playlist_fn(index))
+            song.set_on_doubleclick_cover(lambda: self.__choose_cover_for_song_at(index))
+
+    def __choose_cover_for_song_at(self, index: int) -> None:
+        path = QFileDialog.getOpenFileName(self, filter="JPEG, PNG (*.JPEG *.jpeg *.JPG *.jpg *.JPE *.jpe)")[0]
+        if path is not None and path != '':
+            self.__on_doubleclick_cover_from_playlist_fn(index, path)
 
     def __onclick_play_btn(self, index: int) -> None:
         self.select_song_at(index)
@@ -140,7 +145,7 @@ class SongTableBodyView(SmoothVerticalScrollArea, BaseView):
         self.get_song_at(index).set_love_state(state)
 
     def get_total_songs(self) -> int:
-        return self.__menu.count()
+        return len(self._songs)
 
     def load_songs(self, songs: list[Song]) -> list[SongTableRowView]:
         self.clear_table()
@@ -171,7 +176,7 @@ class SongTableBodyView(SmoothVerticalScrollArea, BaseView):
         songView.set_onclick_love(lambda: self.__onclick_love_btn(index))
         songView.set_onclick_add_to_playlist(lambda: self.__onclick_add_to_playlist_fn(index))
         songView.set_onclick_remove_from_playlist(lambda: self.__onclick_remove_from_playlist_fn(index))
-        songView.set_on_doubleclick_cover(lambda: self.__on_doubleclick_cover_from_playlist_fn(index))
+        songView.set_on_doubleclick_cover(lambda: self.__choose_cover_for_song_at(index))
 
         songView.enable_choosing(False)
 

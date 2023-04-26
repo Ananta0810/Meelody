@@ -11,7 +11,7 @@ from modules.models.view.builder.FontBuilder import FontBuilder
 from modules.models.view.builder.IconButtonStyle import IconButtonStyle
 from modules.models.view.builder.TextStyle import TextStyle
 from modules.screens.AbstractScreen import BaseView
-from modules.statics.view.Material import Icons, Paddings, Colors, Backgrounds, ColorBoxes
+from modules.statics.view.Material import Icons, Paddings, Colors, Backgrounds, ColorBoxes, Cursors
 from modules.widgets import Observers
 from modules.widgets.Buttons import ToggleIconButton, IconButton
 from modules.widgets.Cover import Cover, CoverProp
@@ -37,6 +37,8 @@ class SongTableRowView(BackgroundWidget, BaseView):
     __btn_delete: IconButton
     __btn_close: IconButton
     __cover_observer: Observers.ClickObserver
+
+    __editable: bool = False
 
     def __init__(self, parent: Optional["QWidget"] = None):
         super(SongTableRowView, self).__init__(parent)
@@ -166,7 +168,7 @@ class SongTableRowView(BackgroundWidget, BaseView):
         self.__btn_remove_from_playlist.clicked.connect(lambda: self.__clicked_remove_btn(fn))
 
     def set_on_doubleclick_cover(self, fn: callable) -> None:
-        self.__cover_observer.set_on_doubleclick_fn(fn)
+        self.__cover_observer.set_on_doubleclick_fn(lambda: fn() if self.__editable else None)
 
     def __clicked_add_btn(self, fn: callable) -> None:
         self.__btn_remove_from_playlist.show()
@@ -177,6 +179,10 @@ class SongTableRowView(BackgroundWidget, BaseView):
         self.__btn_add_to_playlist.show()
         self.__btn_remove_from_playlist.hide()
         fn()
+
+    def enable_edit(self, value: bool) -> None:
+        self.__editable = value
+        self.__cover.setCursor(Cursors.HAND if self.__editable else Cursors.DEFAULT)
 
     def set_cover(self, cover: Union[bytes, None]) -> None:
         self.__cover.set_cover(self.__get_cover_from_bytes(cover))

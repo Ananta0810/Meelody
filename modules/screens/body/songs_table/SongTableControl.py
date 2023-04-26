@@ -22,7 +22,7 @@ class SongTableControl(SongTableView, BaseControl):
         if self.__playlist is None:
             return
         for index, song in enumerate(self.__playlist.get_songs()):
-            self._update_song_at(index, song)
+            self.update_song_at(index, song)
 
     def load_songs(self, playlist: PlaylistSongs) -> None:
         self.__playlist = playlist

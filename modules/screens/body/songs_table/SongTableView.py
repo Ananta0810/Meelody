@@ -65,7 +65,7 @@ class SongTableView(QWidget, BaseView):
         self._body.set_onclick_remove_from_playlist(fn)
 
     @connector
-    def set_on_doubleclick_cover_from_playlist(self, fn: Callable[[int], None]) -> None:
+    def set_on_doubleclick_cover_from_playlist(self, fn: Callable[[int, str], None]) -> None:
         self._body.set_on_doubleclick_cover_from_playlist(fn)
 
     @connector
@@ -112,9 +112,18 @@ class SongTableView(QWidget, BaseView):
             for song_view in song_views:
                 song_view.apply_light_mode()
 
-    def _update_song_at(self, index: int, song: Song) -> None:
+    def update_song_at(self, index: int, song: Song) -> None:
         song_view: SongTableRowView = self._body.get_song_at(index)
         song_view.set_title(song.get_title())
         song_view.set_artist(song.get_artist())
         song_view.set_length(song.get_length())
         song_view.set_cover(song.get_cover())
+
+    def enable_edit_songs(self, enabled: bool) -> None:
+        songs = self._body.get_total_songs()
+        for index in range(0, songs):
+            self.enable_edit_of_song_at(index, enabled)
+
+    def enable_edit_of_song_at(self, index: int, enabled: bool) -> None:
+        song_view: SongTableRowView = self._body.get_song_at(index)
+        song_view.enable_edit(enabled)

@@ -76,7 +76,7 @@ class HomeBodyView(QScrollArea, BaseView):
         self.__current_playlist.set_onclick_remove_from_playlist_on_menu(fn)
 
     @connector
-    def set_on_doubleclick_cover_from_playlist(self, fn: Callable[[int], None]) -> None:
+    def set_on_doubleclick_cover_from_playlist(self, fn: Callable[[int, str], None]) -> None:
         self.__current_playlist.set_on_doubleclick_cover_from_playlist(fn)
 
     @connector
@@ -126,6 +126,12 @@ class HomeBodyView(QScrollArea, BaseView):
 
     def select_song_at(self, index: int) -> None:
         self.__current_playlist.select_song_at(index)
+
+    def enable_edit_songs(self, enabled: bool) -> None:
+        self.__current_playlist.enable_edit_songs(enabled)
+
+    def enable_edit_of_song_at(self, index: int, enabled: bool) -> None:
+        self.__current_playlist.enable_edit_of_song_at(index, enabled)
 
     def refresh_menu(self) -> None:
         self.__current_playlist.refresh_menu()
