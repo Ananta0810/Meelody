@@ -16,13 +16,14 @@ from modules.widgets.PlaylistCards import PlaylistCard, EditablePlaylistCard
 
 
 class PlaylistCardData:
+    __onclick: Callable[[], None] = None
+    __ondelete: Callable[[], None] = None
+    __onchange_cover: Callable[[str], None] = None
+    __onchange_title: Callable[[str], None] = None
+    __default_cover: Cover = None
+
     def __init__(self, playlist: PlaylistInformation):
         self.__content: PlaylistInformation = playlist
-        self.__onclick: Callable[[], None] = None
-        self.__ondelete: Callable[[], None] = None
-        self.__onchange_cover: Callable[[str], None] = None
-        self.__onchange_title: Callable[[str], None] = None
-        self.__default_cover: Cover = None
 
     def content(self) -> PlaylistInformation:
         return self.__content
@@ -67,11 +68,12 @@ class PlaylistCarouselView(QScrollArea, BaseView):
     __add_playlist_card: QWidget
     __btn_add_playlist: IconButton
 
+    __default_cover: Cover = None
+    __playlists: list[PlaylistCardData] = []
+    __playlist_view_map_to_playlist: dict[PlaylistCardData, EditablePlaylistCard] = {}
+
     def __init__(self, parent: Optional["QWidget"] = None):
         super(PlaylistCarouselView, self).__init__(parent)
-        self.__default_cover: Cover = None
-        self.__playlists: list[PlaylistCardData] = []
-        self.__playlist_view_map_to_playlist: dict[PlaylistCardData, EditablePlaylistCard] = {}
         self.__init_ui()
         self.__playlist_library.set_label_text("Library")
         self.__playlist_favourites.set_label_text("Favourites")

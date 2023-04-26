@@ -16,14 +16,12 @@ class MainWindowControl(MainWindowView, BaseControl):
     __library: Playlist
     __displaying_playlist: Playlist = None
     __playing_playlist: Playlist = None
-    __playlists: list[Playlist]
+    __playlists: list[Playlist] = []
     __player: AudioPlayer = AudioPlayer()
-    __selecting_playlist_songs: set[int]
+    __selecting_playlist_songs: set[int] = set()
 
     def __init__(self) -> None:
         super().__init__()
-        self.__playlists = []
-        self.__selecting_playlist_songs = set()
         self.set_default_playlist_cover(Images.DEFAULT_PLAYLIST_COVER)
         self.connect_signals()
         self.set_is_playing(False)

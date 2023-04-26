@@ -95,11 +95,12 @@ class EditablePlaylistCard(PlaylistCard):
     __delete_btn: IconButton
     _cover: ImageViewer
     _label: DoubleClickedEditableLabel
+    __onchange_cover_fn: Callable[[str], None]
+    __delete_fn: Callable[[], None]
+
 
     def __init__(self, font: QFont, parent: Optional["QWidget"] = None):
         super().__init__(font, parent)
-        self.__delete_fn = None
-        self.__onchange_cover_fn = None
 
     def _init_ui(self, font: QFont) -> None:
         self._main_layout = QVBoxLayout(self)

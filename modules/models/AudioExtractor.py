@@ -1,3 +1,5 @@
+from typing import Union
+
 from eyed3 import id3, load, mp3
 
 
@@ -23,17 +25,16 @@ class AudioExtractor:
         except AttributeError:
             return 0
 
-    def get_cover(self) -> bytes:
-        data = None
+    def get_cover(self) -> Union[bytes, None]:
         try:
             images = self.__data.tag.images
             for image in images:
                 if image.image_data is None:
                     continue
-                data = image.image_data
+                return image.image_data
         except AttributeError:
-            pass
-        return data
+            return None
+
 
     def get_sample_rate(self) -> int:
         try:
