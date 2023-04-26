@@ -35,7 +35,6 @@ class AudioExtractor:
         except AttributeError:
             return None
 
-
     def get_sample_rate(self) -> int:
         try:
             return self.__data.info.sample_freq
@@ -57,7 +56,8 @@ class AudioExtractor:
             self.__remove_existing_covers()
             self.__add_new_cover(new_cover)
             return True
-        except (FileNotFoundError, PermissionError):
+        except (FileNotFoundError, PermissionError) as e:
+            print(e)
             return False
 
     def __remove_existing_covers(self) -> None:

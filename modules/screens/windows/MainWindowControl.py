@@ -1,7 +1,7 @@
 from PyQt5.QtWidgets import QFileDialog
 
 from modules.helpers import DataSaver
-from modules.helpers.types.Bytes import Bytes
+from modules.helpers.types.Bytes import Bytes, BytesModifier
 from modules.helpers.types.Decorators import override
 from modules.helpers.types.Lists import Lists
 from modules.models.AppSettings import AppSettings
@@ -200,9 +200,13 @@ class MainWindowControl(MainWindowView, BaseControl):
     def __select_cover_for_song_at(self, index: int) -> None:
         path = QFileDialog.getOpenFileName(self, filter="JPEG, PNG (*.JPEG *.jpeg *.JPG *.jpg *.JPE *.jpe)")[0]
         if path is not None and path != '':
-            byte_data: bytes = Bytes.get_bytes_from_file(path)
+            bytes_data = BytesModifier \
+                .of(Bytes.get_bytes_from_file(path)) \
+                .square() \
+                .resize(256, 256) \
+                .to_bytes()
             song = self.__displaying_playlist.get_songs().get_song_at(index)
-            song.set_cover(byte_data)
+            song.set_cover(bytes_data)
             self.__choose_playlist(self.__displaying_playlist)
             DataSaver.save_songs(self.__library.get_songs().get_songs())
 
