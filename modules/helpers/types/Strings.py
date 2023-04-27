@@ -73,3 +73,17 @@ class Strings:
     @staticmethod
     def get_file_basename(file_path: str) -> str:
         return os.path.basename(file_path).split(".")[0]
+
+    @staticmethod
+    def extension_of(file_path: str) -> str:
+        return os.path.basename(file_path).split(".")[1]
+
+    @staticmethod
+    def rename_file(file_path: str, new_base_name: str) -> str:
+        old_base_name = Strings.get_file_basename(file_path)
+        if old_base_name.strip() == "":
+            directory = Strings.get_dir_from(file_path)
+            extension = "." + Strings.extension_of(file_path)
+            return Strings.get_full_path(directory, new_base_name, extension)
+
+        return file_path.replace(old_base_name, new_base_name)

@@ -108,7 +108,7 @@ class Song:
         Rename title of the song. In addition, rename the audio file name.
         """
         try:
-            newLocation = self.__location.replace(self.__title, title)
+            newLocation = Strings.rename_file(self.__location, title)
             if os.path.exists(newLocation):
                 return False
             os.rename(self.__location, newLocation)

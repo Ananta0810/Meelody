@@ -8,6 +8,7 @@ from modules.helpers.types.Decorators import override
 from modules.helpers.types.Strings import Strings
 from modules.models.view.Background import Background
 from modules.models.view.Border import Border
+from modules.models.view.Color import Color
 from modules.models.view.ColorBox import ColorBox
 from modules.models.view.builder.BackgroundThemeBuilder import BackgroundThemeBuilder
 from modules.models.view.builder.FontBuilder import FontBuilder
@@ -30,16 +31,23 @@ class RenameSongDialog(Dialogs.ConfirmDialog):
                  parent: Optional["QWidget"] = None):
         super().__init__(header, msg, accept_text, reject_text, onclick_accept_fn, onclick_reject_fn, dark_mode, parent)
 
+    def with_song_title(self, title: str) -> 'RenameSongDialog':
+        self.__input.setText(title)
+        return self
+
     def _init_content(self, content: QWidget) -> None:
         layout = QVBoxLayout(content)
         self.__input = Input.build(
             font=FontBuilder.build(size=12),
-            light_mode_style=TextStyle(text_color=ColorBoxes.PRIMARY,
+            light_mode_style=TextStyle(text_color=ColorBoxes.BLACK,
                                        background=Background(
                                            border_radius=8,
-                                           color=ColorBox(normal=Colors.PRIMARY.with_opacity(10)),
-                                           border=Border(size=2, color=Colors.PRIMARY))
-                                       ),
+                                           color=ColorBox(
+                                               normal=Colors.GRAY.with_opacity(8)),
+                                           border=Border(
+                                               size=2,
+                                               color=Color(192, 192, 192)
+                                           ))),
             padding=8
         )
         self.__input.set_onpressed(self._on_accepted)
@@ -257,6 +265,9 @@ class SongTableRowView(BackgroundWidget, BaseView):
 
     def clear_info(self):
         self.set_cover(None)
+
+    def get_title(self):
+        return self.__label_title.text()
 
     def set_is_choosing(self, is_choosing: bool) -> None:
         if is_choosing:

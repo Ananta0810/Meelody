@@ -92,15 +92,18 @@ class SongTableBodyView(SmoothVerticalScrollArea, BaseView):
     def set_onchange_song_title(self, fn: Callable[[int, str], bool]) -> None:
         self.__onchange_title_fn = fn
         for index, song in enumerate(self._songs):
-            song.set_on_edit_title(lambda: self.__rename_title_for_song_at(index))
+            song.set_on_edit_title(lambda: self.__rename_title_for_song_at(index, song.get_title()))
 
     def __choose_cover_for_song_at(self, index: int) -> None:
         path = QFileDialog.getOpenFileName(self, filter="JPEG, PNG (*.JPEG *.jpeg *.JPG *.jpg *.JPE *.jpe)")[0]
         if path is not None and path != '':
             self.__onchange_cover_fn(index, path)
 
-    def __rename_title_for_song_at(self, index: int) -> None:
-        RenameSongDialog("Rename song", onclick_accept_fn=lambda title: self.__onchange_title_fn(index, title)).exec()
+    def __rename_title_for_song_at(self, index: int, title: str) -> None:
+        RenameSongDialog(
+            "Rename song",
+            onclick_accept_fn=lambda title: self.__onchange_title_fn(index, title)
+        ).with_song_title(title).exec()
 
     def __onclick_play_btn(self, index: int) -> None:
         self.select_song_at(index)
@@ -187,7 +190,7 @@ class SongTableBodyView(SmoothVerticalScrollArea, BaseView):
         songView.set_onclick_add_to_playlist(lambda: self.__onclick_add_to_playlist_fn(index))
         songView.set_onclick_remove_from_playlist(lambda: self.__onclick_remove_from_playlist_fn(index))
         songView.set_on_doubleclick_cover(lambda: self.__choose_cover_for_song_at(index))
-        songView.set_on_edit_title(lambda: self.__rename_title_for_song_at(index))
+        songView.set_on_edit_title(lambda: self.__rename_title_for_song_at(index, song.get_title()))
 
         songView.enable_choosing(False)
 
