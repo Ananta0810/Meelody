@@ -1,23 +1,64 @@
-from typing import Optional, Union
+from typing import Optional, Union, Callable
 
 from PyQt5.QtCore import Qt
 from PyQt5.QtGui import QFont
-from PyQt5.QtWidgets import QWidget, QHBoxLayout
+from PyQt5.QtWidgets import QWidget, QHBoxLayout, QVBoxLayout
 
 from modules.helpers.types.Decorators import override
 from modules.helpers.types.Strings import Strings
+from modules.models.view.Background import Background
+from modules.models.view.Border import Border
+from modules.models.view.ColorBox import ColorBox
 from modules.models.view.builder.BackgroundThemeBuilder import BackgroundThemeBuilder
 from modules.models.view.builder.FontBuilder import FontBuilder
 from modules.models.view.builder.IconButtonStyle import IconButtonStyle
 from modules.models.view.builder.TextStyle import TextStyle
 from modules.screens.AbstractScreen import BaseView
 from modules.statics.view.Material import Icons, Paddings, Colors, Backgrounds, ColorBoxes, Cursors
-from modules.widgets import Observers
+from modules.widgets import Observers, Dialogs
 from modules.widgets.Buttons import ToggleIconButton, IconButton
 from modules.widgets.Cover import Cover, CoverProp
 from modules.widgets.Icons import AppIcon
-from modules.widgets.Labels import LabelWithDefaultText
+from modules.widgets.Labels import LabelWithDefaultText, Input
 from modules.widgets.Widgets import BackgroundWidget
+
+
+class RenameSongDialog(Dialogs.ConfirmDialog):
+    def __init__(self, header: str, msg: str | None = None, accept_text: str = "Confirm", reject_text: str = "Cancel",
+                 onclick_accept_fn: Callable[[str], str] = None, onclick_reject_fn: callable = None,
+                 dark_mode: bool = False,
+                 parent: Optional["QWidget"] = None):
+        super().__init__(header, msg, accept_text, reject_text, onclick_accept_fn, onclick_reject_fn, dark_mode, parent)
+
+    def _init_content(self, content: QWidget) -> None:
+        layout = QVBoxLayout(content)
+        self.__input = Input.build(
+            font=FontBuilder.build(size=12),
+            light_mode_style=TextStyle(text_color=ColorBoxes.PRIMARY,
+                                       background=Background(
+                                           border_radius=8,
+                                           color=ColorBox(normal=Colors.PRIMARY.with_opacity(10)),
+                                           border=Border(size=2, color=Colors.PRIMARY))
+                                       ),
+            padding=8
+        )
+        self.__input.set_onpressed(self._on_accepted)
+        self.__input.setFixedHeight(48)
+        layout.addWidget(self.__input)
+
+    @override
+    def _get_onclick_accept_fn(self) -> callable:
+        return lambda: self._onclick_accept_fn(self.__input.text())
+
+    @override
+    def apply_dark_mode(self) -> None:
+        super().apply_dark_mode()
+        self.__input.apply_dark_mode()
+
+    @override
+    def apply_light_mode(self) -> None:
+        super().apply_light_mode()
+        self.__input.apply_light_mode()
 
 
 class SongTableRowView(BackgroundWidget, BaseView):
@@ -75,6 +116,7 @@ class SongTableRowView(BackgroundWidget, BaseView):
 
         self.__label_title = self.__create_label(with_font=font, light_mode_text_color=ColorBoxes.BLACK)
         self.__label_title.setFixedWidth(188)
+        self.__title_observer = Observers.observe_click_of(self.__label_title)
 
         self.__label_artist = self.__create_label(with_font=font)
         self.__label_artist.setFixedWidth(128)
@@ -82,6 +124,9 @@ class SongTableRowView(BackgroundWidget, BaseView):
         self.__label_length = self.__create_label(with_font=font)
         self.__label_length.setFixedWidth(64)
         self.__label_length.setAlignment(Qt.AlignCenter)
+
+        self.__btn_more = self.__create_button(with_icon=Icons.MORE)
+        # self.__btn_more.clicked.connect(lambda: self.show_more())
 
         self.__btn_love = ToggleIconButton.build(
             size=Icons.LARGE,
@@ -123,7 +168,7 @@ class SongTableRowView(BackgroundWidget, BaseView):
         self.__info.addWidget(self.__label_artist, 1)
         self.__info.addWidget(self.__label_length)
 
-        self.__buttons_layout.addStretch(0)
+        self.__buttons_layout.addWidget(self.__btn_more)
         self.__buttons_layout.addWidget(self.__btn_love)
         self.__buttons_layout.addWidget(self.__btn_play)
 
@@ -138,6 +183,7 @@ class SongTableRowView(BackgroundWidget, BaseView):
         self.__label_title.apply_light_mode()
         self.__label_artist.apply_light_mode()
         self.__label_length.apply_light_mode()
+        self.__btn_more.apply_light_mode()
         self.__btn_love.apply_light_mode()
         self.__btn_play.apply_light_mode()
         self.__btn_add_to_playlist.apply_light_mode()
@@ -150,6 +196,7 @@ class SongTableRowView(BackgroundWidget, BaseView):
         self.__label_title.apply_dark_mode()
         self.__label_artist.apply_dark_mode()
         self.__label_length.apply_dark_mode()
+        self.__btn_more.apply_dark_mode()
         self.__btn_love.apply_dark_mode()
         self.__btn_play.apply_dark_mode()
         self.__btn_add_to_playlist.apply_dark_mode()
@@ -169,6 +216,9 @@ class SongTableRowView(BackgroundWidget, BaseView):
 
     def set_on_doubleclick_cover(self, fn: callable) -> None:
         self.__cover_observer.set_on_doubleclick_fn(lambda: fn() if self.__editable else None)
+
+    def set_on_edit_title(self, fn: callable) -> None:
+        self.__btn_more.clicked.connect(lambda: fn() if self.__editable else None)
 
     def __clicked_add_btn(self, fn: callable) -> None:
         self.__btn_remove_from_playlist.show()

@@ -25,11 +25,13 @@ def confirm(
 
 
 class ConfirmDialog(QDialog, BaseView):
+    _onclick_accept_fn: callable
+    _onclick_reject_fn: callable
 
     def __init__(
         self,
         header: str,
-        msg: str,
+        msg: str | None = None,
         accept_text: str = "Confirm",
         reject_text: str = "Cancel",
         onclick_accept_fn: callable = None,
@@ -37,8 +39,10 @@ class ConfirmDialog(QDialog, BaseView):
         dark_mode: bool = False,
         parent: Optional["QWidget"] = None,
     ):
+        self._onclick_accept_fn = onclick_accept_fn
+        self._onclick_reject_fn = onclick_reject_fn
         super().__init__(parent)
-        self.__init_ui(header, msg, accept_text, reject_text, onclick_accept_fn, onclick_reject_fn)
+        self.__init_ui(header, msg, accept_text, reject_text)
         if dark_mode:
             self.apply_dark_mode()
         else:
@@ -50,8 +54,6 @@ class ConfirmDialog(QDialog, BaseView):
         msg: str,
         accept_text: str,
         reject_text: str,
-        onclick_accept_fn: callable = None,
-        onclick_reject_fn: callable = None,
     ):
         self.setWindowFlags(Qt.Window | Qt.FramelessWindowHint | Qt.WindowMinMaxButtonsHint)
         self.setAttribute(Qt.WA_StyledBackground, True)
@@ -72,7 +74,7 @@ class ConfirmDialog(QDialog, BaseView):
             dark_mode=TextStyle(text_color=ColorBoxes.WHITE, background=Backgrounds.ROUNDED_WHITE_25)
         )
         self.__accept_btn.setText(accept_text)
-        self.__accept_btn.clicked.connect(lambda: self.__on_accepted(onclick_accept_fn))
+        self.__accept_btn.clicked.connect(lambda: self._on_accepted())
         self.__button_box.addWidget(self.__accept_btn)
 
         self.__reject_btn = ActionButton.build(
@@ -82,7 +84,7 @@ class ConfirmDialog(QDialog, BaseView):
                                  background=Backgrounds.ROUNDED_DANGER_75.with_border_radius(8)),
             dark_mode=TextStyle(text_color=ColorBoxes.WHITE, background=Backgrounds.ROUNDED_WHITE_25)
         )
-        self.__reject_btn.clicked.connect(lambda: self.__on_rejected(onclick_reject_fn))
+        self.__reject_btn.clicked.connect(lambda: self._on_rejected())
         self.__reject_btn.setText(reject_text)
         self.__button_box.addWidget(self.__reject_btn)
 
@@ -113,12 +115,20 @@ class ConfirmDialog(QDialog, BaseView):
     def _init_content(self, content: QWidget) -> None:
         pass
 
-    def __on_accepted(self, fn: callable = None):
+    def _get_onclick_accept_fn(self) -> callable:
+        return self._onclick_accept_fn
+
+    def _get_onclick_reject_fn(self) -> callable:
+        return self._onclick_reject_fn
+
+    def _on_accepted(self) -> None:
+        fn = self._get_onclick_accept_fn()
         if fn is not None:
             fn()
         self.accept()
 
-    def __on_rejected(self, fn: callable = None):
+    def _on_rejected(self) -> None:
+        fn = self._get_onclick_reject_fn()
         if fn is not None:
             fn()
         self.reject()

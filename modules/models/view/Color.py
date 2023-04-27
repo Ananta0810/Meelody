@@ -30,4 +30,4 @@ class Color(StylesheetElement):
         return self.with_alpha(255 * value // 100)
 
     def to_QColor(self) -> QColor:
-        return QColor(self.red, self.green, self.blue, self.alpha)
+        return QColor(self.red, self.green, self.blue)

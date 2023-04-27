@@ -4,19 +4,19 @@ from modules.models.view.StylesheetElement import StylesheetElement
 
 
 class Border(StylesheetElement):
-    def __init__(self, size: int, style: str, color: ColorBox):
+    def __init__(self, size: int, color: ColorBox, style: str = "solid"):
         self.size = size
         self.style = style
         self.color = color
 
     def with_size(self, size: int) -> 'Border':
-        return Border(size, self.style, self.color)
+        return Border(size, self.color, self.style)
 
     def with_style(self, style: str) -> 'Border':
-        return Border(self.size, style, self.color)
+        return Border(self.size, self.color, style)
 
     def with_color(self, color: ColorBox) -> 'Border':
-        return Border(self.size, self.style, color)
+        return Border(self.size, color, self.style)
 
     def and_size(self, size: int) -> 'Border':
         self.size = size

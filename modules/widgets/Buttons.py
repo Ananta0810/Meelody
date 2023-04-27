@@ -1,15 +1,86 @@
 from typing import Optional
 
 from PyQt5.QtCore import QSize, QObject
+from PyQt5.QtGui import QFont
 from PyQt5.QtWidgets import QWidget, QPushButton
 
 from modules.helpers.types.Decorators import override
 from modules.models.view.Padding import Padding
 from modules.models.view.builder.BackgroundThemeBuilder import BackgroundThemeBuilder
 from modules.models.view.builder.IconButtonStyle import IconButtonStyle
+from modules.models.view.builder.TextStyle import TextStyle
 from modules.screens.AbstractScreen import BaseView
 from modules.statics.view.Material import Paddings, Cursors
 from modules.widgets.Icons import AppIcon
+
+
+class ActionButton(QPushButton, BaseView):
+    padding: Padding = Paddings.DEFAULT
+
+    def __init__(self, parent: Optional[QWidget] = None):
+        super().__init__(parent)
+
+    def set_padding(self, padding: Padding) -> None:
+        self.padding = padding
+
+    @override
+    def setText(self, text: str) -> None:
+        super().setText(text)
+        self.__padding_text()
+
+    def __padding_text(self) -> None:
+        if self.padding is Paddings.DEFAULT:
+            return
+        textSize = self.sizeHint()
+        self.setFixedSize(
+            textSize.width() + self.padding.get_width(textSize.width()),
+            textSize.height() + self.padding.get_height(textSize.height()),
+        )
+
+    def __set_light_mode_background(self, style: str) -> None:
+        self.__light_mode_background = style
+
+    def __set_dark_mode_background(self, style: str) -> None:
+        self.__dark_mode_background = style
+
+    @override
+    def apply_light_mode(self) -> None:
+        self.setStyleSheet(self.__light_mode_background)
+
+    @override
+    def apply_dark_mode(self) -> None:
+        self.setStyleSheet(self.__dark_mode_background)
+
+    @staticmethod
+    def build(
+        size: QSize,
+        font: QFont,
+        light_mode: TextStyle,
+        dark_mode: TextStyle = None,
+        padding: Padding = Paddings.DEFAULT,
+        parent: QObject = None,
+    ) -> 'ActionButton':
+        button = ActionButton(parent)
+        button.setFixedSize(size)
+        button.setCursor(Cursors.HAND)
+        button.set_padding(padding)
+        button.setFont(font)
+
+        button.__set_light_mode_background(
+            BackgroundThemeBuilder.build(element=BackgroundThemeBuilder.BUTTON,
+                                         element_size=size.width(),
+                                         background=light_mode.background,
+                                         text_color=light_mode.text_color
+                                         ))
+
+        dark_mode = dark_mode or light_mode
+        button.__set_dark_mode_background(
+            BackgroundThemeBuilder.build(element=BackgroundThemeBuilder.BUTTON,
+                                         element_size=size.width(),
+                                         background=dark_mode.background,
+                                         text_color=dark_mode.text_color
+                                         ))
+        return button
 
 
 class StatelessIconButtonThemeData:
@@ -226,6 +297,8 @@ class IconButton(QPushButton, BaseView):
 
         button.set_light_mode_icon(style.light_mode_icon)
         button.set_dark_mode_icon(style.dark_mode_icon)
-        button.set_light_mode_background(BackgroundThemeBuilder.build(BackgroundThemeBuilder.BUTTON, size.width(), style.light_mode_background))
-        button.set_dark_mode_background(BackgroundThemeBuilder.build(BackgroundThemeBuilder.BUTTON, size.width(), style.dark_mode_background))
+        button.set_light_mode_background(
+            BackgroundThemeBuilder.build(BackgroundThemeBuilder.BUTTON, size.width(), style.light_mode_background))
+        button.set_dark_mode_background(
+            BackgroundThemeBuilder.build(BackgroundThemeBuilder.BUTTON, size.width(), style.dark_mode_background))
         return button
