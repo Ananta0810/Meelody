@@ -73,18 +73,25 @@ class CurrentPlaylistView(QWidget, BaseView):
         self.__menu.set_on_keypress(fn)
 
     @connector
-    def set_onclick_select_songs_fn(self, fn: Callable[[], None]) -> None:
-        self.__menu.set_onclick_select_songs_fn(fn)
+    def set_onclick_add_songs_to_library_fn(self, fn: Callable[[list[str]], None]) -> None:
+        self.__menu.set_onclick_add_songs_to_library_fn(fn)
 
     @connector
-    def set_onclick_apply_add_song_fn(self, fn: Callable[[], None]) -> None:
-        self.__menu.set_onclick_apply_add_song_fn(fn)
+    def set_onclick_select_songs_to_playlist_fn(self, fn: Callable[[], None]) -> None:
+        self.__menu.set_onclick_select_songs_to_playlist_fn(fn)
+
+    @connector
+    def set_onclick_apply_select_songs_to_playlist_fn(self, fn: Callable[[], None]) -> None:
+        self.__menu.set_onclick_apply_select_songs_to_playlist_fn(fn)
 
     def enable_choosing_song(self, is_choosing: bool) -> None:
         self.__menu.enable_choosing_song(is_choosing)
 
-    def enable_add_new_song(self, visible: bool) -> None:
-        self.__menu.enable_add_new_song(visible)
+    def enable_add_songs_to_library(self, visible: bool) -> None:
+        self.__menu.enable_add_songs_to_library(visible)
+
+    def enable_select_songs_to_playlist(self, visible: bool) -> None:
+        self.__menu.enable_select_songs_to_playlist(visible)
 
     def refresh_menu(self) -> None:
         self.__menu.refresh()

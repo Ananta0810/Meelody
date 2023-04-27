@@ -2,7 +2,7 @@ from typing import Optional, Callable
 
 from PyQt5.QtCore import Qt
 from PyQt5.QtGui import QFont
-from PyQt5.QtWidgets import QWidget, QHBoxLayout
+from PyQt5.QtWidgets import QWidget, QHBoxLayout, QFileDialog
 
 from modules.helpers.types.Decorators import override
 from modules.models.view.Padding import Padding
@@ -11,8 +11,8 @@ from modules.models.view.builder.IconButtonStyle import IconButtonStyle
 from modules.models.view.builder.TextStyle import TextStyle
 from modules.screens.AbstractScreen import BaseView
 from modules.statics.view.Material import ColorBoxes, Icons, Paddings, Colors, Backgrounds
-from modules.widgets.Icons import AppIcon
 from modules.widgets.Buttons import IconButton
+from modules.widgets.Icons import AppIcon
 from modules.widgets.Labels import LabelWithDefaultText
 
 
@@ -29,8 +29,9 @@ class SongTableHeaderView(QWidget, BaseView):
     __btn_download_songs: IconButton
     __btn_select_songs: IconButton
 
-    __onclick_select_songs_fn: Callable[[], None]
-    __onclick_apply_add_song_fn: Callable[[], None]
+    __onclick_add_songs_to_library_fn: Callable[[list[str]], None]
+    __onclick_select_songs_to_playlist_fn: Callable[[], None]
+    __onclick_apply_select_songs_to_playlist_fn: Callable[[], None]
 
     def __init__(self, parent: Optional["QWidget"] = None):
         super(SongTableHeaderView, self).__init__(parent)
@@ -76,12 +77,16 @@ class SongTableHeaderView(QWidget, BaseView):
         self.__btn_download_songs = self.__create_button(Icons.DOWNLOAD, Paddings.RELATIVE_50)
         self.__buttons_layout.addWidget(self.__btn_download_songs)
 
+        self.__btn_add_songs_to_library = self.__create_button(Icons.ADD, Paddings.RELATIVE_67)
+        self.__btn_add_songs_to_library.clicked.connect(lambda: self.__select_song_paths_to_add_to_library())
+        self.__buttons_layout.addWidget(self.__btn_add_songs_to_library)
+
         self.__btn_select_songs = self.__create_button(Icons.EDIT, Paddings.RELATIVE_67)
-        self.__btn_select_songs.clicked.connect(lambda: self.__onclick_select_songs_fn())
+        self.__btn_select_songs.clicked.connect(lambda: self.__onclick_select_songs_to_playlist_fn())
         self.__buttons_layout.addWidget(self.__btn_select_songs)
 
         self.__btn_apply_add_songs = self.__create_button(Icons.APPLY, Paddings.RELATIVE_50)
-        self.__btn_apply_add_songs.clicked.connect(lambda: self.__onclick_apply_add_song_fn())
+        self.__btn_apply_add_songs.clicked.connect(lambda: self.__onclick_apply_select_songs_to_playlist_fn())
         self.__btn_apply_add_songs.hide()
         self.__buttons_layout.addWidget(self.__btn_apply_add_songs)
 
@@ -92,12 +97,18 @@ class SongTableHeaderView(QWidget, BaseView):
         self.__info.addWidget(self.__label_length)
         self.__info.addWidget(self.__buttons)
 
+    def __select_song_paths_to_add_to_library(self):
+        paths = QFileDialog.getOpenFileNames(self, filter="MP3 (*.MP3 *.mp3)")[0]
+        if paths is not None and len(paths) > 0:
+            return self.__onclick_add_songs_to_library_fn(paths)
+
     @override
     def apply_light_mode(self) -> None:
         self.__label_track.apply_light_mode()
         self.__label_artist.apply_light_mode()
         self.__label_length.apply_light_mode()
         self.__btn_download_songs.apply_light_mode()
+        self.__btn_add_songs_to_library.apply_light_mode()
         self.__btn_select_songs.apply_light_mode()
         self.__btn_apply_add_songs.apply_light_mode()
 
@@ -107,6 +118,7 @@ class SongTableHeaderView(QWidget, BaseView):
         self.__label_artist.apply_dark_mode()
         self.__label_length.apply_dark_mode()
         self.__btn_download_songs.apply_dark_mode()
+        self.__btn_add_songs_to_library.apply_dark_mode()
         self.__btn_select_songs.apply_dark_mode()
         self.__btn_apply_add_songs.apply_dark_mode()
 
@@ -120,7 +132,13 @@ class SongTableHeaderView(QWidget, BaseView):
         self.__btn_apply_add_songs.setVisible(is_choosing)
         self.__btn_select_songs.setVisible(not is_choosing)
 
-    def enable_add_new_song(self, visible: bool) -> None:
+    def enable_add_songs_to_library(self, visible: bool) -> None:
+        if visible:
+            self.__btn_add_songs_to_library.setVisible(True)
+        else:
+            self.__btn_add_songs_to_library.setVisible(False)
+
+    def enable_select_songs_to_playlist(self, visible: bool) -> None:
         if visible:
             self.__btn_select_songs.setVisible(True)
             self.__btn_apply_add_songs.setVisible(False)
@@ -128,11 +146,14 @@ class SongTableHeaderView(QWidget, BaseView):
             self.__btn_select_songs.setVisible(False)
             self.__btn_apply_add_songs.setVisible(False)
 
-    def set_onclick_select_songs_fn(self, fn: Callable[[], None]) -> None:
-        self.__onclick_select_songs_fn = fn
+    def set_onclick_add_songs_to_library_fn(self, fn: Callable[[list[str]], None]) -> None:
+        self.__onclick_add_songs_to_library_fn = fn
 
-    def set_onclick_apply_add_song_fn(self, fn: Callable[[], None]) -> None:
-        self.__onclick_apply_add_song_fn = fn
+    def set_onclick_select_songs_to_playlist_fn(self, fn: Callable[[], None]) -> None:
+        self.__onclick_select_songs_to_playlist_fn = fn
+
+    def set_onclick_apply_select_songs_to_playlist_fn(self, fn: Callable[[], None]) -> None:
+        self.__onclick_apply_select_songs_to_playlist_fn = fn
 
     @staticmethod
     def __create_label(font: QFont) -> LabelWithDefaultText:

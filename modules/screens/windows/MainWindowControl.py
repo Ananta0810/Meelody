@@ -1,4 +1,5 @@
 from modules.helpers import DataSaver
+from modules.helpers.Files import Files
 from modules.helpers.types.Bytes import Bytes, BytesModifier
 from modules.helpers.types.Decorators import override
 from modules.helpers.types.Lists import Lists
@@ -46,8 +47,10 @@ class MainWindowControl(MainWindowView, BaseControl):
         self._body.set_onclick_remove_from_playlist(lambda index: self.__remove_song_from_menu_at(index))
         self._body.set_on_change_song_cover(lambda index, path: self.__change_cover_for_song_at(index, path))
         self._body.set_onchange_song_title(lambda index, title: self.__change_title_for_song_at(index, title))
-        self._body.set_onclick_select_songs_fn(lambda: self.__start_select_songs_from_library_to_playlist())
-        self._body.set_onclick_apply_select_songs_fn(lambda: self.__finish_select_songs_from_library_to_playlist())
+        self._body.set_onclick_add_songs_to_library_fn(lambda paths: self.__add_songs_to_library(paths))
+        self._body.set_onclick_select_songs_to_playlist_fn(lambda: self.__start_select_songs_from_library_to_playlist())
+        self._body.set_onclick_apply_select_songs_to_playlist_fn(
+            lambda: self.__finish_select_songs_from_library_to_playlist())
         self._body.set_on_keypress(lambda key: self.__go_to_song_that_title_start_with(key))
 
         self._body.set_onclick_library(self.__choose_library)
@@ -84,7 +87,9 @@ class MainWindowControl(MainWindowView, BaseControl):
 
     def __choose_library(self) -> None:
         self._body.enable_choosing_song(False)
-        self._body.enable_add_new_song(False)
+        self._body.enable_add_songs_to_library(True)
+        self._body.enable_select_songs_to_playlist(False)
+
         self.__select_playlist(self.__library)
         self._body.enable_edit_songs(True)
         self.__is_selecting_library = True
@@ -95,7 +100,8 @@ class MainWindowControl(MainWindowView, BaseControl):
 
     def __choose_favourites(self) -> None:
         self._body.enable_choosing_song(False)
-        self._body.enable_add_new_song(False)
+        self._body.enable_add_songs_to_library(False)
+        self._body.enable_select_songs_to_playlist(False)
 
         favourite_songs: list[Song] = list(filter(lambda song: song.is_loved(), self.__library.get_songs().get_songs()))
         playlist = Playlist.create(name="Favourites",
@@ -107,7 +113,9 @@ class MainWindowControl(MainWindowView, BaseControl):
 
     def __choose_playlist(self, playlist: Playlist) -> None:
         self._body.enable_choosing_song(False)
-        self._body.enable_add_new_song(True)
+        self._body.enable_add_songs_to_library(False)
+        self._body.enable_select_songs_to_playlist(True)
+
         self.__select_playlist(playlist)
         self._body.enable_edit_songs(False)
         self.__is_selecting_library = False
@@ -185,6 +193,21 @@ class MainWindowControl(MainWindowView, BaseControl):
 
     def find_playlist_of(self, card: PlaylistCardData) -> Playlist:
         return next(playlist_ for playlist_ in self.__playlists if playlist_.get_info().id == card.content().id)
+
+    def __add_songs_to_library(self, paths: list[str]) -> None:
+        new_songs: list[Song] = []
+        for path in paths:
+            try:
+                song_path = Files.copy_file(path, "library/")
+                song = Song.from_file(song_path)
+                new_songs.append(song)
+            except FileExistsError:
+                pass
+        self.__library.get_songs().insertAll(new_songs)
+        self.__choose_library()
+        DataSaver.save_songs(self.__library.get_songs().get_songs())
+        for song in new_songs:
+            print(f"Inserted song {song.get_title()} to library.")
 
     def __start_select_songs_from_library_to_playlist(self) -> None:
         current_playlist_songs_ids: list[str] = [song.get_id() for song in

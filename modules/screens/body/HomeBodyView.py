@@ -88,12 +88,16 @@ class HomeBodyView(QScrollArea, BaseView):
         self.__current_playlist.set_on_keypress(fn)
 
     @connector
-    def set_onclick_select_songs_fn(self, fn: Callable[[], None]) -> None:
-        self.__current_playlist.set_onclick_select_songs_fn(fn)
+    def set_onclick_add_songs_to_library_fn(self, fn: Callable[[list[str]], None]) -> None:
+        self.__current_playlist.set_onclick_add_songs_to_library_fn(fn)
 
     @connector
-    def set_onclick_apply_select_songs_fn(self, fn: Callable[[], None]) -> None:
-        self.__current_playlist.set_onclick_apply_add_song_fn(fn)
+    def set_onclick_select_songs_to_playlist_fn(self, fn: Callable[[], None]) -> None:
+        self.__current_playlist.set_onclick_select_songs_to_playlist_fn(fn)
+
+    @connector
+    def set_onclick_apply_select_songs_to_playlist_fn(self, fn: Callable[[], None]) -> None:
+        self.__current_playlist.set_onclick_apply_select_songs_to_playlist_fn(fn)
 
     @connector
     def set_onclick_library(self, fn: Callable[[], None]) -> None:
@@ -110,8 +114,11 @@ class HomeBodyView(QScrollArea, BaseView):
     def enable_choosing_song(self, is_choosing: bool) -> None:
         self.__current_playlist.enable_choosing_song(is_choosing)
 
-    def enable_add_new_song(self, visible: bool) -> None:
-        self.__current_playlist.enable_add_new_song(visible)
+    def enable_add_songs_to_library(self, visible: bool) -> None:
+        self.__current_playlist.enable_add_songs_to_library(visible)
+
+    def enable_select_songs_to_playlist(self, visible: bool) -> None:
+        self.__current_playlist.enable_select_songs_to_playlist(visible)
 
     def set_default_playlist_cover(self, cover: bytes) -> None:
         self.__playlist_carousel.set_default_playlist_cover(cover)
