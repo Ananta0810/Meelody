@@ -251,6 +251,11 @@ class IconButton(QPushButton, BaseView):
     def __init__(self, parent: Optional["QWidget"] = None):
         super().__init__(parent)
 
+    def keep_space_when_hiding(self) -> None:
+        policy = self.sizePolicy()
+        policy.setRetainSizeWhenHidden(True)
+        self.setSizePolicy(policy)
+
     def set_light_mode_icon(self, icon: AppIcon) -> None:
         self.__light_mode_icon = icon
 

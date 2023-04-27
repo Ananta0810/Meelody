@@ -287,6 +287,7 @@ class Icons:
     DELETE: AppIcon
     PLAY_SONG: AppIcon
     MORE: AppIcon
+    IMAGE: AppIcon
 
     MINUS: AppIcon
     ADD: AppIcon
@@ -325,6 +326,7 @@ class Icons:
         Icons.MINUS = AppIcon("assets/images/icons/minus.png")
         Icons.ADD = AppIcon("assets/images/icons/add.png")
         Icons.EDIT = AppIcon("assets/images/icons/edit.png")
+        Icons.IMAGE = AppIcon("assets/images/icons/image.png")
         Icons.LOVE = AppIcon("assets/images/icons/love.png")
         Icons.DOWNLOAD = AppIcon("assets/images/icons/download.png")
 
