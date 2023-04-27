@@ -76,8 +76,12 @@ class HomeBodyView(QScrollArea, BaseView):
         self.__current_playlist.set_onclick_remove_from_playlist_on_menu(fn)
 
     @connector
-    def set_on_doubleclick_cover_from_playlist(self, fn: Callable[[int, str], None]) -> None:
-        self.__current_playlist.set_on_doubleclick_cover_from_playlist(fn)
+    def set_on_change_song_cover(self, fn: Callable[[int, str], None]) -> None:
+        self.__current_playlist.set_onchange_song_cover_on_menu(fn)
+
+    @connector
+    def set_onchange_song_title(self, fn: Callable[[int, str], bool]) -> None:
+        self.__current_playlist.set_onchange_song_title_on_menu(fn)
 
     @connector
     def set_on_keypress(self, fn: Callable[[str], int]) -> None:

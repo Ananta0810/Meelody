@@ -44,8 +44,8 @@ class MainWindowControl(MainWindowView, BaseControl):
         self._body.set_onclick_love(lambda index: self.__love_song_from_menu(index))
         self._body.set_onclick_add_to_playlist(lambda index: self.__add_song_from_menu_at(index))
         self._body.set_onclick_remove_from_playlist(lambda index: self.__remove_song_from_menu_at(index))
-        self._body.set_on_doubleclick_cover_from_playlist(
-            lambda index, path: self.__change_cover_for_song_at(index, path))
+        self._body.set_on_change_song_cover(lambda index, path: self.__change_cover_for_song_at(index, path))
+        self._body.set_onchange_song_title(lambda index, title: self.__change_title_for_song_at(index, title))
         self._body.set_onclick_select_songs_fn(lambda: self.__start_select_songs_from_library_to_playlist())
         self._body.set_onclick_apply_select_songs_fn(lambda: self.__finish_select_songs_from_library_to_playlist())
         self._body.set_on_keypress(lambda key: self.__go_to_song_that_title_start_with(key))
@@ -230,6 +230,20 @@ class MainWindowControl(MainWindowView, BaseControl):
         song.set_cover(bytes_data)
         self.__choose_library()
         DataSaver.save_songs(self.__library.get_songs().get_songs())
+
+    def __change_title_for_song_at(self, index: int, new_title: str) -> bool:
+        old_song = self.__displaying_playlist.get_songs().get_song_at(index)
+        new_song = old_song.clone()
+        change_successfully = new_song.set_title(new_title)
+        # TODO: Show alert box here.
+        if not change_successfully:
+            return False
+
+        self.__library.get_songs().remove_song(old_song)
+        self.__library.get_songs().insert(new_song)
+        self.__choose_library()
+        DataSaver.save_songs(self.__library.get_songs().get_songs())
+        return True
 
     def __love_song_from_player(self, song: Song) -> None:
         self._body.love_song(song.is_loved())

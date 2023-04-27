@@ -7,7 +7,7 @@ from PyQt5.QtWidgets import QWidget, QVBoxLayout, QFileDialog
 from modules.helpers.types.Decorators import override, connector
 from modules.models.Song import Song
 from modules.screens.AbstractScreen import BaseView
-from modules.screens.body.songs_table.SongTableRowView import SongTableRowView
+from modules.screens.body.songs_table.SongTableRowView import SongTableRowView, RenameSongDialog
 from modules.statics.view.Material import Images, Backgrounds
 from modules.widgets.ScrollAreas import SmoothVerticalScrollArea
 
@@ -20,7 +20,8 @@ class SongTableBodyView(SmoothVerticalScrollArea, BaseView):
     __onclick_love_fn: Callable[[int], None] = None
     __onclick_add_to_playlist_fn: Callable[[int], None] = None
     __onclick_remove_from_playlist_fn: Callable[[int], None] = None
-    __on_doubleclick_cover_from_playlist_fn: Callable[[int, str], None] = None
+    __onchange_cover_fn: Callable[[int, str], None] = None
+    __onchange_title_fn: Callable[[int, str], bool] = None
     __on_keypress_fn: Callable[[str], int] = None
 
     def __init__(self, parent: Optional["QWidget"] = None):
@@ -82,15 +83,24 @@ class SongTableBodyView(SmoothVerticalScrollArea, BaseView):
             song.set_onclick_remove_from_playlist(lambda: self.__onclick_remove_from_playlist_fn(index))
 
     @connector
-    def set_on_doubleclick_cover_from_playlist(self, fn: Callable[[int, str], None]) -> None:
-        self.__on_doubleclick_cover_from_playlist_fn = fn
+    def set_onchange_song_cover(self, fn: Callable[[int, str], None]) -> None:
+        self.__onchange_cover_fn = fn
         for index, song in enumerate(self._songs):
             song.set_on_doubleclick_cover(lambda: self.__choose_cover_for_song_at(index))
+
+    @connector
+    def set_onchange_song_title(self, fn: Callable[[int, str], bool]) -> None:
+        self.__onchange_title_fn = fn
+        for index, song in enumerate(self._songs):
+            song.set_on_edit_title(lambda: self.__rename_title_for_song_at(index))
 
     def __choose_cover_for_song_at(self, index: int) -> None:
         path = QFileDialog.getOpenFileName(self, filter="JPEG, PNG (*.JPEG *.jpeg *.JPG *.jpg *.JPE *.jpe)")[0]
         if path is not None and path != '':
-            self.__on_doubleclick_cover_from_playlist_fn(index, path)
+            self.__onchange_cover_fn(index, path)
+
+    def __rename_title_for_song_at(self, index: int) -> None:
+        RenameSongDialog("Rename song", onclick_accept_fn=lambda title: self.__onchange_title_fn(index, title)).exec()
 
     def __onclick_play_btn(self, index: int) -> None:
         self.select_song_at(index)
@@ -177,6 +187,7 @@ class SongTableBodyView(SmoothVerticalScrollArea, BaseView):
         songView.set_onclick_add_to_playlist(lambda: self.__onclick_add_to_playlist_fn(index))
         songView.set_onclick_remove_from_playlist(lambda: self.__onclick_remove_from_playlist_fn(index))
         songView.set_on_doubleclick_cover(lambda: self.__choose_cover_for_song_at(index))
+        songView.set_on_edit_title(lambda: self.__rename_title_for_song_at(index))
 
         songView.enable_choosing(False)
 

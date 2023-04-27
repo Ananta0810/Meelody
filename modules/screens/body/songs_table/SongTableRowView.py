@@ -25,7 +25,7 @@ from modules.widgets.Widgets import BackgroundWidget
 
 class RenameSongDialog(Dialogs.ConfirmDialog):
     def __init__(self, header: str, msg: str | None = None, accept_text: str = "Confirm", reject_text: str = "Cancel",
-                 onclick_accept_fn: Callable[[str], str] = None, onclick_reject_fn: callable = None,
+                 onclick_accept_fn: Callable[[str], bool] = None, onclick_reject_fn: callable = None,
                  dark_mode: bool = False,
                  parent: Optional["QWidget"] = None):
         super().__init__(header, msg, accept_text, reject_text, onclick_accept_fn, onclick_reject_fn, dark_mode, parent)

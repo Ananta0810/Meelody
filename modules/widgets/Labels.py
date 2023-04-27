@@ -136,3 +136,61 @@ class DoubleClickedEditableLabel(QLineEdit, BaseView):
         label.set_dark_mode_style(
             LabelWithDefaultText.build_style(dark_mode_style or light_mode_style, padding, width))
         return label
+
+
+class Input(QLineEdit, BaseView):
+    __default_text: str = ""
+    __light_mode_style: str
+    __dark_mode_style: str
+    __onpresses: Callable[[str], None]
+
+    def __init__(self, parent: Optional["QWidget"] = None):
+        super().__init__(parent)
+
+    @handler
+    def set_onpressed(self, fn: Callable[[], None]) -> None:
+        self.__onpresses = fn
+
+    @override
+    def keyPressEvent(self, a0):
+        super().keyPressEvent(a0)
+        if a0.key() != Qt.Key_Return:
+            return
+        if self.__onpresses is not None:
+            self.__onpresses()
+
+    @override
+    def setText(self, text: str) -> None:
+        super().setText(text or self.__default_text)
+        metrics = self.fontMetrics()
+        self.setMinimumWidth(metrics.boundingRect(text).width() + 4)
+
+    def __set_light_mode_style(self, style: str) -> None:
+        self.__light_mode_style = style
+
+    def __set_dark_mode_style(self, style: str) -> None:
+        self.__dark_mode_style = style
+
+    @override
+    def apply_light_mode(self):
+        self.setStyleSheet(self.__light_mode_style)
+
+    @override
+    def apply_dark_mode(self):
+        self.setStyleSheet(self.__dark_mode_style)
+
+    @staticmethod
+    def build(
+        font: QFont,
+        light_mode_style: TextStyle,
+        dark_mode_style: TextStyle = None,
+        width: Union[int, None] = None,
+        padding: int = 0,
+        parent: Optional["QWidget"] = None,
+    ) -> 'Input':
+        widget = Input(parent)
+        widget.setFont(font)
+        widget.__set_light_mode_style(LabelWithDefaultText.build_style(light_mode_style, padding, width))
+        widget.__set_dark_mode_style(
+            LabelWithDefaultText.build_style(dark_mode_style or light_mode_style, padding, width))
+        return widget

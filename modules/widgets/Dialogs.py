@@ -1,4 +1,4 @@
-from typing import Optional
+from typing import Optional, Callable
 
 from PyQt5.QtCore import Qt, QSize
 from PyQt5.QtWidgets import QDialog, QVBoxLayout, QWidget, QHBoxLayout
@@ -21,12 +21,12 @@ def confirm(
     onclick_reject_fn: callable = None,
     dark_mode: bool = False,
 ):
-    ConfirmDialog(header, msg, accept_text, reject_text, dark_mode, onclick_accept_fn, onclick_reject_fn).exec()
+    ConfirmDialog(header, msg, accept_text, reject_text, onclick_accept_fn, onclick_reject_fn, dark_mode).exec()
 
 
 class ConfirmDialog(QDialog, BaseView):
-    _onclick_accept_fn: callable
-    _onclick_reject_fn: callable
+    _onclick_accept_fn: Callable[[], bool]
+    _onclick_reject_fn: Callable[[], bool]
 
     def __init__(
         self,
@@ -34,8 +34,8 @@ class ConfirmDialog(QDialog, BaseView):
         msg: str | None = None,
         accept_text: str = "Confirm",
         reject_text: str = "Cancel",
-        onclick_accept_fn: callable = None,
-        onclick_reject_fn: callable = None,
+        onclick_accept_fn: Callable[[], bool] = None,
+        onclick_reject_fn: Callable[[], bool] = None,
         dark_mode: bool = False,
         parent: Optional["QWidget"] = None,
     ):
@@ -115,17 +115,20 @@ class ConfirmDialog(QDialog, BaseView):
     def _init_content(self, content: QWidget) -> None:
         pass
 
-    def _get_onclick_accept_fn(self) -> callable:
+    def _get_onclick_accept_fn(self) -> Callable[[], bool]:
         return self._onclick_accept_fn
 
-    def _get_onclick_reject_fn(self) -> callable:
+    def _get_onclick_reject_fn(self) -> Callable[[], bool]:
         return self._onclick_reject_fn
 
     def _on_accepted(self) -> None:
         fn = self._get_onclick_accept_fn()
-        if fn is not None:
-            fn()
-        self.accept()
+        if fn is None:
+            self.accept()
+            return
+        can_close = fn()
+        if can_close:
+            self.accept()
 
     def _on_rejected(self) -> None:
         fn = self._get_onclick_reject_fn()
