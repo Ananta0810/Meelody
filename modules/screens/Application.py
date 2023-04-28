@@ -20,6 +20,23 @@ class Application:
         self.window.show()
 
     def load_playlist(self):
+        """
+        TODO:
+            - Add alert when delete song and playlist.
+            - Add alert when song already existed.
+            - Add alert when update something failed.
+            - Add alert when download youtube music failed.
+            - Add progress bar to show which one is downloading.
+            - Add sidebar.
+            - Fix first time hear song.
+            - Fix edit when shuffling is wrong.
+            - Update UI for inputs.
+            - Add button to edit favourite playlist cover.
+            - Change icon for minimize button.
+            - Only show icon on tray when hidden.
+            - Add play buttons on taskbar.
+            - Refactor structure.
+        """
         songs: PlaylistSongs = DataSaver.load_songs_from_dir("library", with_extension="mp3")
         settings: AppSettings = DataSaver.load_settings()
         self.window.set_appsettings(settings)
