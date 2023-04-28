@@ -21,6 +21,11 @@ class Application:
 
     def load_playlist(self):
         """
+            - pip install yt-dlp==2023.2.17
+            - pip install Pillow==9.0.0
+        """
+
+        """
         TODO:
             - Add alert when delete song and playlist.
             - Add alert when song already existed.
@@ -35,6 +40,7 @@ class Application:
             - Change icon for minimize button.
             - Only show icon on tray when hidden.
             - Add play buttons on taskbar.
+            - Sort by title, length, artist.
             - Refactor structure.
         """
         songs: PlaylistSongs = DataSaver.load_songs_from_dir("library", with_extension="mp3")

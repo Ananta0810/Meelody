@@ -1,7 +1,10 @@
 import tempfile
+from threading import Thread
+from time import sleep
 
 from modules.helpers import DataSaver
-from modules.helpers.Files import Files, Youtubes
+from modules.helpers.Files import Files
+from modules.helpers.Youtubes import YoutubeDownloader
 from modules.helpers.types.Bytes import Bytes, BytesModifier
 from modules.helpers.types.Decorators import override
 from modules.helpers.types.Lists import Lists
@@ -51,8 +54,7 @@ class MainWindowControl(MainWindowView, BaseControl):
             lambda index, title, artist: self.__change_title_and_title_for_song_at(index, title, artist))
         self._body.set_on_change_song_cover_on_menu(lambda index, path: self.__change_cover_for_song_at(index, path))
         self._body.set_on_delete_song_on_menu(lambda index: self.__delete_song_at(index))
-        self._body.set_onclick_download_songs_to_library_fn(
-            lambda youtube_url: self.__add_songs_to_library_from_youtube(youtube_url))
+        self._body.set_onclick_download_songs_to_library_fn(lambda youtube_url: Thread(target=lambda: self.__add_songs_to_library_from_youtube(youtube_url)).start())
         self._body.set_onclick_add_songs_to_library_fn(lambda paths: self.__add_songs_to_library_from_computer(paths))
         self._body.set_onclick_select_songs_to_playlist_fn(lambda: self.__start_select_songs_from_library_to_playlist())
         self._body.set_onclick_apply_select_songs_to_playlist_fn(
@@ -206,15 +208,30 @@ class MainWindowControl(MainWindowView, BaseControl):
 
     def __add_songs_to_library_from_computer(self, paths: list[str]) -> None:
         new_songs = self.__add_songs_to_library(paths)
+        if len(new_songs) == 0:
+            return
+        if self.__is_selecting_library:
+            self.__choose_library()
         for song in new_songs:
             print(f"Inserted song {song.get_title()} to library.")
 
     def __add_songs_to_library_from_youtube(self, youtube_url: str) -> None:
         with tempfile.TemporaryDirectory() as temp_dir:
-            Youtubes.download_songs_from_youtube(youtube_url, to_directory=temp_dir)
+            downloader = YoutubeDownloader()
+            downloader.download_from(youtube_url, to_directory=temp_dir)
+            print(f"Downloading song from youtube with url '{youtube_url}'")
+
+            while downloader.is_downloading():
+                sleep(0.1)
+            print("Downloaded song from youtube successfully.")
+
             new_songs = self.__add_songs_to_library(Files.get_files_from(temp_dir, with_extension="mp3"))
+            if len(new_songs) == 0:
+                return
+            if self.__is_selecting_library:
+                self.__choose_library()
             for song in new_songs:
-                print(f"Downloaded song {song.get_title()} to library.")
+                print(f"Downloaded song '{song.get_title()}' to library.")
 
     def __add_songs_to_library(self, paths: list[str] | set[str]) -> list[Song]:
         new_songs: list[Song] = []
@@ -230,7 +247,6 @@ class MainWindowControl(MainWindowView, BaseControl):
             return []
 
         self.__library.get_songs().insertAll(new_songs)
-        self.__choose_library()
         DataSaver.save_songs(self.__library.get_songs().get_songs())
         return new_songs
 

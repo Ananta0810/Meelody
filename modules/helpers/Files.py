@@ -1,7 +1,6 @@
 from os import path, scandir
 from shutil import copyfile
 
-from yt_dlp import YoutubeDL
 
 from modules.helpers.types.Strings import Strings
 
@@ -24,26 +23,3 @@ class Files:
         return destiny
 
 
-class Youtubes:
-    @staticmethod
-    def clean_youtube_url(url: str):
-        index = url.find("&list")
-        if index != -1:
-            url = url[:index]
-        return url
-
-    @staticmethod
-    def download_songs_from_youtube(youtube_url: str, to_directory: str):
-        download_url = Youtubes.clean_youtube_url(youtube_url)
-        ydl_opts = {
-            'format': 'bestaudio/best',
-            'postprocessors': [{
-                'key': 'FFmpegExtractAudio',
-                'preferredcodec': 'mp3',
-                'preferredquality': '192',
-            }],
-            'outtmpl': to_directory + '/%(title)s.%(ext)s',
-        }
-
-        with YoutubeDL(ydl_opts) as ydl:
-            ydl.extract_info(download_url)
