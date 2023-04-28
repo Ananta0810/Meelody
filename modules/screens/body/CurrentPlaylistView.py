@@ -77,6 +77,10 @@ class CurrentPlaylistView(QWidget, BaseView):
         self.__menu.set_on_keypress(fn)
 
     @connector
+    def set_onclick_download_songs_to_library_fn(self, fn: Callable[[str], None]) -> None:
+        self.__menu.set_onclick_download_songs_to_library_fn(fn)
+
+    @connector
     def set_onclick_add_songs_to_library_fn(self, fn: Callable[[list[str]], None]) -> None:
         self.__menu.set_onclick_add_songs_to_library_fn(fn)
 

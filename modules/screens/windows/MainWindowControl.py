@@ -1,5 +1,7 @@
+import tempfile
+
 from modules.helpers import DataSaver
-from modules.helpers.Files import Files
+from modules.helpers.Files import Files, Youtubes
 from modules.helpers.types.Bytes import Bytes, BytesModifier
 from modules.helpers.types.Decorators import override
 from modules.helpers.types.Lists import Lists
@@ -49,7 +51,9 @@ class MainWindowControl(MainWindowView, BaseControl):
             lambda index, title, artist: self.__change_title_and_title_for_song_at(index, title, artist))
         self._body.set_on_change_song_cover_on_menu(lambda index, path: self.__change_cover_for_song_at(index, path))
         self._body.set_on_delete_song_on_menu(lambda index: self.__delete_song_at(index))
-        self._body.set_onclick_add_songs_to_library_fn(lambda paths: self.__add_songs_to_library(paths))
+        self._body.set_onclick_download_songs_to_library_fn(
+            lambda youtube_url: self.__add_songs_to_library_from_youtube(youtube_url))
+        self._body.set_onclick_add_songs_to_library_fn(lambda paths: self.__add_songs_to_library_from_computer(paths))
         self._body.set_onclick_select_songs_to_playlist_fn(lambda: self.__start_select_songs_from_library_to_playlist())
         self._body.set_onclick_apply_select_songs_to_playlist_fn(
             lambda: self.__finish_select_songs_from_library_to_playlist())
@@ -200,7 +204,19 @@ class MainWindowControl(MainWindowView, BaseControl):
     def find_playlist_of(self, card: PlaylistCardData) -> Playlist:
         return next(playlist_ for playlist_ in self.__playlists if playlist_.get_info().id == card.content().id)
 
-    def __add_songs_to_library(self, paths: list[str]) -> None:
+    def __add_songs_to_library_from_computer(self, paths: list[str]) -> None:
+        new_songs = self.__add_songs_to_library(paths)
+        for song in new_songs:
+            print(f"Inserted song {song.get_title()} to library.")
+
+    def __add_songs_to_library_from_youtube(self, youtube_url: str) -> None:
+        with tempfile.TemporaryDirectory() as temp_dir:
+            Youtubes.download_songs_from_youtube(youtube_url, to_directory=temp_dir)
+            new_songs = self.__add_songs_to_library(Files.get_files_from(temp_dir, with_extension="mp3"))
+            for song in new_songs:
+                print(f"Downloaded song {song.get_title()} to library.")
+
+    def __add_songs_to_library(self, paths: list[str] | set[str]) -> list[Song]:
         new_songs: list[Song] = []
         for path in paths:
             try:
@@ -209,11 +225,26 @@ class MainWindowControl(MainWindowView, BaseControl):
                 new_songs.append(song)
             except FileExistsError:
                 pass
+
+        if len(new_songs) == 0:
+            return []
+
         self.__library.get_songs().insertAll(new_songs)
         self.__choose_library()
         DataSaver.save_songs(self.__library.get_songs().get_songs())
-        for song in new_songs:
-            print(f"Inserted song {song.get_title()} to library.")
+        return new_songs
+
+    @staticmethod
+    def __add_songs_from_path(paths):
+        new_songs: list[Song] = []
+        for path in paths:
+            try:
+                song_path = Files.copy_file(path, "library/")
+                song = Song.from_file(song_path)
+                new_songs.append(song)
+            except FileExistsError:
+                pass
+        return new_songs
 
     def __start_select_songs_from_library_to_playlist(self) -> None:
         current_playlist_songs_ids: list[str] = [song.get_id() for song in
@@ -265,7 +296,8 @@ class MainWindowControl(MainWindowView, BaseControl):
         DataSaver.save_songs(self.__library.get_songs().get_songs())
         return True
 
-    def __change_song_title(self, new_song, new_title, old_song) -> bool | None:
+    @staticmethod
+    def __change_song_title(new_song, new_title, old_song) -> bool | None:
         if old_song.get_title() != new_title:
             change_successfully = new_song.set_title(new_title)
             # TODO: Show alert box here.
@@ -274,7 +306,8 @@ class MainWindowControl(MainWindowView, BaseControl):
             return change_successfully
         return None
 
-    def __change_song_artist(self, new_artist, new_song, old_song) -> bool | None:
+    @staticmethod
+    def __change_song_artist(new_artist, new_song, old_song) -> bool | None:
         if old_song.get_artist() != new_artist:
             change_successfully = new_song.set_artist(new_artist)
             # TODO: Show alert box here.
