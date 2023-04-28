@@ -31,13 +31,19 @@ class RenameSongDialog(Dialogs.ConfirmDialog):
                  parent: Optional["QWidget"] = None):
         super().__init__(header, msg, accept_text, reject_text, onclick_accept_fn, onclick_reject_fn, dark_mode, parent)
 
-    def with_song_title(self, title: str) -> 'RenameSongDialog':
-        self.__input.setText(title)
-        return self
-
     def _init_content(self, content: QWidget) -> None:
         layout = QVBoxLayout(content)
-        self.__input = Input.build(
+        self.__title_input = self.__create_input()
+        self.__title_input.set_onpressed(self._on_accepted)
+        layout.addWidget(self.__title_input)
+
+        self.__artist_input = self.__create_input()
+        self.__artist_input.set_onpressed(self._on_accepted)
+        layout.addWidget(self.__artist_input)
+
+    @staticmethod
+    def __create_input() -> Input:
+        input_ = Input.build(
             font=FontBuilder.build(size=12),
             light_mode_style=TextStyle(text_color=ColorBoxes.BLACK,
                                        background=Background(
@@ -50,23 +56,32 @@ class RenameSongDialog(Dialogs.ConfirmDialog):
                                            ))),
             padding=8
         )
-        self.__input.set_onpressed(self._on_accepted)
-        self.__input.setFixedHeight(48)
-        layout.addWidget(self.__input)
+        input_.setFixedHeight(48)
+        return input_
+
+    def with_song_title(self, title: str) -> 'RenameSongDialog':
+        self.__title_input.setText(title)
+        return self
+
+    def with_song_artist(self, artist: str) -> 'RenameSongDialog':
+        self.__artist_input.setText(artist)
+        return self
 
     @override
     def _get_onclick_accept_fn(self) -> callable:
-        return lambda: self._onclick_accept_fn(self.__input.text())
+        return lambda: self._onclick_accept_fn(self.__title_input.text(), self.__artist_input.text())
 
     @override
     def apply_dark_mode(self) -> None:
         super().apply_dark_mode()
-        self.__input.apply_dark_mode()
+        self.__title_input.apply_dark_mode()
+        self.__artist_input.apply_dark_mode()
 
     @override
     def apply_light_mode(self) -> None:
         super().apply_light_mode()
-        self.__input.apply_light_mode()
+        self.__title_input.apply_light_mode()
+        self.__artist_input.apply_light_mode()
 
 
 class SongTableRowView(BackgroundWidget, BaseView):
@@ -336,6 +351,9 @@ class SongTableRowView(BackgroundWidget, BaseView):
 
     def get_title(self):
         return self.__label_title.text()
+
+    def get_artist(self):
+        return self.__label_artist.text()
 
     def set_is_choosing(self, is_choosing: bool) -> None:
         if is_choosing:

@@ -76,8 +76,8 @@ class HomeBodyView(QScrollArea, BaseView):
         self.__current_playlist.set_onclick_remove_from_playlist_on_menu(fn)
 
     @connector
-    def set_onchange_song_title_on_menu(self, fn: Callable[[int, str], bool]) -> None:
-        self.__current_playlist.set_onchange_song_title_on_menu(fn)
+    def set_onchange_song_title_and_artist_on_menu(self, fn: Callable[[int, str, str], bool]) -> None:
+        self.__current_playlist.set_onchange_song_title_and_artist_on_menu(fn)
 
     @connector
     def set_on_change_song_cover_on_menu(self, fn: Callable[[int, str], None]) -> None:

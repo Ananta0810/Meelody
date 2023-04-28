@@ -45,7 +45,8 @@ class MainWindowControl(MainWindowView, BaseControl):
         self._body.set_onclick_love(lambda index: self.__love_song_from_menu(index))
         self._body.set_onclick_add_to_playlist(lambda index: self.__add_song_from_menu_at(index))
         self._body.set_onclick_remove_from_playlist(lambda index: self.__remove_song_from_menu_at(index))
-        self._body.set_onchange_song_title_on_menu(lambda index, title: self.__change_title_for_song_at(index, title))
+        self._body.set_onchange_song_title_and_artist_on_menu(
+            lambda index, title, artist: self.__change_title_and_title_for_song_at(index, title, artist))
         self._body.set_on_change_song_cover_on_menu(lambda index, path: self.__change_cover_for_song_at(index, path))
         self._body.set_on_delete_song_on_menu(lambda index: self.__delete_song_at(index))
         self._body.set_onclick_add_songs_to_library_fn(lambda paths: self.__add_songs_to_library(paths))
@@ -248,19 +249,39 @@ class MainWindowControl(MainWindowView, BaseControl):
     def __remove_song_from_menu_at(self, index: int) -> None:
         self.__selecting_playlist_songs.remove(index)
 
-    def __change_title_for_song_at(self, index: int, new_title: str) -> bool:
+    def __change_title_and_title_for_song_at(self, index: int, new_title: str, new_artist: str) -> bool:
         old_song = self.__displaying_playlist.get_songs().get_song_at(index)
         new_song = old_song.clone()
-        change_successfully = new_song.set_title(new_title)
-        # TODO: Show alert box here.
-        if not change_successfully:
-            return False
+
+        changed_title = self.__change_song_title(new_song, new_title, old_song)
+        changed_artist = self.__change_song_artist(new_artist, new_song, old_song)
+
+        if not changed_title and not changed_artist:
+            return True
 
         self.__library.get_songs().remove_song(old_song)
         self.__library.get_songs().insert(new_song)
         self.__choose_library()
         DataSaver.save_songs(self.__library.get_songs().get_songs())
         return True
+
+    def __change_song_title(self, new_song, new_title, old_song) -> bool | None:
+        if old_song.get_title() != new_title:
+            change_successfully = new_song.set_title(new_title)
+            # TODO: Show alert box here.
+            if change_successfully:
+                print(f"Changed title for song {old_song.get_title()} to {new_song.get_title()}")
+            return change_successfully
+        return None
+
+    def __change_song_artist(self, new_artist, new_song, old_song) -> bool | None:
+        if old_song.get_artist() != new_artist:
+            change_successfully = new_song.set_artist(new_artist)
+            # TODO: Show alert box here.
+            if change_successfully:
+                print(f"Changed artist for song {new_song.get_title()} to {new_song.get_artist()}")
+            return change_successfully
+        return None
 
     def __change_cover_for_song_at(self, index: int, path: str) -> None:
         bytes_data = BytesModifier \
