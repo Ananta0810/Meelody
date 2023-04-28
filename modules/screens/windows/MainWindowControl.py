@@ -33,8 +33,8 @@ class MainWindowControl(MainWindowView, BaseControl):
 
     @override
     def connect_signals(self) -> None:
-        self._music_player.set_onclick_next(lambda index: self.__disable_edit_song_at(index))
-        self._music_player.set_onclick_prev(lambda index: self.__disable_edit_song_at(index))
+        self._music_player.set_onclick_next(lambda index: self.__disable_edit_and_delete_on_libray_of_song_at(index))
+        self._music_player.set_onclick_prev(lambda index: self.__disable_edit_and_delete_on_libray_of_song_at(index))
         self._music_player.set_onclick_play(lambda index: self.__play_song_from_player_at(index))
         self._music_player.set_onclick_pause(lambda index: self.set_is_playing(False))
         self._music_player.set_onclick_shuffle(lambda shuffled: self.__shuffle(shuffled))
@@ -45,8 +45,9 @@ class MainWindowControl(MainWindowView, BaseControl):
         self._body.set_onclick_love(lambda index: self.__love_song_from_menu(index))
         self._body.set_onclick_add_to_playlist(lambda index: self.__add_song_from_menu_at(index))
         self._body.set_onclick_remove_from_playlist(lambda index: self.__remove_song_from_menu_at(index))
-        self._body.set_on_change_song_cover(lambda index, path: self.__change_cover_for_song_at(index, path))
-        self._body.set_onchange_song_title(lambda index, title: self.__change_title_for_song_at(index, title))
+        self._body.set_onchange_song_title_on_menu(lambda index, title: self.__change_title_for_song_at(index, title))
+        self._body.set_on_change_song_cover_on_menu(lambda index, path: self.__change_cover_for_song_at(index, path))
+        self._body.set_on_delete_song_on_menu(lambda index: self.__delete_song_at(index))
         self._body.set_onclick_add_songs_to_library_fn(lambda paths: self.__add_songs_to_library(paths))
         self._body.set_onclick_select_songs_to_playlist_fn(lambda: self.__start_select_songs_from_library_to_playlist())
         self._body.set_onclick_apply_select_songs_to_playlist_fn(
@@ -66,12 +67,12 @@ class MainWindowControl(MainWindowView, BaseControl):
     def play_previous_song(self) -> None:
         self._music_player.play_previous_song()
         if self.__is_selecting_library:
-            self.__disable_edit_song_at(self.__player.get_current_song_index())
+            self.__disable_edit_and_delete_on_libray_of_song_at(self.__player.get_current_song_index())
 
     def play_next_song(self) -> None:
         self._music_player.play_next_song()
         if self.__is_selecting_library:
-            self.__disable_edit_song_at(self.__player.get_current_song_index())
+            self.__disable_edit_and_delete_on_libray_of_song_at(self.__player.get_current_song_index())
 
     def set_appsettings(self, settings: AppSettings) -> None:
         self.__settings = settings
@@ -95,8 +96,9 @@ class MainWindowControl(MainWindowView, BaseControl):
         self.__is_selecting_library = True
         song = self.__player.get_current_song()
         if song is not None:
-            index = self.__library.get_songs().index_of(song)
-            self._body.enable_edit_of_song_at(index, False)
+            displaying_song_index = self.__library.get_songs().index_of(song)
+            self._body.enable_edit_of_song_at(displaying_song_index, False)
+            self._body.enable_delete_song_at(displaying_song_index, False)
 
     def __choose_favourites(self) -> None:
         self._body.enable_choosing_song(False)
@@ -109,6 +111,7 @@ class MainWindowControl(MainWindowView, BaseControl):
                                    cover=Images.FAVOURITES_PLAYLIST_COVER)
         self.__select_playlist(playlist)
         self._body.enable_edit_songs(False)
+        self._body.enable_delete_songs(False)
         self.__is_selecting_library = False
 
     def __choose_playlist(self, playlist: Playlist) -> None:
@@ -118,6 +121,7 @@ class MainWindowControl(MainWindowView, BaseControl):
 
         self.__select_playlist(playlist)
         self._body.enable_edit_songs(False)
+        self._body.enable_delete_songs(True)
         self.__is_selecting_library = False
 
     def __select_playlist(self, playlist: Playlist) -> None:
@@ -184,6 +188,7 @@ class MainWindowControl(MainWindowView, BaseControl):
         )
         self._music_player.load_playing_song(song_index)
         self._body.enable_edit_of_song_at(song_index, False)
+        self._body.enable_delete_song_at(song_index, False)
 
     def __apply_settings_to_music_player_and_menu(self):
         self._music_player.set_shuffle(self.__settings.is_shuffle)
@@ -243,17 +248,6 @@ class MainWindowControl(MainWindowView, BaseControl):
     def __remove_song_from_menu_at(self, index: int) -> None:
         self.__selecting_playlist_songs.remove(index)
 
-    def __change_cover_for_song_at(self, index: int, path: str) -> None:
-        bytes_data = BytesModifier \
-            .of(Bytes.get_bytes_from_file(path)) \
-            .square() \
-            .resize(256, 256) \
-            .to_bytes()
-        song = self.__displaying_playlist.get_songs().get_song_at(index)
-        song.set_cover(bytes_data)
-        self.__choose_library()
-        DataSaver.save_songs(self.__library.get_songs().get_songs())
-
     def __change_title_for_song_at(self, index: int, new_title: str) -> bool:
         old_song = self.__displaying_playlist.get_songs().get_song_at(index)
         new_song = old_song.clone()
@@ -267,6 +261,31 @@ class MainWindowControl(MainWindowView, BaseControl):
         self.__choose_library()
         DataSaver.save_songs(self.__library.get_songs().get_songs())
         return True
+
+    def __change_cover_for_song_at(self, index: int, path: str) -> None:
+        bytes_data = BytesModifier \
+            .of(Bytes.get_bytes_from_file(path)) \
+            .square() \
+            .resize(256, 256) \
+            .to_bytes()
+        song = self.__displaying_playlist.get_songs().get_song_at(index)
+        song.set_cover(bytes_data)
+        self.__choose_library()
+        DataSaver.save_songs(self.__library.get_songs().get_songs())
+
+    def __delete_song_at(self, index: int) -> None:
+        song = self.__displaying_playlist.get_songs().get_song_at(index)
+
+        if self.__is_selecting_library:
+            song.delete()
+            self.__library.get_songs().remove_song(song)
+            self.__choose_library()
+            DataSaver.save_songs(self.__library.get_songs().get_songs())
+            return
+
+        self.__displaying_playlist.get_songs().remove_song(song)
+        self.__choose_playlist(self.__displaying_playlist)
+        DataSaver.save_playlists(self.__playlists)
 
     def __love_song_from_player(self, song: Song) -> None:
         self._body.love_song(song.is_loved())
@@ -286,7 +305,7 @@ class MainWindowControl(MainWindowView, BaseControl):
 
         self._body.select_song_at(index)
         self.set_is_playing(True)
-        self._body.enable_edit_of_song_at(index, False)
+        self.__disable_edit_and_delete_on_libray_of_song_at(index)
 
         self.__settings.set_playing_song_id(self.__song_at(index).get_id())
         DataSaver.save_settings(self.__settings)
@@ -297,17 +316,17 @@ class MainWindowControl(MainWindowView, BaseControl):
         self._music_player.load_playlist_songs(self.__displaying_playlist.get_songs())
         self._music_player.play_song_at(index)
         self.set_is_playing(True)
-        self.__disable_edit_song_at(index)
+        self.__disable_edit_and_delete_on_libray_of_song_at(index)
 
         self.__settings.set_playing_song_id(self.__song_at(index).get_id())
         DataSaver.save_settings(self.__settings)
 
-    def __disable_edit_song_at(self, index):
+    def __disable_edit_and_delete_on_libray_of_song_at(self, index):
         if self.__is_selecting_library:
-            total = range(0, self.__library.get_songs().size())
-            for index_ in total:
-                self._body.enable_edit_of_song_at(index_, True)
+            self._body.enable_edit_songs(True)
+            self._body.enable_delete_songs(True)
             self._body.enable_edit_of_song_at(index, False)
+            self._body.enable_delete_song_at(index, False)
 
     def __shuffle(self, shuffled: bool) -> None:
         self._body.refresh_menu()

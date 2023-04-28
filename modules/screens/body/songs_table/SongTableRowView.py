@@ -89,6 +89,7 @@ class SongTableRowView(BackgroundWidget, BaseView):
     __btn_close: IconButton
 
     __editable: bool = False
+    __removeable: bool = False
 
     def __init__(self, parent: Optional["QWidget"] = None):
         super(SongTableRowView, self).__init__(parent)
@@ -281,11 +282,14 @@ class SongTableRowView(BackgroundWidget, BaseView):
     def set_onclick_remove_from_playlist(self, fn: callable) -> None:
         self.__btn_remove_from_playlist.clicked.connect(lambda: self.__clicked_remove_btn(fn))
 
-    def set_on_doubleclick_cover(self, fn: callable) -> None:
+    def set_on_edit_cover(self, fn: callable) -> None:
         self.__btn_edit_cover.clicked.connect(lambda: fn() if self.__editable else None)
 
     def set_on_edit_title(self, fn: callable) -> None:
         self.__btn_edit_title.clicked.connect(lambda: fn() if self.__editable else None)
+
+    def set_on_delete(self, fn: callable) -> None:
+        self.__btn_delete.clicked.connect(lambda: fn() if self.__removeable else None)
 
     def __clicked_add_btn(self, fn: callable) -> None:
         self.__btn_remove_from_playlist.show()
@@ -301,6 +305,10 @@ class SongTableRowView(BackgroundWidget, BaseView):
         self.__editable = value
         self.__btn_edit_title.setVisible(value)
         self.__btn_edit_cover.setVisible(value)
+
+    def enable_delete(self, value: bool) -> None:
+        self.__removeable = value
+        self.__btn_delete.setVisible(value)
 
     def set_cover(self, cover: Union[bytes, None]) -> None:
         self.__cover.set_cover(self.__get_cover_from_bytes(cover))

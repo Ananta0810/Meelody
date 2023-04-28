@@ -22,6 +22,7 @@ class SongTableBodyView(SmoothVerticalScrollArea, BaseView):
     __onclick_remove_from_playlist_fn: Callable[[int], None] = None
     __onchange_cover_fn: Callable[[int, str], None] = None
     __onchange_title_fn: Callable[[int, str], bool] = None
+    __on_delete_fn: Callable[[int], None] = None
     __on_keypress_fn: Callable[[str], int] = None
 
     def __init__(self, parent: Optional["QWidget"] = None):
@@ -86,7 +87,13 @@ class SongTableBodyView(SmoothVerticalScrollArea, BaseView):
     def set_onchange_song_cover(self, fn: Callable[[int, str], None]) -> None:
         self.__onchange_cover_fn = fn
         for index, song in enumerate(self._songs):
-            song.set_on_doubleclick_cover(lambda: self.__choose_cover_for_song_at(index))
+            song.set_on_edit_cover(lambda: self.__choose_cover_for_song_at(index))
+
+    @connector
+    def set_on_delete_song(self, fn: Callable[[int], None]) -> None:
+        self.__on_delete_fn = fn
+        for index, song in enumerate(self._songs):
+            song.set_on_delete(lambda: fn(index))
 
     @connector
     def set_onchange_song_title(self, fn: Callable[[int, str], bool]) -> None:
@@ -189,8 +196,9 @@ class SongTableBodyView(SmoothVerticalScrollArea, BaseView):
         songView.set_onclick_love(lambda: self.__onclick_love_btn(index))
         songView.set_onclick_add_to_playlist(lambda: self.__onclick_add_to_playlist_fn(index))
         songView.set_onclick_remove_from_playlist(lambda: self.__onclick_remove_from_playlist_fn(index))
-        songView.set_on_doubleclick_cover(lambda: self.__choose_cover_for_song_at(index))
+        songView.set_on_edit_cover(lambda: self.__choose_cover_for_song_at(index))
         songView.set_on_edit_title(lambda: self.__rename_title_for_song_at(index, song.get_title()))
+        songView.set_on_delete(lambda: self.__on_delete_fn(index))
 
         songView.enable_choosing(False)
 

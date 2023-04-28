@@ -61,12 +61,16 @@ class CurrentPlaylistView(QWidget, BaseView):
         self.__menu.set_onclick_remove_from_playlist(fn)
 
     @connector
-    def set_onchange_song_cover_on_menu(self, fn: Callable[[int, str], None]) -> None:
-        self.__menu.set_on_doubleclick_cover_on_menu(fn)
-
-    @connector
     def set_onchange_song_title_on_menu(self, fn: Callable[[int, str], bool]) -> None:
         self.__menu.set_onchange_song_title_on_menu(fn)
+
+    @connector
+    def set_onchange_song_cover_on_menu(self, fn: Callable[[int, str], None]) -> None:
+        self.__menu.set_onchange_song_cover_on_menu(fn)
+
+    @connector
+    def set_on_delete_song_on_menu(self, fn: Callable[[int], None]) -> None:
+        self.__menu.set_on_delete_song_on_menu(fn)
 
     @connector
     def set_on_keypress(self, fn: Callable[[str], int]) -> None:
@@ -105,8 +109,14 @@ class CurrentPlaylistView(QWidget, BaseView):
     def enable_edit_songs(self, enabled: bool) -> None:
         self.__menu.enable_edit_songs(enabled)
 
+    def enable_delete_songs(self, enabled: bool) -> None:
+        self.__menu.enable_delete_songs(enabled)
+
     def enable_edit_of_song_at(self, index: int, enabled: bool) -> None:
         self.__menu.enable_edit_of_song_at(index, enabled)
+
+    def enable_delete_song_at(self, index: int, enabled: bool) -> None:
+        self.__menu.enable_delete_song_at(index, enabled)
 
     def load_playlist(self, playlist: Playlist) -> None:
         self.set_current_playlist_info(playlist)
