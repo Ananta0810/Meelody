@@ -1,3 +1,4 @@
+import os
 from os import path, scandir
 from shutil import copyfile
 
@@ -21,3 +22,13 @@ class Files:
             raise FileExistsError(f"{destiny} already existed.")
         copyfile(file, destiny)
         return destiny
+
+    @staticmethod
+    def copy(src: str, destiny: str) -> None:
+        if path.exists(destiny):
+            raise FileExistsError(f"{destiny} already existed.")
+        try:
+            copyfile(src, destiny)
+        except FileNotFoundError:
+            os.makedirs(Strings.get_dir_from(destiny))
+            copyfile(src, destiny)

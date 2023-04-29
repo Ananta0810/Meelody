@@ -7,6 +7,16 @@ class Strings:
     setlocale(LC_ALL, "")
 
     @staticmethod
+    def clear_non_ascii(text: str) -> str:
+        if text is None:
+            return ''
+        return text.encode('ascii', errors='ignore').decode()
+
+    @staticmethod
+    def is_ascii(text: str) -> bool:
+        return text == Strings.clear_non_ascii(text)
+
+    @staticmethod
     def toLower(text: str) -> str:
         if text is None:
             return ''

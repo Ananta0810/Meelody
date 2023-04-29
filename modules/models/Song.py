@@ -16,6 +16,7 @@ class Song:
     __cover: bytes
     __length: float
     __is_loved: bool
+    __sample_rate: float
 
     def __init__(
         self,
@@ -25,6 +26,7 @@ class Song:
         artist: str = None,
         cover: bytes = None,
         length: float = 0,
+        sample_rate: float = 48000,
         loved: bool = False,
     ):
         self.__location = location
@@ -33,6 +35,7 @@ class Song:
         self.__artist = artist
         self.__cover = cover
         self.__length = length
+        self.__sample_rate = sample_rate
         self.__is_loved = loved
 
     @staticmethod
@@ -51,6 +54,7 @@ class Song:
             artist=json['artist'],
             cover=Bytes.encode(json['cover']),
             length=json['length'],
+            sample_rate=json['sample_rate'],
             loved=json['is_loved'],
         )
         song.__id = json['id']
@@ -71,6 +75,7 @@ class Song:
             'artist': self.__artist,
             'cover': Bytes.decode(self.__cover),
             'length': self.__length,
+            'sample_rate': self.__sample_rate,
             'is_loved': self.__is_loved,
         }
 
@@ -90,13 +95,11 @@ class Song:
             and self.__cover == other.__cover
             and self.__length == other.__length
             and self.__is_loved == other.__is_loved
+            and self.__sample_rate == other.__sample_rate
         )
 
-    def get_sample_rate(self) -> int:
-        """
-        Get sample rate of song for fixing some bugs of pygame audio
-        """
-        return AudioExtractor.load_from(self.__location).get_sample_rate()
+    def set_audio_location(self, location: str) -> None:
+        self.__audio_location = location
 
     def __load_info_from(self, location: str) -> None:
         """
@@ -107,19 +110,7 @@ class Song:
         self.__artist = audio.get_artist()
         self.__cover = audio.get_cover()
         self.__length = audio.get_length()
-        self.__audio_location = self.__create_audio_location_if_not_meet_standard_sample_rate(audio, location)
-
-    def __create_audio_location_if_not_meet_standard_sample_rate(self, audio: AudioExtractor, location: str) -> str:
-        STANDARD_SAMPLE_RATE = 48000
-        if audio.get_sample_rate() == STANDARD_SAMPLE_RATE:
-            return location
-        audio_location = Strings.rename_file(location, 'temp/' + self.__title)
-        if os.path.exists(audio_location):
-            return audio_location
-        cmd = f"ffmpeg -i \"{location}\" -ac 1 -ar 48000 \"{audio_location}\""
-        os.system(cmd)
-        print(f"Created temp song at {audio_location}.")
-        return audio_location
+        self.__sample_rate = audio.get_sample_rate()
 
     def set_title(self, title: str) -> bool:
         """
@@ -169,7 +160,13 @@ class Song:
         """
             Get the location which will be loaded by pygame
         """
-        return self.__audio_location or self.__location
+        if self.__audio_location is not None and os.path.exists(self.__audio_location):
+            try:
+                open(self.__audio_location, "r")
+                return self.__audio_location
+            except IOError:
+                print("Could not open audio.")
+        return self.__location
 
     def get_artist(self) -> str:
         return self.__artist
@@ -179,6 +176,9 @@ class Song:
 
     def get_length(self) -> int:
         return int(self.__length)
+
+    def get_sample_rate(self) -> float:
+        return self.__sample_rate
 
     def is_loved(self) -> bool:
         return self.__is_loved

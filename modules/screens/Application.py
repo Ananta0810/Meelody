@@ -1,4 +1,5 @@
 from modules.helpers import DataSaver
+from modules.helpers.SongLoader import SongLoader
 from modules.models.AppSettings import AppSettings
 from modules.models.Playlist import Playlist
 from modules.models.PlaylistSongs import PlaylistSongs
@@ -18,6 +19,7 @@ class Application:
 
     def run(self) -> None:
         self.window.show()
+        SongLoader().resolve_load_locations()
 
     def load_playlist(self):
         """
@@ -46,5 +48,9 @@ class Application:
         songs: PlaylistSongs = DataSaver.load_songs_from_dir("library", with_extension="mp3")
         settings: AppSettings = DataSaver.load_settings()
         self.window.set_appsettings(settings)
-        self.window.load_library(Playlist.create(name="Library", songs=songs, cover=Images.DEFAULT_PLAYLIST_COVER))
+
+        library = Playlist.create(name="Library", songs=songs, cover=Images.DEFAULT_PLAYLIST_COVER)
+        self.window.load_library(library)
         self.window.load_playlists(DataSaver.load_playlists(songs.get_songs()))
+        for song in library.get_songs().get_songs():
+            SongLoader().add_song(song)
