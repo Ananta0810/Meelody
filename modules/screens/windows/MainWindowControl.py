@@ -247,8 +247,11 @@ class MainWindowControl(MainWindowView, BaseControl):
             return []
 
         self.__library.get_songs().insertAll(new_songs)
-        DataSaver.save_songs(self.__library.get_songs().get_songs())
+        self.__save_library()
         return new_songs
+
+    def __save_library(self):
+        DataSaver.save_songs(self.__library.get_songs().get_songs())
 
     @staticmethod
     def __add_songs_from_path(paths):
@@ -309,7 +312,7 @@ class MainWindowControl(MainWindowView, BaseControl):
         self.__library.get_songs().remove_song(old_song)
         self.__library.get_songs().insert(new_song)
         self.__choose_library()
-        DataSaver.save_songs(self.__library.get_songs().get_songs())
+        self.__save_library()
         return True
 
     @staticmethod
@@ -341,7 +344,7 @@ class MainWindowControl(MainWindowView, BaseControl):
         song = self.__displaying_playlist.get_songs().get_song_at(index)
         song.set_cover(bytes_data)
         self.__choose_library()
-        DataSaver.save_songs(self.__library.get_songs().get_songs())
+        self.__save_library()
 
     def __delete_song_at(self, index: int) -> None:
         song = self.__displaying_playlist.get_songs().get_song_at(index)
@@ -350,7 +353,7 @@ class MainWindowControl(MainWindowView, BaseControl):
             song.delete()
             self.__library.get_songs().remove_song(song)
             self.__choose_library()
-            DataSaver.save_songs(self.__library.get_songs().get_songs())
+            self.__save_library()
             return
 
         self.__displaying_playlist.get_songs().remove_song(song)

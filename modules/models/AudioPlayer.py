@@ -11,6 +11,7 @@ class AudioPlayer(metaclass=SingletonMeta):
     __current_song_index: int = 0
     __time_start_in_sec: float = 0
     __loaded: bool = False
+    __offset_rate: float = 1
 
     def __init__(self):
         mixer.pre_init()
@@ -32,7 +33,8 @@ class AudioPlayer(metaclass=SingletonMeta):
     def get_time_start(self):
         return self.__time_start_in_sec
 
-    def set_volume(self, volume: int):
+    @staticmethod
+    def set_volume(volume: int):
         """
         set volume of the song, volume from 0 to 100
         """
@@ -43,16 +45,18 @@ class AudioPlayer(metaclass=SingletonMeta):
     def load_song_to_play(self):
         if self.__loaded:
             return
-        self.__current_song = self.__playlist.get_song_at(self.__current_song_index)
-        if self.__current_song is None:
+        song = self.__playlist.get_song_at(self.__current_song_index)
+        if song is None:
             return
         self.reset_time()
+        self.__current_song = song
+        self.__offset_rate = 48000 / song.get_sample_rate()
         self.__loaded = True
         mixer.music.unload()
-        mixer.music.load(self.__current_song.get_audio_location())
+        mixer.music.load(song.get_audio_location())
 
     def play(self):
-        mixer.music.play(start=self.get_playing_time())
+        mixer.music.play(start=self.__get_playing_time())
 
     def select_previous_song(self):
         self.set_current_song_index((self.__current_song_index - 1) % self.__playlist.size())
@@ -87,12 +91,12 @@ class AudioPlayer(metaclass=SingletonMeta):
 
     def skip_to_time(self, time: float) -> None:
         self.pause()
-        self.set_time_start(time)
+        self.set_time_start(time / self.__offset_rate)
 
     def pause(self) -> None:
         if not self.is_playing():
             return
-        self.set_time_start(self.get_playing_time())
+        self.set_time_start(self.__get_playing_time())
         mixer.music.stop()
 
     def stop(self) -> None:
@@ -111,11 +115,14 @@ class AudioPlayer(metaclass=SingletonMeta):
     def unshuffle(self) -> None:
         self.__playlist.unshuffle()
 
-    def get_playing_time(self) -> float:
+    def __get_playing_time(self) -> float:
         return self.__time_start_in_sec + mixer.music.get_pos() / 1000
 
-    def is_playing(self) -> bool:
+    def get_playing_time(self) -> float:
+        return self.__get_playing_time() * self.__offset_rate
+
+    @staticmethod
+    def is_playing() -> bool:
         if mixer.get_init() is None:
             return False
         return mixer.music.get_busy()
-

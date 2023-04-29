@@ -85,7 +85,7 @@ class MusicPlayerControl(MusicPlayerBarView, BaseControl):
             return
         self.__player.stop()
         self.__player.select_previous_song()
-        print(f"Playing previous song {self.__player.get_current_song().get_title()}.")
+        print(f"Play previous song {self.__player.get_current_song().get_title()}.")
         self.__playSong()
         self.__onclick_prev_fn(self.__player.get_current_song_index())
 
@@ -96,7 +96,7 @@ class MusicPlayerControl(MusicPlayerBarView, BaseControl):
             return
         self.__player.stop()
         self.__player.select_next_song()
-        print(f"Playing next song {self.__player.get_current_song().get_title()}.")
+        print(f"Play next song {self.__player.get_current_song().get_title()}.")
         self.__playSong()
         self.__onclick_next_fn(self.__player.get_current_song_index())
 
@@ -126,8 +126,10 @@ class MusicPlayerControl(MusicPlayerBarView, BaseControl):
         currentSong = self.__player.get_current_song()
         if currentSong is None:
             return
+
         self.__player.skip_to_time(time)
-        print(f"Skipping song {self.__player.get_current_song().get_title()} at {Strings.float_to_clock_time(time)}.")
+        playing_time = Strings.float_to_clock_time(self.__player.get_playing_time())
+        print(f"Skip song {self.__player.get_current_song().get_title()} at {playing_time}.")
         self.__thread_start_player()
 
     @handler

@@ -1,5 +1,4 @@
 from modules.helpers import DataSaver
-from modules.helpers.SongLoader import SongLoader
 from modules.models.AppSettings import AppSettings
 from modules.models.Playlist import Playlist
 from modules.models.PlaylistSongs import PlaylistSongs
@@ -19,7 +18,6 @@ class Application:
 
     def run(self) -> None:
         self.window.show()
-        SongLoader().resolve_load_locations()
 
     def load_playlist(self):
         """
@@ -35,7 +33,7 @@ class Application:
             - Add alert when download youtube music failed.
             - Add progress bar to show which one is downloading.
             - Add sidebar.
-            - Fix first time hear song.
+            - Fix first time hear song. | DONE
             - Fix edit when shuffling is wrong.
             - Update UI for inputs.
             - Add button to edit favourite playlist cover.
@@ -49,8 +47,5 @@ class Application:
         settings: AppSettings = DataSaver.load_settings()
         self.window.set_appsettings(settings)
 
-        library = Playlist.create(name="Library", songs=songs, cover=Images.DEFAULT_PLAYLIST_COVER)
-        self.window.load_library(library)
+        self.window.load_library(Playlist.create(name="Library", songs=songs, cover=Images.DEFAULT_PLAYLIST_COVER))
         self.window.load_playlists(DataSaver.load_playlists(songs.get_songs()))
-        for song in library.get_songs().get_songs():
-            SongLoader().add_song(song)
