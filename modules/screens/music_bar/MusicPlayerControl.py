@@ -5,6 +5,7 @@ from typing import Callable
 
 from modules.helpers.types.Decorators import handler, override, connector
 from modules.helpers.types.Numbers import Numbers
+from modules.helpers.types.Strings import Strings
 from modules.models.AudioPlayer import AudioPlayer
 from modules.models.PlaylistSongs import PlaylistSongs
 from modules.models.Song import Song
@@ -84,15 +85,31 @@ class MusicPlayerControl(MusicPlayerBarView, BaseControl):
             return
         self.__player.stop()
         self.__player.select_previous_song()
+        print(f"Playing previous song {self.__player.get_current_song().get_title()}.")
         self.__playSong()
         self.__onclick_prev_fn(self.__player.get_current_song_index())
 
     @handler
+    def play_next_song(self) -> None:
+        if not self.__player.has_any_song():
+            print("No song to play")
+            return
+        self.__player.stop()
+        self.__player.select_next_song()
+        print(f"Playing next song {self.__player.get_current_song().get_title()}.")
+        self.__playSong()
+        self.__onclick_next_fn(self.__player.get_current_song_index())
+
+    @handler
     def play_current_song(self) -> None:
+        playing_time = Strings.float_to_clock_time(self.__player.get_playing_time())
+        print(f"Playing {self.__player.get_current_song().get_title()} at {playing_time}.")
         self.__playSong()
 
     @handler
     def pause_current_song(self) -> None:
+        playing_time = Strings.float_to_clock_time(self.__player.get_playing_time())
+        print(f"Paused {self.__player.get_current_song().get_title()} at {playing_time}")
         self.__player.pause()
         self.set_is_playing(False)
 
@@ -103,23 +120,13 @@ class MusicPlayerControl(MusicPlayerBarView, BaseControl):
         self.set_is_playing(False)
 
     @handler
-    def play_next_song(self) -> None:
-        if not self.__player.has_any_song():
-            print("No song to play")
-            return
-        self.__player.stop()
-        self.__player.select_next_song()
-        self.__playSong()
-        self.__onclick_next_fn(self.__player.get_current_song_index())
-
-    @handler
     def play_song_at_time(self, time: float) -> None:
         if not self.__player.has_any_song():
             return
         currentSong = self.__player.get_current_song()
         if currentSong is None:
             return
-        self.__player.skip_to_time(time)
+        print(f"Skipping song {self.__player.get_current_song().get_title()} at {Strings.float_to_clock_time(time)}.")
         self.__thread_start_player()
 
     @handler
@@ -210,10 +217,8 @@ class MusicPlayerControl(MusicPlayerBarView, BaseControl):
             self.set_is_playing(True)
         self.__player.play()
 
-        total_loop: int = 0
         while thread_id == self.__thread_id and self.__player.is_playing():
             self.__do_while_playing_music()
-            total_loop += 1
             sys.stdout.flush()
             sleep(interval)
 
@@ -222,18 +227,9 @@ class MusicPlayerControl(MusicPlayerBarView, BaseControl):
         if song_is_finished:
             self.__do_after_song_finished()
 
-        """
-            There is a bug of pygame where play first time not working.
-            So, we have to check if the player stop right away to replay.
-        """
-        stop_right_after_play_due_to_bug = total_loop == 1
-        if stop_right_after_play_due_to_bug:
-            self.play_song_at_time(self.__player.get_playing_time())
-
     def do_after_played(self, interval, thread_id):
         while thread_id == self.__thread_id and self.__player.is_playing():
             self.__do_while_playing_music()
-            sys.stdout.flush()
             sleep(interval)
 
         playing_this_song: bool = thread_id == self.__thread_id

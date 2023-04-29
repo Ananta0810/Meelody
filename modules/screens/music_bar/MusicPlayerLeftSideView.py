@@ -1,6 +1,5 @@
 from typing import Optional, Union
 
-from PyQt5.QtCore import QMetaObject
 from PyQt5.QtWidgets import QHBoxLayout, QWidget, QVBoxLayout
 
 from modules.helpers.types.Decorators import override, connector
@@ -11,7 +10,7 @@ from modules.screens.AbstractScreen import BaseView
 from modules.statics.view.Material import Paddings, Icons, Colors, Backgrounds, ColorBoxes
 from modules.widgets.Cover import Cover, CoverProp
 from modules.widgets.Labels import LabelWithDefaultText
-from modules.widgets.Buttons import ToggleIconButton, IconButton
+from modules.widgets.Buttons import IconButton
 
 
 class MusicPlayerLeftSideView(QHBoxLayout, BaseView):
@@ -23,12 +22,14 @@ class MusicPlayerLeftSideView(QHBoxLayout, BaseView):
     __label_song_title: LabelWithDefaultText = None
 
     __btn_prev_song: IconButton = None
-    __btn_play_song: ToggleIconButton = None
+    __btn_play_song: IconButton = None
+    __btn_pause_song: IconButton = None
     __btn_next_song: IconButton = None
 
     def __init__(self, parent: Optional["QWidget"] = None):
         super(MusicPlayerLeftSideView, self).__init__(parent)
         self.__init_ui()
+        self.set_is_playing(False)
 
     def __init_ui(self) -> None:
         self.__song_cover = Cover()
@@ -75,25 +76,29 @@ class MusicPlayerLeftSideView(QHBoxLayout, BaseView):
         )
         self.__play_buttons.addWidget(self.__btn_prev_song)
 
-        self.__btn_play_song = ToggleIconButton.build(
+        self.__btn_play_song = IconButton.build(
             padding=Paddings.RELATIVE_50,
             size=Icons.X_LARGE,
-            inactive_btn=IconButtonStyle(
+            style=IconButtonStyle(
                 light_mode_icon=Icons.PLAY.with_color(Colors.PRIMARY),
                 dark_mode_icon=Icons.PLAY.with_color(Colors.WHITE),
                 light_mode_background=Backgrounds.CIRCLE_PRIMARY_10,
                 dark_mode_background=Backgrounds.CIRCLE_PRIMARY,
             ),
-            active_btn=IconButtonStyle(
+        )
+        self.__play_buttons.addWidget(self.__btn_play_song)
+
+        self.__btn_pause_song = IconButton.build(
+            padding=Paddings.RELATIVE_50,
+            size=Icons.X_LARGE,
+            style=IconButtonStyle(
                 light_mode_icon=Icons.PAUSE.with_color(Colors.PRIMARY),
                 dark_mode_icon=Icons.PAUSE.with_color(Colors.WHITE),
                 light_mode_background=Backgrounds.CIRCLE_PRIMARY_10,
                 dark_mode_background=Backgrounds.CIRCLE_PRIMARY,
             )
         )
-        self.__btn_play_song.set_change_state_on_pressed(False)
-        self.__btn_play_song.set_active(False)
-        self.__play_buttons.addWidget(self.__btn_play_song)
+        self.__play_buttons.addWidget(self.__btn_pause_song)
 
         self.__btn_next_song = IconButton.build(
             padding=Paddings.RELATIVE_50,
@@ -104,13 +109,13 @@ class MusicPlayerLeftSideView(QHBoxLayout, BaseView):
             )
         )
         self.__play_buttons.addWidget(self.__btn_next_song)
-        QMetaObject.connectSlotsByName(self)
 
     @override
     def apply_light_mode(self) -> None:
         self.__btn_next_song.apply_light_mode()
         self.__btn_prev_song.apply_light_mode()
         self.__btn_play_song.apply_light_mode()
+        self.__btn_pause_song.apply_light_mode()
         self.__label_song_title.apply_light_mode()
         self.__label_song_artist.apply_light_mode()
 
@@ -119,6 +124,7 @@ class MusicPlayerLeftSideView(QHBoxLayout, BaseView):
         self.__btn_next_song.apply_dark_mode()
         self.__btn_prev_song.apply_dark_mode()
         self.__btn_play_song.apply_dark_mode()
+        self.__btn_pause_song.apply_dark_mode()
         self.__label_song_title.apply_dark_mode()
         self.__label_song_artist.apply_dark_mode()
 
@@ -128,11 +134,19 @@ class MusicPlayerLeftSideView(QHBoxLayout, BaseView):
 
     @connector
     def set_onclick_play_song(self, fn: callable) -> None:
-        self.__btn_play_song.clicked.connect(lambda: fn())
+        self.__btn_play_song.clicked.connect(lambda: self.__onclick_play(fn))
 
     @connector
     def set_onclick_pause_song(self, fn: callable) -> None:
-        self.__btn_play_song.clicked.connect(lambda: fn())
+        self.__btn_pause_song.clicked.connect(lambda: self.__onclick_pause(fn))
+
+    def __onclick_play(self, fn: callable) -> None:
+        self.set_is_playing(True)
+        fn()
+
+    def __onclick_pause(self, fn: callable) -> None:
+        self.set_is_playing(False)
+        fn()
 
     @connector
     def set_onclick_next_song(self, fn: callable) -> None:
@@ -158,10 +172,11 @@ class MusicPlayerLeftSideView(QHBoxLayout, BaseView):
         self.__label_song_artist.setText(text)
 
     def set_is_playing(self, enable: bool) -> None:
-        return self.__btn_play_song.set_active(enable)
+        self.__btn_play_song.setVisible(not enable)
+        self.__btn_pause_song.setVisible(enable)
 
     def is_playing(self) -> bool:
-        return self.__btn_play_song.is_active()
+        return self.__btn_pause_song.isVisible()
 
     @staticmethod
     def __create_cover(byte_pixmap: bytes) -> Union[CoverProp, None]:
