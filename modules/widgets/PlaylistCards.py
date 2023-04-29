@@ -9,6 +9,7 @@ from modules.helpers.types.Decorators import override
 from modules.models.view.Animation import Animation
 from modules.models.view.builder.IconButtonStyle import IconButtonStyle
 from modules.models.view.builder.TextStyle import TextStyle
+from modules.statics import Properties
 from modules.statics.view.Material import ColorBoxes, Paddings, Icons, Colors, Backgrounds
 from modules.widgets.Buttons import IconButton
 from modules.widgets.Cover import Cover, CoverProp
@@ -181,7 +182,7 @@ class EditablePlaylistCard(PlaylistCard):
         self._label.set_onchange_text(fn)
 
     def __onclick_select_cover(self) -> None:
-        path = QFileDialog.getOpenFileName(self, filter="JPEG, PNG (*.JPEG *.jpeg *.JPG *.jpg *.JPE *.jpe)")[0]
+        path = QFileDialog.getOpenFileName(self, filter=Properties.ImportType.IMAGE)[0]
         if path is not None and path != '':
             self.__onchange_cover_fn(path)
 

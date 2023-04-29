@@ -8,6 +8,7 @@ from modules.helpers.types.Decorators import override, connector
 from modules.models.Song import Song
 from modules.screens.AbstractScreen import BaseView
 from modules.screens.body.songs_table.SongTableRowView import SongTableRowView, RenameSongDialog
+from modules.statics import Properties
 from modules.statics.view.Material import Images, Backgrounds
 from modules.widgets.ScrollAreas import SmoothVerticalScrollArea
 
@@ -103,7 +104,7 @@ class SongTableBodyView(SmoothVerticalScrollArea, BaseView):
                 lambda: self.__rename_title_and_artist_for_song_at(index, song.get_title(), song.get_artist()))
 
     def __choose_cover_for_song_at(self, index: int) -> None:
-        path = QFileDialog.getOpenFileName(self, filter="JPEG, PNG (*.JPEG *.jpeg *.JPG *.jpg *.JPE *.jpe)")[0]
+        path = QFileDialog.getOpenFileName(self, filter=Properties.ImportType.IMAGE)[0]
         if path is not None and path != '':
             self.__onchange_cover_fn(index, path)
 

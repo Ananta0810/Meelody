@@ -21,5 +21,3 @@ class Files:
             raise FileExistsError(f"{destiny} already existed.")
         copyfile(file, destiny)
         return destiny
-
-

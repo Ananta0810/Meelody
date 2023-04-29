@@ -314,7 +314,7 @@ class MainWindowControl(MainWindowView, BaseControl):
 
     @staticmethod
     def __change_song_title(new_song, new_title, old_song) -> bool | None:
-        if old_song.get_title() != new_title:
+        if (old_song.get_title() or '') != new_title:
             change_successfully = new_song.set_title(new_title)
             # TODO: Show alert box here.
             if change_successfully:
@@ -324,7 +324,7 @@ class MainWindowControl(MainWindowView, BaseControl):
 
     @staticmethod
     def __change_song_artist(new_artist, new_song, old_song) -> bool | None:
-        if old_song.get_artist() != new_artist:
+        if (old_song.get_artist() or '') != new_artist:
             change_successfully = new_song.set_artist(new_artist)
             # TODO: Show alert box here.
             if change_successfully:
