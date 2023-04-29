@@ -194,8 +194,9 @@ class MainWindowControl(MainWindowView, BaseControl):
             index_if_not_found=0
         )
         self._music_player.load_playing_song(song_index)
-        self._body.enable_edit_of_song_at(song_index, False)
-        self._body.enable_delete_song_at(song_index, False)
+        if self.__library.get_songs().has_any_song():
+            self._body.enable_edit_of_song_at(song_index, False)
+            self._body.enable_delete_song_at(song_index, False)
 
     def __apply_settings_to_music_player_and_menu(self):
         self._music_player.set_shuffle(self.__settings.is_shuffle)
@@ -395,9 +396,11 @@ class MainWindowControl(MainWindowView, BaseControl):
         DataSavers.SettingsSaver().save(self.__settings)
 
     def __disable_edit_and_delete_on_libray_of_song_at(self, index):
-        if self.__is_selecting_library:
-            self._body.enable_edit_songs(True)
-            self._body.enable_delete_songs(True)
+        if not self.__is_selecting_library:
+            return
+        self._body.enable_edit_songs(True)
+        self._body.enable_delete_songs(True)
+        if self.__library.get_songs().has_any_song():
             self._body.enable_edit_of_song_at(index, False)
             self._body.enable_delete_song_at(index, False)
 

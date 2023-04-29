@@ -3,7 +3,7 @@ from threading import Thread
 from time import sleep
 from typing import Callable
 
-from modules.helpers import Times
+from modules.helpers import Times, Printers
 from modules.helpers.types.Decorators import handler, override, connector
 from modules.helpers.types import Numbers
 from modules.models.AudioPlayer import AudioPlayer
@@ -82,6 +82,7 @@ class MusicPlayerControl(MusicPlayerBarView, BaseControl):
     @handler
     def play_previous_song(self) -> None:
         if not self.__player.has_any_song():
+            Printers.print_error("No song to play.")
             return
         self.__player.stop()
         self.__player.select_previous_song()
@@ -92,7 +93,7 @@ class MusicPlayerControl(MusicPlayerBarView, BaseControl):
     @handler
     def play_next_song(self) -> None:
         if not self.__player.has_any_song():
-            print("No song to play")
+            Printers.print_error("No song to play.")
             return
         self.__player.stop()
         self.__player.select_next_song()
@@ -102,14 +103,21 @@ class MusicPlayerControl(MusicPlayerBarView, BaseControl):
 
     @handler
     def play_current_song(self) -> None:
+        song = self.__player.get_current_song()
+        if song is None:
+            self.set_is_playing(False)
+            Printers.print_error('No song to play.')
+            return
         playing_time = Times.string_of(self.__player.get_playing_time())
-        print(f"Playing {self.__player.get_current_song().get_title()} at {playing_time}.")
+        print(f"Playing {song.get_title()} at {playing_time}.")
         self.__playSong()
 
     @handler
     def pause_current_song(self) -> None:
-        playing_time = Times.string_of(self.__player.get_playing_time())
-        print(f"Paused {self.__player.get_current_song().get_title()} at {playing_time}")
+        song = self.__player.get_current_song()
+        if song is not None:
+            playing_time = Times.string_of(self.__player.get_playing_time())
+            print(f"Paused {song.get_title()} at {playing_time}")
         self.__player.pause()
         self.set_is_playing(False)
 
@@ -122,9 +130,11 @@ class MusicPlayerControl(MusicPlayerBarView, BaseControl):
     @handler
     def play_song_at_time(self, time: float) -> None:
         if not self.__player.has_any_song():
+            Printers.print_error("No song to play.")
             return
         currentSong = self.__player.get_current_song()
         if currentSong is None:
+            Printers.print_error("No song to play.")
             return
 
         self.__player.skip_to_time(time)
@@ -167,9 +177,11 @@ class MusicPlayerControl(MusicPlayerBarView, BaseControl):
     def change_love_state(self) -> None:
         song = self.__player.get_current_song()
         if song is None:
+            Printers.print_error("No song to love.")
             return
         song.reverse_love_state()
         self.set_love_state(song.is_loved())
+        print(f"{'Loved' if song.is_loved() else 'Unloved'} song {song.get_title()}")
         if self.__on_love is not None:
             self.__on_love(song)
 
@@ -263,7 +275,7 @@ class MusicPlayerControl(MusicPlayerBarView, BaseControl):
     def __display_current_song_info(self) -> None:
         song: Song = self.__player.get_current_song()
         if song is None:
-            self.display_song_info(None, "Artist", None, False)
+            self.display_song_info(None, "Song Title", "Song Artist", False)
             self.set_playing_time(0)
             self.set_total_time(0)
             return
