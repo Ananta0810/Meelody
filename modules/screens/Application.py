@@ -1,5 +1,4 @@
-from modules.helpers import DataSaver
-from modules.models.AppSettings import AppSettings
+from modules.helpers import DataSavers
 from modules.models.Playlist import Playlist
 from modules.models.PlaylistSongs import PlaylistSongs
 from modules.screens.windows.MainWindowControl import MainWindowControl
@@ -43,9 +42,15 @@ class Application:
             - Sort by title, length, artist.
             - Refactor structure.
         """
-        songs: PlaylistSongs = DataSaver.load_songs_from_dir("library", with_extension="mp3")
-        settings: AppSettings = DataSaver.load_settings()
-        self.window.set_appsettings(settings)
+        settings_saver = DataSavers.SettingsSaver()
+        library_saver = DataSavers.SongSaver()
+        playlist_saver = DataSavers.PlaylistSaver()
 
+        settings_saver.set_path("configuration/settings.json")
+        library_saver.set_path("library/library.json")
+        playlist_saver.set_path("library/playlists.json")
+
+        songs: PlaylistSongs = library_saver.load("library", with_extension="mp3")
+        self.window.set_appsettings(settings_saver.load())
         self.window.load_library(Playlist.create(name="Library", songs=songs, cover=Images.DEFAULT_PLAYLIST_COVER))
-        self.window.load_playlists(DataSaver.load_playlists(songs.get_songs()))
+        self.window.load_playlists(playlist_saver.load(songs.get_songs()))

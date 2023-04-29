@@ -2,7 +2,7 @@ import tempfile
 from threading import Thread
 from time import sleep
 
-from modules.helpers import DataSaver
+from modules.helpers import DataSavers
 from modules.helpers import Files
 from modules.helpers.Youtubes import YoutubeDownloader
 from modules.helpers.types.Bytes import Bytes, BytesModifier
@@ -157,13 +157,13 @@ class MainWindowControl(MainWindowView, BaseControl):
     def __update_playlist_name(self, card: PlaylistCardData, name: str) -> None:
         card.content().name = name
         self.__update_display_playlist_info_if_updating(card)
-        DataSaver.save_playlists(self.__playlists)
+        DataSavers.PlaylistSaver().save(self.__playlists)
 
     def __update_playlist_cover(self, card: PlaylistCardData, cover_path: str) -> None:
         card.content().cover = Bytes.get_bytes_from_file(cover_path)
         self._body.update_playlist(card)
         self.__update_display_playlist_info_if_updating(card)
-        DataSaver.save_playlists(self.__playlists)
+        DataSavers.PlaylistSaver().save(self.__playlists)
 
     def __update_display_playlist_info_if_updating(self, card):
         updating_playlist: Playlist = self.find_playlist_of(card)
@@ -182,7 +182,7 @@ class MainWindowControl(MainWindowView, BaseControl):
             self.__show_library_on_menu_and_player()
             self._music_player.stop_current_song()
 
-        DataSaver.save_playlists(self.__playlists)
+        DataSavers.PlaylistSaver().save(self.__playlists)
 
     def __show_library_on_menu_and_player(self):
         self.__apply_settings_to_music_player_and_menu()
@@ -251,7 +251,7 @@ class MainWindowControl(MainWindowView, BaseControl):
         return new_songs
 
     def __save_library(self):
-        DataSaver.save_songs(self.__library.get_songs().get_songs())
+        DataSavers.SongSaver().save(self.__library.get_songs().get_songs())
 
     @staticmethod
     def __add_songs_from_path(paths):
@@ -290,7 +290,7 @@ class MainWindowControl(MainWindowView, BaseControl):
 
         self.__displaying_playlist.get_songs().get_songs().clear()
         self.__displaying_playlist.get_songs().insertAll(playlist_songs)
-        DataSaver.save_playlists(self.__playlists)
+        DataSavers.PlaylistSaver().save(self.__playlists)
         self.__choose_playlist(self.__displaying_playlist)
 
     def __add_song_from_menu_at(self, index: int) -> None:
@@ -358,11 +358,11 @@ class MainWindowControl(MainWindowView, BaseControl):
 
         self.__displaying_playlist.get_songs().remove_song(song)
         self.__choose_playlist(self.__displaying_playlist)
-        DataSaver.save_playlists(self.__playlists)
+        DataSavers.PlaylistSaver().save(self.__playlists)
 
     def __love_song_from_player(self, song: Song) -> None:
         self._body.love_song(song.is_loved())
-        DataSaver.update_love_state_of(song)
+        self.__save_library()
 
     def __love_song_from_menu(self, index: int) -> None:
         if self.__player.get_current_song_index() == index:
@@ -370,7 +370,7 @@ class MainWindowControl(MainWindowView, BaseControl):
             return
         song = self.__displaying_playlist.get_songs().get_song_at(index)
         song.reverse_love_state()
-        DataSaver.update_love_state_of(self.__player.get_songs()[index])
+        self.__save_library()
 
     def __play_song_from_player_at(self, index: int) -> None:
         if self.__playing_playlist is None:
@@ -381,7 +381,7 @@ class MainWindowControl(MainWindowView, BaseControl):
         self.__disable_edit_and_delete_on_libray_of_song_at(index)
 
         self.__settings.set_playing_song_id(self.__song_at(index).get_id())
-        DataSaver.save_settings(self.__settings)
+        DataSavers.SettingsSaver().save(self.__settings)
 
     def __play_song_from_menu_at(self, index: int) -> None:
         self.__playing_playlist = self.__displaying_playlist
@@ -392,7 +392,7 @@ class MainWindowControl(MainWindowView, BaseControl):
         self.__disable_edit_and_delete_on_libray_of_song_at(index)
 
         self.__settings.set_playing_song_id(self.__song_at(index).get_id())
-        DataSaver.save_settings(self.__settings)
+        DataSavers.SettingsSaver().save(self.__settings)
 
     def __disable_edit_and_delete_on_libray_of_song_at(self, index):
         if self.__is_selecting_library:
@@ -404,11 +404,11 @@ class MainWindowControl(MainWindowView, BaseControl):
     def __shuffle(self, shuffled: bool) -> None:
         self._body.refresh_menu()
         self.__settings.set_is_shuffle(shuffled)
-        DataSaver.save_settings(self.__settings)
+        DataSavers.SettingsSaver().save(self.__settings)
 
     def __loop(self, looping: bool) -> None:
         self.__settings.set_is_looping(looping)
-        DataSaver.save_settings(self.__settings)
+        DataSavers.SettingsSaver().save(self.__settings)
 
     def __go_to_song_that_title_start_with(self, title: str) -> int:
         return self.__displaying_playlist.get_songs().find_nearest_song_index_by_title(title)
