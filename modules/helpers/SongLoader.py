@@ -1,4 +1,5 @@
 import os
+import tempfile
 from threading import Thread
 
 from modules.helpers import Commands
@@ -13,36 +14,45 @@ class SongLoader(metaclass=SingletonMeta):
     __STANDARD_SAMPLE_RATE: float = 48000
 
     def add_song(self, song: Song) -> None:
-        if song.get_sample_rate() != SongLoader.__STANDARD_SAMPLE_RATE:
-            self.__songs.append(song)
+        if song.get_sample_rate() == SongLoader.__STANDARD_SAMPLE_RATE:
+            return
+
+        if os.path.exists(self.__temp_audio_of(song)):
+            return
+
+        self.__songs.append(song)
 
     def resolve_load_locations(self) -> None:
         Thread(target=lambda: self.__resolve()).start()
 
     def __resolve(self):
-        for song in self.__songs:
-            print(f"Resolving load location for song {song.get_title()}")
-            try:
-                if not Strings.is_ascii(song.get_title()):
-                    self.__create_temp_file_and_change_its_simple_rate(song)
-                    # return
-                self.__create_changed_simple_rate_song(song)
-            except Commands.CommandFailedError:
-                print("Some error occurred.")
+        if len(self.__songs) == 0:
+            return
 
-    def __create_changed_simple_rate_song(self, song):
+        with tempfile.TemporaryDirectory() as temp_dir:
+            for song in self.__songs:
+                print(f"Resolving load location for song {song.get_title()}")
+                try:
+                    if not Strings.is_ascii(song.get_title()):
+                        self.__create_temp_file_and_change_its_sample_rate(song, temp_dir)
+                        return
+                    self.__create_changed_sample_rate_song(song)
+                except Commands.CommandFailedError:
+                    print("Some error occurred.")
+
+    def __create_changed_sample_rate_song(self, song):
         original_location = song.get_location()
-        target_location = self.__temp_audio_of(song.get_location())
+        target_location = self.__temp_audio_of(song)
         self.__create_file_with_standard_sample_rate(song, original_location, target_location)
 
-    def __create_temp_file_and_change_its_simple_rate(self, song: Song) -> None:
+    def __create_temp_file_and_change_its_sample_rate(self, song: Song, temp_dir: str) -> None:
         """
             When we run command, sometimes file name will be changed because shell can not write punctuation.
             Therefore, we have to create a file in which name has no punctuation.
         """
         new_name = Strings.clear_non_ascii(song.get_title())
         temp_file_without_punctuation_in_name = Strings.get_full_path(
-            directory="/library/copied",
+            directory=temp_dir,
             name=new_name,
             extension="." + Strings.extension_of(song.get_location())
         )
@@ -52,7 +62,7 @@ class SongLoader(metaclass=SingletonMeta):
         except FileExistsError:
             pass
 
-        audio_location = self.__temp_audio_of(song.get_location().replace(song.get_title(), new_name))
+        audio_location = self.__temp_audio_of(song)
         self.__create_file_with_standard_sample_rate(song, temp_file_without_punctuation_in_name, audio_location)
 
     @staticmethod
@@ -66,5 +76,5 @@ class SongLoader(metaclass=SingletonMeta):
         print(f"Created temp song at {audio_location}.")
 
     @staticmethod
-    def __temp_audio_of(file):
-        return Strings.rename_file(file, 'temp/' + Strings.get_file_basename(file))
+    def __temp_audio_of(song: Song) -> str:
+        return Strings.rename_file(song.get_location(), 'temp/' + Strings.clear_non_ascii(song.get_title()))
