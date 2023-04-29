@@ -4,7 +4,7 @@ from PyQt5.QtCore import QEasingCurve, Qt, QVariantAnimation
 from PyQt5.QtGui import QPixmap
 from PyQt5.QtWidgets import QLabel, QWidget
 
-from modules.helpers.PixmapHelper import PixmapHelper
+from modules.helpers import Pixmaps
 
 
 class CoverProp:
@@ -34,12 +34,12 @@ class CoverProp:
         radius: int = 0,
         crop_center: bool = True,
     ) -> Union['CoverProp', None]:
-        pixmap = PixmapHelper.get_pixmap_from_bytes(image_byte)
+        pixmap = Pixmaps.get_pixmap_from_bytes(image_byte)
         if pixmap.isNull():
             return None
-        pixmap = PixmapHelper.scale_pixmap_keeping_ratio(pixmap, max(width, height))
-        pixmap = PixmapHelper.crop_pixmap(pixmap, width, height, crop_center)
-        pixmap = PixmapHelper.round_pixmap(pixmap, radius)
+        pixmap = Pixmaps.scale_pixmap_keeping_ratio(pixmap, max(width, height))
+        pixmap = Pixmaps.crop_pixmap(pixmap, width, height, crop_center)
+        pixmap = Pixmaps.round_pixmap(pixmap, radius)
         return CoverProp(pixmap, width, height, radius)
 
 
@@ -85,8 +85,8 @@ class Cover(QLabel):
             return
         pixmap = self.__current_cover.content().copy()
         pixmap = pixmap.scaledToHeight(int(self.height() * value), Qt.SmoothTransformation)
-        pixmap = PixmapHelper.crop_pixmap(pixmap, self.width(), self.height())
-        pixmap = PixmapHelper.round_pixmap(pixmap, radius=self.__radius)
+        pixmap = Pixmaps.crop_pixmap(pixmap, self.width(), self.height())
+        pixmap = Pixmaps.round_pixmap(pixmap, radius=self.__radius)
         self.__set_hover_pixmap(pixmap)
 
     def animation_on_entered_hover(self) -> None:

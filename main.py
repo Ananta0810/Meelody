@@ -1,14 +1,13 @@
 from sys import argv, exit
 from PyQt5.QtWidgets import QApplication
 
-from modules.helpers import Timers
+from modules.helpers import Times
 from modules.screens.Application import Application
 
 
 def run_application():
     app = QApplication(argv)
-    application = Application()
-    time_to_run = Timers.measure(lambda: application.run())
+    time_to_run = Times.measure(lambda: Application().run())
     print(f"Time to start application: {time_to_run}")
     exit(app.exec_())
 

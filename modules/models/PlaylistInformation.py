@@ -1,6 +1,6 @@
 import uuid
 
-from modules.helpers.types.Strings import Strings
+from modules.helpers.types import Strings
 
 
 class PlaylistInformation:

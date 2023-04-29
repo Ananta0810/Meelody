@@ -4,7 +4,7 @@ from PyQt5.QtCore import pyqtSignal, QEvent, Qt, QRect
 from PyQt5.QtGui import QFont, QCursor, QResizeEvent, QPixmap
 from PyQt5.QtWidgets import QWidget, QVBoxLayout, QHBoxLayout, QSizePolicy, QFileDialog
 
-from modules.helpers.PixmapHelper import PixmapHelper
+from modules.helpers import Pixmaps
 from modules.helpers.types.Decorators import override
 from modules.models.view.Animation import Animation
 from modules.models.view.builder.IconButtonStyle import IconButtonStyle
@@ -79,7 +79,7 @@ class PlaylistCard(QWidget):
 
     def _adapt_theme_to_cover(self, pixmap: QPixmap):
         rect = self.__get_label_rect()
-        should_dark_mode_for_label = PixmapHelper.check_contrast_at(pixmap, rect)
+        should_dark_mode_for_label = Pixmaps.check_contrast_at(pixmap, rect)
         if should_dark_mode_for_label:
             self._label.apply_dark_mode()
         else:
@@ -190,7 +190,7 @@ class EditablePlaylistCard(PlaylistCard):
     def _adapt_theme_to_cover(self, pixmap: QPixmap) -> None:
         super()._adapt_theme_to_cover(pixmap)
         rect = self.__get_button_rect()
-        should_dark_mode_for_buttons = PixmapHelper.check_contrast_at(pixmap, rect)
+        should_dark_mode_for_buttons = Pixmaps.check_contrast_at(pixmap, rect)
         if should_dark_mode_for_buttons:
             self.__delete_btn.apply_dark_mode()
             self.__edit_cover_btn.apply_dark_mode()

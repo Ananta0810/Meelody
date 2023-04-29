@@ -3,9 +3,9 @@ from threading import Thread
 from time import sleep
 from typing import Callable
 
+from modules.helpers import Times
 from modules.helpers.types.Decorators import handler, override, connector
-from modules.helpers.types.Numbers import Numbers
-from modules.helpers.types.Strings import Strings
+from modules.helpers.types import Numbers
 from modules.models.AudioPlayer import AudioPlayer
 from modules.models.PlaylistSongs import PlaylistSongs
 from modules.models.Song import Song
@@ -102,13 +102,13 @@ class MusicPlayerControl(MusicPlayerBarView, BaseControl):
 
     @handler
     def play_current_song(self) -> None:
-        playing_time = Strings.float_to_clock_time(self.__player.get_playing_time())
+        playing_time = Times.string_of(self.__player.get_playing_time())
         print(f"Playing {self.__player.get_current_song().get_title()} at {playing_time}.")
         self.__playSong()
 
     @handler
     def pause_current_song(self) -> None:
-        playing_time = Strings.float_to_clock_time(self.__player.get_playing_time())
+        playing_time = Times.string_of(self.__player.get_playing_time())
         print(f"Paused {self.__player.get_current_song().get_title()} at {playing_time}")
         self.__player.pause()
         self.set_is_playing(False)
@@ -128,7 +128,7 @@ class MusicPlayerControl(MusicPlayerBarView, BaseControl):
             return
 
         self.__player.skip_to_time(time)
-        playing_time = Strings.float_to_clock_time(self.__player.get_playing_time())
+        playing_time = Times.string_of(self.__player.get_playing_time())
         print(f"Skip song {self.__player.get_current_song().get_title()} at {playing_time}.")
         self.__thread_start_player()
 
@@ -244,7 +244,7 @@ class MusicPlayerControl(MusicPlayerBarView, BaseControl):
         TIMES_THAT_UI_HAS_TO_UPDATE_FOR_SLIDER_WHILE_PLAYING: int = 100
         LONGEST_TIME_BREAK_FOR_A_UI_UPDATE_IN_SECONDS: float = 0.25
 
-        return Numbers.clamp_float(
+        return Numbers.clamp(
             self.__player.get_current_song().get_length() / TIMES_THAT_UI_HAS_TO_UPDATE_FOR_SLIDER_WHILE_PLAYING,
             min_value=0,
             max_value=LONGEST_TIME_BREAK_FOR_A_UI_UPDATE_IN_SECONDS

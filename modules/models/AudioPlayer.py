@@ -53,7 +53,7 @@ class AudioPlayer(metaclass=SingletonMeta):
         self.__offset_rate = 48000 / song.get_sample_rate()
         self.__loaded = True
         mixer.music.unload()
-        mixer.music.load(song.get_audio_location())
+        mixer.music.load(song.get_location())
 
     def play(self):
         mixer.music.play(start=self.__get_playing_time())

@@ -1,8 +1,8 @@
 import os.path
 from logging import getLogger
 
-from modules.helpers.Files import Files
-from modules.helpers.Jsons import Jsons
+from modules.helpers import Files
+from modules.helpers import Jsons
 from modules.models.AppSettings import AppSettings
 from modules.models.Playlist import Playlist, PlaylistJson
 from modules.models.PlaylistSongs import PlaylistSongs

@@ -3,11 +3,11 @@ from threading import Thread
 from time import sleep
 
 from modules.helpers import DataSaver
-from modules.helpers.Files import Files
+from modules.helpers import Files
 from modules.helpers.Youtubes import YoutubeDownloader
 from modules.helpers.types.Bytes import Bytes, BytesModifier
 from modules.helpers.types.Decorators import override
-from modules.helpers.types.Lists import Lists
+from modules.helpers.types import Lists
 from modules.models.AppSettings import AppSettings
 from modules.models.AudioPlayer import AudioPlayer
 from modules.models.Playlist import Playlist

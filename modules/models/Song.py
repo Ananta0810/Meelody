@@ -3,13 +3,12 @@ import uuid
 
 from modules.helpers.types.Bytes import Bytes
 from modules.helpers.types.Decorators import override
-from modules.helpers.types.Strings import Strings
+from modules.helpers.types import Strings
 from modules.models.AudioExtractor import AudioExtractor
 
 
 class Song:
     __id: str
-    __audio_location: str
     __location: str
     __title: str
     __artist: str
@@ -21,7 +20,6 @@ class Song:
     def __init__(
         self,
         location: str = None,
-        audio_location: str = None,
         title: str = None,
         artist: str = None,
         cover: bytes = None,
@@ -30,7 +28,6 @@ class Song:
         loved: bool = False,
     ):
         self.__location = location
-        self.__audio_location = audio_location
         self.__title = title
         self.__artist = artist
         self.__cover = cover
@@ -49,7 +46,6 @@ class Song:
     def from_json(json: dict) -> 'Song':
         song = Song(
             location=json['location'],
-            audio_location=json['audio_location'],
             title=json['title'],
             artist=json['artist'],
             cover=Bytes.encode(json['cover']),
@@ -70,7 +66,6 @@ class Song:
         return {
             'id': self.__id,
             'location': self.__location,
-            'audio_location': self.__audio_location,
             'title': self.__title,
             'artist': self.__artist,
             'cover': Bytes.decode(self.__cover),
@@ -97,9 +92,6 @@ class Song:
             and self.__is_loved == other.__is_loved
             and self.__sample_rate == other.__sample_rate
         )
-
-    def set_audio_location(self, location: str) -> None:
-        self.__audio_location = location
 
     def __load_info_from(self, location: str) -> None:
         """
@@ -154,18 +146,6 @@ class Song:
         return self.__title
 
     def get_location(self) -> str:
-        return self.__location
-
-    def get_audio_location(self) -> str:
-        """
-            Get the location which will be loaded by pygame
-        """
-        if self.__audio_location is not None and os.path.exists(self.__audio_location):
-            try:
-                open(self.__audio_location, "r")
-                return self.__audio_location
-            except IOError:
-                print("Could not open audio.")
         return self.__location
 
     def get_artist(self) -> str:

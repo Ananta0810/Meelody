@@ -4,8 +4,8 @@ from PyQt5.QtCore import Qt
 from PyQt5.QtGui import QFont, QResizeEvent
 from PyQt5.QtWidgets import QWidget, QHBoxLayout, QVBoxLayout
 
+from modules.helpers import Times
 from modules.helpers.types.Decorators import override
-from modules.helpers.types.Strings import Strings
 from modules.models.view.Background import Background
 from modules.models.view.Border import Border
 from modules.models.view.Color import Color
@@ -335,7 +335,7 @@ class SongTableRowView(BackgroundWidget, BaseView):
         self.__label_artist.setText(artist or self.default_artist)
 
     def set_length(self, length: float = 0) -> None:
-        self.__label_length.setText(Strings.float_to_clock_time(length))
+        self.__label_length.setText(Times.string_of(length))
 
     def set_love_state(self, state: bool) -> None:
         self.__btn_love.set_active(state)

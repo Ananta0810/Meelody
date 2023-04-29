@@ -5,7 +5,7 @@ from PyQt5.QtGui import QWheelEvent
 from PyQt5.QtWidgets import QScrollArea, QWidget
 
 from modules.helpers.types.Decorators import override
-from modules.helpers.types.Numbers import Numbers
+from modules.helpers.types import Numbers
 from modules.models.view.Background import Background
 from modules.models.view.builder.BackgroundThemeBuilder import BackgroundThemeBuilder
 from modules.statics.view.Material import Backgrounds
@@ -39,7 +39,7 @@ class SmoothVerticalScrollArea(QScrollArea):
 
     def _scroll_to_item_at(self, index: int) -> None:
         maxValue: int = self.verticalScrollBar().maximum()
-        endValue: int = Numbers.clamp_int(index * self.__itemHeight, 0, maxValue)
+        endValue: int = Numbers.clamp(index * self.__itemHeight, 0, maxValue)
         self.__animation.stop()
         self.__animation.setStartValue(self.verticalScrollBar().value())
         self.__animation.setEndValue(endValue)

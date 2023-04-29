@@ -4,8 +4,8 @@ from PyQt5.QtCore import Qt
 from PyQt5.QtGui import QFont
 from PyQt5.QtWidgets import QHBoxLayout, QWidget
 
+from modules.helpers import Times
 from modules.helpers.types.Decorators import override, connector
-from modules.helpers.types.Strings import Strings
 from modules.models.view.builder.FontBuilder import FontBuilder
 from modules.models.view.builder.SliderStyle import SliderStyle
 from modules.models.view.builder.TextStyle import TextStyle
@@ -84,12 +84,12 @@ class MusicPlayerMiddleView(QHBoxLayout, BaseView):
         )
 
     def set_playing_time(self, time: float) -> None:
-        self.__label_playing_time.setText(Strings.float_to_clock_time(time))
+        self.__label_playing_time.setText(Times.string_of(time))
         self.__run_time_slider(time)
 
     def set_total_time(self, time: float) -> None:
         self.__total_time = time
-        self.__label_total_time.setText(Strings.float_to_clock_time(time))
+        self.__label_total_time.setText(Times.string_of(time))
 
     def get_playing_time(self) -> float:
         return self.__slider_time.sliderPosition() * self.__total_time / 100

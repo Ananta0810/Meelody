@@ -1,4 +1,4 @@
-from modules.helpers.types.Strings import Strings
+from modules.helpers.types import Strings
 from modules.models.view.Background import Background
 from modules.models.view.ColorBox import ColorBox
 from modules.statics.view.Material import Backgrounds, ColorBoxes

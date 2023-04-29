@@ -1,99 +1,74 @@
 import os
 import string
-from locale import setlocale, LC_ALL, strxfrm
+from locale import setlocale, LC_ALL
+
+setlocale(LC_ALL, "")
 
 
-class Strings:
-    setlocale(LC_ALL, "")
+def clear_non_ascii(text: str) -> str:
+    if text is None:
+        return ''
+    return text.encode('ascii', errors='ignore').decode()
 
-    @staticmethod
-    def clear_non_ascii(text: str) -> str:
-        if text is None:
-            return ''
-        return text.encode('ascii', errors='ignore').decode()
 
-    @staticmethod
-    def is_ascii(text: str) -> bool:
-        return text == Strings.clear_non_ascii(text)
+def compare(text: str, other: str) -> int:
+    text = clear_non_ascii(text)
+    other = clear_non_ascii(other)
+    if text < other:
+        return -1
+    if text > other:
+        return 1
+    return 0
 
-    @staticmethod
-    def toLower(text: str) -> str:
-        if text is None:
-            return ''
-        return strxfrm(text.lower())
 
-    @staticmethod
-    def toUpper(text: str) -> str:
-        if text is None:
-            return ''
-        return strxfrm(text.upper())
+def equals(text: str, other: str) -> bool:
+    return compare(text, other) == 0
 
-    @staticmethod
-    def compare(text: str, other: str) -> int:
-        text = Strings.toLower(text)
-        other = Strings.toLower(other)
-        if text < other:
-            return -1
-        if text > other:
-            return 1
-        return 0
 
-    @staticmethod
-    def equals(text: str, other: str) -> bool:
-        return Strings.compare(text, other) == 0
+def unindent(value: str):
+    return '\n'.join(map(str.lstrip, [line for line in value.splitlines() if line != "\n"]))
 
-    @staticmethod
-    def unindent(value: str):
-        return '\n'.join(map(str.lstrip, [line for line in value.splitlines() if line != "\n"]))
 
-    @staticmethod
-    def unindent_multiple_lines(value: str):
-        indent: int = (next(i for i, j in enumerate(value) if j not in string.whitespace) - 1) * ' '
-        lines = [line.replace(indent, '') for line in value.splitlines() if line != ""]
-        return '\n'.join(lines)
+def unindent_multiple_lines(value: str):
+    indent_: str = (next(i for i, j in enumerate(value) if j not in string.whitespace) - 1) * ' '
+    lines = [line.replace(indent_, '') for line in value.splitlines() if line != ""]
+    return '\n'.join(lines)
 
-    @staticmethod
-    def indent(value: str, level: int = 1):
-        indent: str = '\n' + '    ' * level
-        return indent.join(map(str.lstrip, value.splitlines()))
 
-    @staticmethod
-    def float_to_clock_time(time: float) -> str:
-        time = int(time)
-        mm = time // 60
-        ss = time % 60
-        return ":".join([str(mm).zfill(2), str(ss).zfill(2)])
+def indent(value: str, level: int = 1):
+    indent_: str = '\n' + '    ' * level
+    return indent_.join(map(str.lstrip, value.splitlines()))
 
-    @staticmethod
-    def get_full_path(directory: str, name: str, extension: str) -> str:
-        return "".join([directory, "/", name, extension])
 
-    @staticmethod
-    def get_filename(file_path: str) -> str:
-        return file_path.split("/")[-1]
+def get_full_path(directory: str, name: str, extension: str) -> str:
+    return "".join([directory, "/", name, extension])
 
-    @staticmethod
-    def join_path(directory: str, file_path: str) -> str:
-        return f"{directory}/{file_path}"
 
-    @staticmethod
-    def get_dir_from(file_path: str) -> str:
-        return file_path.replace(os.path.basename(file_path), "")
+def get_filename(file_path: str) -> str:
+    return file_path.split("/")[-1]
 
-    @staticmethod
-    def get_file_basename(file_path: str) -> str:
-        return os.path.basename(file_path).split(".")[0]
 
-    @staticmethod
-    def extension_of(file_path: str) -> str:
-        return os.path.basename(file_path).split(".")[1]
+def join_path(directory: str, file_path: str) -> str:
+    return f"{directory}/{file_path}"
 
-    @staticmethod
-    def rename_file(file_path: str, new_base_name: str) -> str:
-        old_base_name = Strings.get_file_basename(file_path)
-        if old_base_name.strip() == "":
-            directory = Strings.get_dir_from(file_path)
-            extension = "." + Strings.extension_of(file_path)
-            return Strings.get_full_path(directory, new_base_name, extension)
 
-        return file_path.replace(old_base_name, new_base_name)
+def get_dir_from(file_path: str) -> str:
+    return file_path.replace(os.path.basename(file_path), "")
+
+
+def get_file_basename(file_path: str) -> str:
+    return os.path.basename(file_path).split(".")[0]
+
+
+def extension_of(file_path: str) -> str:
+    return os.path.basename(file_path).split(".")[1]
+
+
+def rename_file(file_path: str, new_base_name: str) -> str:
+    old_base_name = get_file_basename(file_path)
+    if old_base_name.strip() == "":
+        directory = get_dir_from(file_path)
+        extension = "." + extension_of(file_path)
+        return get_full_path(directory, new_base_name, extension)
+
+    return file_path.replace(old_base_name, new_base_name)

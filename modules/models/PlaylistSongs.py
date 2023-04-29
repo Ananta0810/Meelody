@@ -1,7 +1,7 @@
 import random
 
 from modules.helpers.types.Decorators import override
-from modules.helpers.types.Lists import Lists
+from modules.helpers.types import Lists
 from modules.models.Song import Song
 
 
