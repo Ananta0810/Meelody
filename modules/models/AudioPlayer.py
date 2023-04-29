@@ -10,7 +10,6 @@ class AudioPlayer(metaclass=SingletonMeta):
     __current_song: Song = None
     __current_song_index: int = 0
     __time_start_in_sec: float = 0
-    __sample_rate_offset: float = 1
     __loaded: bool = False
 
     def __init__(self):
@@ -28,7 +27,7 @@ class AudioPlayer(metaclass=SingletonMeta):
         self.__playlist = playlist
 
     def set_time_start(self, time_start: float):
-        self.__time_start_in_sec = time_start / self.__sample_rate_offset
+        self.__time_start_in_sec = time_start
 
     def get_time_start(self):
         return self.__time_start_in_sec
@@ -48,13 +47,9 @@ class AudioPlayer(metaclass=SingletonMeta):
         if self.__current_song is None:
             return
         self.reset_time()
-        self.__reset_sample_rate()
         self.__loaded = True
         mixer.music.unload()
-        mixer.music.load(self.__current_song.get_location())
-
-    def __reset_sample_rate(self):
-        self.__sample_rate_offset = 1
+        mixer.music.load(self.__current_song.get_audio_location())
 
     def play(self):
         mixer.music.play(start=self.get_playing_time())
@@ -97,23 +92,15 @@ class AudioPlayer(metaclass=SingletonMeta):
     def pause(self) -> None:
         if not self.is_playing():
             return
-        self.__fix_sample_rate_offset_when_song_is_paused()
         self.set_time_start(self.get_playing_time())
         mixer.music.stop()
 
     def stop(self) -> None:
         if not self.is_playing():
             return
-        self.__fix_sample_rate_offset_when_song_is_paused()
         mixer.music.stop()
         mixer.music.unload()
         self.__loaded = False
-
-    def __fix_sample_rate_offset_when_song_is_paused(self):
-        if self.__current_song is None:
-            return
-        STANDARD_AUDIO_SAMPLE_RATE = 48000
-        self.__sample_rate_offset = STANDARD_AUDIO_SAMPLE_RATE / self.__current_song.get_sample_rate()
 
     def reset_time(self) -> None:
         self.__time_start_in_sec = 0
@@ -125,7 +112,7 @@ class AudioPlayer(metaclass=SingletonMeta):
         self.__playlist.unshuffle()
 
     def get_playing_time(self) -> float:
-        return (self.__time_start_in_sec + mixer.music.get_pos() / 1000) * self.__sample_rate_offset
+        return self.__time_start_in_sec + mixer.music.get_pos() / 1000
 
     def is_playing(self) -> bool:
         if mixer.get_init() is None:

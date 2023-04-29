@@ -126,6 +126,7 @@ class MusicPlayerControl(MusicPlayerBarView, BaseControl):
         currentSong = self.__player.get_current_song()
         if currentSong is None:
             return
+        self.__player.skip_to_time(time)
         print(f"Skipping song {self.__player.get_current_song().get_title()} at {Strings.float_to_clock_time(time)}.")
         self.__thread_start_player()
 
