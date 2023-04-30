@@ -10,6 +10,7 @@ from modules.screens.AbstractScreen import BaseView
 from modules.screens.body.songs_table.SongTableRowView import SongTableRowView, RenameSongDialog
 from modules.statics import Properties
 from modules.statics.view.Material import Images, Backgrounds
+from modules.widgets.Dialogs import Dialogs
 from modules.widgets.ScrollAreas import SmoothVerticalScrollArea
 
 
@@ -94,7 +95,17 @@ class SongTableBodyView(SmoothVerticalScrollArea, BaseView):
     def set_on_delete_song(self, fn: Callable[[int], None]) -> None:
         self.__on_delete_fn = fn
         for index, song in enumerate(self._songs):
-            song.set_on_delete(lambda: fn(index))
+            song.set_on_delete(lambda: self.__confirm_delete_song(index))
+
+    def __confirm_delete_song(self, index: int) -> None:
+        return Dialogs().confirm(
+            image=Images.DELETE,
+            header="Warning",
+            message="Are you sure want to delete this song?\n The song will be deleted permanently\n from the storage.",
+            accept_text="Delete",
+            cancel_text="Cancel",
+            on_accept=lambda: self.__on_delete_fn(index)
+        )
 
     @connector
     def set_onchange_song_title_and_cover(self, fn: Callable[[int, str, str], bool]) -> None:
@@ -201,7 +212,7 @@ class SongTableBodyView(SmoothVerticalScrollArea, BaseView):
         songView.set_on_edit_cover(lambda: self.__choose_cover_for_song_at(index))
         songView.set_on_edit_title(
             lambda: self.__rename_title_and_artist_for_song_at(index, song.get_title(), song.get_artist()))
-        songView.set_on_delete(lambda: self.__on_delete_fn(index))
+        songView.set_on_delete(lambda: self.__confirm_delete_song(index))
 
         songView.enable_choosing(False)
 

@@ -274,4 +274,4 @@ class FramelessWindow(QMainWindow, BaseView):
     def addOverlay(self, overlay: AlertDialog) -> None:
         self.__overlay_layout.addWidget(overlay)
         overlay.on_show(lambda: self.__overlay.show())
-        overlay.on_accept(lambda: self.__overlay.hide())
+        overlay.on_close(lambda: self.__overlay.hide())

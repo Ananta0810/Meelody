@@ -10,9 +10,10 @@ from modules.models.view.Animation import Animation
 from modules.models.view.builder.IconButtonStyle import IconButtonStyle
 from modules.models.view.builder.TextStyle import TextStyle
 from modules.statics import Properties
-from modules.statics.view.Material import ColorBoxes, Paddings, Icons, Colors, Backgrounds
+from modules.statics.view.Material import ColorBoxes, Paddings, Icons, Colors, Backgrounds, Images
 from modules.widgets.Buttons import IconButton
 from modules.widgets.Cover import Cover, CoverProp
+from modules.widgets.Dialogs import Dialogs
 from modules.widgets.Labels import LabelWithDefaultText, DoubleClickedEditableLabel
 
 
@@ -150,7 +151,7 @@ class EditablePlaylistCard(PlaylistCard):
             ),
         )
         self.__delete_btn.apply_light_mode()
-        self.__delete_btn.clicked.connect(lambda: self.__delete_fn() if self.__delete_fn is not None else None)
+        self.__delete_btn.clicked.connect(lambda: self.__on_click_delete())
 
         self._buttons = QHBoxLayout()
         self._buttons.setContentsMargins(0, 0, 0, 0)
@@ -171,6 +172,16 @@ class EditablePlaylistCard(PlaylistCard):
         self._main_layout.addLayout(self._buttons)
         self._main_layout.addStretch()
         self._main_layout.addWidget(self._label)
+
+    def __on_click_delete(self):
+        Dialogs().confirm(
+            image=Images.DELETE,
+            header="Warning",
+            message="Are you sure want to delete this playlist? The playlist will be deleted permanently.",
+            accept_text="Delete",
+            cancel_text="Cancel",
+            on_accept=lambda: self.__delete_fn() if self.__delete_fn is not None else None
+        )
 
     def set_onchange_cover(self, fn: Callable[[str], None]) -> None:
         self.__onchange_cover_fn = fn

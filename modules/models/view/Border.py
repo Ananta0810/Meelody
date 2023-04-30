@@ -32,4 +32,4 @@ class Border(StylesheetElement):
 
     @override
     def to_stylesheet(self, active: bool = False) -> str:
-        return f"{self.size}px {self.style} {self.color or self.color.to_stylesheet(active)}"
+        return f"{self.size}px {self.style} {self.color.to_stylesheet(active)}"
