@@ -1,4 +1,5 @@
 import os.path
+from abc import ABC, abstractmethod
 from logging import getLogger
 
 from modules.helpers import Files
@@ -11,7 +12,7 @@ from modules.models.PlaylistSongs import PlaylistSongs
 from modules.models.Song import Song
 
 
-class SongSaver(metaclass=SingletonMeta):
+class DataSaver(ABC):
     _path: str = None
 
     def set_path(self, path: str) -> None:
@@ -22,6 +23,24 @@ class SongSaver(metaclass=SingletonMeta):
 
     def get_path(self) -> str:
         return self._path
+
+    @abstractmethod
+    def load(self, *args, **kwargs) -> ...:
+        pass
+
+    @abstractmethod
+    def save(self, data: ...) -> None:
+        pass
+
+
+class Database(metaclass=SingletonMeta):
+    def __init__(self):
+        self.settings: SettingsSaver = SettingsSaver()
+        self.songs: SongSaver = SongSaver()
+        self.playlists: PlaylistSaver = PlaylistSaver()
+
+
+class SongSaver(DataSaver):
 
     def load(self, directory: str, with_extension: str) -> PlaylistSongs:
         return self.__get_library_songs_from_json() \
@@ -52,17 +71,7 @@ class SongSaver(metaclass=SingletonMeta):
         return playlist
 
 
-class PlaylistSaver(metaclass=SingletonMeta):
-    _path: str = None
-
-    def set_path(self, path: str) -> None:
-        self._path = path
-        directory = Strings.get_dir_from(path)
-        if not os.path.exists(directory):
-            os.makedirs(directory)
-
-    def get_path(self) -> str:
-        return self._path
+class PlaylistSaver(DataSaver):
 
     def load(self, songs: list[Song]) -> list[Playlist]:
         return self.__get_library_playlists_from_json(songs) \
@@ -87,17 +96,7 @@ class PlaylistSaver(metaclass=SingletonMeta):
         Jsons.write_to_file(self.get_path(), data)
 
 
-class SettingsSaver(metaclass=SingletonMeta):
-    _path: str = None
-
-    def set_path(self, path: str) -> None:
-        self._path = path
-        directory = Strings.get_dir_from(path)
-        if not os.path.exists(directory):
-            os.makedirs(directory)
-
-    def get_path(self) -> str:
-        return self._path
+class SettingsSaver(DataSaver):
 
     def load(self) -> AppSettings:
         return self.__get_settings_from_json() \
