@@ -61,6 +61,7 @@ class Dialogs(metaclass=SingletonMeta):
     def show_dialog(self, dialog: 'Dialog') -> None:
         self.__window.addOverlay(dialog)
 
+
 class Dialog(QWidget, BaseView):
     __on_close_fn: callable = None
     __on_show_fn: callable = None
@@ -127,7 +128,6 @@ class Dialog(QWidget, BaseView):
         self.hide()
         if self.__on_close_fn is not None:
             self.__on_close_fn()
-
 
 
 class AlertDialog(QWidget, BaseView):
@@ -368,5 +368,3 @@ class ConfirmDialog(QWidget, BaseView):
             self.__on_close_fn()
         if self.__on_cancel_fn is not None:
             self.__on_cancel_fn()
-
-

@@ -36,25 +36,19 @@ class DownloadDialog(Dialog):
             dark_mode_style=TextStyle(text_color=ColorBoxes.WHITE),
         )
         self.__header.setAlignment(Qt.AlignCenter)
-        self.__label = LabelWithDefaultText.build(
-            font=FontBuilder.build(size=11),
-            light_mode_style=TextStyle(text_color=ColorBoxes.BLACK),
-            dark_mode_style=TextStyle(text_color=ColorBoxes.WHITE),
-        )
-        self.__label.setContentsMargins(0, 0, 0, 4)
-        background = Background(border_radius=8,
-                                color=ColorBox(normal=Colors.GRAY.with_opacity(8)),
-                                border=Border(size=2, color=ColorBox(Color(216, 216, 216)))
-                                )
+
         self.__input = Input.build(
             font=FontBuilder.build(size=12),
-            light_mode_style=TextStyle(text_color=ColorBoxes.BLACK,
-                                       background=background),
+            light_mode_style=TextStyle(
+                text_color=ColorBoxes.BLACK,
+                background=(Background(border_radius=8,
+                                       color=ColorBox(normal=Colors.GRAY.with_opacity(8)),
+                                       border=Border(size=2, color=ColorBox(Color(216, 216, 216)))
+                                       ))
+            ),
             padding=8
         )
         self.__input.setFixedHeight(48)
-        self.__input.setContentsMargins(0, 0, 0, 8)
-        self.__button_box = QHBoxLayout()
         self.__accept_btn = ActionButton.build(
             font=FontBuilder.build(family="Segoe UI Semibold", size=11),
             size=QSize(0, 48),
@@ -63,28 +57,27 @@ class DownloadDialog(Dialog):
             dark_mode=TextStyle(text_color=ColorBoxes.WHITE, background=Backgrounds.ROUNDED_WHITE_25)
         )
         self.__accept_btn.clicked.connect(lambda: self._on_accepted())
-        self.__button_box.addWidget(self.__accept_btn)
+
         self.__view_layout = QVBoxLayout(self)
         self.__view_layout.setAlignment(Qt.AlignVCenter)
         self.__view_layout.addWidget(self.__image)
         self.__view_layout.addWidget(self.__header)
-        self.__view_layout.addWidget(self.__label)
+        self.__view_layout.addSpacing(4)
         self.__view_layout.addWidget(self.__input)
-        self.__view_layout.addLayout(self.__button_box)
-        self.setFixedWidth(360)
+        self.__view_layout.addSpacing(8)
+        self.__view_layout.addWidget(self.__accept_btn)
 
         self.__image.set_cover(CoverProp.from_bytes(Images.DOWNLOAD, width=128))
         self.__header.setText("Download Youtube Song")
-        self.__header.setContentsMargins(0, 0, 0, 8)
-        self.__label.hide()
         self.__accept_btn.setText("Download")
+
+        self.setFixedWidth(360)
         self.setFixedHeight(self.sizeHint().height())
 
     @override
     def apply_dark_mode(self) -> None:
         super().apply_dark_mode()
         self.__header.apply_dark_mode()
-        self.__label.apply_dark_mode()
         self.__input.apply_dark_mode()
         self.__accept_btn.apply_dark_mode()
 
@@ -92,7 +85,6 @@ class DownloadDialog(Dialog):
     def apply_light_mode(self) -> None:
         super().apply_light_mode()
         self.__header.apply_light_mode()
-        self.__label.apply_light_mode()
         self.__input.apply_light_mode()
         self.__accept_btn.apply_light_mode()
 

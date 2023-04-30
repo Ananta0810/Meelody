@@ -311,11 +311,11 @@ class MainWindowControl(MainWindowView, BaseControl):
         changed_artist = self.__change_song_artist(new_artist, new_song, old_song)
 
         if not changed_title and not changed_artist:
-            Dialogs().alert(
-                with_image=Images.EDIT,
-                with_header="Warning",
-                with_message=f"Please enter new information for song."
-            )
+            # Dialogs().alert(
+            #     with_image=Images.EDIT,
+            #     with_header="Warning",
+            #     with_message=f"Please enter new information for song."
+            # )
             return False
 
         self.__library.get_songs().remove_song(old_song)
@@ -323,11 +323,11 @@ class MainWindowControl(MainWindowView, BaseControl):
         self.__choose_library()
         self.__save_library()
 
-        Dialogs().alert(
-            with_image=Images.EDIT,
-            with_header="Edit song successfully",
-            with_message=f"You have successfully change information for song '{new_song.get_title()}'."
-        )
+        # Dialogs().alert(
+        #     with_image=Images.EDIT,
+        #     with_header="Edit song successfully",
+        #     with_message=f"You have successfully change information for song '{new_song.get_title()}'."
+        # )
         return True
 
     @staticmethod

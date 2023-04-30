@@ -1,11 +1,11 @@
 from typing import Optional, Union, Callable
 
-from PyQt5.QtCore import Qt
+from PyQt5.QtCore import Qt, QSize
 from PyQt5.QtGui import QFont, QResizeEvent
 from PyQt5.QtWidgets import QWidget, QHBoxLayout, QVBoxLayout
 
 from modules.helpers import Times
-from modules.helpers.types.Decorators import override
+from modules.helpers.types.Decorators import override, connector
 from modules.models.view.Background import Background
 from modules.models.view.Border import Border
 from modules.models.view.Color import Color
@@ -15,73 +15,133 @@ from modules.models.view.builder.FontBuilder import FontBuilder
 from modules.models.view.builder.IconButtonStyle import IconButtonStyle
 from modules.models.view.builder.TextStyle import TextStyle
 from modules.screens.AbstractScreen import BaseView
-from modules.statics.view.Material import Icons, Paddings, Colors, Backgrounds, ColorBoxes
+from modules.statics.view.Material import Icons, Paddings, Colors, Backgrounds, ColorBoxes, Images
 from modules.widgets import Observers, Dialogs
-from modules.widgets.Buttons import ToggleIconButton, IconButton
+from modules.widgets.Buttons import ToggleIconButton, IconButton, ActionButton
 from modules.widgets.Cover import Cover, CoverProp
 from modules.widgets.Icons import AppIcon
 from modules.widgets.Labels import LabelWithDefaultText, Input
 from modules.widgets.Widgets import BackgroundWidget
 
 
-# class RenameSongDialog(Dialogs.OldDialog):
-#     def __init__(self, header: str, msg: str | None = None, accept_text: str = "Confirm", reject_text: str = "Cancel",
-#                  onclick_accept_fn: Callable[[str], bool] = None, onclick_reject_fn: callable = None,
-#                  dark_mode: bool = False,
-#                  parent: Optional["QWidget"] = None):
-#         super().__init__(header, msg, accept_text, reject_text, onclick_accept_fn, onclick_reject_fn, dark_mode, parent)
-#
-#     def _init_content(self, content: QWidget) -> None:
-#         layout = QVBoxLayout(content)
-#         self.__title_input = self.__create_input()
-#         self.__title_input.set_onpressed(self._on_accepted)
-#         layout.addWidget(self.__title_input)
-#
-#         self.__artist_input = self.__create_input()
-#         self.__artist_input.set_onpressed(self._on_accepted)
-#         layout.addWidget(self.__artist_input)
-#
-#     @staticmethod
-#     def __create_input() -> Input:
-#         input_ = Input.build(
-#             font=FontBuilder.build(size=12),
-#             light_mode_style=TextStyle(text_color=ColorBoxes.BLACK,
-#                                        background=Background(
-#                                            border_radius=8,
-#                                            color=ColorBox(
-#                                                normal=Colors.GRAY.with_opacity(8)),
-#                                            border=Border(
-#                                                size=2,
-#                                                color=Color(192, 192, 192)
-#                                            ))),
-#             padding=8
-#         )
-#         input_.setFixedHeight(48)
-#         return input_
-#
-#     def with_song_title(self, title: str) -> 'RenameSongDialog':
-#         self.__title_input.setText(title)
-#         return self
-#
-#     def with_song_artist(self, artist: str) -> 'RenameSongDialog':
-#         self.__artist_input.setText(artist)
-#         return self
-#
-#     @override
-#     def _get_onclick_accept_fn(self) -> callable:
-#         return lambda: self._onclick_accept_fn(self.__title_input.text(), self.__artist_input.text())
-#
-#     @override
-#     def apply_dark_mode(self) -> None:
-#         super().apply_dark_mode()
-#         self.__title_input.apply_dark_mode()
-#         self.__artist_input.apply_dark_mode()
-#
-#     @override
-#     def apply_light_mode(self) -> None:
-#         super().apply_light_mode()
-#         self.__title_input.apply_light_mode()
-#         self.__artist_input.apply_light_mode()
+class UpdateSongDialog(Dialogs.Dialog):
+    __on_accept_fn: callable = Callable[[str, str], None]
+
+    @override
+    def _build_content(self):
+        self.__image = Cover()
+        self.__image.setAlignment(Qt.AlignHCenter)
+        self.__header = LabelWithDefaultText.build(
+            font=FontBuilder.build(family="Segoe UI Semibold", size=16, bold=True),
+            light_mode_style=TextStyle(text_color=ColorBoxes.BLACK),
+            dark_mode_style=TextStyle(text_color=ColorBoxes.WHITE),
+        )
+        self.__header.setAlignment(Qt.AlignCenter)
+
+        self.__label_title = LabelWithDefaultText.build(
+            font=FontBuilder.build(size=11),
+            light_mode_style=TextStyle(text_color=ColorBoxes.BLACK),
+            dark_mode_style=TextStyle(text_color=ColorBoxes.WHITE),
+        )
+        background = Background(border_radius=8,
+                                color=ColorBox(normal=Colors.GRAY.with_opacity(8)),
+                                border=Border(size=2, color=ColorBox(Color(216, 216, 216)))
+                                )
+
+        self.__input_title = Input.build(
+            font=FontBuilder.build(size=12),
+            light_mode_style=TextStyle(text_color=ColorBoxes.BLACK, background=background),
+            padding=8
+        )
+        self.__input_title.setFixedHeight(48)
+
+        self.__label_artist = LabelWithDefaultText.build(
+            font=FontBuilder.build(size=11),
+            light_mode_style=TextStyle(text_color=ColorBoxes.BLACK),
+            dark_mode_style=TextStyle(text_color=ColorBoxes.WHITE),
+        )
+
+        self.__input_artist = Input.build(
+            font=FontBuilder.build(size=12),
+            light_mode_style=TextStyle(text_color=ColorBoxes.BLACK, background=background),
+            padding=8
+        )
+        self.__input_artist.setFixedHeight(48)
+
+        self.__accept_btn = ActionButton.build(
+            font=FontBuilder.build(family="Segoe UI Semibold", size=11),
+            size=QSize(0, 48),
+            light_mode=TextStyle(text_color=ColorBoxes.WHITE,
+                                 background=Backgrounds.ROUNDED_PRIMARY_75.with_border_radius(8)),
+            dark_mode=TextStyle(text_color=ColorBoxes.WHITE, background=Backgrounds.ROUNDED_WHITE_25)
+        )
+        self.__accept_btn.clicked.connect(lambda: self._on_accepted())
+
+        self.__view_layout = QVBoxLayout(self)
+        self.__view_layout.setAlignment(Qt.AlignVCenter)
+        self.__view_layout.addWidget(self.__image)
+        self.__view_layout.addWidget(self.__header)
+        self.__view_layout.addWidget(self.__label_title)
+        self.__view_layout.addWidget(self.__input_title)
+        self.__view_layout.addSpacing(4)
+        self.__view_layout.addWidget(self.__label_artist)
+        self.__view_layout.addWidget(self.__input_artist)
+        self.__view_layout.addSpacing(8)
+        self.__view_layout.addWidget(self.__accept_btn)
+
+        self.__label_title.setText("Title")
+        self.__label_artist.setText("Artist")
+        self.__image.set_cover(CoverProp.from_bytes(Images.EDIT, width=128))
+        self.__header.setText("Update Song")
+        self.__accept_btn.setText("Apply")
+
+        self.setFixedWidth(360)
+        self.setFixedHeight(self.sizeHint().height())
+
+    @override
+    def apply_dark_mode(self) -> None:
+        super().apply_dark_mode()
+        self.__header.apply_dark_mode()
+        self.__label_title.apply_dark_mode()
+        self.__input_title.apply_dark_mode()
+        self.__label_artist.apply_dark_mode()
+        self.__input_artist.apply_dark_mode()
+        self.__accept_btn.apply_dark_mode()
+
+    @override
+    def apply_light_mode(self) -> None:
+        super().apply_light_mode()
+        self.__header.apply_light_mode()
+        self.__label_title.apply_light_mode()
+        self.__input_title.apply_light_mode()
+        self.__label_artist.apply_light_mode()
+        self.__input_artist.apply_light_mode()
+        self.__accept_btn.apply_light_mode()
+
+    @override
+    def resizeEvent(self, event: QResizeEvent) -> None:
+        super().resizeEvent(event)
+        self.__input_title.setFixedWidth(self.__accept_btn.size().width())
+        self.__input_artist.setFixedWidth(self.__accept_btn.size().width())
+
+    @connector
+    def on_apply_change(self, fn: Callable[[str, str], bool]) -> None:
+        self.__on_accept_fn = fn
+
+    def set_song_title(self, title: str) -> None:
+        self.__input_title.setText(title)
+
+    def set_song_artist(self, artist: str) -> None:
+        self.__input_artist.setText(artist)
+
+    def _on_accepted(self) -> None:
+        if self.__on_accept_fn is None:
+            super()._on_accepted()
+            return
+
+        can_close = self.__on_accept_fn(self.__input_title.text(), self.__input_artist.text())
+        if can_close:
+            super()._on_accepted()
 
 
 class SongTableRowView(BackgroundWidget, BaseView):
@@ -297,8 +357,15 @@ class SongTableRowView(BackgroundWidget, BaseView):
     def set_on_edit_cover(self, fn: callable) -> None:
         self.__btn_edit_cover.clicked.connect(fn)
 
-    def set_on_edit_title(self, fn: callable) -> None:
-        self.__btn_edit_title.clicked.connect(fn)
+    def set_on_update_info(self, fn: Callable[[str, str], bool]) -> None:
+        self.__btn_edit_title.clicked.connect(lambda: self.__on_update_info(fn))
+
+    def __on_update_info(self, fn: Callable[[str, str], bool]) -> None:
+        dialog = UpdateSongDialog()
+        dialog.set_song_title(self.__label_title.text())
+        dialog.set_song_artist(self.__label_artist.text())
+        dialog.on_apply_change(fn)
+        Dialogs.Dialogs().show_dialog(dialog)
 
     def set_on_delete(self, fn: callable) -> None:
         self.__btn_delete.clicked.connect(fn)
@@ -343,12 +410,6 @@ class SongTableRowView(BackgroundWidget, BaseView):
 
     def clear_info(self):
         self.set_cover(None)
-
-    def get_title(self):
-        return self.__label_title.text()
-
-    def get_artist(self):
-        return self.__label_artist.text()
 
     def set_is_choosing(self, is_choosing: bool) -> None:
         if is_choosing:
