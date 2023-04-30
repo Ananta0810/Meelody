@@ -1,10 +1,10 @@
 from typing import Optional, Callable
 
-from PyQt5.QtCore import Qt
+from PyQt5.QtCore import Qt, QSize
 from PyQt5.QtGui import QFont
 from PyQt5.QtWidgets import QWidget, QHBoxLayout, QFileDialog, QVBoxLayout
 
-from modules.helpers.types.Decorators import override
+from modules.helpers.types.Decorators import override, connector
 from modules.models.view.Background import Background
 from modules.models.view.Border import Border
 from modules.models.view.Color import Color
@@ -14,57 +14,96 @@ from modules.models.view.builder.FontBuilder import FontBuilder
 from modules.models.view.builder.IconButtonStyle import IconButtonStyle
 from modules.models.view.builder.TextStyle import TextStyle
 from modules.screens.AbstractScreen import BaseView
-from modules.statics.view.Material import ColorBoxes, Icons, Paddings, Colors, Backgrounds
+from modules.statics.view.Material import ColorBoxes, Icons, Paddings, Colors, Backgrounds, Images
 from modules.widgets import Dialogs
-from modules.widgets.Buttons import IconButton
+from modules.widgets.Buttons import IconButton, ActionButton
+from modules.widgets.Cover import CoverProp, Cover
+from modules.widgets.Dialogs import Dialog
 from modules.widgets.Icons import AppIcon
 from modules.widgets.Labels import LabelWithDefaultText, Input
 
 
-class DownloadSongDialog(Dialogs.ConfirmDialog):
-    def __init__(self, header: str, msg: str | None = None, accept_text: str = "Confirm", reject_text: str = "Cancel",
-                 onclick_accept_fn: Callable[[], bool] = None, onclick_reject_fn: callable = None,
-                 dark_mode: bool = False,
-                 parent: Optional["QWidget"] = None):
-        super().__init__(header, msg, accept_text, reject_text, onclick_accept_fn, onclick_reject_fn, dark_mode, parent)
-
-    def _init_content(self, content: QWidget) -> None:
-        layout = QVBoxLayout(content)
-        self.__url_input = self.__create_input()
-        self.__url_input.set_onpressed(self._on_accepted)
-        layout.addWidget(self.__url_input)
-
-    @staticmethod
-    def __create_input() -> Input:
-        input_ = Input.build(
-            font=FontBuilder.build(size=12),
-            light_mode_style=TextStyle(text_color=ColorBoxes.BLACK,
-                                       background=Background(
-                                           border_radius=8,
-                                           color=ColorBox(
-                                               normal=Colors.GRAY.with_opacity(8)),
-                                           border=Border(
-                                               size=2,
-                                               color=Color(192, 192, 192)
-                                           ))),
-            padding=8
-        )
-        input_.setFixedHeight(48)
-        return input_
+class DownloadDialog(Dialog):
+    __on_accept_fn: callable = None
 
     @override
-    def _get_onclick_accept_fn(self) -> callable:
-        return lambda: self._onclick_accept_fn(self.__url_input.text())
+    def _build_content(self):
+        self.__image = Cover()
+        self.__image.setAlignment(Qt.AlignHCenter)
+        self.__header = LabelWithDefaultText.build(
+            font=FontBuilder.build(family="Segoe UI Semibold", size=16, bold=True),
+            light_mode_style=TextStyle(text_color=ColorBoxes.BLACK),
+            dark_mode_style=TextStyle(text_color=ColorBoxes.WHITE),
+        )
+        self.__header.setAlignment(Qt.AlignCenter)
+        self.__label = LabelWithDefaultText.build(
+            font=FontBuilder.build(size=11),
+            light_mode_style=TextStyle(text_color=ColorBoxes.BLACK),
+            dark_mode_style=TextStyle(text_color=ColorBoxes.WHITE),
+        )
+        self.__label.setContentsMargins(0, 0, 0, 4)
+        background = Background(border_radius=8,
+                                color=ColorBox(normal=Colors.GRAY.with_opacity(8)),
+                                border=Border(size=2, color=ColorBox(Color(216, 216, 216)))
+                                )
+        self.__input = Input.build(
+            font=FontBuilder.build(size=12),
+            light_mode_style=TextStyle(text_color=ColorBoxes.BLACK,
+                                       background=background),
+            padding=8
+        )
+        self.__input.setFixedHeight(48)
+        self.__input.setContentsMargins(0, 0, 0, 8)
+        self.__button_box = QHBoxLayout()
+        self.__accept_btn = ActionButton.build(
+            font=FontBuilder.build(family="Segoe UI Semibold", size=11),
+            size=QSize(0, 48),
+            light_mode=TextStyle(text_color=ColorBoxes.WHITE,
+                                 background=Backgrounds.ROUNDED_PRIMARY_75.with_border_radius(8)),
+            dark_mode=TextStyle(text_color=ColorBoxes.WHITE, background=Backgrounds.ROUNDED_WHITE_25)
+        )
+        self.__accept_btn.clicked.connect(lambda: self._on_accepted())
+        self.__button_box.addWidget(self.__accept_btn)
+        self.__view_layout = QVBoxLayout(self)
+        self.__view_layout.setAlignment(Qt.AlignVCenter)
+        self.__view_layout.addWidget(self.__image)
+        self.__view_layout.addWidget(self.__header)
+        self.__view_layout.addWidget(self.__label)
+        self.__view_layout.addWidget(self.__input)
+        self.__view_layout.addLayout(self.__button_box)
+        self.setFixedWidth(360)
+
+        self.__image.set_cover(CoverProp.from_bytes(Images.DOWNLOAD, width=128))
+        self.__header.setText("Download Youtube Song")
+        self.__header.setContentsMargins(0, 0, 0, 8)
+        self.__label.hide()
+        self.__accept_btn.setText("Download")
+        self.setFixedHeight(self.sizeHint().height())
 
     @override
     def apply_dark_mode(self) -> None:
         super().apply_dark_mode()
-        self.__url_input.apply_dark_mode()
+        self.__header.apply_dark_mode()
+        self.__label.apply_dark_mode()
+        self.__input.apply_dark_mode()
+        self.__accept_btn.apply_dark_mode()
 
     @override
     def apply_light_mode(self) -> None:
         super().apply_light_mode()
-        self.__url_input.apply_light_mode()
+        self.__header.apply_light_mode()
+        self.__label.apply_light_mode()
+        self.__input.apply_light_mode()
+        self.__accept_btn.apply_light_mode()
+
+    @connector
+    def on_download(self, fn: Callable[[str], None]) -> None:
+        self.__on_accept_fn = fn
+
+    def _on_accepted(self) -> None:
+        super()._on_accepted()
+        if self.__on_accept_fn is not None:
+            self.__on_accept_fn(self.__input.text())
 
 
 class SongTableHeaderView(QWidget, BaseView):
@@ -81,7 +120,7 @@ class SongTableHeaderView(QWidget, BaseView):
     __btn_select_songs: IconButton
 
     __onclick_add_songs_to_library_fn: Callable[[list[str]], None]
-    __onpress_download_songs_to_library_fn: Callable[[str], None]
+    __on_download_songs_to_library_fn: Callable[[str], None]
     __onclick_select_songs_to_playlist_fn: Callable[[], None]
     __onclick_apply_select_songs_to_playlist_fn: Callable[[], None]
 
@@ -127,9 +166,7 @@ class SongTableHeaderView(QWidget, BaseView):
         self.__buttons_layout.addSpacing(8)
 
         self.__btn_download_songs = self.__create_button(Icons.DOWNLOAD, Paddings.RELATIVE_50)
-        self.__btn_download_songs.clicked.connect(
-            lambda: DownloadSongDialog(header="Download songs", accept_text="Download",
-                                       onclick_accept_fn=lambda url: self.__download_songs_to_library(url)).exec())
+        self.__btn_download_songs.clicked.connect(self.show_download_dialog)
         self.__buttons_layout.addWidget(self.__btn_download_songs)
 
         self.__btn_add_songs_to_library = self.__create_button(Icons.ADD, Paddings.RELATIVE_67)
@@ -152,14 +189,15 @@ class SongTableHeaderView(QWidget, BaseView):
         self.__info.addWidget(self.__label_length)
         self.__info.addWidget(self.__buttons)
 
-    def __select_song_paths_to_add_to_library(self):
+    def show_download_dialog(self) -> None:
+        dialog = DownloadDialog()
+        dialog.on_download(lambda url: self.__on_download_songs_to_library_fn(url))
+        Dialogs.Dialogs().show_dialog(dialog)
+
+    def __select_song_paths_to_add_to_library(self) -> None:
         paths = QFileDialog.getOpenFileNames(self, filter="MP3 (*.MP3 *.mp3)")[0]
         if paths is not None and len(paths) > 0:
             return self.__onclick_add_songs_to_library_fn(paths)
-
-    def __download_songs_to_library(self, youtube_url: str) -> bool:
-        self.__onpress_download_songs_to_library_fn(youtube_url)
-        return True
 
     @override
     def apply_light_mode(self) -> None:
@@ -206,7 +244,7 @@ class SongTableHeaderView(QWidget, BaseView):
             self.__btn_apply_add_songs.setVisible(False)
 
     def set_onclick_download_songs_to_library_fn(self, fn: Callable[[str], None]) -> None:
-        self.__onpress_download_songs_to_library_fn = fn
+        self.__on_download_songs_to_library_fn = fn
 
     def set_onclick_add_songs_to_library_fn(self, fn: Callable[[list[str]], None]) -> None:
         self.__onclick_add_songs_to_library_fn = fn

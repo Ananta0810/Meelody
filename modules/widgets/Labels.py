@@ -190,7 +190,9 @@ class Input(QLineEdit, BaseView):
     ) -> 'Input':
         widget = Input(parent)
         widget.setFont(font)
-        widget.__set_light_mode_style(LabelWithDefaultText.build_style(light_mode_style, padding, width))
+        style = LabelWithDefaultText.build_style(light_mode_style, padding, width)
+        widget.__set_light_mode_style(style)
         widget.__set_dark_mode_style(
-            LabelWithDefaultText.build_style(dark_mode_style or light_mode_style, padding, width))
+            style if dark_mode_style is None else LabelWithDefaultText.build_style(dark_mode_style, padding, width)
+        )
         return widget

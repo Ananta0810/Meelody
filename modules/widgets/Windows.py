@@ -10,10 +10,11 @@ from modules.models.view.builder.IconButtonStyle import IconButtonStyle
 from modules.screens.AbstractScreen import BaseView
 from modules.statics.view.Material import Paddings, Icons, Colors, Backgrounds
 from modules.widgets.Buttons import IconButton
-from modules.widgets.Dialogs import Dialogs, AlertDialog
+from modules.widgets.DialogWindow import DialogWindow
+from modules.widgets.Dialogs import AlertDialog
 
 
-class FramelessWindow(QMainWindow, BaseView):
+class FramelessWindow(QMainWindow, DialogWindow, BaseView):
     __main_layout: QVBoxLayout
     __inner: QWidget
     __title_bar: QHBoxLayout
@@ -275,3 +276,4 @@ class FramelessWindow(QMainWindow, BaseView):
         self.__overlay_layout.addWidget(overlay)
         overlay.on_show(lambda: self.__overlay.show())
         overlay.on_close(lambda: self.__overlay.hide())
+        overlay.show()

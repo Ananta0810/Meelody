@@ -8,7 +8,7 @@ from modules.models.view.Background import Background
 from modules.screens.AbstractScreen import BaseView
 from modules.screens.body.HomeBodyView import HomeBodyView
 from modules.screens.music_bar.MusicPlayerControl import MusicPlayerControl
-from modules.statics.view.Material import ColorBoxes, Images
+from modules.statics.view.Material import ColorBoxes
 from modules.widgets import Dialogs
 from modules.widgets.Windows import FramelessWindow
 
@@ -22,6 +22,7 @@ class MainWindowView(FramelessWindow, BaseView):
         self.setFixedWidth(width)
         self.setFixedHeight(height)
         self.__init_ui()
+        Dialogs.Dialogs().set_window(self)
 
     def __init_ui(self) -> None:
         self._body = HomeBodyView()
@@ -34,14 +35,8 @@ class MainWindowView(FramelessWindow, BaseView):
         self._music_player.setFixedHeight(96)
         self._music_player.setObjectName("musicPlayer")
 
-        # alert_dialog = Dialogs.AlertDialog()
-
         self.addWidget(self._body)
         self.addWidget(self._music_player, alignment=Qt.AlignBottom)
-
-        confirm_dialog = Dialogs.ConfirmDialogs()
-        self.addOverlay(confirm_dialog)
-        Dialogs.Dialogs().set_confirm(confirm_dialog)
 
     @override
     def apply_light_mode(self) -> None:

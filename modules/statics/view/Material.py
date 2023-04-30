@@ -355,6 +355,7 @@ class Icons:
 
 class Images:
     ERROR_PLAYLIST: bytes = Bytes.get_bytes_from_file("assets\images\defaults\oops.png")
+    DOWNLOAD: bytes = Bytes.get_bytes_from_file("assets\images\defaults\download.png")
     EDIT: bytes = Bytes.get_bytes_from_file("assets\images\defaults\edit.png")
     DELETE: bytes = Bytes.get_bytes_from_file("assets\images\defaults\delete.png")
     DEFAULT_SONG_COVER: bytes = Bytes.get_bytes_from_file("assets\images\defaults\song_cover.jpg")

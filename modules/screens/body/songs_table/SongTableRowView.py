@@ -24,64 +24,64 @@ from modules.widgets.Labels import LabelWithDefaultText, Input
 from modules.widgets.Widgets import BackgroundWidget
 
 
-class RenameSongDialog(Dialogs.ConfirmDialog):
-    def __init__(self, header: str, msg: str | None = None, accept_text: str = "Confirm", reject_text: str = "Cancel",
-                 onclick_accept_fn: Callable[[str], bool] = None, onclick_reject_fn: callable = None,
-                 dark_mode: bool = False,
-                 parent: Optional["QWidget"] = None):
-        super().__init__(header, msg, accept_text, reject_text, onclick_accept_fn, onclick_reject_fn, dark_mode, parent)
-
-    def _init_content(self, content: QWidget) -> None:
-        layout = QVBoxLayout(content)
-        self.__title_input = self.__create_input()
-        self.__title_input.set_onpressed(self._on_accepted)
-        layout.addWidget(self.__title_input)
-
-        self.__artist_input = self.__create_input()
-        self.__artist_input.set_onpressed(self._on_accepted)
-        layout.addWidget(self.__artist_input)
-
-    @staticmethod
-    def __create_input() -> Input:
-        input_ = Input.build(
-            font=FontBuilder.build(size=12),
-            light_mode_style=TextStyle(text_color=ColorBoxes.BLACK,
-                                       background=Background(
-                                           border_radius=8,
-                                           color=ColorBox(
-                                               normal=Colors.GRAY.with_opacity(8)),
-                                           border=Border(
-                                               size=2,
-                                               color=Color(192, 192, 192)
-                                           ))),
-            padding=8
-        )
-        input_.setFixedHeight(48)
-        return input_
-
-    def with_song_title(self, title: str) -> 'RenameSongDialog':
-        self.__title_input.setText(title)
-        return self
-
-    def with_song_artist(self, artist: str) -> 'RenameSongDialog':
-        self.__artist_input.setText(artist)
-        return self
-
-    @override
-    def _get_onclick_accept_fn(self) -> callable:
-        return lambda: self._onclick_accept_fn(self.__title_input.text(), self.__artist_input.text())
-
-    @override
-    def apply_dark_mode(self) -> None:
-        super().apply_dark_mode()
-        self.__title_input.apply_dark_mode()
-        self.__artist_input.apply_dark_mode()
-
-    @override
-    def apply_light_mode(self) -> None:
-        super().apply_light_mode()
-        self.__title_input.apply_light_mode()
-        self.__artist_input.apply_light_mode()
+# class RenameSongDialog(Dialogs.OldDialog):
+#     def __init__(self, header: str, msg: str | None = None, accept_text: str = "Confirm", reject_text: str = "Cancel",
+#                  onclick_accept_fn: Callable[[str], bool] = None, onclick_reject_fn: callable = None,
+#                  dark_mode: bool = False,
+#                  parent: Optional["QWidget"] = None):
+#         super().__init__(header, msg, accept_text, reject_text, onclick_accept_fn, onclick_reject_fn, dark_mode, parent)
+#
+#     def _init_content(self, content: QWidget) -> None:
+#         layout = QVBoxLayout(content)
+#         self.__title_input = self.__create_input()
+#         self.__title_input.set_onpressed(self._on_accepted)
+#         layout.addWidget(self.__title_input)
+#
+#         self.__artist_input = self.__create_input()
+#         self.__artist_input.set_onpressed(self._on_accepted)
+#         layout.addWidget(self.__artist_input)
+#
+#     @staticmethod
+#     def __create_input() -> Input:
+#         input_ = Input.build(
+#             font=FontBuilder.build(size=12),
+#             light_mode_style=TextStyle(text_color=ColorBoxes.BLACK,
+#                                        background=Background(
+#                                            border_radius=8,
+#                                            color=ColorBox(
+#                                                normal=Colors.GRAY.with_opacity(8)),
+#                                            border=Border(
+#                                                size=2,
+#                                                color=Color(192, 192, 192)
+#                                            ))),
+#             padding=8
+#         )
+#         input_.setFixedHeight(48)
+#         return input_
+#
+#     def with_song_title(self, title: str) -> 'RenameSongDialog':
+#         self.__title_input.setText(title)
+#         return self
+#
+#     def with_song_artist(self, artist: str) -> 'RenameSongDialog':
+#         self.__artist_input.setText(artist)
+#         return self
+#
+#     @override
+#     def _get_onclick_accept_fn(self) -> callable:
+#         return lambda: self._onclick_accept_fn(self.__title_input.text(), self.__artist_input.text())
+#
+#     @override
+#     def apply_dark_mode(self) -> None:
+#         super().apply_dark_mode()
+#         self.__title_input.apply_dark_mode()
+#         self.__artist_input.apply_dark_mode()
+#
+#     @override
+#     def apply_light_mode(self) -> None:
+#         super().apply_light_mode()
+#         self.__title_input.apply_light_mode()
+#         self.__artist_input.apply_light_mode()
 
 
 class SongTableRowView(BackgroundWidget, BaseView):

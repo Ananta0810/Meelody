@@ -7,7 +7,7 @@ from PyQt5.QtWidgets import QWidget, QVBoxLayout, QFileDialog
 from modules.helpers.types.Decorators import override, connector
 from modules.models.Song import Song
 from modules.screens.AbstractScreen import BaseView
-from modules.screens.body.songs_table.SongTableRowView import SongTableRowView, RenameSongDialog
+from modules.screens.body.songs_table.SongTableRowView import SongTableRowView
 from modules.statics import Properties
 from modules.statics.view.Material import Images, Backgrounds
 from modules.widgets.Dialogs import Dialogs
@@ -120,10 +120,11 @@ class SongTableBodyView(SmoothVerticalScrollArea, BaseView):
             self.__onchange_cover_fn(index, path)
 
     def __rename_title_and_artist_for_song_at(self, index: int, title: str, artist) -> None:
-        RenameSongDialog(
-            "Rename song",
-            onclick_accept_fn=lambda title_, artist_: self.__onchange_title_fn(index, title_, artist_)
-        ).with_song_title(title).with_song_artist(artist).exec()
+        pass
+        # RenameSongDialog(
+        #     "Rename song",
+        #     onclick_accept_fn=lambda title_, artist_: self.__onchange_title_fn(index, title_, artist_)
+        # ).with_song_title(title).with_song_artist(artist).exec()
 
     def __onclick_play_btn(self, index: int) -> None:
         self.select_song_at(index)
