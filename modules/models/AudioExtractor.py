@@ -59,7 +59,7 @@ class AudioExtractor:
             self.__add_new_cover(new_cover)
             return True
         except (FileNotFoundError, PermissionError) as e:
-            Printers.print_error(e)
+            Printers.error(e)
             return False
 
     def __remove_existing_covers(self) -> None:

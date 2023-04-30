@@ -137,7 +137,7 @@ class Song:
         if change_successfully:
             self.__cover = cover
         else:
-            Printers.print_error("Save cover failed.")
+            Printers.error("Save cover failed.")
         return change_successfully
 
     def get_id(self) -> str:

@@ -82,7 +82,7 @@ class MusicPlayerControl(MusicPlayerBarView, BaseControl):
     @handler
     def play_previous_song(self) -> None:
         if not self.__player.has_any_song():
-            Printers.print_error("No song to play.")
+            Printers.error("No song to play.")
             return
         self.__player.stop()
         self.__player.select_previous_song()
@@ -93,7 +93,7 @@ class MusicPlayerControl(MusicPlayerBarView, BaseControl):
     @handler
     def play_next_song(self) -> None:
         if not self.__player.has_any_song():
-            Printers.print_error("No song to play.")
+            Printers.error("No song to play.")
             return
         self.__player.stop()
         self.__player.select_next_song()
@@ -106,7 +106,7 @@ class MusicPlayerControl(MusicPlayerBarView, BaseControl):
         song = self.__player.get_current_song()
         if song is None:
             self.set_is_playing(False)
-            Printers.print_error('No song to play.')
+            Printers.error('No song to play.')
             return
         playing_time = Times.string_of(self.__player.get_playing_time())
         print(f"Playing {song.get_title()} at {playing_time}.")
@@ -130,11 +130,11 @@ class MusicPlayerControl(MusicPlayerBarView, BaseControl):
     @handler
     def play_song_at_time(self, time: float) -> None:
         if not self.__player.has_any_song():
-            Printers.print_error("No song to play.")
+            Printers.error("No song to play.")
             return
         currentSong = self.__player.get_current_song()
         if currentSong is None:
-            Printers.print_error("No song to play.")
+            Printers.error("No song to play.")
             return
 
         self.__player.skip_to_time(time)
@@ -177,7 +177,7 @@ class MusicPlayerControl(MusicPlayerBarView, BaseControl):
     def change_love_state(self) -> None:
         song = self.__player.get_current_song()
         if song is None:
-            Printers.print_error("No song to love.")
+            Printers.error("No song to love.")
             return
         song.reverse_love_state()
         self.set_love_state(song.is_loved())

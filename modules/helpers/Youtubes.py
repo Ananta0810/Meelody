@@ -56,7 +56,7 @@ class YoutubeDownloader:
             self.__is_downloading = False
             self.__download_success = True
         except Exception as e:
-            Printers.print_error(e)
+            Printers.error(e)
             self.__download_success = False
             self.__is_downloading = False
             error = str(e)
