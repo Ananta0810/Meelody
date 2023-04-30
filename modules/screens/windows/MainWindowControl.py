@@ -56,7 +56,7 @@ class MainWindowControl(MainWindowView, BaseControl):
         self._body.set_on_change_song_cover_on_menu(lambda index, path: self.__change_cover_for_song_at(index, path))
         self._body.set_on_delete_song_on_menu(lambda index: self.__delete_song_at(index))
         self._body.set_onclick_download_songs_to_library_fn(
-            lambda youtube_url: Thread(target=lambda: self.__add_songs_to_library_from_youtube(youtube_url)).start()
+            lambda youtube_url: self.__add_songs_to_library_from_youtube(youtube_url)
         )
         self._body.set_onclick_add_songs_to_library_fn(lambda paths: self.__add_songs_to_library_from_computer(paths))
         self._body.set_onclick_select_songs_to_playlist_fn(lambda: self.__start_select_songs_from_library_to_playlist())
@@ -220,6 +220,17 @@ class MainWindowControl(MainWindowView, BaseControl):
             print(f"Inserted song {song.get_title()} to library.")
 
     def __add_songs_to_library_from_youtube(self, youtube_url: str) -> None:
+        if youtube_url is None or youtube_url.strip() == "":
+            Dialogs.alert(
+                image=Images.WARNING,
+                header="Warning",
+                message=f"Please enter Youtube url to download song."
+            )
+            return
+
+        Thread(target=lambda: self.__download_songs(youtube_url)).start()
+
+    def __download_songs(self, youtube_url):
         with tempfile.TemporaryDirectory() as temp_dir:
             downloader = YoutubeDownloader()
             downloader.download_from(youtube_url, to_directory=temp_dir)
@@ -227,6 +238,14 @@ class MainWindowControl(MainWindowView, BaseControl):
 
             while downloader.is_downloading():
                 sleep(0.1)
+
+            if not downloader.is_success():
+                Dialogs.alert(
+                    image=Images.WARNING,
+                    header="Warning",
+                    message=downloader.get_error_message()
+                )
+                return
             print("Downloaded song from youtube successfully.")
 
             new_songs = self.__add_songs_to_library(Files.get_files_from(temp_dir, with_extension="mp3"))
@@ -311,10 +330,10 @@ class MainWindowControl(MainWindowView, BaseControl):
         changed_artist = self.__change_song_artist(new_artist, new_song, old_song)
 
         if not changed_title and not changed_artist:
-            Dialogs().alert(
-                with_image=Images.EDIT,
-                with_header="Warning",
-                with_message=f"Please enter new information for song."
+            Dialogs.alert(
+                image=Images.WARNING,
+                header="Warning",
+                message=f"Please enter new information for song."
             )
             return False
 
@@ -323,10 +342,10 @@ class MainWindowControl(MainWindowView, BaseControl):
         self.__choose_library()
         self.__save_library()
 
-        Dialogs().alert(
-            with_image=Images.EDIT,
-            with_header="Edit song successfully",
-            with_message=f"You have successfully change information for song '{new_song.get_title()}'."
+        Dialogs.alert(
+            image=Images.EDIT,
+            header="Edit song successfully",
+            message=f"You have successfully change information for song '{new_song.get_title()}'."
         )
         return True
 

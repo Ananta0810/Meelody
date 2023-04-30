@@ -174,7 +174,7 @@ class EditablePlaylistCard(PlaylistCard):
         self._main_layout.addWidget(self._label)
 
     def __on_click_delete(self):
-        Dialogs().confirm(
+        Dialogs.confirm(
             image=Images.DELETE,
             header="Warning",
             message="Are you sure want to delete this playlist? The playlist will be deleted permanently.",

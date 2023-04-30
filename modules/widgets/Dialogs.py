@@ -1,25 +1,36 @@
-from modules.helpers.types.Metas import SingletonMeta
 from modules.widgets.BaseDialogs import AlertDialog, ConfirmDialog, Dialog
 from modules.widgets.DialogWindow import DialogWindow
 
 
-class Dialogs(metaclass=SingletonMeta):
+class Dialogs:
     __window: DialogWindow = None
+    __instance: 'Dialogs' = None
+
+    @staticmethod
+    def get_instance() -> 'Dialogs':
+        if Dialogs.__instance is None:
+            Dialogs.__instance = Dialogs()
+        return Dialogs.__instance
+
+    def __init__(self):
+        self.__alert_dialog: AlertDialog = AlertDialog()
+        self.__confirm_dialog: ConfirmDialog = ConfirmDialog()
 
     def set_window(self, window: 'DialogWindow') -> None:
         self.__window = window
 
-    def alert(self,
-              with_image: bytes,
-              with_header: str,
-              with_message: str,
+    @staticmethod
+    def alert(
+              image: bytes,
+              header: str,
+              message: str,
               with_accept_text: str = "OK",
               ) -> None:
-        dialog = AlertDialog()
-        dialog.set_info(with_image, with_header, with_message, with_accept_text)
-        self.__window.add_alert(dialog)
+        Dialogs.get_instance().__alert_dialog.set_info(image, header, message, with_accept_text)
+        Dialogs.get_instance().__window.add_alert(Dialogs.get_instance().__alert_dialog)
 
-    def confirm(self,
+    @staticmethod
+    def confirm(
                 image: bytes,
                 header: str,
                 message: str,
@@ -32,10 +43,11 @@ class Dialogs(metaclass=SingletonMeta):
         dialog.set_info(image, header, message, accept_text, cancel_text)
         dialog.on_accept(on_accept)
         dialog.on_cancel(on_cancel)
-        self.__window.add_confirm(dialog)
+        Dialogs.get_instance().__window.add_confirm(dialog)
 
-    def show_dialog(self, dialog: Dialog) -> None:
-        self.__window.add_dialog(dialog)
+    @staticmethod
+    def show_dialog( dialog: Dialog) -> None:
+        Dialogs.get_instance().__window.add_dialog(dialog)
 
 
 

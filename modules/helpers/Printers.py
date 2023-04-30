@@ -1,2 +1,2 @@
-def print_error(message: str) -> None:
-    print('\033[31m' + 'Error::' + message + '\033[0m')
+def print_error(message: any) -> None:
+    print('\033[31m' + 'Error::' + str(message) + '\033[0m')

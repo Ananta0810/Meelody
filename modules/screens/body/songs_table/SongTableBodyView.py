@@ -98,7 +98,7 @@ class SongTableBodyView(SmoothVerticalScrollArea, BaseView):
             song.set_on_delete(lambda: self.__confirm_delete_song(index))
 
     def __confirm_delete_song(self, index: int) -> None:
-        return Dialogs().confirm(
+        return Dialogs.confirm(
             image=Images.DELETE,
             header="Warning",
             message="Are you sure want to delete this song?\n The song will be deleted permanently\n from the storage.",

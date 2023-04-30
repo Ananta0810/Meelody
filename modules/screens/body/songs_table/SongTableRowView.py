@@ -95,7 +95,7 @@ class UpdateSongDialog(Dialogs.Dialog):
         self.__header.setText("Update Song")
         self.__accept_btn.setText("Apply")
 
-        self.setFixedWidth(360)
+        self.setFixedWidth(480)
         self.setFixedHeight(self.sizeHint().height())
 
     @override
@@ -365,7 +365,7 @@ class SongTableRowView(BackgroundWidget, BaseView):
         dialog.set_song_title(self.__label_title.text())
         dialog.set_song_artist(self.__label_artist.text())
         dialog.on_apply_change(fn)
-        Dialogs.Dialogs().show_dialog(dialog)
+        Dialogs.Dialogs.show_dialog(dialog)
 
     def set_on_delete(self, fn: callable) -> None:
         self.__btn_delete.clicked.connect(fn)

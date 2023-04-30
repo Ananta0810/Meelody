@@ -40,8 +40,12 @@ class Dialog(QWidget, BaseView):
             ),
             parent=self
         )
-        self.__btn_close.clicked.connect(lambda: self.__on_close_fn())
+        self.__btn_close.clicked.connect(lambda: self.__close())
         self._build_content()
+
+    def __close(self) -> None:
+        self.hide()
+        self.__on_close_fn()
 
     @abstractmethod
     def _build_content(self) -> None:

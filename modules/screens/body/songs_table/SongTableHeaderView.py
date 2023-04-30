@@ -71,7 +71,7 @@ class DownloadDialog(Dialog):
         self.__header.setText("Download Youtube Song")
         self.__accept_btn.setText("Download")
 
-        self.setFixedWidth(360)
+        self.setFixedWidth(480)
         self.setFixedHeight(self.sizeHint().height())
 
     @override
@@ -93,7 +93,6 @@ class DownloadDialog(Dialog):
         self.__on_accept_fn = fn
 
     def _on_accepted(self) -> None:
-        super()._on_accepted()
         if self.__on_accept_fn is not None:
             self.__on_accept_fn(self.__input.text())
 
@@ -184,7 +183,7 @@ class SongTableHeaderView(QWidget, BaseView):
     def show_download_dialog(self) -> None:
         dialog = DownloadDialog()
         dialog.on_download(lambda url: self.__on_download_songs_to_library_fn(url))
-        Dialogs.Dialogs().show_dialog(dialog)
+        Dialogs.Dialogs.show_dialog(dialog)
 
     def __select_song_paths_to_add_to_library(self) -> None:
         paths = QFileDialog.getOpenFileNames(self, filter="MP3 (*.MP3 *.mp3)")[0]

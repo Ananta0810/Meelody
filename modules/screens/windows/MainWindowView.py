@@ -22,7 +22,7 @@ class MainWindowView(FramelessWindow, BaseView):
         self.setFixedWidth(width)
         self.setFixedHeight(height)
         self.__init_ui()
-        Dialogs.Dialogs().set_window(self)
+        Dialogs.Dialogs.get_instance().set_window(self)
 
     def __init_ui(self) -> None:
         self._body = HomeBodyView()
