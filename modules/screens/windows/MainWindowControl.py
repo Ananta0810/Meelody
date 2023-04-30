@@ -18,6 +18,7 @@ from modules.screens.AbstractScreen import BaseControl
 from modules.screens.body.PlaylistCarouselView import PlaylistCardData
 from modules.screens.windows.MainWindowView import MainWindowView
 from modules.statics.view.Material import Images
+from modules.widgets.Dialogs import Dialogs
 
 
 class MainWindowControl(MainWindowView, BaseControl):
@@ -310,32 +311,35 @@ class MainWindowControl(MainWindowView, BaseControl):
         changed_artist = self.__change_song_artist(new_artist, new_song, old_song)
 
         if not changed_title and not changed_artist:
-            return True
+            Dialogs().alert(
+                with_image=Images.EDIT,
+                with_header="Warning",
+                with_message=f"Please enter new information for song."
+            )
+            return False
 
         self.__library.get_songs().remove_song(old_song)
         self.__library.get_songs().insert(new_song)
         self.__choose_library()
         self.__save_library()
+
+        Dialogs().alert(
+            with_image=Images.EDIT,
+            with_header="Edit song successfully",
+            with_message=f"You have successfully change information for song '{new_song.get_title()}'."
+        )
         return True
 
     @staticmethod
     def __change_song_title(new_song, new_title, old_song) -> bool | None:
         if (old_song.get_title() or '') != new_title:
-            change_successfully = new_song.set_title(new_title)
-            # TODO: Show alert box here.
-            if change_successfully:
-                print(f"Changed title for song {old_song.get_title()} to {new_song.get_title()}")
-            return change_successfully
+            return new_song.set_title(new_title)
         return None
 
     @staticmethod
     def __change_song_artist(new_artist, new_song, old_song) -> bool | None:
         if (old_song.get_artist() or '') != new_artist:
-            change_successfully = new_song.set_artist(new_artist)
-            # TODO: Show alert box here.
-            if change_successfully:
-                print(f"Changed artist for song {new_song.get_title()} to {new_song.get_artist()}")
-            return change_successfully
+            return new_song.set_artist(new_artist)
         return None
 
     def __change_cover_for_song_at(self, index: int, path: str) -> None:

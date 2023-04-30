@@ -2,6 +2,9 @@ from modules.helpers.types.Metas import SingletonMeta
 from modules.models.PlaylistSongs import PlaylistSongs
 from modules.models.Song import Song
 
+import os
+os.environ['PYGAME_HIDE_SUPPORT_PROMPT'] = "hide"
+
 from pygame import mixer
 
 

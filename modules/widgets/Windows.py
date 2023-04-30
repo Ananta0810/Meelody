@@ -2,13 +2,15 @@ from typing import Union, Optional, Callable
 
 from PyQt5.QtCore import Qt
 from PyQt5.QtGui import QResizeEvent
-from PyQt5.QtWidgets import QMainWindow, QWidget, QVBoxLayout, QHBoxLayout, QLayout, QSystemTrayIcon, QAction, QMenu
+from PyQt5.QtWidgets import QMainWindow, QWidget, QVBoxLayout, QHBoxLayout, QLayout, QSystemTrayIcon, QAction, QMenu, \
+    QGraphicsDropShadowEffect
 
 from modules.helpers.types.Decorators import override, connector
 from modules.models.view.builder.IconButtonStyle import IconButtonStyle
 from modules.screens.AbstractScreen import BaseView
 from modules.statics.view.Material import Paddings, Icons, Colors, Backgrounds
 from modules.widgets.Buttons import IconButton
+from modules.widgets.Dialogs import Dialogs, AlertDialog
 
 
 class FramelessWindow(QMainWindow, BaseView):
@@ -34,9 +36,10 @@ class FramelessWindow(QMainWindow, BaseView):
 
     def __init__(self, parent: Optional["QWidget"] = None):
         super().__init__(parent)
-        self.__init_component_ui()
+        self.__init_ui()
+        self.__overlay.hide()
 
-    def __init_component_ui(self) -> None:
+    def __init_ui(self) -> None:
         self.setWindowFlags(Qt.Window | Qt.FramelessWindowHint | Qt.WindowMinMaxButtonsHint)
         self.setAttribute(Qt.WA_TranslucentBackground)
 
@@ -119,6 +122,16 @@ class FramelessWindow(QMainWindow, BaseView):
         self.__icon_tray.show()
 
         self.addLayout(self.__title_bar)
+        self.__overlay = QWidget(self.__inner)
+        self.__overlay.setGraphicsEffect(
+            QGraphicsDropShadowEffect(
+                blurRadius=50,
+                color=Colors.PRIMARY.with_opacity(25).to_QColor(),
+                xOffset=0,
+                yOffset=1,
+            )
+        )
+        self.__overlay_layout = QHBoxLayout(self.__overlay)
 
     def set_is_playing(self, is_playing: bool) -> None:
         self.__is_playing = is_playing
@@ -215,6 +228,8 @@ class FramelessWindow(QMainWindow, BaseView):
     @override
     def resizeEvent(self, event: QResizeEvent) -> None:
         self.__background.resize(self.size())
+        self.__overlay.resize(self.size())
+        self.__overlay.raise_()
         return super().resizeEvent(event)
 
     @override
@@ -255,3 +270,8 @@ class FramelessWindow(QMainWindow, BaseView):
             return
         delta = event.pos() - self.__offset
         self.move(self.pos() + delta)
+
+    def addOverlay(self, overlay: AlertDialog) -> None:
+        self.__overlay_layout.addWidget(overlay)
+        overlay.on_show(lambda: self.__overlay.show())
+        overlay.on_accept(lambda: self.__overlay.hide())

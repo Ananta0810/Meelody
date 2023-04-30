@@ -61,7 +61,15 @@ class ActionButton(QPushButton, BaseView):
         parent: QObject = None,
     ) -> 'ActionButton':
         button = ActionButton(parent)
-        button.setFixedSize(size)
+
+        width = size.width()
+        if width is not None and width > 0:
+            button.setFixedWidth(width)
+
+        height = size.height()
+        if height is not None and height > 0:
+            button.setFixedHeight(height)
+
         button.setCursor(Cursors.HAND)
         button.set_padding(padding)
         button.setFont(font)

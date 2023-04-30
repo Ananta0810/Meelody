@@ -29,17 +29,19 @@ class CoverProp:
     @staticmethod
     def from_bytes(
         image_byte: bytes,
-        width: int,
-        height: int,
+        width: int = 0,
+        height: int = 0,
         radius: int = 0,
         crop_center: bool = True,
     ) -> Union['CoverProp', None]:
         pixmap = Pixmaps.get_pixmap_from_bytes(image_byte)
         if pixmap.isNull():
             return None
-        pixmap = Pixmaps.scale_pixmap_keeping_ratio(pixmap, max(width, height))
-        pixmap = Pixmaps.crop_pixmap(pixmap, width, height, crop_center)
-        pixmap = Pixmaps.round_pixmap(pixmap, radius)
+        if width > 0 or height > 0:
+            pixmap = Pixmaps.scale_pixmap_keeping_ratio(pixmap, max(width, height))
+            pixmap = Pixmaps.crop_pixmap(pixmap, width, height, crop_center)
+        if radius > 0:
+            pixmap = Pixmaps.round_pixmap(pixmap, radius)
         return CoverProp(pixmap, width, height, radius)
 
 
