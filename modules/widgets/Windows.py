@@ -11,7 +11,7 @@ from modules.screens.AbstractScreen import BaseView
 from modules.statics.view.Material import Paddings, Icons, Colors, Backgrounds
 from modules.widgets.Buttons import IconButton
 from modules.widgets.DialogWindow import DialogWindow
-from modules.widgets.Dialogs import AlertDialog
+from modules.widgets.Dialogs import AlertDialog, ConfirmDialog, Dialog
 
 
 class FramelessWindow(QMainWindow, DialogWindow, BaseView):
@@ -123,16 +123,7 @@ class FramelessWindow(QMainWindow, DialogWindow, BaseView):
         self.__icon_tray.show()
 
         self.addLayout(self.__title_bar)
-        self.__overlay = QWidget(self.__inner)
-        self.__overlay.setGraphicsEffect(
-            QGraphicsDropShadowEffect(
-                blurRadius=50,
-                color=Colors.PRIMARY.with_opacity(25).to_QColor(),
-                xOffset=0,
-                yOffset=1,
-            )
-        )
-        self.__overlay_layout = QHBoxLayout(self.__overlay)
+        self.__overlay = WindowOverlay(self.__inner)
 
     def set_is_playing(self, is_playing: bool) -> None:
         self.__is_playing = is_playing
@@ -219,12 +210,14 @@ class FramelessWindow(QMainWindow, DialogWindow, BaseView):
         self.__btn_collapse.apply_light_mode()
         self.__btn_minimize.apply_light_mode()
         self.__btn_close.apply_light_mode()
+        self.__overlay.apply_light_mode()
 
     @override
     def apply_dark_mode(self) -> None:
         self.__btn_collapse.apply_dark_mode()
         self.__btn_minimize.apply_dark_mode()
         self.__btn_close.apply_dark_mode()
+        self.__overlay.apply_dark_mode()
 
     @override
     def resizeEvent(self, event: QResizeEvent) -> None:
@@ -272,8 +265,133 @@ class FramelessWindow(QMainWindow, DialogWindow, BaseView):
         delta = event.pos() - self.__offset
         self.move(self.pos() + delta)
 
-    def addOverlay(self, overlay: AlertDialog) -> None:
-        self.__overlay_layout.addWidget(overlay)
-        overlay.on_show(lambda: self.__overlay.show())
-        overlay.on_close(lambda: self.__overlay.hide())
-        overlay.show()
+    def add_alert(self, overlay: AlertDialog) -> None:
+        self.__overlay.add_alert(overlay)
+
+    def add_confirm(self, overlay: ConfirmDialog) -> None:
+        self.__overlay.add_confirm(overlay)
+
+    def add_dialog(self, overlay: Dialog) -> None:
+        self.__overlay.add_dialog(overlay)
+
+
+class WindowOverlay(QWidget, BaseView, DialogWindow):
+    __light_mode: bool = False
+    __alert_dialog: AlertDialog = None
+    __confirm_dialog: ConfirmDialog = None
+    __dialog: Union[QWidget, BaseView] = None
+    __higher_overlay: QWidget = None
+    __lower_overlay: QWidget = None
+
+    def __init__(self, parent: Optional["QWidget"] = None):
+        super().__init__(parent)
+        self.__higher_overlay = QWidget(self)
+        self.__higher_overlay.setGraphicsEffect(self.__create_effect())
+        self.__higher_overlay.hide()
+
+        self.__lower_overlay = QWidget(self)
+        self.__lower_overlay.setGraphicsEffect(self.__create_effect())
+        self.__lower_overlay.hide()
+
+    @staticmethod
+    def __create_effect():
+        return QGraphicsDropShadowEffect(blurRadius=50,
+                                         color=Colors.PRIMARY.with_opacity(
+                                             25).to_QColor(),
+                                         xOffset=0,
+                                         yOffset=1)
+
+    @override
+    def apply_dark_mode(self) -> None:
+        self.__light_mode = False
+        if self.__alert_dialog is not None:
+            self.__alert_dialog.apply_dark_mode()
+        if self.__confirm_dialog is not None:
+            self.__confirm_dialog.apply_dark_mode()
+        if self.__dialog is not None:
+            self.__dialog.apply_dark_mode()
+
+    @override
+    def apply_light_mode(self) -> None:
+        self.__light_mode = True
+        if self.__alert_dialog is not None:
+            self.__alert_dialog.apply_light_mode()
+        if self.__confirm_dialog is not None:
+            self.__confirm_dialog.apply_light_mode()
+        if self.__dialog is not None:
+            self.__dialog.apply_light_mode()
+
+    @override
+    def add_alert(self, widget: AlertDialog) -> None:
+        self.__alert_dialog = widget
+        self.__add_higher_dialog(widget)
+
+    @override
+    def add_confirm(self, widget: ConfirmDialog) -> None:
+        self.__confirm_dialog = widget
+        self.__add_higher_dialog(widget)
+
+    def __add_higher_dialog(self, widget: Union[Dialog, QWidget]) -> None:
+        if self.__light_mode:
+            widget.apply_light_mode()
+        else:
+            widget.apply_dark_mode()
+        widget.setParent(self.__higher_overlay)
+        widget.move(
+            int(self.width() / 2 - widget.width() / 2),
+            int(self.height() / 2 - widget.height() / 2),
+        )
+        widget.on_close(lambda: self.__hide_higher_overlay())
+
+        widget.show()
+        self.show()
+
+        self.__higher_overlay.show()
+        self.__higher_overlay.raise_()
+
+    @override
+    def add_dialog(self, widget: Dialog) -> None:
+        self.__dialog = widget
+        self.__add_lower_dialog(widget)
+
+    def __add_lower_dialog(self, widget: Union[Dialog, QWidget]) -> None:
+        if self.__light_mode:
+            widget.apply_light_mode()
+        else:
+            widget.apply_dark_mode()
+        widget.setParent(self.__lower_overlay)
+        widget.move(
+            int(self.width() / 2 - widget.width() / 2),
+            int(self.height() / 2 - widget.height() / 2),
+        )
+        widget.on_close(lambda: self.__hide_lower_overlay())
+
+        widget.show()
+        self.show()
+
+        self.__lower_overlay.show()
+        self.__lower_overlay.raise_()
+
+    def __hide_higher_overlay(self):
+        if self.__confirm_dialog is not None and self.__confirm_dialog.isVisible():
+            return
+
+        if self.__alert_dialog is not None and self.__alert_dialog.isVisible():
+            return
+
+        self.__higher_overlay.hide()
+        self.__hide_self()
+
+    def __hide_lower_overlay(self):
+        if self.__dialog is not None and self.__dialog.isVisible():
+            return
+        self.__lower_overlay.hide()
+        self.__hide_self()
+
+    def __hide_self(self):
+        if self.__higher_overlay.isVisible() or self.__lower_overlay.isVisible():
+            return
+        return self.hide()
+
+
+
