@@ -1,6 +1,7 @@
 import os
 import uuid
 
+from modules.helpers import Printers
 from modules.helpers.types.Bytes import Bytes
 from modules.helpers.types.Decorators import override
 from modules.helpers.types import Strings
@@ -136,7 +137,7 @@ class Song:
         if change_successfully:
             self.__cover = cover
         else:
-            print("Save cover failed.")
+            Printers.print_error("Save cover failed.")
         return change_successfully
 
     def get_id(self) -> str:

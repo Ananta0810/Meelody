@@ -2,7 +2,7 @@ import os.path
 from abc import ABC, abstractmethod
 from logging import getLogger
 
-from modules.helpers import Files
+from modules.helpers import Files, Printers
 from modules.helpers import Jsons
 from modules.helpers.types import Strings
 from modules.helpers.types.Metas import SingletonMeta
@@ -66,7 +66,7 @@ class SongSaver(DataSaver):
             try:
                 playlist.insert(Song.from_json(song))
             except KeyError:
-                print("Extract song from json failed.")
+                Printers.print_error("Extract song from json failed.")
                 pass
         return playlist
 
@@ -83,7 +83,7 @@ class PlaylistSaver(DataSaver):
         try:
             return [PlaylistJson.from_json(playlist).to_playlist(songs) for playlist in playlists]
         except KeyError:
-            print("Extract song from json failed.")
+            Printers.print_error("Extract playlists from json failed.")
             return []
 
     def __create_empty_playlist(self) -> list[Playlist]:
@@ -108,7 +108,7 @@ class SettingsSaver(DataSaver):
         try:
             return AppSettings.from_json(json)
         except KeyError:
-            print("Extract appsettings from json failed.")
+            Printers.print_error("Extract appsettings from json failed.")
             return AppSettings()
 
     def __create_empty_settings(self) -> AppSettings:

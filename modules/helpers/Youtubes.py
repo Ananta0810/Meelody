@@ -2,6 +2,8 @@ from threading import Thread
 
 from yt_dlp import YoutubeDL
 
+from modules.helpers import Printers
+
 
 def _clean_youtube_url(url: str) -> str:
     index = url.find("&list")
@@ -45,7 +47,7 @@ class YoutubeDownloader:
             ydl.extract_info(download_url)
             self.__is_downloading = False
         except Exception as e:
-            print(e)
+            Printers.print_error(e)
             self.__is_downloading = False
 
     def __track_percentage(self, info: dict) -> None:

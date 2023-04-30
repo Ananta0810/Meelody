@@ -2,6 +2,8 @@ from typing import Union
 
 from eyed3 import id3, load, mp3
 
+from modules.helpers import Printers
+
 
 class AudioExtractor:
     __data: mp3.Mp3AudioFile
@@ -57,7 +59,7 @@ class AudioExtractor:
             self.__add_new_cover(new_cover)
             return True
         except (FileNotFoundError, PermissionError) as e:
-            print(e)
+            Printers.print_error(e)
             return False
 
     def __remove_existing_covers(self) -> None:
