@@ -14,7 +14,7 @@ class BackgroundWidget(QWidget):
     def __init__(self, parent: Optional["QWidget"] = None):
         super(BackgroundWidget, self).__init__(parent)
         self.__children = []
-        self.__init_component_ui()
+        self.__init_ui()
 
     def __post_init__(self):
         self.__children = self.findChildren(QWidget)
@@ -22,7 +22,7 @@ class BackgroundWidget(QWidget):
             child.installEventFilter(self)
             child.setAttribute(Qt.WA_Hover)
 
-    def __init_component_ui(self) -> None:
+    def __init_ui(self) -> None:
         self.setAttribute(Qt.WA_StyledBackground, True)
         self.setAttribute(Qt.WA_Hover, True)
 
