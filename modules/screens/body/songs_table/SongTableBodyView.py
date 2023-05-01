@@ -28,7 +28,7 @@ class SongTableBodyView(SmoothVerticalScrollArea, BaseView):
     __on_keypress_fn: Callable[[str], int] = None
 
     def __init__(self, parent: Optional["QWidget"] = None):
-        super(SongTableBodyView, self).__init__(parent)
+        super().__init__(parent)
         self.start: int = 0
         self.last: int = 6
         self._songs: list[SongTableRowView] = []

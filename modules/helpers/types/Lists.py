@@ -17,6 +17,13 @@ def index_of(
     return index_if_not_found
 
 
+def last_of(collection: list[Generic[T]]) -> T | None:
+    if collection is None:
+        return None
+
+    return collection[len(collection) - 1]
+
+
 def move_element(list_: list[Generic[T]], from_index: int, to_index: int) -> None:
     start: int = from_index
     end: int = to_index

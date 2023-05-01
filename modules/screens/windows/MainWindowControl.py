@@ -2,7 +2,7 @@ import tempfile
 from threading import Thread
 from time import sleep
 
-from yt_dlp.utils import ExtractorError, DownloadError
+from PyQt5.QtCore import pyqtSignal
 
 from modules.helpers import Files, Times
 from modules.helpers.Database import Database
@@ -33,12 +33,16 @@ class MainWindowControl(MainWindowView, BaseControl):
     __selecting_playlist_songs: set[int] = set()
     __is_selecting_library: bool = False
     __download_temp_dir: str = None
+    __start_download: pyqtSignal = pyqtSignal()
+    __downloaders: list[YoutubeDownloader] = []
+    __download_thread: Thread | None = None
 
     def __init__(self) -> None:
-        super().__init__()
+        super(MainWindowControl, self).__init__()
         self._set_default_playlist_cover(Images.DEFAULT_PLAYLIST_COVER)
         self.connect_signals()
         self.set_is_playing(False)
+        self.__start_download.connect(lambda: self._body.add_download_item(Lists.last_of(self.__downloaders).get_video_title()))
 
     @override
     def connect_signals(self) -> None:
@@ -239,41 +243,44 @@ class MainWindowControl(MainWindowView, BaseControl):
     def __download_song(self, youtube_url: str) -> None:
         try:
             downloader = YoutubeDownloader(youtube_url)
+
             downloader.extract_info()
             self.__validate_youtube_url(downloader)
+            self.__downloaders.append(downloader)
+            self.__start_download.emit()
 
-            downloader.on_download_success(lambda path: self.__download_song_success())
-            downloader.on_download_failed(lambda error: Dialogs.alert(
-                    image=Images.WARNING,
-                    header="Warning",
-                    message=error
-                )
-            )
+            downloader.on_succeed(lambda path: self.__download_song_success())
+            downloader.on_failed(lambda error: Dialogs.alert(image=Images.WARNING, header="Warning", message=error))
 
             print(f"Downloading song from youtube with url '{youtube_url}'")
             downloader.download_to(self.__download_temp_dir)
         except ValueError as e:
             Dialogs.alert(image=Images.WARNING, header="Warning", message=str(e))
-            return
 
-        while downloader.is_downloading():
-            self.__show_download_progress(downloader)
+        if self.__download_thread is None:
+            self.__download_thread = Thread(target=lambda: self.__update_progress_items())
+            self.__download_thread.start()
+
+    def __update_progress_items(self):
+        while any(downloader.is_downloading() for downloader in self.__downloaders):
+            for index, downloader in enumerate(self.__downloaders):
+                self.__show_download_progress(index, downloader)
             sleep(0.1)
+        self.__download_thread = None
 
-    def __validate_youtube_url(self, downloader):
+    def __validate_youtube_url(self, downloader: YoutubeDownloader) -> None:
         song_titles = {song.get_title() for song in self.__library.get_songs().get_songs()}
         if downloader.get_video_title() in song_titles:
             raise ValueError("You already have this song.")
 
-    def __show_download_progress(self, downloader):
+    def __show_download_progress(self, index: int, downloader: YoutubeDownloader) -> None:
         percentage = downloader.get_percentage()
         download_size = round(downloader.get_downloaded_size() / 1000000, 2)
         total_size = round(downloader.get_size() / 1000000, 2)
         remain_sec = Times.string_of(float(downloader.get_remain_seconds()))
         description = f"{percentage}%   |   {download_size}/{total_size}MB   |  estimate: {remain_sec}"
-        self._body.set_description_in_download_dialog_at(0, description)
-        self._body.set_label_in_download_dialog_at(0, downloader.get_video_title())
-        self._body.set_progress_in_download_dialog_at(0, percentage)
+        self._body.set_description_in_download_dialog_at(index, description)
+        self._body.set_progress_in_download_dialog_at(index, percentage)
 
     def __download_song_success(self) -> None:
         print("Downloaded song from youtube successfully.")

@@ -56,6 +56,11 @@ class SmoothVerticalScrollArea(QScrollArea):
         element_type: str = "vertical"
         return "\n".join(
             [
+                """
+                    QScrollArea { background: transparent; border: none; }
+                    QScrollArea > QWidget > QWidget { background: transparent; border: none; }
+                    QScrollArea > QWidget > QScrollBar { background: palette(base); border: none; }
+                """,
                 BackgroundThemeBuilder.build(element=f"QScrollBar::handle:{element_type}", element_size=length, background=background),
                 f"QScrollBar:{element_type}{{border:none;background-color:transparent;width:{length}px}}",
                 f"QScrollBar::sub-line:{element_type}{{border:none}}",

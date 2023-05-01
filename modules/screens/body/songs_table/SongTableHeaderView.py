@@ -170,8 +170,8 @@ class SongTableHeaderView(QWidget, BaseView):
     def set_onclick_apply_select_songs_to_playlist_fn(self, fn: Callable[[], None]) -> None:
         self.__onclick_apply_select_songs_to_playlist_fn = fn
 
-    def set_label_at(self, index: int, label: str) -> None:
-        self.__dialog.set_label_at(index, label)
+    def add_item(self, label: str) -> None:
+        self.__dialog.add_item(label)
 
     def set_description_at(self, index: int, value: str) -> None:
         self.__dialog.set_description_at(index, value)

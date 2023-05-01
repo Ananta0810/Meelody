@@ -92,8 +92,8 @@ class CurrentPlaylistView(QWidget, BaseView):
     def set_onclick_apply_select_songs_to_playlist_fn(self, fn: Callable[[], None]) -> None:
         self.__menu.set_onclick_apply_select_songs_to_playlist_fn(fn)
 
-    def set_label_in_download_dialog_at(self, index: int, label: str) -> None:
-        self.__menu.set_label_at(index, label)
+    def add_download_item(self, label: str) -> None:
+        self.__menu.add_item(label)
 
     def set_description_in_download_dialog_at(self, index: int, value: str) -> None:
         self.__menu.set_description_at(index, value)

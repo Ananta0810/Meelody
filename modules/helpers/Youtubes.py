@@ -15,8 +15,8 @@ def _clean_youtube_url(url: str) -> str:
 
 
 class YoutubeDownloader:
-    __on_download_success_fn: Callable[[str], None] = None
-    __on_download_failed_fn: Callable[[str], None] = None
+    __on_succeed_fn: Callable[[str], None] = None
+    __on_failed_fn: Callable[[str], None] = None
 
     def __init__(self, url: str):
         self.__url: str = _clean_youtube_url(url)
@@ -56,11 +56,11 @@ class YoutubeDownloader:
         except DownloadError:
             raise ValueError("Your url is invalid. Please use a valid one.")
 
-    def on_download_success(self, fn: Callable[[str], None]) -> None:
-        self.__on_download_success_fn = fn
+    def on_succeed(self, fn: Callable[[str], None]) -> None:
+        self.__on_succeed_fn = fn
 
-    def on_download_failed(self, fn: Callable[[str], None]) -> None:
-        self.__on_download_failed_fn = fn
+    def on_failed(self, fn: Callable[[str], None]) -> None:
+        self.__on_failed_fn = fn
 
     def download_to(self, directory: str):
         ydl_opts = {
@@ -86,10 +86,10 @@ class YoutubeDownloader:
         except Exception as e:
             Printers.error(e)
             self.__is_downloading = False
-            self.__on_download_failed_fn("Some error had occurred.\n Please retry again.")
+            self.__on_failed_fn("Some error had occurred.\n Please retry again.")
             return
         path = Strings.get_full_path(directory.replace("\\", "/"), self.__title, ".mp3")
-        self.__on_download_success_fn(path)
+        self.__on_succeed_fn(path)
 
     def __track_percentage(self, info: dict) -> None:
         status = info['status']
