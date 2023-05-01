@@ -1,3 +1,4 @@
+import os
 from os import path, scandir
 from shutil import copyfile
 
@@ -14,7 +15,16 @@ def get_files_from(directory: str, with_extension: str) -> set[str]:
 
 def copy_file(file: str, to_directory: str) -> str:
     destiny = "/".join([to_directory, Strings.get_filename(file)])
+    if not path.exists(file):
+        raise FileExistsError(f"{file} not found.")
     if path.exists(destiny):
         raise FileExistsError(f"{destiny} already existed.")
     copyfile(file, destiny)
     return destiny
+
+
+def remove_file(file: str) -> None:
+    try:
+        os.remove(file)
+    except:
+        pass

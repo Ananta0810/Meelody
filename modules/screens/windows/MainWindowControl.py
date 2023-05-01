@@ -2,6 +2,8 @@ import tempfile
 from threading import Thread
 from time import sleep
 
+from yt_dlp.utils import ExtractorError, DownloadError
+
 from modules.helpers import Files, Times
 from modules.helpers.Database import Database
 from modules.helpers.Youtubes import YoutubeDownloader
@@ -30,6 +32,7 @@ class MainWindowControl(MainWindowView, BaseControl):
     __player: AudioPlayer = AudioPlayer()
     __selecting_playlist_songs: set[int] = set()
     __is_selecting_library: bool = False
+    __download_temp_dir: str = None
 
     def __init__(self) -> None:
         super().__init__()
@@ -228,42 +231,64 @@ class MainWindowControl(MainWindowView, BaseControl):
             )
             return
 
-        Thread(target=lambda: self.__download_songs(youtube_url)).start()
+        if self.__download_temp_dir is None:
+            self.__download_temp_dir = tempfile.mkdtemp()
 
-    def __download_songs(self, youtube_url):
-        with tempfile.TemporaryDirectory() as temp_dir:
-            downloader = YoutubeDownloader()
-            downloader.download_from(youtube_url, to_directory=temp_dir)
-            print(f"Downloading song from youtube with url '{youtube_url}'")
+        Thread(target=lambda: self.__download_song(youtube_url)).start()
 
-            while downloader.is_downloading():
-                percentage = downloader.get_percentage()
-                download_size = round(downloader.get_downloaded_size() / 1000000, 2)
-                total_size = round(downloader.get_size() / 1000000, 2)
-                remain_sec = Times.string_of(float(downloader.get_remain_seconds()))
+    def __download_song(self, youtube_url: str) -> None:
+        try:
+            downloader = YoutubeDownloader(youtube_url)
+            downloader.extract_info()
+            self.__validate_youtube_url(downloader)
 
-                description = f"{percentage}%   |   {download_size}/{total_size}MB   |  estimate: {remain_sec}"
-                self._body.set_description_in_download_dialog_at(0, description)
-                self._body.set_label_in_download_dialog_at(0, downloader.get_video_title())
-                self._body.set_progress_in_download_dialog_at(0, percentage)
-                sleep(0.1)
-
-            if not downloader.is_success():
-                Dialogs.alert(
+            downloader.on_download_success(lambda path: self.__download_song_success())
+            downloader.on_download_failed(lambda error: Dialogs.alert(
                     image=Images.WARNING,
                     header="Warning",
-                    message=downloader.get_error_message()
+                    message=error
                 )
-                return
-            print("Downloaded song from youtube successfully.")
+            )
 
-            new_songs = self.__add_songs_to_library(Files.get_files_from(temp_dir, with_extension="mp3"))
-            if len(new_songs) == 0:
-                return
-            if self.__is_selecting_library:
-                self.__choose_library()
-            for song in new_songs:
-                print(f"Downloaded song '{song.get_title()}' to library.")
+            print(f"Downloading song from youtube with url '{youtube_url}'")
+            downloader.download_to(self.__download_temp_dir)
+        except ValueError as e:
+            Dialogs.alert(image=Images.WARNING, header="Warning", message=str(e))
+            return
+
+        while downloader.is_downloading():
+            self.__show_download_progress(downloader)
+            sleep(0.1)
+
+    def __validate_youtube_url(self, downloader):
+        song_titles = {song.get_title() for song in self.__library.get_songs().get_songs()}
+        if downloader.get_video_title() in song_titles:
+            raise ValueError("You already have this song.")
+
+    def __show_download_progress(self, downloader):
+        percentage = downloader.get_percentage()
+        download_size = round(downloader.get_downloaded_size() / 1000000, 2)
+        total_size = round(downloader.get_size() / 1000000, 2)
+        remain_sec = Times.string_of(float(downloader.get_remain_seconds()))
+        description = f"{percentage}%   |   {download_size}/{total_size}MB   |  estimate: {remain_sec}"
+        self._body.set_description_in_download_dialog_at(0, description)
+        self._body.set_label_in_download_dialog_at(0, downloader.get_video_title())
+        self._body.set_progress_in_download_dialog_at(0, percentage)
+
+    def __download_song_success(self) -> None:
+        print("Downloaded song from youtube successfully.")
+
+        files = Files.get_files_from(self.__download_temp_dir, with_extension="mp3")
+        songs = self.__add_songs_to_library(files)
+
+        if self.__is_selecting_library:
+            self.__choose_library()
+
+        for song in songs:
+            print(f"Downloaded song '{song.get_title()}' to library.")
+
+        for file in files:
+            Files.remove_file(file)
 
     def __add_songs_to_library(self, paths: list[str] | set[str]) -> list[Song]:
         new_songs: list[Song] = []
