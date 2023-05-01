@@ -164,7 +164,7 @@ class SongTableRowView(BackgroundWidget, BaseView):
     __btn_close: IconButton
 
     def __init__(self, parent: Optional["QWidget"] = None):
-        super(SongTableRowView, self).__init__(parent)
+        super().__init__(parent)
         self.default_artist = ""
         self.__init_ui()
         self.show_less()
@@ -172,7 +172,6 @@ class SongTableRowView(BackgroundWidget, BaseView):
     def __init_ui(self) -> None:
         font = FontBuilder.build(size=10)
 
-        self.setAttribute(Qt.WA_StyledBackground, True)
         self.__main_layout = QHBoxLayout()
         self.__main_layout.setContentsMargins(20, 12, 20, 12)
         self.__main_layout.setSpacing(0)

@@ -96,6 +96,15 @@ class SongTableView(QWidget, BaseView):
     def set_onclick_apply_select_songs_to_playlist_fn(self, fn: Callable[[], None]) -> None:
         self._header.set_onclick_apply_select_songs_to_playlist_fn(fn)
 
+    def set_label_at(self, index: int, label: str) -> None:
+        self._header.set_label_at(index, label)
+
+    def set_description_at(self, index: int, value: str) -> None:
+        self._header.set_description_at(index, value)
+
+    def set_progress_at(self, index: int, value: float) -> None:
+        self._header.set_progress_at(index, value)
+
     def enable_choosing_song(self, is_choosing: bool) -> None:
         self._header.enable_choosing_song(is_choosing)
         self._body.enable_choosing_song(is_choosing)

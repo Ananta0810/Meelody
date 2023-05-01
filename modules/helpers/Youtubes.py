@@ -18,6 +18,10 @@ class YoutubeDownloader:
         self.__is_downloading: bool = False
         self.__download_success: bool = False
         self.__percentage: float = 0
+        self.__size: int = 0
+        self.__downloaded_size: int = 0
+        self.__remain_sec: int = 0
+        self.__title: str = ""
         self.__error_message: str = ""
 
     def is_downloading(self) -> bool:
@@ -31,6 +35,18 @@ class YoutubeDownloader:
 
     def get_percentage(self) -> float:
         return self.__percentage
+
+    def get_video_title(self) -> str:
+        return self.__title
+
+    def get_size(self) -> int:
+        return self.__size
+
+    def get_remain_seconds(self) -> int:
+        return self.__remain_sec
+
+    def get_downloaded_size(self) -> int:
+        return self.__downloaded_size
 
     def download_from(self, youtube_url: str, to_directory: str):
         download_url = _clean_youtube_url(youtube_url)
@@ -47,6 +63,8 @@ class YoutubeDownloader:
         }
 
         with YoutubeDL(ydl_opts) as ydl:
+            info_dict = ydl.extract_info(download_url, download=False)
+            self.__title = info_dict.get("title", None)
             self.__is_downloading = True
             Thread(target=lambda: self.__start_download(ydl, download_url)).start()
 
@@ -69,3 +87,6 @@ class YoutubeDownloader:
         status = info['status']
         if status == 'downloading':
             self.__percentage = float(info['_percent_str'].replace('%', ''))
+            self.__downloaded_size = info['downloaded_bytes']
+            self.__size = info['total_bytes']
+            self.__remain_sec = info['eta']

@@ -36,7 +36,7 @@ class ProgressBar(QWidget, BaseView):
         self.__resize_bar()
 
     def __resize_bar(self):
-        self.__bar.setMinimumWidth(int(self.__value * self.width() / 100))
+        self.__bar.setFixedWidth(int(self.__value * self.width() / 100))
 
     def set_progress_style(self, light_mode: Background, dark_mode: Background = None) -> None:
         light_style = light_mode.to_stylesheet(border_radius_size=self.height() // 2)

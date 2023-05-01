@@ -2,7 +2,7 @@ import tempfile
 from threading import Thread
 from time import sleep
 
-from modules.helpers import Files
+from modules.helpers import Files, Times
 from modules.helpers.Database import Database
 from modules.helpers.Youtubes import YoutubeDownloader
 from modules.helpers.types.Bytes import Bytes, BytesModifier
@@ -237,6 +237,15 @@ class MainWindowControl(MainWindowView, BaseControl):
             print(f"Downloading song from youtube with url '{youtube_url}'")
 
             while downloader.is_downloading():
+                percentage = downloader.get_percentage()
+                download_size = round(downloader.get_downloaded_size() / 1000000, 2)
+                total_size = round(downloader.get_size() / 1000000, 2)
+                remain_sec = Times.string_of(float(downloader.get_remain_seconds()))
+
+                description = f"{percentage}%   |   {download_size}/{total_size}MB   |  estimate: {remain_sec}"
+                self._body.set_description_in_download_dialog_at(0, description)
+                self._body.set_label_in_download_dialog_at(0, downloader.get_video_title())
+                self._body.set_progress_in_download_dialog_at(0, percentage)
                 sleep(0.1)
 
             if not downloader.is_success():
