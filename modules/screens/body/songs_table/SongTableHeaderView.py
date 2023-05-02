@@ -199,6 +199,15 @@ class SongTableHeaderView(QWidget, BaseView):
     def add_item(self, label: str) -> None:
         self.__download_dialog.add_item(label)
 
+    def mark_succeed_at(self, index: int) -> None:
+        self.__download_dialog.mark_succeed_at(index)
+
+    def mark_processing_at(self, index: int) -> None:
+        self.__download_dialog.mark_processing_at(index)
+
+    def mark_failed_at(self, index: int) -> None:
+        self.__download_dialog.mark_failed_at(index)
+
     def set_description_at(self, index: int, value: str) -> None:
         self.__download_dialog.set_description_at(index, value)
 

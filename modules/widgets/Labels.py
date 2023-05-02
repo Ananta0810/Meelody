@@ -1,7 +1,7 @@
 from typing import Optional, Union, Callable
 
 from PyQt5.QtCore import Qt
-from PyQt5.QtGui import QFont, QFontMetrics
+from PyQt5.QtGui import QFont, QFontMetrics, QResizeEvent
 from PyQt5.QtWidgets import QLabel, QWidget, QLineEdit
 
 from modules.helpers.types.Decorators import override, handler
@@ -15,21 +15,23 @@ class LabelWithDefaultText(QLabel, BaseView):
     __displaying_text: str = ""
     __light_mode_style: str
     __dark_mode_style: str
-    __is_fixed_with: bool = False
+    __show_dot: bool = True
 
     def __init__(self, parent: Optional["QWidget"] = None):
         super().__init__(parent)
 
+    def enable_ellipsis(self, a0: bool) -> None:
+        self.__show_dot = a0
+
     @override
-    def setFixedWidth(self, w: int) -> None:
-        super().setFixedWidth(w)
-        self.__is_fixed_with = True
+    def resizeEvent(self, a0: QResizeEvent) -> None:
+        super().resizeEvent(a0)
         self.setText(self.__displaying_text)
 
     @override
     def setText(self, text: str) -> None:
         self.__displaying_text = text or self.__default_text
-        if self.__is_fixed_with:
+        if self.__show_dot:
             metrics = QFontMetrics(self.font())
             display_text_with_dot = metrics.elidedText(text, Qt.ElideRight, self.width())
             super().setText(display_text_with_dot)
@@ -69,6 +71,7 @@ class LabelWithDefaultText(QLabel, BaseView):
         label = LabelWithDefaultText(parent)
         label.setFont(font)
         label.setWordWrap(allow_multiple_lines)
+        label.enable_ellipsis(not allow_multiple_lines)
         if width is not None:
             label.setFixedWidth(width)
         label.set_light_mode_style(LabelWithDefaultText.build_style(light_mode_style, padding, width))

@@ -254,8 +254,8 @@ class MainWindowControl(MainWindowView, BaseControl):
             self.__start_download.emit()
 
             download_temp_dir = tempfile.mkdtemp()
-            downloader.on_succeed(lambda path: self.__download_song_success(downloader, download_temp_dir))
-            downloader.on_failed(lambda error: Dialogs.alert(image=Images.WARNING, header="Warning", message=error))
+            downloader.on_succeed(lambda path: self.__download_song_succeed(downloader, download_temp_dir))
+            downloader.on_failed(lambda error: self.__download_song_failed(downloader, error))
 
             print(f"Downloading song from youtube with url '{youtube_url}'")
             downloader.download_to(download_temp_dir)
@@ -266,11 +266,28 @@ class MainWindowControl(MainWindowView, BaseControl):
             self.__download_thread = Thread(target=lambda: self.__update_progress_items())
             self.__download_thread.start()
 
-    def __update_progress_items(self):
-        while any(downloader.is_downloading() for downloader in self.__downloaders):
+    def __download_song_failed(self, downloader: YoutubeDownloader, error: str) -> None:
+        Printers.error(f"Download '{downloader.get_video_title()}' failed")
+        Dialogs.alert(image=Images.WARNING, header="Warning", message=error)
+        index = self.__downloaders.index(downloader)
+        self._body.mark_failed_download_at(index)
+
+    def __update_progress_items(self) -> None:
+        active_downloaders = {downloader
+                              for downloader in self.__downloaders if
+                              downloader.is_downloading() or downloader.is_processing()}
+
+        while len(active_downloaders) > 0:
             for index, downloader in enumerate(self.__downloaders):
-                self.__show_download_progress(index, downloader)
-            sleep(0.1)
+                if downloader in active_downloaders:
+                    if downloader.is_downloading():
+                        self.__show_download_progress(index, downloader)
+                    else:
+                        self.__show_process_progress(index)
+            sleep(0.05)
+            active_downloaders = {downloader for downloader in self.__downloaders if
+                                  downloader.is_downloading() or downloader.is_processing()}
+
         self.__download_thread = None
 
     def __validate_youtube_url(self, downloader: YoutubeDownloader) -> None:
@@ -296,13 +313,20 @@ class MainWindowControl(MainWindowView, BaseControl):
         except IndexError:
             pass
 
-    def __download_song_success(self, downloader: YoutubeDownloader, download_temp_dir: str) -> None:
-        print(f"Downloaded song from youtube successfully with tite '{downloader.get_video_title()}'.")
+    def __show_process_progress(self, index: int) -> None:
+        try:
+            self._body.mark_processing_download_at(index)
+        except IndexError:
+            pass
+
+    def __download_song_succeed(self, downloader: YoutubeDownloader, download_temp_dir: str) -> None:
+        print(f"Downloaded song from youtube successfully with title '{downloader.get_video_title()}'.")
 
         download_files = Files.get_files_from(download_temp_dir, with_extension="mp3")
         song = self.__add_songs_to_library(download_files)[0]
         shutil.rmtree(download_temp_dir)
 
+        self._body.mark_succeed_download_at(self.__downloaders.index(downloader))
         Dialogs.alert(
             image=Images.DOWNLOAD,
             header="Download successfully",

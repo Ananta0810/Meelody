@@ -103,6 +103,15 @@ class SongTableView(QWidget, BaseView):
     def add_item(self, label: str) -> None:
         self._header.add_item(label)
 
+    def mark_succeed_download_at(self, index: int) -> None:
+        self._header.mark_succeed_at(index)
+
+    def mark_processing_download_at(self, index: int) -> None:
+        self._header.mark_processing_at(index)
+
+    def mark_failed_download_at(self, index: int) -> None:
+        self._header.mark_failed_at(index)
+
     def set_description_at(self, index: int, value: str) -> None:
         self._header.set_description_at(index, value)
 

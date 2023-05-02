@@ -114,6 +114,15 @@ class HomeBodyView(QScrollArea, BaseView):
     def add_download_item(self, label: str) -> None:
         self.__current_playlist.add_download_item(label)
 
+    def mark_succeed_download_at(self, index: int) -> None:
+        self.__current_playlist.mark_succeed_download_at(index)
+
+    def mark_processing_download_at(self, index: int) -> None:
+        self.__current_playlist.mark_processing_download_at(index)
+
+    def mark_failed_download_at(self, index: int) -> None:
+        self.__current_playlist.mark_failed_download_at(index)
+
     def set_description_in_download_dialog_at(self, index: int, value: str) -> None:
         self.__current_playlist.set_description_in_download_dialog_at(index, value)
 

@@ -113,6 +113,15 @@ class DownloadDialog(Dialog):
         self.__menu.add(label)
         self.setFixedHeight(self.sizeHint().height())
 
+    def mark_succeed_at(self, index: int) -> None:
+        self.__menu.mark_succeed_at(index)
+
+    def mark_processing_at(self, index: int) -> None:
+        self.__menu.mark_processing_at(index)
+
+    def mark_failed_at(self, index: int) -> None:
+        self.__menu.mark_failed_at(index)
+
     def set_description_at(self, index: int, value: str) -> None:
         self.__menu.set_description_at(index, value)
 

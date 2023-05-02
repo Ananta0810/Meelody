@@ -1,5 +1,6 @@
 from typing import Optional
 
+from PyQt5 import QtGui
 from PyQt5.QtCore import Qt
 from PyQt5.QtWidgets import QWidget, QVBoxLayout, QScrollArea
 
@@ -50,11 +51,20 @@ class DownloadMenu(QScrollArea, BaseView):
     def set_description_at(self, index: int, value: str) -> None:
         self._items[index].set_description(value)
 
+    def mark_succeed_at(self, index: int) -> None:
+        self._items[index].mark_succeed()
+
+    def mark_processing_at(self, index: int) -> None:
+        self._items[index].mark_processing()
+
+    def mark_failed_at(self, index: int) -> None:
+        self._items[index].mark_failed()
+
     def add(self, title: str) -> None:
         row = DownloadRow()
-        row.set_label(title)
-        row.setFixedHeight(64)
+        row.setFixedHeight(92)
         row.apply_light_mode()
+        row.set_label(title)
         self._items.append(row)
         self.__menu.addWidget(row)
-        self.setFixedHeight(min(len(self._items), 3) * 64)
+        self.setFixedHeight(min(len(self._items), 3) * row.height())

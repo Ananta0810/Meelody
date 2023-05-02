@@ -129,6 +129,11 @@ class StatelessIconButton(QPushButton, BaseView):
     def __init__(self, parent: Optional["QWidget"] = None):
         super().__init__(parent)
 
+    def keep_space_when_hiding(self) -> None:
+        policy = self.sizePolicy()
+        policy.setRetainSizeWhenHidden(True)
+        self.setSizePolicy(policy)
+
     def set_children(self, children: list[StatelessIconButtonThemeData]) -> None:
         self._children = children
 
@@ -198,6 +203,11 @@ class ToggleIconButton(StatelessIconButton):
 
     def __init__(self, parent: Optional["QWidget"] = None):
         super().__init__(parent)
+
+    def keep_space_when_hiding(self) -> None:
+        policy = self.sizePolicy()
+        policy.setRetainSizeWhenHidden(True)
+        self.setSizePolicy(policy)
 
     def set_active(self, active: bool) -> None:
         self.__is_active = active

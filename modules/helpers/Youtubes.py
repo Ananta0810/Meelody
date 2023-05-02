@@ -14,6 +14,11 @@ def _clean_youtube_url(url: str) -> str:
         url = url[:index]
     return url
 
+_init = 0
+_downloading = 1
+_processing = 2
+_succeed = 3
+_failed = 4
 
 class YoutubeDownloader:
     __on_succeed_fn: Callable[[str], None] = None
@@ -21,7 +26,7 @@ class YoutubeDownloader:
 
     def __init__(self, url: str):
         self.__url: str = _clean_youtube_url(url)
-        self.__is_downloading: bool = False
+        self.__state: int = _init
         self.__percentage: float = 0
         self.__size: int = 0
         self.__downloaded_size: int = 0
@@ -29,7 +34,16 @@ class YoutubeDownloader:
         self.__title: str = ""
 
     def is_downloading(self) -> bool:
-        return self.__is_downloading
+        return self.__state == _downloading
+
+    def is_processing(self) -> bool:
+        return self.__state == _processing
+
+    def is_finished(self) -> bool:
+        return self.__state == _succeed or self.__state == _failed
+
+    def is_started(self) -> bool:
+        return self.__state == _init
 
     def get_percentage(self) -> float:
         return self.__percentage
@@ -77,25 +91,30 @@ class YoutubeDownloader:
         }
 
         with YoutubeDL(ydl_opts) as ydl:
-            self.__is_downloading = True
             Thread(target=lambda: self.__start_download(ydl, directory)).start()
 
     def __start_download(self, ydl: YoutubeDL, directory) -> None:
         try:
+            self.__state = _downloading
             ydl.extract_info(self.__url)
-            self.__is_downloading = False
         except Exception as e:
             Printers.error(e)
-            self.__is_downloading = False
+            self.__state = _failed
             self.__on_failed_fn("Some error had occurred.\n Please retry again.")
             return
+
         path = Strings.get_full_path(directory.replace("\\", "/"), self.__title, ".mp3")
         self.__on_succeed_fn(path)
+        self.__state = _succeed
 
     def __track_percentage(self, info: dict) -> None:
         status = info['status']
         if status == 'downloading':
+            self.__state = _downloading
             self.__percentage = float(info['_percent_str'].replace('%', ''))
             self.__downloaded_size = info['downloaded_bytes']
             self.__size = info['total_bytes']
             self.__remain_sec = info['eta']
+            return
+        if status == 'finished':
+            self.__state = _processing

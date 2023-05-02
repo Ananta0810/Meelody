@@ -99,6 +99,15 @@ class CurrentPlaylistView(QWidget, BaseView):
     def add_download_item(self, label: str) -> None:
         self.__menu.add_item(label)
 
+    def mark_succeed_download_at(self, index: int) -> None:
+        self.__menu.mark_succeed_download_at(index)
+
+    def mark_processing_download_at(self, index: int) -> None:
+        self.__menu.mark_processing_download_at(index)
+
+    def mark_failed_download_at(self, index: int) -> None:
+        self.__menu.mark_failed_download_at(index)
+
     def set_description_in_download_dialog_at(self, index: int, value: str) -> None:
         self.__menu.set_description_at(index, value)
 
