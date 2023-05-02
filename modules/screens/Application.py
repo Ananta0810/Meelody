@@ -27,7 +27,7 @@ class Application:
         """
         TODO:
             - Add alert when delete song and playlist. | DONE
-            - Add alert when song already existed.
+            - Add alert when song already existed. | DONE
             - Add alert when update something failed. | DONE
             - Add alert when download youtube music failed. | DONE
             - Add progress bar to show which one is downloading. | DONE
@@ -36,10 +36,13 @@ class Application:
             - Fix edit when shuffling is wrong.
             - Update UI for inputs. | DONE
             - Add button to edit favourite playlist cover.
-            - Change icon for minimize button.
-            - Only show icon on tray when hidden.
+            - Change icon for minimize button. | CANCELED
+            - Only show icon on tray when hidden. | DONE
             - Add play buttons on taskbar.
             - Sort by title, length, artist.
+            - Fix 3 alerts show up at the same time.
+            - Run thread when import songs.
+            - Improve performance for menu.
             - Refactor structure.
         """
 

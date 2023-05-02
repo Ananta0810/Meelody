@@ -19,15 +19,14 @@ class FramelessWindow(QMainWindow, DialogWindow, BaseView):
     __inner: QWidget
     __title_bar: QHBoxLayout
     __background: QWidget
-    __btn_collapse: IconButton
     __btn_close: IconButton
     __btn_minimize: IconButton
     __title_bar_height: int = 72
     __offset: int = 0
     __onclick_collapse_fn: Callable[[], None] = None
-    __onclick_close_fn: Callable[[], None] = None
+    __on_exit_fn: Callable[[], None] = None
     __onclick_minimize_fn: Callable[[], None] = None
-    __icon_tray: QSystemTrayIcon
+    __tray: QSystemTrayIcon
     __play_action_btn: QAction
     __onclick_play_fn: Callable[[], None]
     __onclick_pause_fn: Callable[[], None]
@@ -39,6 +38,7 @@ class FramelessWindow(QMainWindow, DialogWindow, BaseView):
         super().__init__(parent)
         self.__init_ui()
         self.__overlay.hide()
+        self.__tray.setVisible(False)
 
     def __init_ui(self) -> None:
         self.setWindowFlags(Qt.Window | Qt.FramelessWindowHint | Qt.WindowMinMaxButtonsHint)
@@ -55,17 +55,6 @@ class FramelessWindow(QMainWindow, DialogWindow, BaseView):
         self.__title_bar = QHBoxLayout()
         self.__title_bar.setContentsMargins(12, 12, 12, 12)
         self.__title_bar.setSpacing(8)
-
-        self.__btn_collapse = IconButton.build(
-            padding=Paddings.RELATIVE_50,
-            size=Icons.MEDIUM,
-            style=IconButtonStyle(
-                light_mode_icon=Icons.MINIMIZE.with_color(Colors.PRIMARY),
-                dark_mode_icon=Icons.MINIMIZE.with_color(Colors.WHITE),
-                light_mode_background=Backgrounds.ROUNDED_HIDDEN_PRIMARY_25,
-                dark_mode_background=Backgrounds.ROUNDED_HIDDEN_WHITE_50,
-            )
-        )
 
         self.__btn_minimize = IconButton.build(
             padding=Paddings.RELATIVE_50,
@@ -88,23 +77,39 @@ class FramelessWindow(QMainWindow, DialogWindow, BaseView):
             )
         )
 
-        self.__btn_collapse.clicked.connect(lambda: self.__click_collapse())
         self.__btn_minimize.clicked.connect(lambda: self.__click_minimize())
-        self.__btn_close.clicked.connect(lambda: self.__click_close())
+        self.__btn_close.clicked.connect(lambda: self.__click_collapse())
 
         self.__title_bar.addStretch()
-        self.__title_bar.addWidget(self.__btn_collapse)
         self.__title_bar.addWidget(self.__btn_minimize)
         self.__title_bar.addWidget(self.__btn_close)
 
-        self.__icon_tray = QSystemTrayIcon()
-        self.__icon_tray.setIcon(Icons.LOGO)
-        self.__icon_tray.setVisible(False)
+        self.__tray = QSystemTrayIcon()
+        self.__tray.setIcon(Icons.LOGO)
+        self.__tray.setToolTip("Meelody")
 
         tray_menu = QMenu()
+        tray_menu.setStyleSheet(
+            """
+                QMenu {
+                    background-color: rgb(250, 250, 250);
+                    border-color: rgb(225, 225, 225);
+                    border-radius: 8px
+                }
+                QMenu::item {
+                    border: none;
+                    background-color: rgb(250,250,250);
+                    min-width: 128px;
+                    padding: 8 32 8 32;
+                }
+                QMenu::item:selected {
+                    background-color: rgb(240, 240, 240);
+                }
+            """
+        )
 
         show_action = QAction("Show", self)
-        show_action.triggered.connect(lambda: self.__set_collapse(False))
+        show_action.triggered.connect(lambda: self.__clicked_show_btn())
         tray_menu.addAction(show_action)
 
         self.__play_action_btn = QAction(self)
@@ -119,8 +124,11 @@ class FramelessWindow(QMainWindow, DialogWindow, BaseView):
         next_action.triggered.connect(lambda: self.__onclick_next_fn())
         tray_menu.addAction(next_action)
 
-        self.__icon_tray.setContextMenu(tray_menu)
-        self.__icon_tray.show()
+        exit_action = QAction("Exit", self)
+        exit_action.triggered.connect(lambda: self.__exit())
+        tray_menu.addAction(exit_action)
+
+        self.__tray.setContextMenu(tray_menu)
 
         self.addLayout(self.__title_bar)
         self.__overlay = WindowOverlay(self.__inner)
@@ -171,25 +179,23 @@ class FramelessWindow(QMainWindow, DialogWindow, BaseView):
     def show_close_button(self, enable: bool) -> None:
         self.__btn_close.setVisible(enable)
 
-    def __set_collapse(self, collapse: bool) -> None:
-        if collapse:
-            self.hide()
-        else:
-            self.show()
+    def __clicked_show_btn(self) -> None:
+        self.show()
+        self.__tray.hide()
 
     @connector
     def set_onclick_collapse(self, fn: Callable[[], None]) -> None:
         self.__onclick_collapse_fn = fn
 
     def __click_collapse(self):
-        self.__set_collapse(True)
-        self.__icon_tray.setVisible(True)
+        self.hide()
+        self.__tray.setVisible(True)
         if self.__onclick_collapse_fn is not None:
             self.__onclick_collapse_fn()
 
     @connector
-    def set_onclick_close(self, fn: Callable[[], None]) -> None:
-        self.__onclick_close_fn = fn
+    def set_on_exit(self, fn: Callable[[], None]) -> None:
+        self.__on_exit_fn = fn
 
     @connector
     def set_onclick_minimize(self, fn: Callable[[], None]) -> None:
@@ -197,24 +203,23 @@ class FramelessWindow(QMainWindow, DialogWindow, BaseView):
 
     def __click_minimize(self) -> None:
         self.showMinimized()
+        self.__tray.show()
         if self.__onclick_minimize_fn is not None:
             self.__onclick_minimize_fn()
 
-    def __click_close(self) -> None:
+    def __exit(self) -> None:
         self.close()
-        if self.__onclick_close_fn is not None:
-            self.__onclick_close_fn()
+        if self.__on_exit_fn is not None:
+            self.__on_exit_fn()
 
     @override
     def apply_light_mode(self) -> None:
-        self.__btn_collapse.apply_light_mode()
         self.__btn_minimize.apply_light_mode()
         self.__btn_close.apply_light_mode()
         self.__overlay.apply_light_mode()
 
     @override
     def apply_dark_mode(self) -> None:
-        self.__btn_collapse.apply_dark_mode()
         self.__btn_minimize.apply_dark_mode()
         self.__btn_close.apply_dark_mode()
         self.__overlay.apply_dark_mode()
@@ -396,6 +401,3 @@ class WindowOverlay(QWidget, BaseView, DialogWindow):
         if self.__higher_overlay.isVisible() or self.__lower_overlay.isVisible():
             return
         return self.hide()
-
-
-

@@ -75,7 +75,7 @@ class MainWindowControl(MainWindowView, BaseControl):
         self._body.set_onclick_favourites(self.__choose_favourites)
         self._body.set_onclick_add_playlist(self.__create_empty_playlist)
 
-        self.set_onclick_close(lambda: self._music_player.pause_current_song())
+        self.set_on_exit(lambda: self._music_player.pause_current_song())
         self.set_onclick_play_on_tray(lambda: self._music_player.play_current_song())
         self.set_onclick_pause_on_tray(lambda: self._music_player.pause_current_song())
         self.set_onclick_prev_on_tray(lambda: self.play_previous_song())
