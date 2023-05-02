@@ -1,7 +1,7 @@
 from typing import Optional, Union, Callable
 
 from PyQt5.QtCore import Qt
-from PyQt5.QtGui import QFont
+from PyQt5.QtGui import QFont, QFontMetrics
 from PyQt5.QtWidgets import QLabel, QWidget, QLineEdit
 
 from modules.helpers.types.Decorators import override, handler
@@ -12,15 +12,32 @@ from modules.screens.AbstractScreen import BaseView
 
 class LabelWithDefaultText(QLabel, BaseView):
     __default_text: str = ""
+    __displaying_text: str = ""
     __light_mode_style: str
     __dark_mode_style: str
+    __is_fixed_with: bool = False
 
     def __init__(self, parent: Optional["QWidget"] = None):
         super().__init__(parent)
 
     @override
+    def setFixedWidth(self, w: int) -> None:
+        super().setFixedWidth(w)
+        self.__is_fixed_with = True
+        self.setText(self.__displaying_text)
+
+    @override
     def setText(self, text: str) -> None:
-        return super().setText(text or self.__default_text)
+        self.__displaying_text = text or self.__default_text
+        if self.__is_fixed_with and self.wordWrap():
+            metrics = QFontMetrics(self.font())
+            display_text_with_dot = metrics.elidedText(text, Qt.ElideRight, self.width())
+            super().setText(display_text_with_dot)
+            return
+        return super().setText(self.__displaying_text)
+
+    def text(self) -> str:
+        return self.__displaying_text
 
     def set_default_text(self, text: str) -> None:
         self.__default_text = text
