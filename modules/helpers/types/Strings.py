@@ -57,7 +57,11 @@ def get_dir_from(file_path: str) -> str:
 
 
 def get_file_basename(file_path: str) -> str:
-    return os.path.basename(file_path).split(".")[0]
+    parts = os.path.basename(file_path).split(".")
+    size = len(parts)
+    if size == 0:
+        return ""
+    return ".".join(parts[:size - 1])
 
 
 def extension_of(file_path: str) -> str:
