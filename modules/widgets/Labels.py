@@ -29,7 +29,7 @@ class LabelWithDefaultText(QLabel, BaseView):
     @override
     def setText(self, text: str) -> None:
         self.__displaying_text = text or self.__default_text
-        if self.__is_fixed_with and self.wordWrap():
+        if self.__is_fixed_with:
             metrics = QFontMetrics(self.font())
             display_text_with_dot = metrics.elidedText(text, Qt.ElideRight, self.width())
             super().setText(display_text_with_dot)
@@ -63,7 +63,7 @@ class LabelWithDefaultText(QLabel, BaseView):
         dark_mode_style: TextStyle = None,
         width: Union[int, None] = None,
         padding: int = 0,
-        allow_multiple_lines: bool = True,
+        allow_multiple_lines: bool = False,
         parent: Optional["QWidget"] = None,
     ) -> 'LabelWithDefaultText':
         label = LabelWithDefaultText(parent)

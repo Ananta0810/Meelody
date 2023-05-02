@@ -177,7 +177,7 @@ class EditablePlaylistCard(PlaylistCard):
         Dialogs.confirm(
             image=Images.DELETE,
             header="Warning",
-            message="Are you sure want to delete this playlist? The playlist will be deleted permanently.",
+            message="Are you sure want to delete this playlist?\n The playlist will be deleted permanently.",
             accept_text="Delete",
             cancel_text="Cancel",
             on_accept=lambda: self.__delete_fn() if self.__delete_fn is not None else None

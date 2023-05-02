@@ -97,6 +97,7 @@ class AlertDialog(Dialog, BaseView):
             font=FontBuilder.build(family="Segoe UI Semibold", size=16, bold=True),
             light_mode_style=TextStyle(text_color=ColorBoxes.BLACK),
             dark_mode_style=TextStyle(text_color=ColorBoxes.WHITE),
+            allow_multiple_lines=True
         )
         self.__header.setAlignment(Qt.AlignCenter)
 
@@ -104,6 +105,7 @@ class AlertDialog(Dialog, BaseView):
             font=FontBuilder.build(size=11),
             light_mode_style=TextStyle(text_color=ColorBoxes.BLACK),
             dark_mode_style=TextStyle(text_color=ColorBoxes.WHITE),
+            allow_multiple_lines=True
         )
         self.__message.setAlignment(Qt.AlignCenter)
 
@@ -164,6 +166,7 @@ class ConfirmDialog(Dialog, BaseView):
             font=FontBuilder.build(family="Segoe UI Semibold", size=16, bold=True),
             light_mode_style=TextStyle(text_color=ColorBoxes.BLACK),
             dark_mode_style=TextStyle(text_color=ColorBoxes.WHITE),
+            allow_multiple_lines=True
         )
         self.__header.setAlignment(Qt.AlignCenter)
 
@@ -171,9 +174,9 @@ class ConfirmDialog(Dialog, BaseView):
             font=FontBuilder.build(size=11),
             light_mode_style=TextStyle(text_color=ColorBoxes.BLACK),
             dark_mode_style=TextStyle(text_color=ColorBoxes.WHITE),
+            allow_multiple_lines=True
         )
         self.__message.setAlignment(Qt.AlignCenter)
-        self.__message.setContentsMargins(0, 0, 0, 12)
 
         self.__button_box = QHBoxLayout()
 
@@ -206,6 +209,7 @@ class ConfirmDialog(Dialog, BaseView):
         self.__view_layout.addWidget(self.__image)
         self.__view_layout.addWidget(self.__header)
         self.__view_layout.addWidget(self.__message)
+        self.__view_layout.addSpacing(8)
         self.__view_layout.addLayout(self.__button_box)
         self.setFixedWidth(360)
         self._btn_close.hide()

@@ -39,11 +39,10 @@ class Dialogs:
                 on_accept: callable = None,
                 on_cancel: callable = None
                 ) -> None:
-        dialog = ConfirmDialog()
-        dialog.set_info(image, header, message, accept_text, cancel_text)
-        dialog.on_accept(on_accept)
-        dialog.on_cancel(on_cancel)
-        Dialogs.get_instance().__window.add_confirm(dialog)
+        Dialogs.get_instance().__confirm_dialog.set_info(image, header, message, accept_text, cancel_text)
+        Dialogs.get_instance().__confirm_dialog.on_accept(on_accept)
+        Dialogs.get_instance().__confirm_dialog.on_cancel(on_cancel)
+        Dialogs.get_instance().__window.add_confirm(Dialogs.get_instance().__confirm_dialog)
 
     @staticmethod
     def show_dialog( dialog: Dialog) -> None:

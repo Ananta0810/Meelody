@@ -38,7 +38,7 @@ class DownloadRow(BackgroundWidget, BaseView):
         self.__label_title = LabelWithDefaultText.build(
             font=FontBuilder.build(size=10, bold=True),
             light_mode_style=TextStyle(text_color=ColorBoxes.BLACK),
-            dark_mode_style=TextStyle(text_color=ColorBoxes.WHITE)
+            dark_mode_style=TextStyle(text_color=ColorBoxes.WHITE),
         )
         self.__label_description = LabelWithDefaultText.build(
             font=FontBuilder.build(size=9),
@@ -83,6 +83,7 @@ class DownloadRow(BackgroundWidget, BaseView):
         super().resizeEvent(a0)
         self.__progress_bar.setFixedWidth(self.width() - 16)
         self.__progress_bar.move(8, self.height() - self.__progress_bar.height())
+        self.__label_title.setFixedWidth(480)
 
     def set_label(self, label: str) -> None:
         self.__label_title.setText(label)
