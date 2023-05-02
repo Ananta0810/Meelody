@@ -33,7 +33,6 @@ class MainWindowControl(MainWindowView, BaseControl):
     __player: AudioPlayer = AudioPlayer()
     __selecting_playlist_songs: set[int] = set()
     __is_selecting_library: bool = False
-    __download_temp_dir: str | None = None
     __start_download: pyqtSignal = pyqtSignal()
     __downloaders: list[YoutubeDownloader] = []
     __download_thread: Thread | None = None
@@ -43,7 +42,6 @@ class MainWindowControl(MainWindowView, BaseControl):
         self._set_default_playlist_cover(Images.DEFAULT_PLAYLIST_COVER)
         self.connect_signals()
         self.set_is_playing(False)
-        self.__start_download.connect(lambda: self._body.add_download_item(Lists.last_of(self.__downloaders).get_video_title()))
 
     @override
     def connect_signals(self) -> None:
@@ -66,6 +64,7 @@ class MainWindowControl(MainWindowView, BaseControl):
         self._body.set_onclick_download_songs_to_library_fn(
             lambda youtube_url: self.__add_songs_to_library_from_youtube(youtube_url)
         )
+        self._body.set_onclose_download_dialog(lambda: self.__on_close_download_dialog())
         self._body.set_onclick_add_songs_to_library_fn(lambda paths: self.__add_songs_to_library_from_computer(paths))
         self._body.set_onclick_select_songs_to_playlist_fn(lambda: self.__start_select_songs_from_library_to_playlist())
         self._body.set_onclick_apply_select_songs_to_playlist_fn(
@@ -81,6 +80,8 @@ class MainWindowControl(MainWindowView, BaseControl):
         self.set_onclick_pause_on_tray(lambda: self._music_player.pause_current_song())
         self.set_onclick_prev_on_tray(lambda: self.play_previous_song())
         self.set_onclick_next_on_tray(lambda: self.play_next_song())
+
+        self.__start_download.connect(lambda: self._body.add_download_item(Lists.last_of(self.__downloaders).get_video_title()))
 
     def play_previous_song(self) -> None:
         self._music_player.play_previous_song()
@@ -236,10 +237,6 @@ class MainWindowControl(MainWindowView, BaseControl):
             )
             return
 
-        if self.__download_temp_dir is None:
-            self.__download_temp_dir = tempfile.mkdtemp()
-            print(f"Created temp directory at {self.__download_temp_dir}.")
-
         Thread(target=lambda: self.__download_song(youtube_url)).start()
 
     def __download_song(self, youtube_url: str) -> None:
@@ -251,11 +248,12 @@ class MainWindowControl(MainWindowView, BaseControl):
             self.__downloaders.append(downloader)
             self.__start_download.emit()
 
-            downloader.on_succeed(lambda path: self.__download_song_success(downloader))
+            download_temp_dir = tempfile.mkdtemp()
+            downloader.on_succeed(lambda path: self.__download_song_success(downloader, download_temp_dir))
             downloader.on_failed(lambda error: Dialogs.alert(image=Images.WARNING, header="Warning", message=error))
 
             print(f"Downloading song from youtube with url '{youtube_url}'")
-            downloader.download_to(self.__download_temp_dir)
+            downloader.download_to(download_temp_dir)
         except ValueError as e:
             Dialogs.alert(image=Images.WARNING, header="Warning", message=str(e))
 
@@ -271,46 +269,46 @@ class MainWindowControl(MainWindowView, BaseControl):
         self.__download_thread = None
 
     def __validate_youtube_url(self, downloader: YoutubeDownloader) -> None:
-        song_titles = {song.get_title() for song in self.__library.get_songs().get_songs()}
-        if downloader.get_video_title() in song_titles:
+        youtube_title = downloader.get_video_title()
+
+        existing_song_titles = {song.get_title() for song in self.__library.get_songs().get_songs()}
+        if youtube_title in existing_song_titles:
             raise ValueError("You already have this song.")
 
+        downloading_song_titles = {downloader_.get_video_title() for downloader_ in self.__downloaders}
+        if youtube_title in downloading_song_titles:
+            raise ValueError("You are downloading this youtube video.")
+
     def __show_download_progress(self, index: int, downloader: YoutubeDownloader) -> None:
-        percentage = downloader.get_percentage()
-        download_size = round(downloader.get_downloaded_size() / 1000000, 2)
-        total_size = round(downloader.get_size() / 1000000, 2)
-        remain_sec = Times.string_of(float(downloader.get_remain_seconds()))
-        description = f"{percentage}%   |   {download_size}/{total_size}MB   |  estimate: {remain_sec}"
-        self._body.set_description_in_download_dialog_at(index, description)
-        self._body.set_progress_in_download_dialog_at(index, percentage)
+        try:
+            percentage = downloader.get_percentage()
+            download_size = round(downloader.get_downloaded_size() / 1000000, 2)
+            total_size = round(downloader.get_size() / 1000000, 2)
+            remain_sec = Times.string_of(float(downloader.get_remain_seconds()))
+            description = f"{percentage}%   |   {download_size}/{total_size}MB   |  estimate: {remain_sec}"
+            self._body.set_description_in_download_dialog_at(index, description)
+            self._body.set_progress_in_download_dialog_at(index, percentage)
+        except IndexError:
+            pass
 
-    def __download_song_success(self, downloader: YoutubeDownloader) -> None:
-        print("Downloaded song from youtube successfully.")
+    def __download_song_success(self, downloader: YoutubeDownloader, download_temp_dir: str) -> None:
+        print(f"Downloaded song from youtube successfully with tite '{downloader.get_video_title()}'.")
 
-        files = Files.get_files_from(self.__download_temp_dir, with_extension="mp3")
-        download_files = [
-            file for file in files
-            if Strings.get_file_basename(file.replace(self.__download_temp_dir, "")) == downloader.get_video_title()
-        ]
+        download_files = Files.get_files_from(download_temp_dir, with_extension="mp3")
         songs = self.__add_songs_to_library(download_files)
-
-        if self.__is_selecting_library:
-            self.__choose_library()
+        shutil.rmtree(download_temp_dir)
 
         for song in songs:
             print(f"Downloaded song '{song.get_title()}' to library.")
 
-        for file in files:
-            Files.remove_file(file)
-
-        if not any(downloader_.is_downloading() for downloader_ in self.__downloaders):
-            shutil.rmtree(self.__download_temp_dir)
-            print(f"Removing download temp directory at {self.__download_temp_dir}.")
-            self.__download_temp_dir = None
+    def __on_close_download_dialog(self) -> None:
+        if self.__is_selecting_library:
+            self.__choose_library()
 
     def __add_songs_to_library(self, paths: list[str] | set[str]) -> list[Song]:
         new_songs: list[Song] = []
         for path in paths:
+            print(f"Adding song from path '{path}'")
             try:
                 song_path = Files.copy_file(path, "library/")
                 song = Song.from_file(song_path)

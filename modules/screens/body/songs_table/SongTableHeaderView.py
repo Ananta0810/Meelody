@@ -80,7 +80,7 @@ class SongTableHeaderView(QWidget, BaseView):
         self.__buttons_layout.addSpacing(8)
 
         self.__btn_download_songs = self.__create_button(Icons.DOWNLOAD, Paddings.RELATIVE_50)
-        self.__btn_download_songs.clicked.connect(self.show_download_dialog)
+        self.__btn_download_songs.clicked.connect(self.__show_download_dialog)
         self.__buttons_layout.addWidget(self.__btn_download_songs)
 
         self.__btn_add_songs_to_library = self.__create_button(Icons.ADD, Paddings.RELATIVE_67)
@@ -103,11 +103,11 @@ class SongTableHeaderView(QWidget, BaseView):
         self.__info.addWidget(self.__label_length)
         self.__info.addWidget(self.__buttons)
 
-        self.__dialog = DownloadDialog()
-        self.__dialog.on_download(lambda url: self.__on_download_songs_to_library_fn(url))
+        self.__download_dialog = DownloadDialog()
+        self.__download_dialog.on_download(lambda url: self.__on_download_songs_to_library_fn(url))
 
-    def show_download_dialog(self) -> None:
-        Dialogs.Dialogs.show_dialog(self.__dialog)
+    def __show_download_dialog(self) -> None:
+        Dialogs.Dialogs.show_dialog(self.__download_dialog)
 
     def __select_song_paths_to_add_to_library(self) -> None:
         paths = QFileDialog.getOpenFileNames(self, filter="MP3 (*.MP3 *.mp3)")[0]
@@ -158,6 +158,9 @@ class SongTableHeaderView(QWidget, BaseView):
             self.__btn_select_songs.setVisible(False)
             self.__btn_apply_add_songs.setVisible(False)
 
+    def set_onclose_download_dialog(self, fn: callable) -> None:
+        self.__download_dialog.on_close(fn)
+
     def set_onclick_download_songs_to_library_fn(self, fn: Callable[[str], None]) -> None:
         self.__on_download_songs_to_library_fn = fn
 
@@ -171,13 +174,13 @@ class SongTableHeaderView(QWidget, BaseView):
         self.__onclick_apply_select_songs_to_playlist_fn = fn
 
     def add_item(self, label: str) -> None:
-        self.__dialog.add_item(label)
+        self.__download_dialog.add_item(label)
 
     def set_description_at(self, index: int, value: str) -> None:
-        self.__dialog.set_description_at(index, value)
+        self.__download_dialog.set_description_at(index, value)
 
     def set_progress_at(self, index: int, value: float) -> None:
-        self.__dialog.set_progress_at(index, value)
+        self.__download_dialog.set_progress_at(index, value)
 
 
     @staticmethod

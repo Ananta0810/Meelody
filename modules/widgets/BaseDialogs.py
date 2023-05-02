@@ -40,12 +40,16 @@ class Dialog(QWidget, BaseView):
             ),
             parent=self
         )
-        self.__btn_close.clicked.connect(lambda: self.__close())
+        self.__btn_close.clicked.connect(lambda: self._close())
         self._build_content()
 
-    def __close(self) -> None:
+    def _close(self) -> None:
         self.hide()
-        self.__on_close_fn()
+        self._call_close_fn()
+
+    def _call_close_fn(self):
+        if self.__on_close_fn is not None:
+            self.__on_close_fn()
 
     @abstractmethod
     def _build_content(self) -> None:
@@ -72,13 +76,11 @@ class Dialog(QWidget, BaseView):
 
     def _on_accepted(self) -> None:
         self.hide()
-        if self.__on_close_fn is not None:
-            self.__on_close_fn()
+        self._call_close_fn()
 
     def _on_cancel(self) -> None:
         self.hide()
-        if self.__on_close_fn is not None:
-            self.__on_close_fn()
+        self._call_close_fn()
 
 
 class AlertDialog(QWidget, BaseView):

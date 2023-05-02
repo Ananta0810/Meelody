@@ -20,6 +20,7 @@ from modules.widgets.Labels import LabelWithDefaultText, Input
 
 class DownloadDialog(Dialog):
     __on_accept_fn: callable = None
+    __close_fns: list[callable] = []
 
     @override
     def _build_content(self):
@@ -91,6 +92,13 @@ class DownloadDialog(Dialog):
     @connector
     def on_download(self, fn: Callable[[str], None]) -> None:
         self.__on_accept_fn = fn
+
+    def on_close(self, fn: callable) -> None:
+        self.__close_fns.append(fn)
+
+    def _call_close_fn(self):
+        for fn in self.__close_fns:
+            fn()
 
     def _on_accepted(self) -> None:
         if self.__on_accept_fn is not None:
