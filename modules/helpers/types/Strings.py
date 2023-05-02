@@ -1,19 +1,38 @@
 import os
+import re
 import string
 from locale import setlocale, LC_ALL
 
 setlocale(LC_ALL, "")
 
 
-def clear_non_ascii(text: str) -> str:
-    if text is None:
+def unaccent(value: str) -> str:
+    if value is None:
         return ''
-    return text.encode('ascii', errors='ignore').decode()
+    value = re.sub(r'[àáạảãâầấậẩẫăằắặẳẵ]', 'a', value)
+    value = re.sub(r'[ÀÁẠẢÃĂẰẮẶẲẴÂẦẤẬẨẪ]', 'A', value)
+    value = re.sub(r'[èéẹẻẽêềếệểễ]', 'e', value)
+    value = re.sub(r'[ÈÉẸẺẼÊỀẾỆỂỄ]', 'E', value)
+    value = re.sub(r'[òóọỏõôồốộổỗơờớợởỡ]', 'o', value)
+    value = re.sub(r'[ÒÓỌỎÕÔỒỐỘỔỖƠỜỚỢỞỠ]', 'O', value)
+    value = re.sub(r'[ìíịỉĩ]', 'i', value)
+    value = re.sub(r'[ÌÍỊỈĨ]', 'I', value)
+    value = re.sub(r'[ùúụủũưừứựửữ]', 'u', value)
+    value = re.sub(r'[ƯỪỨỰỬỮÙÚỤỦŨ]', 'U', value)
+    value = re.sub(r'[ỳýỵỷỹ]', 'y', value)
+    value = re.sub(r'[ỲÝỴỶỸ]', 'Y', value)
+    value = re.sub(r'[Đ]', 'D', value)
+    value = re.sub(r'[đ]', 'd', value)
+    return value
+
+
+def clean_name(value: str) -> str:
+    return re.sub(r"[^A-Za-z0-9 ]+", "", unaccent(value))
 
 
 def compare(text: str, other: str) -> int:
-    text = clear_non_ascii(text)
-    other = clear_non_ascii(other)
+    text = unaccent(text)
+    other = unaccent(other)
     if text < other:
         return -1
     if text > other:

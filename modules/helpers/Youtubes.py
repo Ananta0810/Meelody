@@ -53,8 +53,7 @@ class YoutubeDownloader:
         try:
             with YoutubeDL(ydl_opts) as ydl:
                 info_dict = ydl.extract_info(self.__url, download=False)
-                title = sub(r"[^A-Za-z0-9 ]+", "", info_dict.get("title", None))
-                self.__title = title
+                self.__title = Strings.clean_name(info_dict.get("title", None))
         except DownloadError:
             raise ValueError("Your url is invalid. Please use a valid one.")
 
