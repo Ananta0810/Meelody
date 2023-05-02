@@ -109,12 +109,18 @@ class SongTableView(QWidget, BaseView):
     def set_progress_at(self, index: int, value: float) -> None:
         self._header.set_progress_at(index, value)
 
+    def is_opening_download_dialog(self) -> bool:
+        return self._header.is_opening_download_dialog()
+
     def enable_choosing_song(self, is_choosing: bool) -> None:
         self._header.enable_choosing_song(is_choosing)
         self._body.enable_choosing_song(is_choosing)
 
     def enable_add_songs_to_library(self, visible: bool) -> None:
         self._header.enable_add_songs_to_library(visible)
+
+    def enable_download_songs_to_library(self, visible: bool) -> None:
+        self._header.enable_download_songs_to_library(visible)
 
     def enable_select_songs_to_playlist(self, visible: bool) -> None:
         self._header.enable_select_songs_to_playlist(visible)

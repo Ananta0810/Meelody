@@ -105,11 +105,17 @@ class CurrentPlaylistView(QWidget, BaseView):
     def set_progress_in_download_dialog_at(self, index: int, value: float) -> None:
         self.__menu.set_progress_at(index, value)
 
+    def is_opening_download_dialog(self) -> bool:
+        return self.__menu.is_opening_download_dialog()
+
     def enable_choosing_song(self, is_choosing: bool) -> None:
         self.__menu.enable_choosing_song(is_choosing)
 
     def enable_add_songs_to_library(self, visible: bool) -> None:
         self.__menu.enable_add_songs_to_library(visible)
+
+    def enable_download_songs_to_library(self, visible: bool) -> None:
+        self.__menu.enable_download_songs_to_library(visible)
 
     def enable_select_songs_to_playlist(self, visible: bool) -> None:
         self.__menu.enable_select_songs_to_playlist(visible)

@@ -120,6 +120,9 @@ class HomeBodyView(QScrollArea, BaseView):
     def set_progress_in_download_dialog_at(self, index: int, value: float) -> None:
         self.__current_playlist.set_progress_in_download_dialog_at(index, value)
 
+    def is_opening_download_dialog(self) -> bool:
+        return self.__current_playlist.is_opening_download_dialog()
+
     @connector
     def set_onclick_library(self, fn: Callable[[], None]) -> None:
         self.__playlist_carousel.set_onclick_library(fn)
@@ -137,6 +140,9 @@ class HomeBodyView(QScrollArea, BaseView):
 
     def enable_add_songs_to_library(self, visible: bool) -> None:
         self.__current_playlist.enable_add_songs_to_library(visible)
+
+    def enable_download_songs_to_library(self, visible: bool) -> None:
+        self.__current_playlist.enable_download_songs_to_library(visible)
 
     def enable_select_songs_to_playlist(self, visible: bool) -> None:
         self.__current_playlist.enable_select_songs_to_playlist(visible)

@@ -30,7 +30,7 @@ class SongTableHeaderView(QWidget, BaseView):
 
     __buttons: QWidget
     __buttons_layout: QHBoxLayout
-    __btn_download_songs: IconButton
+    __btn_download_songs_to_library: IconButton
     __btn_select_songs: IconButton
 
     __onclick_add_songs_to_library_fn: Callable[[list[str]], None]
@@ -79,20 +79,23 @@ class SongTableHeaderView(QWidget, BaseView):
         self.__buttons_layout.addSpacing(48)
         self.__buttons_layout.addSpacing(8)
 
-        self.__btn_download_songs = self.__create_button(Icons.DOWNLOAD, Paddings.RELATIVE_50)
-        self.__btn_download_songs.clicked.connect(self.__show_download_dialog)
-        self.__buttons_layout.addWidget(self.__btn_download_songs)
+        self.__btn_download_songs_to_library = self.__create_button(Icons.DOWNLOAD, Paddings.RELATIVE_50)
+        self.__btn_download_songs_to_library.clicked.connect(self.__show_download_dialog)
+        self.__btn_download_songs_to_library.setToolTip("Download songs from Youtube.")
+        self.__buttons_layout.addWidget(self.__btn_download_songs_to_library)
 
         self.__btn_add_songs_to_library = self.__create_button(Icons.ADD, Paddings.RELATIVE_67)
         self.__btn_add_songs_to_library.clicked.connect(lambda: self.__select_song_paths_to_add_to_library())
+        self.__btn_add_songs_to_library.setToolTip("Import songs from computer.")
         self.__buttons_layout.addWidget(self.__btn_add_songs_to_library)
 
         self.__btn_select_songs = self.__create_button(Icons.EDIT, Paddings.RELATIVE_67)
-        self.__btn_select_songs.clicked.connect(lambda: self.__onclick_select_songs_to_playlist_fn())
+        self.__btn_select_songs.clicked.connect(lambda: self.__clicked_select_songs())
+        self.__btn_select_songs.setToolTip("Select playlist songs.")
         self.__buttons_layout.addWidget(self.__btn_select_songs)
 
         self.__btn_apply_add_songs = self.__create_button(Icons.APPLY, Paddings.RELATIVE_50)
-        self.__btn_apply_add_songs.clicked.connect(lambda: self.__onclick_apply_select_songs_to_playlist_fn())
+        self.__btn_apply_add_songs.clicked.connect(lambda: self.clicked_apply_songs())
         self.__btn_apply_add_songs.hide()
         self.__buttons_layout.addWidget(self.__btn_apply_add_songs)
 
@@ -105,6 +108,16 @@ class SongTableHeaderView(QWidget, BaseView):
 
         self.__download_dialog = DownloadDialog()
         self.__download_dialog.on_download(lambda url: self.__on_download_songs_to_library_fn(url))
+
+    def clicked_apply_songs(self) -> None:
+        self.__btn_select_songs.show()
+        self.__btn_apply_add_songs.hide()
+        return self.__onclick_apply_select_songs_to_playlist_fn()
+
+    def __clicked_select_songs(self) -> None:
+        self.__btn_select_songs.hide()
+        self.__btn_apply_add_songs.show()
+        return self.__onclick_select_songs_to_playlist_fn()
 
     def __show_download_dialog(self) -> None:
         Dialogs.Dialogs.show_dialog(self.__download_dialog)
@@ -119,7 +132,7 @@ class SongTableHeaderView(QWidget, BaseView):
         self.__label_track.apply_light_mode()
         self.__label_artist.apply_light_mode()
         self.__label_length.apply_light_mode()
-        self.__btn_download_songs.apply_light_mode()
+        self.__btn_download_songs_to_library.apply_light_mode()
         self.__btn_add_songs_to_library.apply_light_mode()
         self.__btn_select_songs.apply_light_mode()
         self.__btn_apply_add_songs.apply_light_mode()
@@ -129,7 +142,7 @@ class SongTableHeaderView(QWidget, BaseView):
         self.__label_track.apply_dark_mode()
         self.__label_artist.apply_dark_mode()
         self.__label_length.apply_dark_mode()
-        self.__btn_download_songs.apply_dark_mode()
+        self.__btn_download_songs_to_library.apply_dark_mode()
         self.__btn_add_songs_to_library.apply_dark_mode()
         self.__btn_select_songs.apply_dark_mode()
         self.__btn_apply_add_songs.apply_dark_mode()
@@ -141,14 +154,24 @@ class SongTableHeaderView(QWidget, BaseView):
         self.__label_length.setText(length)
 
     def enable_choosing_song(self, is_choosing: bool) -> None:
-        self.__btn_apply_add_songs.setVisible(is_choosing)
-        self.__btn_select_songs.setVisible(not is_choosing)
+        if is_choosing:
+            self.__btn_select_songs.setVisible(True)
+            self.__btn_apply_add_songs.setVisible(False)
+        else:
+            self.__btn_apply_add_songs.setVisible(False)
+            self.__btn_select_songs.setVisible(False)
 
     def enable_add_songs_to_library(self, visible: bool) -> None:
         if visible:
             self.__btn_add_songs_to_library.setVisible(True)
         else:
             self.__btn_add_songs_to_library.setVisible(False)
+
+    def enable_download_songs_to_library(self, visible: bool) -> None:
+        if visible:
+            self.__btn_download_songs_to_library.setVisible(True)
+        else:
+            self.__btn_download_songs_to_library.setVisible(False)
 
     def enable_select_songs_to_playlist(self, visible: bool) -> None:
         if visible:
@@ -182,6 +205,8 @@ class SongTableHeaderView(QWidget, BaseView):
     def set_progress_at(self, index: int, value: float) -> None:
         self.__download_dialog.set_progress_at(index, value)
 
+    def is_opening_download_dialog(self) -> bool:
+        return self.__download_dialog.isVisible()
 
     @staticmethod
     def __create_label(font: QFont) -> LabelWithDefaultText:

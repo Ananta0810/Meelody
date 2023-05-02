@@ -1,9 +1,7 @@
-import typing
 from typing import Callable
 
-from PyQt5 import QtCore
 from PyQt5.QtCore import QSize, Qt
-from PyQt5.QtWidgets import QVBoxLayout, QWidget
+from PyQt5.QtWidgets import QVBoxLayout
 
 from modules.helpers.types.Decorators import override, connector
 from modules.models.view.Background import Background
@@ -90,6 +88,11 @@ class DownloadDialog(Dialog):
         self.__input.apply_light_mode()
         self.__accept_btn.apply_light_mode()
         self.__menu.apply_light_mode()
+
+    @override
+    def show(self) -> None:
+        super().show()
+        self.__input.clear()
 
     @connector
     def on_download(self, fn: Callable[[str], None]) -> None:

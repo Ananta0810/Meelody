@@ -106,13 +106,16 @@ class MainWindowControl(MainWindowView, BaseControl):
             self.__create_playlist(playlist)
 
     def __choose_library(self) -> None:
-        self._body.enable_choosing_song(False)
-        self._body.enable_add_songs_to_library(True)
-        self._body.enable_select_songs_to_playlist(False)
-
         self.__select_playlist(self.__library)
-        self._body.enable_edit_songs(True)
+
         self.__is_selecting_library = True
+        self._body.enable_add_songs_to_library(True)
+        self._body.enable_download_songs_to_library(True)
+        self._body.enable_select_songs_to_playlist(False)
+        self._body.enable_choosing_song(False)
+        self._body.enable_edit_songs(True)
+        self._body.enable_delete_songs(True)
+
         song = self.__player.get_current_song()
         if song is not None:
             displaying_song_index = self.__library.get_songs().index_of(song)
@@ -120,28 +123,30 @@ class MainWindowControl(MainWindowView, BaseControl):
             self._body.enable_delete_song_at(displaying_song_index, False)
 
     def __choose_favourites(self) -> None:
-        self._body.enable_choosing_song(False)
-        self._body.enable_add_songs_to_library(False)
-        self._body.enable_select_songs_to_playlist(False)
-
         favourite_songs: list[Song] = list(filter(lambda song: song.is_loved(), self.__library.get_songs().get_songs()))
         playlist = Playlist.create(name="Favourites",
                                    songs=PlaylistSongs(favourite_songs),
                                    cover=Images.FAVOURITES_PLAYLIST_COVER)
         self.__select_playlist(playlist)
+
+        self.__is_selecting_library = False
+        self._body.enable_add_songs_to_library(False)
+        self._body.enable_download_songs_to_library(False)
+        self._body.enable_select_songs_to_playlist(False)
+        self._body.enable_choosing_song(False)
         self._body.enable_edit_songs(False)
         self._body.enable_delete_songs(False)
-        self.__is_selecting_library = False
 
     def __choose_playlist(self, playlist: Playlist) -> None:
-        self._body.enable_choosing_song(False)
-        self._body.enable_add_songs_to_library(False)
-        self._body.enable_select_songs_to_playlist(True)
-
         self.__select_playlist(playlist)
+
+        self.__is_selecting_library = False
+        self._body.enable_add_songs_to_library(False)
+        self._body.enable_download_songs_to_library(False)
+        self._body.enable_select_songs_to_playlist(True)
+        self._body.enable_choosing_song(True)
         self._body.enable_edit_songs(False)
         self._body.enable_delete_songs(True)
-        self.__is_selecting_library = False
 
     def __select_playlist(self, playlist: Playlist) -> None:
         self.__selecting_playlist_songs.clear()
@@ -304,7 +309,8 @@ class MainWindowControl(MainWindowView, BaseControl):
             message=f"Your video with title '{song.get_title()}' has been downloaded successfully."
         )
 
-        print(f"Downloaded song '{song.get_title()}' to library.")
+        if not self._body.is_opening_download_dialog():
+            self.__on_close_download_dialog()
 
     def __on_close_download_dialog(self) -> None:
         if self.__is_selecting_library:
@@ -357,7 +363,6 @@ class MainWindowControl(MainWindowView, BaseControl):
             if is_existing:
                 self.__selecting_playlist_songs.add(index)
 
-        self._body.enable_choosing_song(True)
         temp_playlist: Playlist = Playlist(info=self.__displaying_playlist.get_info(), songs=PlaylistSongs(temp_songs))
 
         self._body.load_choosing_playlist(temp_playlist)
