@@ -411,7 +411,22 @@ class MainWindowControl(MainWindowView, BaseControl):
         old_song = self.__displaying_playlist.get_songs().get_song_at(index)
         new_song = old_song.clone()
 
-        changed_title = self.__change_song_title(new_song, new_title, old_song)
+        new_title = new_title.strip()
+        new_artist = new_artist.strip()
+
+        changed_title: bool = False
+        if (old_song.get_title() or '') != new_title:
+            existing_title = {song.get_title() for song in self.__library.get_songs().get_songs() if
+                              song.get_title() != old_song.get_title()}
+            if new_title in existing_title:
+                Dialogs.alert(
+                    image=Images.WARNING,
+                    header="Warning",
+                    message=f"Song has already existed."
+                )
+                return False
+            changed_title = new_song.set_title(new_title.strip())
+
         changed_artist = self.__change_song_artist(new_artist, new_song, old_song)
 
         if not changed_title and not changed_artist:
@@ -443,7 +458,7 @@ class MainWindowControl(MainWindowView, BaseControl):
     @staticmethod
     def __change_song_artist(new_artist, new_song, old_song) -> bool | None:
         if (old_song.get_artist() or '') != new_artist:
-            return new_song.set_artist(new_artist)
+            return new_song.set_artist(new_artist.strip())
         return None
 
     def __change_cover_for_song_at(self, index: int, path: str) -> None:
