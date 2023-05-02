@@ -337,10 +337,9 @@ class WindowOverlay(QWidget, BaseView, DialogWindow):
         else:
             widget.apply_dark_mode()
         widget.setParent(self.__higher_overlay)
-        widget.move(
-            int(self.width() / 2 - widget.width() / 2),
-            int(self.height() / 2 - widget.height() / 2),
-        )
+        self.__move_to_center(widget)
+
+        widget.on_change_size(lambda: self.__move_to_center(widget))
         widget.on_close(lambda: self.__hide_higher_overlay())
 
         widget.show()
@@ -360,10 +359,9 @@ class WindowOverlay(QWidget, BaseView, DialogWindow):
         else:
             widget.apply_dark_mode()
         widget.setParent(self.__lower_overlay)
-        widget.move(
-            int(self.width() / 2 - widget.width() / 2),
-            int(self.height() / 2 - widget.height() / 2),
-        )
+        self.__move_to_center(widget)
+
+        widget.on_change_size(lambda: self.__move_to_center(widget))
         widget.on_close(lambda: self.__hide_lower_overlay())
 
         widget.show()
@@ -371,6 +369,12 @@ class WindowOverlay(QWidget, BaseView, DialogWindow):
 
         self.__lower_overlay.show()
         self.__lower_overlay.raise_()
+
+    def __move_to_center(self, widget):
+        widget.move(
+            int(self.width() / 2 - widget.width() / 2),
+            int(self.height() / 2 - widget.height() / 2),
+        )
 
     def __hide_higher_overlay(self):
         if self.__confirm_dialog is not None and self.__confirm_dialog.isVisible():
