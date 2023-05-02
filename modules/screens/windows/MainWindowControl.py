@@ -5,7 +5,7 @@ from time import sleep
 
 from PyQt5.QtCore import pyqtSignal
 
-from modules.helpers import Files, Times
+from modules.helpers import Files, Times, Printers
 from modules.helpers.Database import Database
 from modules.helpers.Youtubes import YoutubeDownloader
 from modules.helpers.types.Bytes import Bytes, BytesModifier
@@ -295,11 +295,16 @@ class MainWindowControl(MainWindowView, BaseControl):
         print(f"Downloaded song from youtube successfully with tite '{downloader.get_video_title()}'.")
 
         download_files = Files.get_files_from(download_temp_dir, with_extension="mp3")
-        songs = self.__add_songs_to_library(download_files)
+        song = self.__add_songs_to_library(download_files)[0]
         shutil.rmtree(download_temp_dir)
 
-        for song in songs:
-            print(f"Downloaded song '{song.get_title()}' to library.")
+        Dialogs.alert(
+            image=Images.DOWNLOAD,
+            header="Download successfully",
+            message=f"Your video with title '{song.get_title()}' has been downloaded successfully."
+        )
+
+        print(f"Downloaded song '{song.get_title()}' to library.")
 
     def __on_close_download_dialog(self) -> None:
         if self.__is_selecting_library:
@@ -314,6 +319,7 @@ class MainWindowControl(MainWindowView, BaseControl):
                 song = Song.from_file(song_path)
                 new_songs.append(song)
             except FileExistsError:
+                Printers.error(f"Copy failed for {path}")
                 pass
 
         if len(new_songs) == 0:

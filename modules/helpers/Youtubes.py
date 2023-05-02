@@ -1,3 +1,4 @@
+from re import sub
 from threading import Thread
 from typing import Callable
 
@@ -52,7 +53,8 @@ class YoutubeDownloader:
         try:
             with YoutubeDL(ydl_opts) as ydl:
                 info_dict = ydl.extract_info(self.__url, download=False)
-                self.__title = info_dict.get("title", None)
+                title = sub(r"[^A-Za-z0-9 ]+", "", info_dict.get("title", None))
+                self.__title = title
         except DownloadError:
             raise ValueError("Your url is invalid. Please use a valid one.")
 
@@ -72,7 +74,7 @@ class YoutubeDownloader:
                 'preferredquality': '192',
             }],
             'quiet': True,
-            'outtmpl': directory + '/%(title)s.%(ext)s',
+            'outtmpl': "".join([directory, '/', self.__title]),
         }
 
         with YoutubeDL(ydl_opts) as ydl:
