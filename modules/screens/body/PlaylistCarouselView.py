@@ -19,7 +19,7 @@ class PlaylistCardData:
     __onclick: Callable[[], None] = None
     __ondelete: Callable[[], None] = None
     __onchange_cover: Callable[[str], None] = None
-    __onchange_title: Callable[[str], None] = None
+    __onchange_title: Callable[[str], bool] = None
     __default_cover: CoverProp = None
 
     def __init__(self, playlist: PlaylistInformation):
@@ -28,7 +28,7 @@ class PlaylistCardData:
     def content(self) -> PlaylistInformation:
         return self.__content
 
-    def onchange_title(self) -> Callable[[str], None]:
+    def onchange_title(self) -> Callable[[str], bool]:
         return self.__onchange_title
 
     def onchange_cover(self) -> Callable[[str], None]:
@@ -49,7 +49,7 @@ class PlaylistCardData:
     def set_ondelete(self, fn: Callable[[], None]) -> None:
         self.__ondelete = fn
 
-    def set_onchange_title(self, fn: Callable[[str], None]) -> None:
+    def set_onchange_title(self, fn: Callable[[str], bool]) -> None:
         self.__onchange_title = fn
 
     def set_onchange_cover(self, fn: Callable[[str], None]) -> None:

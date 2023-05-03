@@ -89,86 +89,17 @@ class LabelWithDefaultText(QLabel, BaseView):
         )
 
 
-class DoubleClickedEditableLabel(QLineEdit, BaseView):
-    __default_text: str = ""
-    __light_mode_style: str
-    __dark_mode_style: str
-    __onchange_text: Callable[[str], None]
-
-    def __init__(self, parent: Optional["QWidget"] = None):
-        super().__init__(parent)
-
-    def mouseDoubleClickEvent(self, event):
-        super().mouseDoubleClickEvent(event)
-        super().setReadOnly(False)
-
-    def keyPressEvent(self, a0):
-        super().keyPressEvent(a0)
-        if a0.key() != Qt.Key_Return:
-            return
-        self.setReadOnly(True)
-        try:
-            self.__onchange_text(self.text())
-        except AttributeError:
-            print("Please assign onchange_text for DoubleClickedEditableLabel.")
-            pass
-
-    @handler
-    def set_onchange_text(self, fn: Callable[[str], None]) -> None:
-        self.__onchange_text = fn
-
-    @override
-    def setText(self, text: str) -> None:
-        super().setText(text or self.__default_text)
-        metrics = self.fontMetrics()
-        self.setMinimumWidth(metrics.boundingRect(text).width() + 4)
-
-    def set_default_text(self, text: str) -> None:
-        self.__default_text = text
-
-    def set_light_mode_style(self, style: str) -> None:
-        self.__light_mode_style = style
-
-    def set_dark_mode_style(self, style: str) -> None:
-        self.__dark_mode_style = style
-
-    @override
-    def apply_light_mode(self):
-        self.setStyleSheet(self.__light_mode_style)
-
-    @override
-    def apply_dark_mode(self):
-        self.setStyleSheet(self.__dark_mode_style)
-
-    @staticmethod
-    def build(
-        font: QFont,
-        light_mode_style: TextStyle,
-        dark_mode_style: TextStyle = None,
-        width: Union[int, None] = None,
-        padding: int = 0,
-        parent: Optional["QWidget"] = None,
-    ) -> 'DoubleClickedEditableLabel':
-        label = DoubleClickedEditableLabel(parent)
-        label.setFont(font)
-        label.setReadOnly(True)
-        label.set_light_mode_style(LabelWithDefaultText.build_style(light_mode_style, padding, width))
-        label.set_dark_mode_style(
-            LabelWithDefaultText.build_style(dark_mode_style or light_mode_style, padding, width))
-        return label
-
-
 class Input(QLineEdit, BaseView):
     __default_text: str = ""
     __light_mode_style: str
     __dark_mode_style: str
-    __onpresses: Callable[[str], None]
+    __onpresses: Callable[[str], None] = None
 
     def __init__(self, parent: Optional["QWidget"] = None):
         super().__init__(parent)
 
     @handler
-    def set_onpressed(self, fn: Callable[[], None]) -> None:
+    def set_onpressed(self, fn: Callable[[str], None]) -> None:
         self.__onpresses = fn
 
     @override
@@ -177,7 +108,7 @@ class Input(QLineEdit, BaseView):
         if a0.key() != Qt.Key_Return:
             return
         if self.__onpresses is not None:
-            self.__onpresses()
+            self.__onpresses(self.text())
 
     @override
     def setText(self, text: str) -> None:

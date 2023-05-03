@@ -1,20 +1,121 @@
 from typing import Optional, Callable
 
-from PyQt5.QtCore import pyqtSignal, QEvent, Qt, QRect
+from PyQt5.QtCore import pyqtSignal, QEvent, Qt, QRect, QSize
 from PyQt5.QtGui import QFont, QCursor, QResizeEvent, QPixmap
 from PyQt5.QtWidgets import QWidget, QVBoxLayout, QHBoxLayout, QSizePolicy, QFileDialog
 
 from modules.helpers import Pixmaps
-from modules.helpers.types.Decorators import override
+from modules.helpers.types.Decorators import override, connector
 from modules.models.view.Animation import Animation
+from modules.models.view.Background import Background
+from modules.models.view.Border import Border
+from modules.models.view.Color import Color
+from modules.models.view.ColorBox import ColorBox
+from modules.models.view.builder.FontBuilder import FontBuilder
 from modules.models.view.builder.IconButtonStyle import IconButtonStyle
 from modules.models.view.builder.TextStyle import TextStyle
 from modules.statics import Properties
 from modules.statics.view.Material import ColorBoxes, Paddings, Icons, Colors, Backgrounds, Images
-from modules.widgets.Buttons import IconButton
+from modules.widgets.Buttons import IconButton, ActionButton
 from modules.widgets.Cover import Cover, CoverProp
-from modules.widgets.Dialogs import Dialogs
-from modules.widgets.Labels import LabelWithDefaultText, DoubleClickedEditableLabel
+from modules.widgets import Dialogs
+from modules.widgets.Labels import LabelWithDefaultText, Input
+
+
+class UpdatePlaylistWindow(Dialogs.Dialog):
+    __on_accept_fn: callable = Callable[[str, str], None]
+
+    @override
+    def _build_content(self):
+        self.__image = Cover()
+        self.__image.setAlignment(Qt.AlignHCenter)
+        self.__header = LabelWithDefaultText.build(
+            font=FontBuilder.build(family="Segoe UI Semibold", size=16, bold=True),
+            light_mode_style=TextStyle(text_color=ColorBoxes.BLACK),
+            dark_mode_style=TextStyle(text_color=ColorBoxes.WHITE),
+        )
+        self.__header.setAlignment(Qt.AlignCenter)
+
+        self.__label_title = LabelWithDefaultText.build(
+            font=FontBuilder.build(size=11),
+            light_mode_style=TextStyle(text_color=ColorBoxes.BLACK),
+            dark_mode_style=TextStyle(text_color=ColorBoxes.WHITE),
+        )
+        background = Background(border_radius=8,
+                                color=ColorBox(normal=Colors.GRAY.with_opacity(8)),
+                                border=Border(size=2, color=ColorBox(Color(216, 216, 216)))
+                                )
+
+        self.__input_title = Input.build(
+            font=FontBuilder.build(size=12),
+            light_mode_style=TextStyle(text_color=ColorBoxes.BLACK, background=background),
+            padding=8
+        )
+        self.__input_title.setFixedHeight(48)
+        self.__input_title.set_onpressed(lambda title: self._on_accepted())
+
+        self.__accept_btn = ActionButton.build(
+            font=FontBuilder.build(family="Segoe UI Semibold", size=11),
+            size=QSize(0, 48),
+            light_mode=TextStyle(text_color=ColorBoxes.WHITE,
+                                 background=Backgrounds.ROUNDED_PRIMARY_75.with_border_radius(8)),
+            dark_mode=TextStyle(text_color=ColorBoxes.WHITE, background=Backgrounds.ROUNDED_WHITE_25)
+        )
+        self.__accept_btn.clicked.connect(lambda: self._on_accepted())
+
+        self.__view_layout = QVBoxLayout(self)
+        self.__view_layout.setAlignment(Qt.AlignVCenter)
+        self.__view_layout.addWidget(self.__image)
+        self.__view_layout.addWidget(self.__header)
+        self.__view_layout.addWidget(self.__label_title)
+        self.__view_layout.addWidget(self.__input_title)
+        self.__view_layout.addSpacing(8)
+        self.__view_layout.addWidget(self.__accept_btn)
+
+        self.__header.setText("Update Playlist")
+        self.__label_title.setText("Enter title")
+        self.__image.set_cover(CoverProp.from_bytes(Images.EDIT, width=128))
+        self.__accept_btn.setText("Apply")
+
+        self.setFixedWidth(480)
+        self.setFixedHeight(self.sizeHint().height())
+
+    @override
+    def apply_dark_mode(self) -> None:
+        super().apply_dark_mode()
+        self.__header.apply_dark_mode()
+        self.__label_title.apply_dark_mode()
+        self.__input_title.apply_dark_mode()
+        self.__accept_btn.apply_dark_mode()
+
+    @override
+    def apply_light_mode(self) -> None:
+        super().apply_light_mode()
+        self.__header.apply_light_mode()
+        self.__label_title.apply_light_mode()
+        self.__input_title.apply_light_mode()
+        self.__accept_btn.apply_light_mode()
+
+    @override
+    def resizeEvent(self, event: QResizeEvent) -> None:
+        super().resizeEvent(event)
+        self.__input_title.setFixedWidth(self.__accept_btn.size().width())
+
+    @connector
+    def on_apply_change(self, fn: Callable[[str], bool]) -> None:
+        self.__on_accept_fn = fn
+
+    def set_song_title(self, title: str) -> None:
+        self.__input_title.setText(title)
+
+    def _on_accepted(self) -> None:
+        if self.__on_accept_fn is None:
+            super()._on_accepted()
+            return
+
+        can_close = self.__on_accept_fn(self.__input_title.text())
+        if can_close:
+            super()._on_accepted()
 
 
 class PlaylistCard(QWidget):
@@ -115,8 +216,9 @@ class EditablePlaylistCard(PlaylistCard):
     _buttons: QHBoxLayout
     __delete_btn: IconButton
     _cover: Cover
-    _label: DoubleClickedEditableLabel
+    _label: LabelWithDefaultText
     __onchange_cover_fn: Callable[[str], None]
+    __onchange_title_fn: Callable[[str], bool]
     __delete_fn: Callable[[], None]
 
     def __init__(self, font: QFont, parent: Optional["QWidget"] = None):
@@ -126,7 +228,7 @@ class EditablePlaylistCard(PlaylistCard):
         self._main_layout = QVBoxLayout(self)
         self._main_layout.setContentsMargins(20, 20, 20, 20)
 
-        self.__edit_cover_btn = IconButton.build(
+        self.__edit_title_btn = IconButton.build(
             padding=Paddings.RELATIVE_50,
             size=Icons.MEDIUM,
             style=IconButtonStyle(
@@ -136,7 +238,21 @@ class EditablePlaylistCard(PlaylistCard):
                 dark_mode_background=Backgrounds.CIRCLE_PRIMARY_75,
             ),
         )
+        self.__edit_title_btn.apply_light_mode()
+        self.__edit_title_btn.clicked.connect(lambda: self.__open_dialog())
+
+        self.__edit_cover_btn = IconButton.build(
+            padding=Paddings.RELATIVE_50,
+            size=Icons.MEDIUM,
+            style=IconButtonStyle(
+                light_mode_icon=Icons.IMAGE.with_color(Colors.PRIMARY),
+                light_mode_background=Backgrounds.CIRCLE_PRIMARY_10,
+                dark_mode_icon=Icons.IMAGE.with_color(Colors.WHITE),
+                dark_mode_background=Backgrounds.CIRCLE_PRIMARY_75,
+            ),
+        )
         self.__edit_cover_btn.apply_light_mode()
+
         self.__edit_cover_btn.clicked.connect(
             lambda: self.__onclick_select_cover() if self.__onchange_cover_fn is not None else None)
 
@@ -156,11 +272,12 @@ class EditablePlaylistCard(PlaylistCard):
         self._buttons = QHBoxLayout()
         self._buttons.setContentsMargins(0, 0, 0, 0)
         self._buttons.addStretch()
+        self._buttons.addWidget(self.__edit_title_btn)
         self._buttons.addWidget(self.__edit_cover_btn)
         self._buttons.addWidget(self.__delete_btn)
 
         self._cover = Cover(self)
-        self._label = DoubleClickedEditableLabel.build(
+        self._label = LabelWithDefaultText.build(
             font=font,
             light_mode_style=TextStyle(text_color=ColorBoxes.BLACK),
             dark_mode_style=TextStyle(text_color=ColorBoxes.WHITE),
@@ -173,8 +290,20 @@ class EditablePlaylistCard(PlaylistCard):
         self._main_layout.addStretch()
         self._main_layout.addWidget(self._label)
 
-    def __on_click_delete(self):
-        Dialogs.confirm(
+    def __open_dialog(self) -> None:
+        dialog = UpdatePlaylistWindow()
+        dialog.set_song_title(self._label.text())
+        dialog.on_apply_change(self.__on_change_title)
+        Dialogs.Dialogs.show_dialog(dialog)
+
+    def __on_change_title(self, title: str) -> bool:
+        changed_success = self.__onchange_title_fn(title)
+        if changed_success:
+            self.set_label_text(title)
+        return changed_success
+
+    def __on_click_delete(self) -> None:
+        Dialogs.Dialogs.confirm(
             image=Images.DELETE,
             header="Warning",
             message="Are you sure want to delete this playlist?\n The playlist will be deleted permanently.",
@@ -189,8 +318,8 @@ class EditablePlaylistCard(PlaylistCard):
     def set_ondelete(self, fn: Callable[[], None]) -> None:
         self.__delete_fn = fn
 
-    def set_onchange_title(self, fn: Callable[[str], None]) -> None:
-        self._label.set_onchange_text(fn)
+    def set_onchange_title(self, fn: Callable[[str], bool]) -> None:
+        self.__onchange_title_fn = fn
 
     def __onclick_select_cover(self) -> None:
         path = QFileDialog.getOpenFileName(self, filter=Properties.ImportType.IMAGE)[0]
@@ -203,9 +332,11 @@ class EditablePlaylistCard(PlaylistCard):
         rect = self.__get_button_rect()
         should_dark_mode_for_buttons = Pixmaps.check_contrast_at(pixmap, rect)
         if should_dark_mode_for_buttons:
-            self.__delete_btn.apply_dark_mode()
+            self.__edit_title_btn.apply_dark_mode()
             self.__edit_cover_btn.apply_dark_mode()
+            self.__delete_btn.apply_dark_mode()
         else:
+            self.__edit_title_btn.apply_light_mode()
             self.__delete_btn.apply_light_mode()
             self.__edit_cover_btn.apply_light_mode()
 

@@ -10,7 +10,7 @@ from modules.helpers.Database import Database
 from modules.helpers.Youtubes import YoutubeDownloader
 from modules.helpers.types.Bytes import Bytes, BytesModifier
 from modules.helpers.types.Decorators import override
-from modules.helpers.types import Lists, Strings
+from modules.helpers.types import Lists
 from modules.models.AppSettings import AppSettings
 from modules.models.AudioPlayer import AudioPlayer
 from modules.models.Playlist import Playlist
@@ -47,46 +47,45 @@ class MainWindowControl(MainWindowView, BaseControl):
 
     @override
     def connect_signals(self) -> None:
-        self._music_player.set_onclick_next(lambda index: self.__disable_edit_and_delete_on_libray_of_song_at(index))
-        self._music_player.set_onclick_prev(lambda index: self.__disable_edit_and_delete_on_libray_of_song_at(index))
-        self._music_player.set_onclick_play(lambda index: self.__play_song_from_player_at(index))
+        self._music_player.set_onclick_next(self.__disable_edit_and_delete_on_libray_of_song_at)
+        self._music_player.set_onclick_prev(self.__disable_edit_and_delete_on_libray_of_song_at)
+        self._music_player.set_onclick_play(self.__play_song_from_player_at)
         self._music_player.set_onclick_pause(lambda index: self.set_is_playing(False))
-        self._music_player.set_onclick_shuffle(lambda shuffled: self.__shuffle(shuffled))
-        self._music_player.set_onclick_loop(lambda looping: self.__loop(looping))
-        self._music_player.set_onclick_love(lambda song: self.__love_song_from_player(song))
+        self._music_player.set_onclick_shuffle(self.__shuffle)
+        self._music_player.set_onclick_loop(self.__loop)
+        self._music_player.set_onclick_love(self.__love_song_from_player)
 
-        self._body.set_onclick_play(lambda index: self.__play_song_from_menu_at(index))
-        self._body.set_onclick_love(lambda index: self.__love_song_from_menu(index))
-        self._body.set_onclick_add_to_playlist(lambda index: self.__add_song_from_menu_at(index))
-        self._body.set_onclick_remove_from_playlist(lambda index: self.__remove_song_from_menu_at(index))
-        self._body.set_onchange_song_title_and_artist_on_menu(
-            lambda index, title, artist: self.__change_title_and_title_for_song_at(index, title, artist))
-        self._body.set_on_change_song_cover_on_menu(lambda index, path: self.__change_cover_for_song_at(index, path))
-        self._body.set_on_delete_song_on_menu(lambda index: self.__delete_song_at(index))
-        self._body.set_onclick_download_songs_to_library_fn(
-            lambda youtube_url: self.__add_songs_to_library_from_youtube(youtube_url)
-        )
-        self._body.set_onclose_download_dialog(lambda: self.__on_close_download_dialog())
-        self._body.set_onclick_add_songs_to_library_fn(lambda paths: self.__add_songs_to_library_from_computer(paths))
-        self._body.set_onclick_select_songs_to_playlist_fn(lambda: self.__start_select_songs_from_library_to_playlist())
-        self._body.set_onclick_apply_select_songs_to_playlist_fn(
-            lambda: self.__finish_select_songs_from_library_to_playlist())
-        self._body.set_on_keypress(lambda key: self.__go_to_song_that_title_start_with(key))
+        self._body.set_onclick_play(self.__play_song_from_menu_at)
+        self._body.set_onclick_love(self.__love_song_from_menu)
+        self._body.set_onclick_add_to_playlist(self.__add_song_from_menu_at)
+        self._body.set_onclick_remove_from_playlist(self.__remove_song_from_menu_at)
+        self._body.set_onchange_song_title_and_artist_on_menu(self.__change_title_and_title_for_song)
+        self._body.set_on_change_song_cover_on_menu(self.__change_cover_for_song)
+        self._body.set_on_delete_song_on_menu(self.__delete_song_at)
+        self._body.set_onclick_download_songs_to_library_fn(self.__add_songs_to_library_from_youtube)
+        self._body.set_onclose_download_dialog(self.__on_close_download_dialog)
+        self._body.set_onclick_add_songs_to_library_fn(self.__add_songs_to_library_from_computer)
+        self._body.set_onclick_select_songs_to_playlist_fn(self.__start_select_songs_from_library_to_playlist)
+        self._body.set_onclick_apply_select_songs_to_playlist_fn(self.__finish_select_songs_from_library_to_playlist)
+        self._body.set_on_keypress(self.__go_to_song_that_title_start_with)
 
         self._body.set_onclick_library(self.__choose_library)
         self._body.set_onclick_favourites(self.__choose_favourites)
         self._body.set_onclick_add_playlist(self.__create_empty_playlist)
 
-        self.set_on_exit(lambda: self._music_player.pause_current_song())
-        self.set_onclick_play_on_tray(lambda: self._music_player.play_current_song())
-        self.set_onclick_pause_on_tray(lambda: self._music_player.pause_current_song())
-        self.set_onclick_prev_on_tray(lambda: self.play_previous_song())
-        self.set_onclick_next_on_tray(lambda: self.play_next_song())
+        self.set_on_exit(self._music_player.pause_current_song)
+        self.set_onclick_play_on_tray(self._music_player.play_current_song)
+        self.set_onclick_pause_on_tray(self._music_player.pause_current_song)
+        self.set_onclick_prev_on_tray(self.play_previous_song)
+        self.set_onclick_next_on_tray(self.play_next_song)
 
-        self.__start_download.connect(lambda: self._body.add_download_item(Lists.last_of(self.__downloaders).get_video_title()))
+        self.__start_download.connect(self.__on_start_download)
 
         # TODO: Reload current playlist
         self.__loaded_covers.connect(lambda: self.__choose_library())
+
+    def __on_start_download(self):
+        return self._body.add_download_item(Lists.last_of(self.__downloaders).get_video_title())
 
     def play_previous_song(self) -> None:
         self._music_player.play_previous_song()
@@ -173,7 +172,7 @@ class MainWindowControl(MainWindowView, BaseControl):
     def __create_playlist(self, playlist: Playlist) -> None:
         card = PlaylistCardData(playlist.get_info())
         card.set_onclick(lambda: self.__choose_playlist(playlist))
-        card.set_onchange_title(lambda title: self.__update_playlist_name(card, title))
+        card.set_onchange_title(lambda title: self.__update_playlist_title(card, title))
         card.set_onchange_cover(lambda cover_path: self.__update_playlist_cover(card, cover_path))
         card.set_ondelete(lambda: self.__delete_playlist(card))
         self._body.add_playlist(card)
@@ -181,10 +180,16 @@ class MainWindowControl(MainWindowView, BaseControl):
         playlist: Playlist = Playlist(info=playlist.get_info(), songs=playlist.get_songs())
         self.__playlists.append(playlist)
 
-    def __update_playlist_name(self, card: PlaylistCardData, name: str) -> None:
-        card.content().name = name
+    def __update_playlist_title(self, card: PlaylistCardData, title: str) -> bool:
+        card.content().name = title
         self.__update_display_playlist_info_if_updating(card)
         Database().playlists.save(self.__playlists)
+        Dialogs.alert(
+            image=Images.EDIT,
+            header="Edit playlist successfully",
+            message=f"You have successfully change information for playlist."
+        )
+        return True
 
     def __update_playlist_cover(self, card: PlaylistCardData, cover_path: str) -> None:
         card.content().cover = Bytes.get_bytes_from_file(cover_path)
@@ -418,7 +423,7 @@ class MainWindowControl(MainWindowView, BaseControl):
     def __remove_song_from_menu_at(self, index: int) -> None:
         self.__selecting_playlist_songs.remove(index)
 
-    def __change_title_and_title_for_song_at(self, index: int, new_title: str, new_artist: str) -> bool:
+    def __change_title_and_title_for_song(self, index: int, new_title: str, new_artist: str) -> bool:
         old_song = self.__displaying_playlist.get_songs().get_song_at(index)
         new_song = old_song.clone()
 
@@ -472,7 +477,7 @@ class MainWindowControl(MainWindowView, BaseControl):
             return new_song.change_artist(new_artist.strip())
         return None
 
-    def __change_cover_for_song_at(self, index: int, path: str) -> None:
+    def __change_cover_for_song(self, index: int, path: str) -> None:
         bytes_data = BytesModifier \
             .of(Bytes.get_bytes_from_file(path)) \
             .square() \
