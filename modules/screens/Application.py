@@ -50,6 +50,7 @@ class Application:
             - Fix bug when choose songs for playlist.
             - Scroll wheel on playlist carousel to scroll.
             - Add shortcut to exit alert, dialog.
+            - Fix color dominant in playlist.
             - Refactor structure.
         """
 

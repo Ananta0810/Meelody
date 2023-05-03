@@ -189,12 +189,17 @@ class MainWindowControl(MainWindowView, BaseControl):
     def __update_playlist_title(self, card: PlaylistCardData, title: str) -> bool:
         card.content().name = title
         self.__update_display_playlist_info_if_updating(card)
+        playlist = next(playlist for playlist in self.__playlists if playlist.get_info().id == card.content().id)
+        playlist.get_info().name = title
         Database().playlists.save(self.__playlists)
         return True
 
     def __update_playlist_cover(self, card: PlaylistCardData, cover_path: str) -> None:
-        card.content().cover = Bytes.get_bytes_from_file(cover_path)
+        cover = Bytes.get_bytes_from_file(cover_path)
+        card.content().cover = cover
         self._body.update_playlist(card)
+        playlist = next(playlist for playlist in self.__playlists if playlist.get_info().id == card.content().id)
+        playlist.get_info().cover = cover
         self.__update_display_playlist_info_if_updating(card)
         Database().playlists.save(self.__playlists)
 
