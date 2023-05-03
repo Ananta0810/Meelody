@@ -12,7 +12,8 @@ from modules.screens.AbstractScreen import BaseView
 from modules.statics.view.Material import Icons, Colors, Cursors, Paddings, Backgrounds, Images
 from modules.widgets.Buttons import IconButton
 from modules.widgets.Cover import CoverProp
-from modules.widgets.PlaylistCards import PlaylistCard, FavouritePlaylistCard, UserPlaylistCard
+from modules.widgets.Dialogs import Dialogs
+from modules.widgets.PlaylistCards import PlaylistCard, FavouritePlaylistCard, UserPlaylistCard, NewPlaylistWindow
 
 
 class PlaylistCardData:
@@ -72,6 +73,8 @@ class PlaylistCarouselView(QScrollArea, BaseView):
     __playlists: list[PlaylistCardData] = []
     __playlist_view_map_to_playlist: dict[PlaylistCardData, UserPlaylistCard] = {}
 
+    __on_add_playlist_fn: Callable[[str, bytes], bool] = None
+
     def __init__(self, parent: Optional["QWidget"] = None):
         super(PlaylistCarouselView, self).__init__(parent)
         self.__init_ui()
@@ -93,7 +96,6 @@ class PlaylistCarouselView(QScrollArea, BaseView):
         # =================Library=================
         self.__playlist_library = self.__create_library_playlist()
         self.__playlist_favourites = self.__create_favourite_playlist()
-        self.__playlist_favourites.set_cover(self.__create_cover(Images.FAVOURITES_PLAYLIST_COVER))
 
         self.__default_playlists = QHBoxLayout()
         self.__default_playlists.setAlignment(Qt.AlignLeft)
@@ -118,11 +120,14 @@ class PlaylistCarouselView(QScrollArea, BaseView):
         )
         self.__btn_add_playlist.setCursor(Cursors.HAND)
         self.__btn_add_playlist.move(self.__add_playlist_card.rect().center() - self.__btn_add_playlist.rect().center())
+        self.__btn_add_playlist.clicked.connect(lambda: self.__open_dialog())
 
         self.__main_layout.addLayout(self.__default_playlists)
         self.__main_layout.addLayout(self.__user_playlists)
         self.__main_layout.addWidget(self.__add_playlist_card)
         self.__main_layout.addStretch()
+
+        self.__add_playlist_dialog = NewPlaylistWindow()
 
     @override
     def setContentsMargins(self, left: int, top: int, right: int, bottom: int) -> None:
@@ -147,8 +152,14 @@ class PlaylistCarouselView(QScrollArea, BaseView):
         self.__playlist_favourites.set_onclick_fn(fn)
 
     @connector
-    def set_onclick_add_playlist(self, fn: Callable[[], None]) -> None:
-        self.__btn_add_playlist.clicked.connect(lambda: fn())
+    def set_on_add_playlist(self, fn: Callable[[str, bytes], bool]) -> None:
+        self.__on_add_playlist_fn = fn
+
+    def __open_dialog(self) -> None:
+        self.__add_playlist_dialog.set_title("Untitled")
+        self.__add_playlist_dialog.set_cover(Images.DEFAULT_PLAYLIST_COVER)
+        self.__add_playlist_dialog.on_apply_change(self.__on_add_playlist_fn)
+        Dialogs.show_dialog(self.__add_playlist_dialog)
 
     def set_default_playlist_cover(self, cover: bytes) -> None:
         self.__default_cover = self.__create_cover(cover)

@@ -39,7 +39,7 @@ class Application:
             - Fix first time hear song. | DONE
             - Fix edit when shuffling is wrong.
             - Update UI for inputs. | DONE
-            - Add button to edit favourite playlist cover.
+            - Add button to edit favourite playlist cover. | DONE
             - Change icon for minimize button. | CANCELED
             - Only show icon on tray when hidden. | DONE
             - Add play buttons on taskbar.
@@ -47,6 +47,9 @@ class Application:
             - Fix 3 alerts show up at the same time.
             - Run thread when import songs.
             - Improve performance for menu.
+            - Fix bug when choose songs for playlist.
+            - Scroll wheel on playlist carousel to scroll.
+            - Add shortcut to exit alert, dialog.
             - Refactor structure.
         """
 

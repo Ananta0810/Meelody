@@ -72,7 +72,7 @@ class MainWindowControl(MainWindowView, BaseControl):
         self._body.set_onclick_library(self.__choose_library)
         self._body.set_onclick_favourites(self.__choose_favourites)
         self._body.set_on_change_favourites_cover(self.__update_favourites_cover)
-        self._body.set_onclick_add_playlist(self.__create_empty_playlist)
+        self._body.set_onclick_add_playlist(self.__create_new_playlist)
 
         self.set_on_exit(self._music_player.pause_current_song)
         self.set_onclick_play_on_tray(self._music_player.play_current_song)
@@ -100,7 +100,7 @@ class MainWindowControl(MainWindowView, BaseControl):
 
     def set_appsettings(self, settings: AppSettings) -> None:
         self.__settings = settings
-        self._body.set_favourites_cover(settings.favourites_cover)
+        self._body.set_favourites_cover(settings.favourites_cover or Images.FAVOURITES_PLAYLIST_COVER)
 
     def load_library(self, playlist: Playlist) -> None:
         self.__library = playlist
@@ -109,7 +109,9 @@ class MainWindowControl(MainWindowView, BaseControl):
     def load_playlists(self, playlists: list[Playlist]) -> None:
         self.__playlists.clear()
         for playlist in playlists:
-            self.__create_playlist(playlist)
+            self.__create_playlist_item(playlist)
+            playlist: Playlist = Playlist(info=playlist.get_info(), songs=playlist.get_songs())
+            self.__playlists.append(playlist)
 
     def load_covers(self, covers_map_to_id: dict[str, bytes]) -> None:
         for song in self.__library.get_songs().get_songs():
@@ -140,7 +142,7 @@ class MainWindowControl(MainWindowView, BaseControl):
         favourite_songs: list[Song] = list(filter(lambda song: song.is_loved(), self.__library.get_songs().get_songs()))
         playlist = Playlist.create(name="Favourites",
                                    songs=PlaylistSongs(favourite_songs),
-                                   cover=Images.FAVOURITES_PLAYLIST_COVER)
+                                   cover=self.__settings.favourites_cover or Images.FAVOURITES_PLAYLIST_COVER)
         self.__select_playlist(playlist)
 
         self.__is_selecting_library = False
@@ -167,55 +169,39 @@ class MainWindowControl(MainWindowView, BaseControl):
         self.__displaying_playlist = playlist
         self._body.load_playlist(playlist)
 
-    def __create_empty_playlist(self) -> None:
-        empty_playlist = Playlist(
-            info=PlaylistInformation(name="Untitled", cover=Images.DEFAULT_PLAYLIST_COVER),
-            songs=PlaylistSongs()
-        )
-        self.__create_playlist(empty_playlist)
+    def __create_new_playlist(self, title: str, cover: bytes | None) -> bool:
+        new_playlist = Playlist(info=PlaylistInformation(name=title, cover=cover), songs=PlaylistSongs())
+        self.__create_playlist_item(new_playlist)
+        self.__playlists.append(new_playlist)
 
-    def __create_playlist(self, playlist: Playlist) -> None:
-        card = PlaylistCardData(playlist.get_info())
+        Database().playlists.save(self.__playlists)
+        return True
+
+    def __create_playlist_item(self, playlist: Playlist) -> None:
+        info = playlist.get_info()
+        card = PlaylistCardData(info.with_cover(info.cover or Images.DEFAULT_PLAYLIST_COVER))
         card.set_onclick(lambda: self.__choose_playlist(playlist))
         card.set_onchange_title(lambda title: self.__update_playlist_title(card, title))
         card.set_onchange_cover(lambda cover_path: self.__update_playlist_cover(card, cover_path))
         card.set_ondelete(lambda: self.__delete_playlist(card))
         self._body.add_playlist(card)
 
-        playlist: Playlist = Playlist(info=playlist.get_info(), songs=playlist.get_songs())
-        self.__playlists.append(playlist)
-
     def __update_playlist_title(self, card: PlaylistCardData, title: str) -> bool:
         card.content().name = title
         self.__update_display_playlist_info_if_updating(card)
         Database().playlists.save(self.__playlists)
-        Dialogs.alert(
-            image=Images.EDIT,
-            header="Edit playlist successfully",
-            message=f"You have successfully changed title for playlist."
-        )
         return True
 
     def __update_playlist_cover(self, card: PlaylistCardData, cover_path: str) -> None:
         card.content().cover = Bytes.get_bytes_from_file(cover_path)
         self._body.update_playlist(card)
         self.__update_display_playlist_info_if_updating(card)
-        Dialogs.alert(
-            image=Images.EDIT,
-            header="Edit playlist successfully",
-            message=f"You have successfully changed cover for playlist."
-        )
         Database().playlists.save(self.__playlists)
 
     def __update_favourites_cover(self, cover_path: str) -> bytes:
         cover = Bytes.get_bytes_from_file(cover_path)
         self.__settings.set_favourite_cover(cover)
         Database().settings.save(self.__settings)
-        Dialogs.alert(
-            image=Images.EDIT,
-            header="Edit cover successfully",
-            message=f"You have successfully changed cover for Favourites."
-        )
         return cover
 
     def __update_display_playlist_info_if_updating(self, card):
@@ -479,11 +465,6 @@ class MainWindowControl(MainWindowView, BaseControl):
         self.__choose_library()
         self.__save_library()
 
-        Dialogs.alert(
-            image=Images.EDIT,
-            header="Edit song successfully",
-            message=f"You have successfully change information for song '{new_song.get_title()}'."
-        )
         return True
 
     @staticmethod
