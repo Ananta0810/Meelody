@@ -5,20 +5,37 @@ from PyQt5.QtGui import QPixmap
 from PyQt5.QtWidgets import QLabel, QWidget
 
 from modules.helpers import Pixmaps
+from modules.helpers.types.Bytes import Bytes
 
 
 class CoverProp:
+    __created_covers: dict['CoverProp', QPixmap] = {}
 
     def __init__(self,
-                 pixmap: QPixmap,
+                 data: bytes,
                  width: int,
                  height: int,
                  radius: int,
                  ):
-        self.__pixmap: QPixmap = pixmap
+        self.__data: bytes = data
+        self.__pixmap: QPixmap | None = None
         self.__width: int = width
         self.__height: int = height
         self.__radius: int = radius
+
+    def __eq__(self, o: 'CoverProp') -> bool:
+        return (
+            self.__data == o.__data and
+            self.__width == o.__width and
+            self.__height == o.__height and
+            self.__radius == o.__radius
+        )
+
+    def __hash__(self) -> int:
+        return hash((Bytes.decode(self.__data), self.__width, self.__height, self.__radius))
+
+    def __set_pixmap(self, pixmap: QPixmap) -> None:
+        self.__pixmap = pixmap
 
     def radius(self) -> int:
         return self.__radius
@@ -34,6 +51,12 @@ class CoverProp:
         radius: int = 0,
         crop_center: bool = True,
     ) -> Union['CoverProp', None]:
+        cover = CoverProp(image_byte, width, height, radius)
+        if cover in CoverProp.__created_covers:
+            pixmap = CoverProp.__created_covers[cover]
+            cover.__set_pixmap(pixmap)
+            return cover
+
         pixmap = Pixmaps.get_pixmap_from_bytes(image_byte)
         if pixmap.isNull():
             return None
@@ -42,7 +65,10 @@ class CoverProp:
             pixmap = Pixmaps.crop_pixmap(pixmap, width, height, crop_center)
         if radius > 0:
             pixmap = Pixmaps.round_pixmap(pixmap, radius)
-        return CoverProp(pixmap, width, height, radius)
+
+        cover.__set_pixmap(pixmap)
+        CoverProp.__created_covers[cover] = pixmap
+        return cover
 
 
 class Cover(QLabel):
