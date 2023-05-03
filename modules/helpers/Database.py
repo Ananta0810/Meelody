@@ -5,6 +5,7 @@ from logging import getLogger
 from modules.helpers import Files, Printers
 from modules.helpers import Jsons
 from modules.helpers.types import Strings
+from modules.helpers.types.Bytes import Bytes
 from modules.helpers.types.Metas import SingletonMeta
 from modules.models.AppSettings import AppSettings
 from modules.models.Playlist import Playlist, PlaylistJson
@@ -38,6 +39,7 @@ class Database(metaclass=SingletonMeta):
         self.settings: SettingsSaver = SettingsSaver()
         self.songs: SongSaver = SongSaver()
         self.playlists: PlaylistSaver = PlaylistSaver()
+        self.covers: CoverSaver = CoverSaver()
 
 
 class SongSaver(DataSaver):
@@ -69,6 +71,29 @@ class SongSaver(DataSaver):
                 Printers.error("Extract song from json failed.")
                 pass
         return playlist
+
+
+class CoverSaver(DataSaver):
+
+    def load(self) -> dict[str, bytes]:
+        return self.__get_covers_from_json() \
+            if os.path.exists(self.get_path()) \
+            else {}
+
+    def save(self, data: list[Song]) -> None:
+        file_data: list[dict[str, str]] = [self.__dict_of(song) for song in data]
+        Jsons.write_to_file(self.get_path(), file_data)
+
+    @staticmethod
+    def __dict_of(song: Song) -> dict[str, str]:
+        return {
+            'id': song.get_id(),
+            'cover': Bytes.decode(song.get_cover())
+        }
+
+    def __get_covers_from_json(self) -> dict[str, bytes]:
+        data: list[dict[str, str]] = Jsons.read_from_file(self.get_path()) or {}
+        return {item['id']: Bytes.encode(item['cover']) for item in data}
 
 
 class PlaylistSaver(DataSaver):

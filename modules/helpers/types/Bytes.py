@@ -1,6 +1,5 @@
 import io
 from io import BytesIO
-from typing import Union
 
 from PIL import Image
 
@@ -12,11 +11,11 @@ class Bytes:
             return bytearray(file.read())
 
     @staticmethod
-    def decode(value: Union[bytes, None]) -> Union[str, None]:
+    def decode(value: bytes | None) -> str | None:
         return None if value is None else value.decode('iso-8859-1')
 
     @staticmethod
-    def encode(value: Union[str, None]) -> Union[bytes, None]:
+    def encode(value: str | None) -> bytes | None:
         return None if value is None else value.encode('iso-8859-1')
 
 

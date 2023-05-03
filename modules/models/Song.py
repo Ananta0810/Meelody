@@ -49,7 +49,6 @@ class Song:
             location=json['location'],
             title=json['title'],
             artist=json['artist'],
-            cover=Bytes.encode(json['cover']),
             length=json['length'],
             sample_rate=json['sample_rate'],
             loved=json['is_loved'],
@@ -69,7 +68,6 @@ class Song:
             'location': self.__location,
             'title': self.__title,
             'artist': self.__artist,
-            'cover': Bytes.decode(self.__cover),
             'length': self.__length,
             'sample_rate': self.__sample_rate,
             'is_loved': self.__is_loved,
@@ -105,7 +103,7 @@ class Song:
         self.__length = audio.get_length()
         self.__sample_rate = audio.get_sample_rate()
 
-    def set_title(self, title: str) -> bool:
+    def change_title(self, title: str) -> bool:
         """
         Rename title of the song. In addition, rename the audio file name.
         """
@@ -120,7 +118,7 @@ class Song:
         except PermissionError:
             return False
 
-    def set_artist(self, artist: str) -> bool:
+    def change_artist(self, artist: str) -> bool:
         """
         Rename artist of the song. Save the new artist into the audio file.
         """
@@ -129,7 +127,7 @@ class Song:
             self.__artist = artist
         return change_successfully
 
-    def set_cover(self, cover: bytes) -> bool:
+    def change_cover(self, cover: bytes) -> bool:
         """
         Change cover of the song. Save the new cover into the audio file.
         """
@@ -139,6 +137,12 @@ class Song:
         else:
             Printers.error("Save cover failed.")
         return change_successfully
+
+    def set_cover(self, cover: bytes) -> None:
+        """
+        Change cover of the song. Save the new cover into the audio file.
+        """
+        self.__cover = cover
 
     def get_id(self) -> str:
         return self.__id
@@ -152,7 +156,7 @@ class Song:
     def get_artist(self) -> str:
         return self.__artist
 
-    def get_cover(self) -> bytes:
+    def get_cover(self) -> bytes | None:
         return self.__cover
 
     def get_length(self) -> int:

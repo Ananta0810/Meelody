@@ -1,3 +1,6 @@
+from threading import Thread
+from time import sleep
+
 from modules.helpers.Database import Database
 from modules.models.Playlist import Playlist
 from modules.models.PlaylistSongs import PlaylistSongs
@@ -17,6 +20,7 @@ class Application:
 
     def run(self) -> None:
         self.window.show()
+        self.__post_init()
 
     def load_playlist(self):
         """
@@ -49,8 +53,17 @@ class Application:
         Database().settings.set_path("configuration/settings.json")
         Database().songs.set_path("library/library.json")
         Database().playlists.set_path("library/playlists.json")
+        Database().covers.set_path("library/covers.json")
 
         songs: PlaylistSongs = Database().songs.load("library", with_extension="mp3")
         self.window.set_appsettings(Database().settings.load())
         self.window.load_library(Playlist.create(name="Library", songs=songs, cover=Images.DEFAULT_PLAYLIST_COVER))
         self.window.load_playlists(Database().playlists.load(songs.get_songs()))
+
+    def __post_init(self) -> None:
+        Thread(target=lambda: self.__lazy_load_covers()).start()
+
+    def __lazy_load_covers(self):
+        sleep(0.5)
+        covers = Database().covers.load()
+        self.window.load_covers(covers)

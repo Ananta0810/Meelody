@@ -1,12 +1,15 @@
 from time import perf_counter
-from typing import Callable
+from typing import Callable, TypeVar
+
+T = TypeVar('T')
 
 
-def measure(fn: Callable[[], None]) -> float:
+def measure(target: Callable[[], T], result_fn: Callable[[float], None]) -> T:
     start = perf_counter()
-    fn()
+    result = target()
     end = perf_counter()
-    return end - start
+    result_fn(end - start)
+    return result
 
 
 def string_of(time: float) -> str:

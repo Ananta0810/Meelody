@@ -7,8 +7,7 @@ from modules.screens.Application import Application
 
 def run_application():
     app = QApplication(argv)
-    time_to_run = Times.measure(lambda: Application().run())
-    print(f"Time to start application: {time_to_run}")
+    Times.measure(lambda: Application().run(), lambda time: print(f"Time to start application: {time}"))
     exit(app.exec_())
 
 

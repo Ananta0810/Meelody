@@ -33,9 +33,11 @@ class MainWindowControl(MainWindowView, BaseControl):
     __player: AudioPlayer = AudioPlayer()
     __selecting_playlist_songs: set[int] = set()
     __is_selecting_library: bool = False
-    __start_download: pyqtSignal = pyqtSignal()
     __downloaders: list[YoutubeDownloader] = []
     __download_thread: Thread | None = None
+
+    __start_download: pyqtSignal = pyqtSignal()
+    __loaded_covers: pyqtSignal = pyqtSignal()
 
     def __init__(self) -> None:
         super(MainWindowControl, self).__init__()
@@ -83,6 +85,9 @@ class MainWindowControl(MainWindowView, BaseControl):
 
         self.__start_download.connect(lambda: self._body.add_download_item(Lists.last_of(self.__downloaders).get_video_title()))
 
+        # TODO: Reload current playlist
+        self.__loaded_covers.connect(lambda: self.__choose_library())
+
     def play_previous_song(self) -> None:
         self._music_player.play_previous_song()
         if self.__is_selecting_library:
@@ -104,6 +109,11 @@ class MainWindowControl(MainWindowView, BaseControl):
         self.__playlists.clear()
         for playlist in playlists:
             self.__create_playlist(playlist)
+
+    def load_covers(self, covers_map_to_id: dict[str, bytes]) -> None:
+        for song in self.__library.get_songs().get_songs():
+            song.set_cover(covers_map_to_id[song.get_id()])
+        self.__loaded_covers.emit()
 
     def __choose_library(self) -> None:
         self.__select_playlist(self.__library)
@@ -361,6 +371,7 @@ class MainWindowControl(MainWindowView, BaseControl):
 
     def __save_library(self):
         Database().songs.save(self.__library.get_songs().get_songs())
+        Database().covers.save(self.__library.get_songs().get_songs())
 
     @staticmethod
     def __add_songs_from_path(paths):
@@ -425,7 +436,7 @@ class MainWindowControl(MainWindowView, BaseControl):
                     message=f"Song has already existed."
                 )
                 return False
-            changed_title = new_song.set_title(new_title.strip())
+            changed_title = new_song.change_title(new_title.strip())
 
         changed_artist = self.__change_song_artist(new_artist, new_song, old_song)
 
@@ -452,13 +463,13 @@ class MainWindowControl(MainWindowView, BaseControl):
     @staticmethod
     def __change_song_title(new_song, new_title, old_song) -> bool | None:
         if (old_song.get_title() or '') != new_title:
-            return new_song.set_title(new_title)
+            return new_song.change_title(new_title)
         return None
 
     @staticmethod
     def __change_song_artist(new_artist, new_song, old_song) -> bool | None:
         if (old_song.get_artist() or '') != new_artist:
-            return new_song.set_artist(new_artist.strip())
+            return new_song.change_artist(new_artist.strip())
         return None
 
     def __change_cover_for_song_at(self, index: int, path: str) -> None:
@@ -468,7 +479,7 @@ class MainWindowControl(MainWindowView, BaseControl):
             .resize(256, 256) \
             .to_bytes()
         song = self.__displaying_playlist.get_songs().get_song_at(index)
-        song.set_cover(bytes_data)
+        song.change_cover(bytes_data)
         self.__choose_library()
         self.__save_library()
 
