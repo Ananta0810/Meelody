@@ -53,14 +53,16 @@ class ActionButton(QPushButton, BaseView):
 
     @staticmethod
     def build(
-        size: QSize,
         font: QFont,
         light_mode: TextStyle,
+        size: QSize = None,
         dark_mode: TextStyle = None,
         padding: Padding = Paddings.DEFAULT,
         parent: QObject = None,
     ) -> 'ActionButton':
         button = ActionButton(parent)
+
+        size = size or QSize(0, 0)
 
         width = size.width()
         if width is not None and width > 0:

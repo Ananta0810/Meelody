@@ -51,9 +51,9 @@ class Application:
         """
 
         Database().settings.set_path("configuration/settings.json")
-        Database().songs.set_path("library/library.json")
-        Database().playlists.set_path("library/playlists.json")
-        Database().covers.set_path("library/covers.json")
+        Database().songs.set_path("configuration/library.json")
+        Database().playlists.set_path("configuration/playlists.json")
+        Database().covers.set_path("configuration/covers.json")
 
         songs: PlaylistSongs = Database().songs.load("library", with_extension="mp3")
         self.window.set_appsettings(Database().settings.load())

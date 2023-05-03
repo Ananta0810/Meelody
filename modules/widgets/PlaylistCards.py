@@ -11,44 +11,44 @@ from modules.models.view.Background import Background
 from modules.models.view.Border import Border
 from modules.models.view.Color import Color
 from modules.models.view.ColorBox import ColorBox
+from modules.models.view.Padding import Padding
 from modules.models.view.builder.FontBuilder import FontBuilder
 from modules.models.view.builder.IconButtonStyle import IconButtonStyle
 from modules.models.view.builder.TextStyle import TextStyle
 from modules.statics import Properties
 from modules.statics.view.Material import ColorBoxes, Paddings, Icons, Colors, Backgrounds, Images
+from modules.widgets import Dialogs
 from modules.widgets.Buttons import IconButton, ActionButton
 from modules.widgets.Cover import Cover, CoverProp
-from modules.widgets import Dialogs
 from modules.widgets.Labels import LabelWithDefaultText, Input
 
 
 class UpdatePlaylistWindow(Dialogs.Dialog):
-    __on_accept_fn: callable = Callable[[str, str], None]
+    __on_accept_fn: Callable[[str], bool] = None
+    __onclick_choose_cover: callable = None
 
     @override
     def _build_content(self):
-        self.__image = Cover()
-        self.__image.setAlignment(Qt.AlignHCenter)
-        self.__header = LabelWithDefaultText.build(
-            font=FontBuilder.build(family="Segoe UI Semibold", size=16, bold=True),
-            light_mode_style=TextStyle(text_color=ColorBoxes.BLACK),
-            dark_mode_style=TextStyle(text_color=ColorBoxes.WHITE),
-        )
-        self.__header.setAlignment(Qt.AlignCenter)
+        self.__cover = Cover()
+        cover_edge = 360 - self.contentsMargins().left() - self.contentsMargins().right()
+        self.__cover.setFixedSize(cover_edge, cover_edge)
 
         self.__label_title = LabelWithDefaultText.build(
             font=FontBuilder.build(size=11),
             light_mode_style=TextStyle(text_color=ColorBoxes.BLACK),
             dark_mode_style=TextStyle(text_color=ColorBoxes.WHITE),
         )
-        background = Background(border_radius=8,
-                                color=ColorBox(normal=Colors.GRAY.with_opacity(8)),
-                                border=Border(size=2, color=ColorBox(Color(216, 216, 216)))
-                                )
-
         self.__input_title = Input.build(
             font=FontBuilder.build(size=12),
-            light_mode_style=TextStyle(text_color=ColorBoxes.BLACK, background=background),
+            light_mode_style=TextStyle(
+                text_color=ColorBoxes.BLACK,
+                background=(
+                    Background(border_radius=8,
+                               color=ColorBox(normal=Colors.GRAY.with_opacity(8)),
+                               border=Border(size=2, color=ColorBox(Color(216, 216, 216)))
+                               )
+                )
+            ),
             padding=8
         )
         self.__input_title.setFixedHeight(48)
@@ -61,29 +61,39 @@ class UpdatePlaylistWindow(Dialogs.Dialog):
                                  background=Backgrounds.ROUNDED_PRIMARY_75.with_border_radius(8)),
             dark_mode=TextStyle(text_color=ColorBoxes.WHITE, background=Backgrounds.ROUNDED_WHITE_25)
         )
-        self.__accept_btn.clicked.connect(lambda: self._on_accepted())
 
         self.__view_layout = QVBoxLayout(self)
+        self.__view_layout.setContentsMargins(0, 12, 0, 0)
         self.__view_layout.setAlignment(Qt.AlignVCenter)
-        self.__view_layout.addWidget(self.__image)
-        self.__view_layout.addWidget(self.__header)
+        self.__view_layout.addWidget(self.__cover)
         self.__view_layout.addWidget(self.__label_title)
         self.__view_layout.addWidget(self.__input_title)
         self.__view_layout.addSpacing(8)
         self.__view_layout.addWidget(self.__accept_btn)
 
-        self.__header.setText("Update Playlist")
+        self.__edit_cover_btn = ActionButton.build(
+            font=FontBuilder.build(family="Segoe UI Semibold", size=9),
+            padding=Padding(12, 12),
+            light_mode=TextStyle(text_color=ColorBoxes.WHITE,
+                                 background=Backgrounds.ROUNDED_PRIMARY.with_border_radius(8)),
+            dark_mode=TextStyle(text_color=ColorBoxes.WHITE, background=Backgrounds.ROUNDED_WHITE_25),
+            parent=self
+        )
+        self.__edit_cover_btn.setText("Choose cover")
+        self.__edit_cover_btn.apply_light_mode()
+
         self.__label_title.setText("Enter title")
-        self.__image.set_cover(CoverProp.from_bytes(Images.EDIT, width=128))
         self.__accept_btn.setText("Apply")
 
-        self.setFixedWidth(480)
+        self.setFixedWidth(360)
         self.setFixedHeight(self.sizeHint().height())
+
+        self.__accept_btn.clicked.connect(self._on_accepted)
+        self.__edit_cover_btn.clicked.connect(lambda: self.__onclick_choose_cover())
 
     @override
     def apply_dark_mode(self) -> None:
         super().apply_dark_mode()
-        self.__header.apply_dark_mode()
         self.__label_title.apply_dark_mode()
         self.__input_title.apply_dark_mode()
         self.__accept_btn.apply_dark_mode()
@@ -91,7 +101,6 @@ class UpdatePlaylistWindow(Dialogs.Dialog):
     @override
     def apply_light_mode(self) -> None:
         super().apply_light_mode()
-        self.__header.apply_light_mode()
         self.__label_title.apply_light_mode()
         self.__input_title.apply_light_mode()
         self.__accept_btn.apply_light_mode()
@@ -100,10 +109,21 @@ class UpdatePlaylistWindow(Dialogs.Dialog):
     def resizeEvent(self, event: QResizeEvent) -> None:
         super().resizeEvent(event)
         self.__input_title.setFixedWidth(self.__accept_btn.size().width())
+        self.__edit_cover_btn.move(
+            self.__cover.x() + self.__cover.width() - self.__edit_cover_btn.width() - 8,
+            self.__cover.y() + 8,
+        )
 
     @connector
     def on_apply_change(self, fn: Callable[[str], bool]) -> None:
         self.__on_accept_fn = fn
+
+    @connector
+    def onclick_choose_cover(self, fn: callable) -> None:
+        self.__onclick_choose_cover = fn
+
+    def set_cover(self, cover: bytes) -> None:
+        self.__cover.set_cover(CoverProp.from_bytes(cover, self.__cover.width(), self.__cover.height(), radius=16))
 
     def set_song_title(self, title: str) -> None:
         self.__input_title.setText(title)
@@ -116,6 +136,11 @@ class UpdatePlaylistWindow(Dialogs.Dialog):
         can_close = self.__on_accept_fn(self.__input_title.text())
         if can_close:
             super()._on_accepted()
+
+    def __onclick_select_cover(self) -> None:
+        path = QFileDialog.getOpenFileName(self, filter=Properties.ImportType.IMAGE)[0]
+        if path is not None and path != '':
+            self.__onchange_cover_fn(path)
 
 
 class PlaylistCard(QWidget):
@@ -148,7 +173,7 @@ class PlaylistCard(QWidget):
     @override
     def resizeEvent(self, event: QResizeEvent) -> None:
         self._cover.setFixedSize(self.size())
-        self._adapt_theme_to_cover(self._cover.current_cover())
+        self._adapt_theme_to_cover(self._cover.current_cover().content())
         return super().resizeEvent(event)
 
     @override
@@ -213,7 +238,7 @@ class PlaylistCard(QWidget):
 
 class EditablePlaylistCard(PlaylistCard):
     _main_layout: QVBoxLayout
-    _buttons: QHBoxLayout
+    __buttons: QHBoxLayout
     __delete_btn: IconButton
     _cover: Cover
     _label: LabelWithDefaultText
@@ -225,9 +250,6 @@ class EditablePlaylistCard(PlaylistCard):
         super().__init__(font, parent)
 
     def _init_ui(self, font: QFont) -> None:
-        self._main_layout = QVBoxLayout(self)
-        self._main_layout.setContentsMargins(20, 20, 20, 20)
-
         self.__edit_title_btn = IconButton.build(
             padding=Paddings.RELATIVE_50,
             size=Icons.MEDIUM,
@@ -241,21 +263,6 @@ class EditablePlaylistCard(PlaylistCard):
         self.__edit_title_btn.apply_light_mode()
         self.__edit_title_btn.clicked.connect(lambda: self.__open_dialog())
 
-        self.__edit_cover_btn = IconButton.build(
-            padding=Paddings.RELATIVE_50,
-            size=Icons.MEDIUM,
-            style=IconButtonStyle(
-                light_mode_icon=Icons.IMAGE.with_color(Colors.PRIMARY),
-                light_mode_background=Backgrounds.CIRCLE_PRIMARY_10,
-                dark_mode_icon=Icons.IMAGE.with_color(Colors.WHITE),
-                dark_mode_background=Backgrounds.CIRCLE_PRIMARY_75,
-            ),
-        )
-        self.__edit_cover_btn.apply_light_mode()
-
-        self.__edit_cover_btn.clicked.connect(
-            lambda: self.__onclick_select_cover() if self.__onchange_cover_fn is not None else None)
-
         self.__delete_btn = IconButton.build(
             padding=Paddings.RELATIVE_50,
             size=Icons.MEDIUM,
@@ -267,14 +274,15 @@ class EditablePlaylistCard(PlaylistCard):
             ),
         )
         self.__delete_btn.apply_light_mode()
-        self.__delete_btn.clicked.connect(lambda: self.__on_click_delete())
 
-        self._buttons = QHBoxLayout()
-        self._buttons.setContentsMargins(0, 0, 0, 0)
-        self._buttons.addStretch()
-        self._buttons.addWidget(self.__edit_title_btn)
-        self._buttons.addWidget(self.__edit_cover_btn)
-        self._buttons.addWidget(self.__delete_btn)
+        self.__buttons = QVBoxLayout()
+        self.__buttons.setContentsMargins(0, 0, 0, 0)
+        self.__buttons.addWidget(self.__edit_title_btn)
+        self.__buttons.addWidget(self.__delete_btn)
+
+        top_layout = QHBoxLayout()
+        top_layout.addStretch(1)
+        top_layout.addLayout(self.__buttons)
 
         self._cover = Cover(self)
         self._label = LabelWithDefaultText.build(
@@ -286,15 +294,23 @@ class EditablePlaylistCard(PlaylistCard):
         self._label.setFixedHeight(32)
         self._label.setSizePolicy(QSizePolicy(QSizePolicy.Expanding, QSizePolicy.Fixed))
 
-        self._main_layout.addLayout(self._buttons)
+        self._main_layout = QVBoxLayout(self)
+        self._main_layout.setContentsMargins(20, 20, 20, 20)
+        self._main_layout.addLayout(top_layout)
         self._main_layout.addStretch()
         self._main_layout.addWidget(self._label)
 
+        self.__delete_btn.clicked.connect(lambda: self.__on_click_delete())
+
+        self.__update_dialog = UpdatePlaylistWindow()
+
     def __open_dialog(self) -> None:
-        dialog = UpdatePlaylistWindow()
-        dialog.set_song_title(self._label.text())
-        dialog.on_apply_change(self.__on_change_title)
-        Dialogs.Dialogs.show_dialog(dialog)
+        self.__update_dialog.set_song_title(self._label.text())
+        self.__update_dialog.set_cover(self._cover.current_cover().data())
+        self.__update_dialog.on_apply_change(self.__on_change_title)
+        self.__update_dialog.onclick_choose_cover(
+            lambda: self.__onclick_select_cover() if self.__onchange_cover_fn is not None else None)
+        Dialogs.Dialogs.show_dialog(self.__update_dialog)
 
     def __on_change_title(self, title: str) -> bool:
         changed_success = self.__onchange_title_fn(title)
@@ -321,6 +337,11 @@ class EditablePlaylistCard(PlaylistCard):
     def set_onchange_title(self, fn: Callable[[str], bool]) -> None:
         self.__onchange_title_fn = fn
 
+    @override
+    def set_cover(self, pixmap: CoverProp) -> None:
+        super().set_cover(pixmap)
+        self.__update_dialog.set_cover(pixmap.data())
+
     def __onclick_select_cover(self) -> None:
         path = QFileDialog.getOpenFileName(self, filter=Properties.ImportType.IMAGE)[0]
         if path is not None and path != '':
@@ -333,15 +354,13 @@ class EditablePlaylistCard(PlaylistCard):
         should_dark_mode_for_buttons = Pixmaps.check_contrast_at(pixmap, rect)
         if should_dark_mode_for_buttons:
             self.__edit_title_btn.apply_dark_mode()
-            self.__edit_cover_btn.apply_dark_mode()
             self.__delete_btn.apply_dark_mode()
         else:
             self.__edit_title_btn.apply_light_mode()
             self.__delete_btn.apply_light_mode()
-            self.__edit_cover_btn.apply_light_mode()
 
     def __get_button_rect(self) -> QRect:
-        return QRect(self.__edit_cover_btn.pos().x(),
-                     self.__edit_cover_btn.pos().y(),
-                     self.__edit_cover_btn.rect().width() + self.__delete_btn.rect().width(),
-                     self.__edit_cover_btn.rect().height())
+        return QRect(self.__edit_title_btn.pos().x(),
+                     self.__edit_title_btn.pos().y(),
+                     self.__edit_title_btn.rect().width() + self.__delete_btn.rect().width(),
+                     self.__edit_title_btn.rect().height())

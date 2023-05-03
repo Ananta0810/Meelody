@@ -75,10 +75,10 @@ class SongSaver(DataSaver):
 
 class CoverSaver(DataSaver):
 
-    def load(self) -> dict[str, bytes]:
+    def load(self, songs: list[Song] = None) -> dict[str, bytes]:
         return self.__get_covers_from_json() \
             if os.path.exists(self.get_path()) \
-            else {}
+            else self.__create_json_with_covers_of(songs or [])
 
     def save(self, data: list[Song]) -> None:
         file_data: list[dict[str, str]] = [self.__dict_of(song) for song in data]
@@ -94,6 +94,10 @@ class CoverSaver(DataSaver):
     def __get_covers_from_json(self) -> dict[str, bytes]:
         data: list[dict[str, str]] = Jsons.read_from_file(self.get_path()) or {}
         return {item['id']: Bytes.encode(item['cover']) for item in data}
+
+    def __create_json_with_covers_of(self, songs: list[Song]):
+        self.save(songs)
+        return {song.get_id(): Bytes.encode(song.get_cover()) for song in songs}
 
 
 class PlaylistSaver(DataSaver):

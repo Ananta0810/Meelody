@@ -8,9 +8,9 @@ from PyQt5.QtCore import pyqtSignal
 from modules.helpers import Files, Times, Printers
 from modules.helpers.Database import Database
 from modules.helpers.Youtubes import YoutubeDownloader
+from modules.helpers.types import Lists
 from modules.helpers.types.Bytes import Bytes, BytesModifier
 from modules.helpers.types.Decorators import override
-from modules.helpers.types import Lists
 from modules.models.AppSettings import AppSettings
 from modules.models.AudioPlayer import AudioPlayer
 from modules.models.Playlist import Playlist
@@ -111,7 +111,10 @@ class MainWindowControl(MainWindowView, BaseControl):
 
     def load_covers(self, covers_map_to_id: dict[str, bytes]) -> None:
         for song in self.__library.get_songs().get_songs():
-            song.set_cover(covers_map_to_id[song.get_id()])
+            try:
+                song.set_cover(covers_map_to_id[song.get_id()])
+            except KeyError:
+                pass
         self.__loaded_covers.emit()
 
     def __choose_library(self) -> None:

@@ -37,6 +37,9 @@ class CoverProp:
     def __set_pixmap(self, pixmap: QPixmap) -> None:
         self.__pixmap = pixmap
 
+    def data(self) -> bytes:
+        return self.__data
+
     def radius(self) -> int:
         return self.__radius
 
@@ -87,8 +90,8 @@ class Cover(QLabel):
         self.__default_cover = cover
         self.set_cover(cover)
 
-    def current_cover(self) -> QPixmap:
-        return self.__current_cover.content()
+    def current_cover(self) -> CoverProp:
+        return self.__current_cover
 
     def set_radius(self, radius: int) -> None:
         self.__radius = radius
