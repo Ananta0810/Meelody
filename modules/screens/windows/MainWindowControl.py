@@ -71,6 +71,7 @@ class MainWindowControl(MainWindowView, BaseControl):
 
         self._body.set_onclick_library(self.__choose_library)
         self._body.set_onclick_favourites(self.__choose_favourites)
+        self._body.set_on_change_favourites_cover(self.__update_favourites_cover)
         self._body.set_onclick_add_playlist(self.__create_empty_playlist)
 
         self.set_on_exit(self._music_player.pause_current_song)
@@ -82,7 +83,7 @@ class MainWindowControl(MainWindowView, BaseControl):
         self.__start_download.connect(self.__on_start_download)
 
         # TODO: Reload current playlist
-        self.__loaded_covers.connect(lambda: self.__choose_library())
+        # self.__loaded_covers.connect(lambda: self.__choose_library())
 
     def __on_start_download(self):
         return self._body.add_download_item(Lists.last_of(self.__downloaders).get_video_title())
@@ -99,6 +100,7 @@ class MainWindowControl(MainWindowView, BaseControl):
 
     def set_appsettings(self, settings: AppSettings) -> None:
         self.__settings = settings
+        self._body.set_favourites_cover(settings.favourites_cover)
 
     def load_library(self, playlist: Playlist) -> None:
         self.__library = playlist
@@ -190,7 +192,7 @@ class MainWindowControl(MainWindowView, BaseControl):
         Dialogs.alert(
             image=Images.EDIT,
             header="Edit playlist successfully",
-            message=f"You have successfully change information for playlist."
+            message=f"You have successfully changed title for playlist."
         )
         return True
 
@@ -198,7 +200,23 @@ class MainWindowControl(MainWindowView, BaseControl):
         card.content().cover = Bytes.get_bytes_from_file(cover_path)
         self._body.update_playlist(card)
         self.__update_display_playlist_info_if_updating(card)
+        Dialogs.alert(
+            image=Images.EDIT,
+            header="Edit playlist successfully",
+            message=f"You have successfully changed cover for playlist."
+        )
         Database().playlists.save(self.__playlists)
+
+    def __update_favourites_cover(self, cover_path: str) -> bytes:
+        cover = Bytes.get_bytes_from_file(cover_path)
+        self.__settings.set_favourite_cover(cover)
+        Database().settings.save(self.__settings)
+        Dialogs.alert(
+            image=Images.EDIT,
+            header="Edit cover successfully",
+            message=f"You have successfully changed cover for Favourites."
+        )
+        return cover
 
     def __update_display_playlist_info_if_updating(self, card):
         updating_playlist: Playlist = self.find_playlist_of(card)

@@ -141,6 +141,13 @@ class HomeBodyView(QScrollArea, BaseView):
         self.__playlist_carousel.set_onclick_favourites(fn)
 
     @connector
+    def set_on_change_favourites_cover(self, fn: Callable[[str], bytes]) -> None:
+        self.__playlist_carousel.set_on_change_favourites_cover(fn)
+
+    def set_favourites_cover(self, cover: bytes) -> None:
+        self.__playlist_carousel.set_favourites_cover(cover)
+
+    @connector
     def set_onclick_add_playlist(self, fn: Callable[[], None]) -> None:
         self.__playlist_carousel.set_onclick_add_playlist(fn)
 

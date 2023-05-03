@@ -236,7 +236,7 @@ class PlaylistCard(QWidget):
         )
 
 
-class EditablePlaylistCard(PlaylistCard):
+class UserPlaylistCard(PlaylistCard):
     _main_layout: QVBoxLayout
     __buttons: QHBoxLayout
     __delete_btn: IconButton
@@ -364,3 +364,83 @@ class EditablePlaylistCard(PlaylistCard):
                      self.__edit_title_btn.pos().y(),
                      self.__edit_title_btn.rect().width() + self.__delete_btn.rect().width(),
                      self.__edit_title_btn.rect().height())
+
+
+class FavouritePlaylistCard(PlaylistCard):
+    _main_layout: QVBoxLayout
+    __buttons: QHBoxLayout
+    __delete_btn: IconButton
+    _cover: Cover
+    _label: LabelWithDefaultText
+    __onchange_cover_fn: Callable[[str], bytes]
+    __onchange_title_fn: Callable[[str], bool]
+    __delete_fn: Callable[[], None]
+
+    def __init__(self, font: QFont, parent: Optional["QWidget"] = None):
+        super().__init__(font, parent)
+
+    def _init_ui(self, font: QFont) -> None:
+        self.__edit_cover_btn = IconButton.build(
+            padding=Paddings.RELATIVE_50,
+            size=Icons.MEDIUM,
+            style=IconButtonStyle(
+                light_mode_icon=Icons.IMAGE.with_color(Colors.PRIMARY),
+                light_mode_background=Backgrounds.CIRCLE_PRIMARY_10,
+                dark_mode_icon=Icons.IMAGE.with_color(Colors.WHITE),
+                dark_mode_background=Backgrounds.CIRCLE_PRIMARY_75,
+            ),
+        )
+        self.__edit_cover_btn.apply_light_mode()
+        self.__edit_cover_btn.clicked.connect(self.__onclick_select_cover)
+
+        top_layout = QHBoxLayout()
+        top_layout.addStretch(1)
+        top_layout.setContentsMargins(0, 0, 0, 0)
+        top_layout.addWidget(self.__edit_cover_btn)
+
+        self._cover = Cover(self)
+        self._label = LabelWithDefaultText.build(
+            font=font,
+            light_mode_style=TextStyle(text_color=ColorBoxes.BLACK),
+            dark_mode_style=TextStyle(text_color=ColorBoxes.WHITE),
+            parent=self,
+        )
+        self._label.setFixedHeight(32)
+        self._label.setSizePolicy(QSizePolicy(QSizePolicy.Expanding, QSizePolicy.Fixed))
+
+        self._main_layout = QVBoxLayout(self)
+        self._main_layout.setContentsMargins(20, 20, 20, 20)
+        self._main_layout.addLayout(top_layout)
+        self._main_layout.addStretch()
+        self._main_layout.addWidget(self._label)
+
+    def set_onchange_cover(self, fn: Callable[[str], bytes]) -> None:
+        self.__onchange_cover_fn = fn
+
+    def set_favourites_cover(self, cover: bytes) -> None:
+        self.set_cover(
+            CoverProp.from_bytes(cover or Images.FAVOURITES_PLAYLIST_COVER,
+                                 width=self.width(),
+                                 height=self.height(),
+                                 radius=24))
+
+    @override
+    def set_cover(self, pixmap: CoverProp) -> None:
+        super().set_cover(pixmap)
+
+    def __onclick_select_cover(self) -> None:
+        path: str = QFileDialog.getOpenFileName(self, filter=Properties.ImportType.IMAGE)[0]
+        if path is None and path == '':
+            return
+        cover = self.__onchange_cover_fn(path)
+        if cover is not None:
+            self.set_favourites_cover(cover)
+
+    @override
+    def _adapt_theme_to_cover(self, pixmap: QPixmap) -> None:
+        super()._adapt_theme_to_cover(pixmap)
+        should_dark_mode_for_buttons = Pixmaps.check_contrast_at(pixmap, self.__edit_cover_btn.rect())
+        if should_dark_mode_for_buttons:
+            self.__edit_cover_btn.apply_dark_mode()
+        else:
+            self.__edit_cover_btn.apply_light_mode()

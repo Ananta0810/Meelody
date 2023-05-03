@@ -10,9 +10,9 @@ from modules.models.view.builder.FontBuilder import FontBuilder
 from modules.models.view.builder.IconButtonStyle import IconButtonStyle
 from modules.screens.AbstractScreen import BaseView
 from modules.statics.view.Material import Icons, Colors, Cursors, Paddings, Backgrounds, Images
-from modules.widgets.Cover import CoverProp
 from modules.widgets.Buttons import IconButton
-from modules.widgets.PlaylistCards import PlaylistCard, EditablePlaylistCard
+from modules.widgets.Cover import CoverProp
+from modules.widgets.PlaylistCards import PlaylistCard, FavouritePlaylistCard, UserPlaylistCard
 
 
 class PlaylistCardData:
@@ -64,13 +64,13 @@ class PlaylistCarouselView(QScrollArea, BaseView):
     __user_playlists: QHBoxLayout
     __default_playlists: QHBoxLayout
     __playlist_library: PlaylistCard
-    __playlist_favourites: PlaylistCard
+    __playlist_favourites: FavouritePlaylistCard
     __add_playlist_card: QWidget
     __btn_add_playlist: IconButton
 
     __default_cover: CoverProp = None
     __playlists: list[PlaylistCardData] = []
-    __playlist_view_map_to_playlist: dict[PlaylistCardData, EditablePlaylistCard] = {}
+    __playlist_view_map_to_playlist: dict[PlaylistCardData, UserPlaylistCard] = {}
 
     def __init__(self, parent: Optional["QWidget"] = None):
         super(PlaylistCarouselView, self).__init__(parent)
@@ -91,8 +91,8 @@ class PlaylistCarouselView(QScrollArea, BaseView):
         self.__main_layout.setSpacing(32)
 
         # =================Library=================
-        self.__playlist_library = self.__create_default_playlist_with_cover()
-        self.__playlist_favourites = self.__create_default_playlist_with_cover()
+        self.__playlist_library = self.__create_library_playlist()
+        self.__playlist_favourites = self.__create_favourite_playlist()
         self.__playlist_favourites.set_cover(self.__create_cover(Images.FAVOURITES_PLAYLIST_COVER))
 
         self.__default_playlists = QHBoxLayout()
@@ -174,14 +174,14 @@ class PlaylistCarouselView(QScrollArea, BaseView):
 
     def add_playlist(self, data: PlaylistCardData) -> None:
         playlist_view = self.__create_user_playlist_with_cover()
-        self.attach_data_to(playlist_view, src=data)
+        self.__attach_data_to(playlist_view, src=data)
         self.__user_playlists.addWidget(playlist_view)
 
         self.__playlists.append(data)
         self.__playlist_view_map_to_playlist[data] = playlist_view
 
     @staticmethod
-    def attach_data_to(playlist_view: EditablePlaylistCard, src: PlaylistCardData) -> None:
+    def __attach_data_to(playlist_view: UserPlaylistCard, src: PlaylistCardData) -> None:
         content = src.content()
         playlist_view.set_label_default_text(content.name)
         playlist_view.set_label_text(content.name)
@@ -195,6 +195,12 @@ class PlaylistCarouselView(QScrollArea, BaseView):
             else PlaylistCarouselView.__create_cover(content.cover)
         )
 
+    def set_on_change_favourites_cover(self, fn: Callable[[str], bytes]) -> None:
+        self.__playlist_favourites.set_onchange_cover(fn)
+
+    def set_favourites_cover(self, cover: bytes) -> None:
+        self.__playlist_favourites.set_favourites_cover(cover)
+
     def delete_playlist(self, playlist: PlaylistCardData) -> None:
         index = self.__playlists.index(playlist)
         self.__user_playlists.itemAt(index).widget().deleteLater()
@@ -203,10 +209,10 @@ class PlaylistCarouselView(QScrollArea, BaseView):
 
     def update_playlist(self, playlist: PlaylistCardData) -> None:
         playlist_view = self.__playlist_view_map_to_playlist[playlist]
-        self.attach_data_to(playlist_view, src=playlist)
+        self.__attach_data_to(playlist_view, src=playlist)
 
     @staticmethod
-    def __create_default_playlist_with_cover() -> PlaylistCard:
+    def __create_library_playlist() -> PlaylistCard:
         playlist = PlaylistCard(FontBuilder.build(size=16, bold=True))
         playlist.setFixedSize(256, 320)
         playlist.setCursor(Cursors.HAND)
@@ -215,8 +221,17 @@ class PlaylistCarouselView(QScrollArea, BaseView):
         return playlist
 
     @staticmethod
-    def __create_user_playlist_with_cover() -> EditablePlaylistCard:
-        playlist = EditablePlaylistCard(FontBuilder.build(size=16, bold=True))
+    def __create_favourite_playlist() -> FavouritePlaylistCard:
+        playlist = FavouritePlaylistCard(FontBuilder.build(size=16, bold=True))
+        playlist.setFixedSize(256, 320)
+        playlist.setCursor(Cursors.HAND)
+        playlist.set_default_cover(PlaylistCarouselView.__create_cover(Images.NULL_IMAGE))
+        playlist.set_animation(PlaylistCarouselView.__HOVER_ANIMATION)
+        return playlist
+
+    @staticmethod
+    def __create_user_playlist_with_cover() -> UserPlaylistCard:
+        playlist = UserPlaylistCard(FontBuilder.build(size=16, bold=True))
         playlist.setFixedSize(256, 320)
         playlist.setCursor(Cursors.HAND)
         playlist.set_default_cover(PlaylistCarouselView.__create_cover(Images.NULL_IMAGE))
