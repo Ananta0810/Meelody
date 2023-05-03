@@ -31,7 +31,7 @@ class SongTableBodyView(SmoothVerticalScrollArea, BaseView):
         super().__init__(parent)
         self.start: int = 0
         self.last: int = 6
-        self._songs: list[SongTableRowView] = []
+        self.__song_views: list[SongTableRowView] = []
         self._current_song_index: list[int] = []
         self.__init_ui()
 
@@ -52,49 +52,49 @@ class SongTableBodyView(SmoothVerticalScrollArea, BaseView):
     @override
     def apply_light_mode(self) -> None:
         self.setStyleSheet(SmoothVerticalScrollArea.build_style(background=Backgrounds.CIRCLE_PRIMARY))
-        for song in self._songs:
+        for song in self.__song_views:
             song.apply_light_mode()
 
     @override
     def apply_dark_mode(self) -> None:
         self.setStyleSheet(SmoothVerticalScrollArea.build_style(background=Backgrounds.CIRCLE_PRIMARY))
-        for song in self._songs:
+        for song in self.__song_views:
             song.apply_dark_mode()
 
     @connector
     def set_onclick_play(self, fn: Callable[[int], None]) -> None:
         self.__onclick_button_fn = fn
-        for index, song in enumerate(self._songs):
+        for index, song in enumerate(self.__song_views):
             song.set_onclick_play(lambda: self.__onclick_play_btn(index))
 
     @connector
     def set_onclick_love(self, fn: Callable[[int], None]) -> None:
         self.__onclick_love_fn = fn
-        for index, song in enumerate(self._songs):
+        for index, song in enumerate(self.__song_views):
             song.set_onclick_love(lambda: self.__onclick_love_btn(index))
 
     @connector
     def set_onclick_add_to_playlist(self, fn: Callable[[int], None]) -> None:
         self.__onclick_add_to_playlist_fn = fn
-        for index, song in enumerate(self._songs):
+        for index, song in enumerate(self.__song_views):
             song.set_onclick_add_to_playlist(lambda: self.__onclick_add_to_playlist_fn(index))
 
     @connector
     def set_onclick_remove_from_playlist(self, fn: Callable[[int], None]) -> None:
         self.__onclick_remove_from_playlist_fn = fn
-        for index, song in enumerate(self._songs):
+        for index, song in enumerate(self.__song_views):
             song.set_onclick_remove_from_playlist(lambda: self.__onclick_remove_from_playlist_fn(index))
 
     @connector
     def set_onchange_song_cover(self, fn: Callable[[int, str], None]) -> None:
         self.__onchange_cover_fn = fn
-        for index, song in enumerate(self._songs):
+        for index, song in enumerate(self.__song_views):
             song.set_on_edit_cover(lambda: self.__choose_cover_for_song_at(index))
 
     @connector
     def set_on_delete_song(self, fn: Callable[[int], None]) -> None:
         self.__on_delete_fn = fn
-        for index, song in enumerate(self._songs):
+        for index, song in enumerate(self.__song_views):
             song.set_on_delete(lambda: self.__confirm_delete_song(index))
 
     def __confirm_delete_song(self, index: int) -> None:
@@ -110,7 +110,7 @@ class SongTableBodyView(SmoothVerticalScrollArea, BaseView):
     @connector
     def set_onchange_song_title_and_cover(self, fn: Callable[[int, str, str], bool]) -> None:
         self.__onchange_title_fn = fn
-        for index, song in enumerate(self._songs):
+        for index, song in enumerate(self.__song_views):
             song.set_on_update_info(lambda title, artist: fn(index, title, artist))
 
     def __choose_cover_for_song_at(self, index: int) -> None:
@@ -171,59 +171,36 @@ class SongTableBodyView(SmoothVerticalScrollArea, BaseView):
         self.get_song_at(index).set_love_state(state)
 
     def get_total_songs(self) -> int:
-        return len(self._songs)
+        return len(self.__song_views)
 
     def load_songs(self, songs: list[Song]) -> list[SongTableRowView]:
-        self.clear_table()
-        return [self.add_new_song(song) for song in songs]
+        total_rows = len(self.__song_views)
+        total_songs = len(songs)
+        if total_rows == total_songs:
+            for i, song_view in enumerate(self.__song_views):
+                self.__popular_info(song_view, songs[i], i)
+            return self.__song_views
 
-    def load_choosing_playlist(self, songs: list[Song]) -> list[SongTableRowView]:
-        self.clear_table()
-        result = []
-        for song in songs:
-            song_view = self.add_new_song(song)
-            song_view.set_is_choosing(song.is_loved())
-            song_view.enable_choosing(True)
-            result.append(song_view)
-        return result
+        if total_rows > total_songs:
+            displaying_rows = self.__display_songs(songs)
+            self.__hide_items_after_index(total_songs)
+            return displaying_rows
 
-    def enable_choosing_song(self, is_choosing: bool) -> None:
-        for song in self._songs:
-            song.enable_choosing(is_choosing)
+        # Lacking rows, need to add.
+        total_lacking_rows = total_songs - total_rows
 
-    def clear_table(self):
-        self.__remove_songs_in_range(0, self.get_total_songs())
-        self._songs.clear()
+        for i in range(0, total_lacking_rows):
+            self.__add_new_row_to_menu()
 
-    def add_new_song(self, song: Song) -> SongTableRowView:
-        songView = self.__addSong(song)
-        index: int = len(self._songs)
-        songView.set_onclick_play(lambda: self.__onclick_play_btn(index))
-        songView.set_onclick_love(lambda: self.__onclick_love_btn(index))
-        songView.set_onclick_add_to_playlist(lambda: self.__onclick_add_to_playlist_fn(index))
-        songView.set_onclick_remove_from_playlist(lambda: self.__onclick_remove_from_playlist_fn(index))
-        songView.set_on_edit_cover(lambda: self.__choose_cover_for_song_at(index))
-        songView.set_on_update_info(lambda title, artist: self.__onchange_title_fn(index, title, artist))
-        songView.set_on_delete(lambda: self.__confirm_delete_song(index))
+        for i, song_view in enumerate(self.__song_views):
+            self.__popular_info(song_view, songs[i], i)
 
-        songView.enable_choosing(False)
+        return self.__song_views
 
-        self._songs.append(songView)
-        self.__menu.addWidget(songView)
-        return songView
+    def __popular_info(self, song_view: SongTableRowView, song: Song, index: int) -> None:
+        song_view.show()
 
-    def select_song_at(self, index: int) -> None:
-        self._scroll_to_item_at(index)
-
-    def get_song_at(self, index: int) -> SongTableRowView:
-        return self._songs[index]
-
-    def __remove_songs_in_range(self, start: int, end: int) -> None:
-        for index in range(start, end):
-            self.__menu.itemAt(index).widget().deleteLater()
-
-    def __addSong(self, song: Song) -> SongTableRowView:
-        song_view = SongTableRowView()
+        song_view.enable_choosing(False)
         song_view.set_default_cover(Images.DEFAULT_SONG_COVER)
         song_view.set_cover(song.get_cover())
         song_view.set_default_artist(song.get_artist())
@@ -231,5 +208,66 @@ class SongTableBodyView(SmoothVerticalScrollArea, BaseView):
         song_view.set_title(song.get_title())
         song_view.set_love_state(song.is_loved())
         song_view.set_length(song.get_length())
+        song_view.set_onclick_play(lambda: self.__onclick_play_btn(index))
+        song_view.set_onclick_love(lambda: self.__onclick_love_btn(index))
+        song_view.set_onclick_add_to_playlist(lambda: self.__onclick_add_to_playlist_fn(index))
+        song_view.set_onclick_remove_from_playlist(lambda: self.__onclick_remove_from_playlist_fn(index))
+        song_view.set_on_edit_cover(lambda: self.__choose_cover_for_song_at(index))
+        song_view.set_on_update_info(lambda title, artist: self.__onchange_title_fn(index, title, artist))
+        song_view.set_on_delete(lambda: self.__confirm_delete_song(index))
+
+    def __hide_items_after_index(self, total_songs):
+        hiding_rows = self.__song_views[total_songs:len(self.__song_views)]
+        for song_view in hiding_rows:
+            song_view.hide()
+
+    def __display_songs(self, songs: list[Song]) -> list[SongTableRowView]:
+        displaying_rows = self.__song_views[0:len(songs)]
+        for i, song_view in enumerate(displaying_rows):
+            self.__popular_info(song_view, songs[i], i)
+        return displaying_rows
+
+    def __add_new_row_to_menu(self) -> SongTableRowView:
+        song_view = SongTableRowView()
+        self.__song_views.append(song_view)
         self.__menu.addWidget(song_view)
         return song_view
+
+    def load_choosing_playlist(self, songs: list[Song]) -> list[SongTableRowView]:
+        song_views = self.load_songs(songs)
+        for i, song_view in enumerate(song_views):
+            song_view.set_is_chosen(songs[i].is_loved())
+            song_view.enable_choosing(True)
+        return song_views
+
+    def enable_choosing_song(self, is_choosing: bool) -> None:
+        for song in self.__song_views:
+            song.enable_choosing(is_choosing)
+
+    def __popular_info_into(self, song_view: SongTableRowView, song: Song, index: int) -> None:
+        song_view.set_default_cover(Images.DEFAULT_SONG_COVER)
+        song_view.set_cover(song.get_cover())
+        song_view.set_default_artist(song.get_artist())
+        song_view.set_artist(song.get_artist())
+        song_view.set_title(song.get_title())
+        song_view.set_love_state(song.is_loved())
+        song_view.set_length(song.get_length())
+
+        song_view.set_onclick_play(lambda: self.__onclick_play_btn(index))
+        song_view.set_onclick_love(lambda: self.__onclick_love_btn(index))
+        song_view.set_onclick_add_to_playlist(lambda: self.__onclick_add_to_playlist_fn(index))
+        song_view.set_onclick_remove_from_playlist(lambda: self.__onclick_remove_from_playlist_fn(index))
+        song_view.set_on_edit_cover(lambda: self.__choose_cover_for_song_at(index))
+        song_view.set_on_update_info(lambda title, artist: self.__onchange_title_fn(index, title, artist))
+        song_view.set_on_delete(lambda: self.__confirm_delete_song(index))
+        song_view.enable_choosing(False)
+
+    def select_song_at(self, index: int) -> None:
+        self._scroll_to_item_at(index)
+
+    def get_song_at(self, index: int) -> SongTableRowView:
+        return self.__song_views[index]
+
+    def __remove_songs_in_range(self, start: int, end: int) -> None:
+        for index in range(start, end):
+            self.__song_views[index].clear_info()

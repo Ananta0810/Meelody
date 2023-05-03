@@ -122,7 +122,6 @@ class SongTableView(QWidget, BaseView):
         return self._header.is_opening_download_dialog()
 
     def enable_choosing_song(self, is_choosing: bool) -> None:
-        self._header.enable_choosing_song(is_choosing)
         self._body.enable_choosing_song(is_choosing)
 
     def enable_add_songs_to_library(self, visible: bool) -> None:
@@ -133,13 +132,6 @@ class SongTableView(QWidget, BaseView):
 
     def enable_select_songs_to_playlist(self, visible: bool) -> None:
         self._header.enable_select_songs_to_playlist(visible)
-
-    def _add_song(self, song: Song) -> None:
-        new_song: SongTableRowView = self._body.add_new_song(song)
-        if self.__is_dark_mode:
-            new_song.apply_dark_mode()
-        else:
-            new_song.apply_light_mode()
 
     def _load_songs(self, songs: list[Song]) -> None:
         song_views: list[SongTableRowView] = self._body.load_songs(songs)

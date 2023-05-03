@@ -163,6 +163,14 @@ class SongTableRowView(BackgroundWidget, BaseView):
     __btn_delete: IconButton
     __btn_close: IconButton
 
+    __onclick_play_fn: callable = None
+    __set_onclick_love_fn: callable = None
+    __set_onclick_add_to_playlist_fn: callable = None
+    __set_onclick_remove_from_playlist_fn: callable = None
+    __set_on_edit_cover_fn: callable = None
+    __on_update_info_fn: Callable[[str, str], bool] = None
+    __on_delete_info_fn: callable = None
+
     def __init__(self, parent: Optional["QWidget"] = None):
         super().__init__(parent)
         self.default_artist = ""
@@ -283,6 +291,13 @@ class SongTableRowView(BackgroundWidget, BaseView):
             parent=self,
         )
 
+        self.__btn_play.clicked.connect(lambda: self.__onclick_play_fn())
+        self.__btn_love.clicked.connect(lambda: self.__set_onclick_love_fn())
+        self.__btn_add_to_playlist.clicked.connect(lambda: self.__clicked_add_btn())
+        self.__btn_remove_from_playlist.clicked.connect(lambda: self.__clicked_remove_btn())
+        self.__btn_edit_cover.clicked.connect(lambda: self.__set_on_edit_cover_fn())
+        self.__btn_edit_title.clicked.connect(lambda: self.__on_update_info())
+        self.__btn_delete.clicked.connect(lambda: self.__on_delete_info_fn())
         self.__btn_close.clicked.connect(lambda: self.show_less())
 
     @override
@@ -342,42 +357,42 @@ class SongTableRowView(BackgroundWidget, BaseView):
         self.__more_buttons.hide()
 
     def set_onclick_play(self, fn: callable) -> None:
-        self.__btn_play.clicked.connect(fn)
+        self.__onclick_play_fn = fn
 
     def set_onclick_love(self, fn: callable) -> None:
-        self.__btn_love.clicked.connect(fn)
+        self.__set_onclick_love_fn = fn
 
     def set_onclick_add_to_playlist(self, fn: callable) -> None:
-        self.__btn_add_to_playlist.clicked.connect(lambda: self.__clicked_add_btn(fn))
+        self.__set_onclick_add_to_playlist_fn = fn
 
     def set_onclick_remove_from_playlist(self, fn: callable) -> None:
-        self.__btn_remove_from_playlist.clicked.connect(lambda: self.__clicked_remove_btn(fn))
+        self.__set_onclick_remove_from_playlist_fn = fn
 
     def set_on_edit_cover(self, fn: callable) -> None:
-        self.__btn_edit_cover.clicked.connect(fn)
+        self.__set_on_edit_cover_fn = fn
 
     def set_on_update_info(self, fn: Callable[[str, str], bool]) -> None:
-        self.__btn_edit_title.clicked.connect(lambda: self.__on_update_info(fn))
+        self.__on_update_info_fn = fn
 
-    def __on_update_info(self, fn: Callable[[str, str], bool]) -> None:
+    def set_on_delete(self, fn: callable) -> None:
+        self.__on_delete_info_fn = fn
+
+    def __on_update_info(self) -> None:
         dialog = UpdateSongDialog()
         dialog.set_song_title(self.__label_title.text())
         dialog.set_song_artist(self.__label_artist.text())
-        dialog.on_apply_change(fn)
+        dialog.on_apply_change(lambda: self.__on_update_info_fn())
         Dialogs.Dialogs.show_dialog(dialog)
 
-    def set_on_delete(self, fn: callable) -> None:
-        self.__btn_delete.clicked.connect(fn)
-
-    def __clicked_add_btn(self, fn: callable) -> None:
+    def __clicked_add_btn(self) -> None:
         self.__btn_remove_from_playlist.show()
         self.__btn_add_to_playlist.hide()
-        fn()
+        self.__set_onclick_add_to_playlist_fn()
 
-    def __clicked_remove_btn(self, fn: callable) -> None:
+    def __clicked_remove_btn(self) -> None:
         self.__btn_add_to_playlist.show()
         self.__btn_remove_from_playlist.hide()
-        fn()
+        self.__set_onclick_remove_from_playlist_fn()
 
     def enable_edit(self, value: bool) -> None:
         self.__btn_edit_title.setVisible(value)
@@ -410,8 +425,8 @@ class SongTableRowView(BackgroundWidget, BaseView):
     def clear_info(self):
         self.set_cover(None)
 
-    def set_is_choosing(self, is_choosing: bool) -> None:
-        if is_choosing:
+    def set_is_chosen(self, is_chosen: bool) -> None:
+        if is_chosen:
             self.__btn_remove_from_playlist.show()
             self.__btn_add_to_playlist.hide()
         else:

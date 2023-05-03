@@ -144,7 +144,7 @@ class MainWindowControl(MainWindowView, BaseControl):
         self._body.enable_add_songs_to_library(False)
         self._body.enable_download_songs_to_library(False)
         self._body.enable_select_songs_to_playlist(True)
-        self._body.enable_choosing_song(True)
+        self._body.enable_choosing_song(False)
         self._body.enable_edit_songs(False)
         self._body.enable_delete_songs(True)
 
