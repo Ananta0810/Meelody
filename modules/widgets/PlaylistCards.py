@@ -54,7 +54,6 @@ class NewPlaylistWindow(Dialogs.Dialog):
             padding=8
         )
         self.__input_title.setFixedHeight(48)
-        self.__input_title.set_onpressed(lambda title: self._on_accepted())
 
         self.__create_btn = ActionButton.build(
             font=FontBuilder.build(family="Segoe UI Semibold", size=11),
@@ -172,7 +171,6 @@ class UpdatePlaylistWindow(Dialogs.Dialog):
             padding=8
         )
         self.__input_title.setFixedHeight(48)
-        self.__input_title.set_onpressed(lambda title: self._on_accepted())
 
         self.__accept_btn = ActionButton.build(
             font=FontBuilder.build(family="Segoe UI Semibold", size=11),

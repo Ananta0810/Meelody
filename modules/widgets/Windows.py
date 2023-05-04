@@ -12,6 +12,7 @@ from modules.statics.view.Material import Paddings, Icons, Colors, Backgrounds
 from modules.widgets.Buttons import IconButton
 from modules.widgets.DialogWindow import DialogWindow
 from modules.widgets.Dialogs import AlertDialog, ConfirmDialog, Dialog
+from modules.widgets.Shortcut import Shortcut
 
 
 class FramelessWindow(QMainWindow, DialogWindow, BaseView):
@@ -37,7 +38,7 @@ class FramelessWindow(QMainWindow, DialogWindow, BaseView):
     def __init__(self, parent: Optional["QWidget"] = None):
         super().__init__(parent)
         self.__init_ui()
-        self.__overlay.hide()
+        self._overlay.hide()
         self.__tray.setVisible(False)
 
     def __init_ui(self) -> None:
@@ -131,7 +132,11 @@ class FramelessWindow(QMainWindow, DialogWindow, BaseView):
         self.__tray.setContextMenu(tray_menu)
 
         self.addLayout(self.__title_bar)
-        self.__overlay = WindowOverlay(self.__inner)
+        self._overlay = WindowOverlay(self.__inner)
+
+    @override
+    def get_shortcut_map(self) -> dict[Shortcut, callable]:
+        return self._overlay.get_shortcut_map()
 
     def set_is_playing(self, is_playing: bool) -> None:
         self.__is_playing = is_playing
@@ -216,19 +221,19 @@ class FramelessWindow(QMainWindow, DialogWindow, BaseView):
     def apply_light_mode(self) -> None:
         self.__btn_minimize.apply_light_mode()
         self.__btn_close.apply_light_mode()
-        self.__overlay.apply_light_mode()
+        self._overlay.apply_light_mode()
 
     @override
     def apply_dark_mode(self) -> None:
         self.__btn_minimize.apply_dark_mode()
         self.__btn_close.apply_dark_mode()
-        self.__overlay.apply_dark_mode()
+        self._overlay.apply_dark_mode()
 
     @override
     def resizeEvent(self, event: QResizeEvent) -> None:
         self.__background.resize(self.size())
-        self.__overlay.resize(self.size())
-        self.__overlay.raise_()
+        self._overlay.resize(self.size())
+        self._overlay.raise_()
         return super().resizeEvent(event)
 
     @override
@@ -271,13 +276,13 @@ class FramelessWindow(QMainWindow, DialogWindow, BaseView):
         self.move(self.pos() + delta)
 
     def add_alert(self, overlay: AlertDialog) -> None:
-        self.__overlay.add_alert(overlay)
+        self._overlay.add_alert(overlay)
 
     def add_confirm(self, overlay: ConfirmDialog) -> None:
-        self.__overlay.add_confirm(overlay)
+        self._overlay.add_confirm(overlay)
 
     def add_dialog(self, overlay: Dialog) -> None:
-        self.__overlay.add_dialog(overlay)
+        self._overlay.add_dialog(overlay)
 
 
 class WindowOverlay(QWidget, BaseView, DialogWindow):
@@ -287,6 +292,7 @@ class WindowOverlay(QWidget, BaseView, DialogWindow):
     __dialog: Union[QWidget, BaseView] = None
     __higher_overlay: QWidget = None
     __lower_overlay: QWidget = None
+    __shortcut_map: dict[Shortcut, callable] = {}
 
     def __init__(self, parent: Optional["QWidget"] = None):
         super().__init__(parent)
@@ -327,6 +333,10 @@ class WindowOverlay(QWidget, BaseView, DialogWindow):
             self.__dialog.apply_light_mode()
 
     @override
+    def get_shortcut_map(self) -> dict[Shortcut, callable]:
+        return self.__shortcut_map
+
+    @override
     def add_alert(self, widget: AlertDialog) -> None:
         self.__alert_dialog = widget
         self.__add_higher_dialog(widget)
@@ -344,14 +354,19 @@ class WindowOverlay(QWidget, BaseView, DialogWindow):
         widget.setParent(self.__higher_overlay)
         self.__move_to_center(widget)
 
+        self.__add_short_cut_from_dialog(widget)
         widget.on_change_size(lambda: self.__move_to_center(widget))
-        widget.on_close(lambda: self.__hide_higher_overlay())
+        widget.on_close(lambda: self.__hide_higher_overlay(widget))
 
         widget.show()
         self.show()
 
         self.__higher_overlay.show()
         self.__higher_overlay.raise_()
+
+    def __add_short_cut_from_dialog(self, widget):
+        for shortcut in widget.get_shortcut_map():
+            self.__shortcut_map[shortcut] = widget.get_shortcut_map()[shortcut]
 
     @override
     def add_dialog(self, widget: Dialog) -> None:
@@ -366,8 +381,9 @@ class WindowOverlay(QWidget, BaseView, DialogWindow):
         widget.setParent(self.__lower_overlay)
         self.__move_to_center(widget)
 
+        self.__add_short_cut_from_dialog(widget)
         widget.on_change_size(lambda: self.__move_to_center(widget))
-        widget.on_close(lambda: self.__hide_lower_overlay())
+        widget.on_close(lambda: self.__hide_lower_overlay(widget))
 
         widget.show()
         self.show()
@@ -381,7 +397,7 @@ class WindowOverlay(QWidget, BaseView, DialogWindow):
             int(self.height() / 2 - widget.height() / 2),
         )
 
-    def __hide_higher_overlay(self):
+    def __hide_higher_overlay(self, widget: BaseView) -> None:
         if self.__confirm_dialog is not None and self.__confirm_dialog.isVisible():
             return
 
@@ -391,11 +407,23 @@ class WindowOverlay(QWidget, BaseView, DialogWindow):
         self.__higher_overlay.hide()
         self.__hide_self()
 
-    def __hide_lower_overlay(self):
+        shortcut_map = widget.get_shortcut_map()
+        self.__remove_shortcuts(shortcut_map)
+
+    def __hide_lower_overlay(self, widget: BaseView) -> None:
         if self.__dialog is not None and self.__dialog.isVisible():
             return
         self.__lower_overlay.hide()
         self.__hide_self()
+        shortcut_map = widget.get_shortcut_map()
+        self.__remove_shortcuts(shortcut_map)
+
+    def __remove_shortcuts(self, shortcut_map):
+        for shortcut in shortcut_map:
+            try:
+                self.__shortcut_map.pop(shortcut)
+            except Exception:
+                pass
 
     def __hide_self(self):
         if self.__higher_overlay.isVisible() or self.__lower_overlay.isVisible():

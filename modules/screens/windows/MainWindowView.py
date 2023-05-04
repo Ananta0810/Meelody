@@ -1,6 +1,7 @@
 from typing import Optional
 
 from PyQt5.QtCore import Qt
+from PyQt5.QtGui import QKeyEvent
 from PyQt5.QtWidgets import QWidget
 
 from modules.helpers.types.Decorators import override
@@ -10,6 +11,7 @@ from modules.screens.body.HomeBodyView import HomeBodyView
 from modules.screens.music_bar.MusicPlayerControl import MusicPlayerControl
 from modules.statics.view.Material import ColorBoxes
 from modules.widgets import Dialogs
+from modules.widgets.Shortcut import Shortcut
 from modules.widgets.Windows import FramelessWindow
 
 
@@ -23,6 +25,17 @@ class MainWindowView(FramelessWindow, BaseView):
         self.setFixedHeight(height)
         self.__init_ui()
         Dialogs.Dialogs.get_instance().set_window(self)
+        self.installEventFilter(self)
+
+    @override
+    def keyPressEvent(self, event: QKeyEvent) -> None:
+        shortcut = Shortcut.of(event.modifiers(), event.key())
+        shortcut_map = self.get_shortcut_map()
+        if shortcut in shortcut_map:
+            fn = shortcut_map[shortcut]
+            fn() if fn is not None else None
+
+        return super().keyPressEvent(event)
 
     def __init_ui(self) -> None:
         self._body = HomeBodyView()

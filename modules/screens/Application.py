@@ -48,9 +48,9 @@ class Application:
             - Run thread when import songs.
             - Improve performance for menu.
             - Fix bug when choose songs for playlist.
-            - Scroll wheel on playlist carousel to scroll.
+            - Scroll wheel on playlist carousel to scroll. | DONE
             - Add shortcut to exit alert, dialog.
-            - Fix color dominant in playlist.
+            - Fix color dominant in playlist. | DONE
             - Refactor structure.
         """
 

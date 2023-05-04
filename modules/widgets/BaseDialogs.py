@@ -17,6 +17,7 @@ from modules.statics.view.Material import ColorBoxes, Backgrounds, Colors, Paddi
 from modules.widgets.Buttons import ActionButton, IconButton
 from modules.widgets.Cover import Cover, CoverProp
 from modules.widgets.Labels import LabelWithDefaultText
+from modules.widgets.Shortcut import Shortcut
 
 
 class Dialog(QWidget, BaseView):
@@ -85,6 +86,13 @@ class Dialog(QWidget, BaseView):
         self.hide()
         self._call_close_fn()
 
+    @override
+    def get_shortcut_map(self) -> dict[Shortcut, callable]:
+        return {
+            Shortcut.of_key(Qt.Key_Escape): lambda: self._close(),
+            Shortcut.of_key(Qt.Key_Return): lambda: self._on_accepted(),
+        }
+
 
 class AlertDialog(Dialog, BaseView):
     _onclick_accept_fn: Callable[[], bool]
@@ -138,6 +146,13 @@ class AlertDialog(Dialog, BaseView):
         self.__message.setText(message)
         self.__accept_btn.setText(accept_text)
         self.setMaximumHeight(self.sizeHint().height())
+
+    @override
+    def get_shortcut_map(self) -> dict[Shortcut, callable]:
+        return {
+            Shortcut.of_key(Qt.Key_Escape): lambda: self._close(),
+            Shortcut.of_key(Qt.Key_Return): lambda: self._on_accepted(),
+        }
 
     @override
     def apply_dark_mode(self) -> None:
@@ -227,6 +242,13 @@ class ConfirmDialog(Dialog, BaseView):
         self.__accept_btn.setText(accept_text)
         self.__cancel_btn.setText(cancel_text)
         self.setMaximumHeight(self.sizeHint().height())
+
+    @override
+    def get_shortcut_map(self) -> dict[Shortcut, callable]:
+        return {
+            Shortcut.of_key(Qt.Key_Escape): lambda: self._close(),
+            Shortcut.of_key(Qt.Key_Return): lambda: self._on_accepted(),
+        }
 
     @override
     def apply_dark_mode(self) -> None:
