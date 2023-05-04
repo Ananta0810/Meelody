@@ -162,7 +162,7 @@ class MainWindowControl(MainWindowView, BaseControl):
         self._body.enable_select_songs_to_playlist(True)
         self._body.enable_choosing_song(False)
         self._body.enable_edit_songs(False)
-        self._body.enable_delete_songs(True)
+        self._body.enable_delete_songs(False)
 
     def __select_playlist(self, playlist: Playlist) -> None:
         self.__selecting_playlist_songs.clear()

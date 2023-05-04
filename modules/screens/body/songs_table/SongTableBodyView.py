@@ -198,6 +198,7 @@ class SongTableBodyView(SmoothVerticalScrollArea, BaseView):
 
     def __popular_info(self, song_view: SongTableRowView, song: Song, index: int) -> None:
         song_view.show()
+        song_view.show_less()
 
         song_view.enable_choosing(False)
         song_view.set_default_cover(Images.DEFAULT_SONG_COVER)
