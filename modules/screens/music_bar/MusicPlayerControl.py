@@ -4,8 +4,8 @@ from time import sleep
 from typing import Callable
 
 from modules.helpers import Times, Printers
-from modules.helpers.types.Decorators import handler, override, connector
 from modules.helpers.types import Numbers
+from modules.helpers.types.Decorators import handler, override, connector
 from modules.models.AudioPlayer import AudioPlayer
 from modules.models.PlaylistSongs import PlaylistSongs
 from modules.models.Song import Song
@@ -165,7 +165,7 @@ class MusicPlayerControl(MusicPlayerBarView, BaseControl):
         playlist: PlaylistSongs = self.__player.get_playlist()
         if not playlist.has_any_song():
             return
-        new_index = playlist.find_song_index_by_title(self.__player.get_current_song().get_title())
+        new_index = playlist.index_of(self.__player.get_current_song())
         if new_index < 0:
             new_index = 0
         self.__player.set_current_song_index(new_index)
@@ -207,7 +207,7 @@ class MusicPlayerControl(MusicPlayerBarView, BaseControl):
         playlist: PlaylistSongs = self.__player.get_playlist()
         if not playlist.has_any_song():
             return
-        new_index = playlist.find_song_index_by_title(self.__player.get_current_song().get_title())
+        new_index = playlist.index_of(self.__player.get_current_song().get_title())
         if new_index < 0:
             new_index = 0
         self.__player.set_current_song_index(new_index)

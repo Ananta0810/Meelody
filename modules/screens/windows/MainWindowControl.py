@@ -568,7 +568,8 @@ class MainWindowControl(MainWindowView, BaseControl):
         Database().settings.save(self.__settings)
 
     def __go_to_song_that_title_start_with(self, title: str) -> int:
-        return self.__displaying_playlist.get_songs().find_nearest_song_index_by_title(title)
+        # return self.__displaying_playlist.get_songs().find_nearest_song_index_by_title(title)
+        return 0
 
     def __song_at(self, index: int) -> Song:
         playlist = self.__player.get_playlist()

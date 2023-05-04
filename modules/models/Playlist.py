@@ -14,7 +14,7 @@ class Playlist:
 
     @staticmethod
     def create(name: str, cover: bytes = None, songs: PlaylistSongs = None) -> 'Playlist':
-        return Playlist(PlaylistInformation(name, cover), songs or PlaylistSongs.create_empty())
+        return Playlist(PlaylistInformation(name, cover), songs or PlaylistSongs())
 
     def get_info(self) -> PlaylistInformation:
         return self.__info

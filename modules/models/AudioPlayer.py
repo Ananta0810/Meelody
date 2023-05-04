@@ -1,8 +1,9 @@
+import os
+
 from modules.helpers.types.Metas import SingletonMeta
 from modules.models.PlaylistSongs import PlaylistSongs
 from modules.models.Song import Song
 
-import os
 os.environ['PYGAME_HIDE_SUPPORT_PROMPT'] = "hide"
 
 from pygame import mixer
@@ -77,13 +78,6 @@ class AudioPlayer(metaclass=SingletonMeta):
 
     def set_current_song_index(self, index: int) -> None:
         self.__current_song_index = index
-        self.__loaded = False
-
-    def set_current_song(self, title: str) -> None:
-        song_index = self.__playlist.find_song_index_by_title(title)
-        if song_index < 0 or song_index >= self.__playlist.size():
-            song_index = 0
-        self.__current_song_index = song_index
         self.__loaded = False
 
     def get_current_song(self) -> Song:

@@ -1,5 +1,6 @@
 import os
 import uuid
+from enum import Enum
 
 from modules.helpers import Printers
 from modules.helpers.types import Strings
@@ -8,6 +9,11 @@ from modules.models.AudioExtractor import AudioExtractor
 
 
 class Song:
+    class Order(Enum):
+        TITLE = 'title',
+        ARTIST = 'artist',
+        LENGTH = 'length'
+
     __id: str
     __location: str
     __title: str
