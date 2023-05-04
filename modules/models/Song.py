@@ -2,9 +2,8 @@ import os
 import uuid
 
 from modules.helpers import Printers
-from modules.helpers.types.Bytes import Bytes
-from modules.helpers.types.Decorators import override
 from modules.helpers.types import Strings
+from modules.helpers.types.Decorators import override
 from modules.models.AudioExtractor import AudioExtractor
 
 
@@ -73,9 +72,8 @@ class Song:
             'is_loved': self.__is_loved,
         }
 
-    @override
-    def __str__(self):
-        return f"Song({self.__title}, {self.__artist}, {self.__length}, {self.__is_loved})"
+    def __hash__(self) -> int:
+        return hash(self.__id)
 
     @override
     def __eq__(self, other: 'Song') -> bool:
@@ -91,6 +89,10 @@ class Song:
             and self.__is_loved == other.__is_loved
             and self.__sample_rate == other.__sample_rate
         )
+
+    @override
+    def __str__(self):
+        return f"Song({self.__title}, {self.__artist}, {self.__length}, {self.__is_loved})"
 
     def __load_info_from(self, location: str) -> None:
         """

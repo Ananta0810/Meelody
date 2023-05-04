@@ -1,7 +1,7 @@
 import random
 
-from modules.helpers.types.Decorators import override
 from modules.helpers.types import Lists
+from modules.helpers.types.Decorators import override
 from modules.models.Song import Song
 
 
@@ -32,6 +32,9 @@ class PlaylistSongs:
 
     def get_songs(self) -> list[Song]:
         return self.__songs
+
+    def get_original_songs(self) -> list[Song]:
+        return self.__backup_songs if len(self.__backup_songs) > 0 else self.__songs
 
     def is_sorted(self):
         return self.__is_sorted
@@ -105,7 +108,8 @@ class PlaylistSongs:
             return Lists.string_binary_search(
                 self.__songs, search_value=title, key_provider=lambda s: s.get_title(), find_nearest=True
             )
-        return Lists.string_nearest_linear_search(self.__songs, search_value=title, key_provider=lambda s: s.get_title())
+        return Lists.string_nearest_linear_search(self.__songs, search_value=title,
+                                                  key_provider=lambda s: s.get_title())
 
     def remove_song(self, song: Song) -> None:
         index: int = self.index_of(song)

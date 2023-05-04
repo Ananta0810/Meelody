@@ -31,7 +31,8 @@ class MainWindowControl(MainWindowView, BaseControl):
     __settings: AppSettings = None
     __playlists: list[Playlist] = []
     __player: AudioPlayer = AudioPlayer()
-    __selecting_playlist_songs: set[int] = set()
+    __temp_library_songs: list[Song] = []
+    __selecting_playlist_songs: set[Song] = set()
     __is_selecting_library: bool = False
     __downloaders: list[YoutubeDownloader] = []
     __download_thread: Thread | None = None
@@ -59,7 +60,7 @@ class MainWindowControl(MainWindowView, BaseControl):
         self._body.set_onclick_love(self.__love_song_from_menu)
         self._body.set_onclick_add_to_playlist(self.__add_song_from_menu_at)
         self._body.set_onclick_remove_from_playlist(self.__remove_song_from_menu_at)
-        self._body.set_onchange_song_title_and_artist_on_menu(self.__change_title_and_title_for_song)
+        self._body.set_onchange_song_title_and_artist_on_menu(self.__change_song_information)
         self._body.set_on_change_song_cover_on_menu(self.__change_cover_for_song)
         self._body.set_on_delete_song_on_menu(self.__delete_song_at)
         self._body.set_onclick_download_songs_to_library_fn(self.__add_songs_to_library_from_youtube)
@@ -163,6 +164,10 @@ class MainWindowControl(MainWindowView, BaseControl):
         self._body.enable_choosing_song(False)
         self._body.enable_edit_songs(False)
         self._body.enable_delete_songs(False)
+
+        print(f"Chose playlist: {playlist.get_info().name}")
+        sogs = self.__player.get_songs()
+        print(sogs)
 
     def __select_playlist(self, playlist: Playlist) -> None:
         self.__selecting_playlist_songs.clear()
@@ -405,24 +410,25 @@ class MainWindowControl(MainWindowView, BaseControl):
     def __start_select_songs_from_library_to_playlist(self) -> None:
         current_playlist_songs_ids: list[str] = [song.get_id() for song in
                                                  self.__displaying_playlist.get_songs().get_songs()]
-        temp_songs = [song.clone() for song in self.__library.get_songs().get_songs()]
+        self.__temp_library_songs = [song.clone() for song in self.__library.get_songs().get_original_songs()]
         """
             We will consider loved songs as the existing songs
         """
-        for index, song in enumerate(temp_songs):
+        for index, song in enumerate(self.__temp_library_songs):
             is_existing = song.get_id() in current_playlist_songs_ids
             song.set_love_state(is_existing)
             if is_existing:
-                self.__selecting_playlist_songs.add(index)
+                self.__selecting_playlist_songs.add(song)
 
-        temp_playlist: Playlist = Playlist(info=self.__displaying_playlist.get_info(), songs=PlaylistSongs(temp_songs))
+        temp_playlist: Playlist = Playlist(info=self.__displaying_playlist.get_info(),
+                                           songs=PlaylistSongs(self.__temp_library_songs))
 
         self._body.load_choosing_playlist(temp_playlist)
 
     def __finish_select_songs_from_library_to_playlist(self) -> None:
-        playlist_songs = [song for index, song in enumerate(self.__library.get_songs().get_songs()) if
-                          index in self.__selecting_playlist_songs]
+        playlist_songs = [song for song in self.__selecting_playlist_songs]
         self.__selecting_playlist_songs.clear()
+        self.__temp_library_songs.clear()
 
         self.__displaying_playlist.get_songs().get_songs().clear()
         self.__displaying_playlist.get_songs().insertAll(playlist_songs)
@@ -430,12 +436,14 @@ class MainWindowControl(MainWindowView, BaseControl):
         self.__choose_playlist(self.__displaying_playlist)
 
     def __add_song_from_menu_at(self, index: int) -> None:
-        self.__selecting_playlist_songs.add(index)
+        song_to_add = self.__temp_library_songs[index]
+        self.__selecting_playlist_songs.add(song_to_add)
 
     def __remove_song_from_menu_at(self, index: int) -> None:
-        self.__selecting_playlist_songs.remove(index)
+        song_to_remove = self.__temp_library_songs[index]
+        self.__selecting_playlist_songs.remove(song_to_remove)
 
-    def __change_title_and_title_for_song(self, index: int, new_title: str, new_artist: str) -> bool:
+    def __change_song_information(self, index: int, new_title: str, new_artist: str) -> bool:
         old_song = self.__displaying_playlist.get_songs().get_song_at(index)
         new_song = old_song.clone()
 
@@ -565,4 +573,5 @@ class MainWindowControl(MainWindowView, BaseControl):
         return self.__displaying_playlist.get_songs().find_nearest_song_index_by_title(title)
 
     def __song_at(self, index: int) -> Song:
-        return self.__playing_playlist.get_songs().get_song_at(index)
+        playlist = self.__player.get_playlist()
+        return playlist.get_song_at(index)

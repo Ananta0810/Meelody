@@ -1,4 +1,3 @@
-from threading import Thread
 from typing import Optional, Callable
 
 from PyQt5.QtCore import Qt
@@ -178,11 +177,11 @@ class SongTableBodyView(SmoothVerticalScrollArea, BaseView):
         total_rows = len(self.__song_views)
         total_songs = len(songs)
         if total_rows == total_songs:
-            Thread(target=lambda: self.__display_songs(songs)).start()
+            self.__display_songs(songs)
             return self.__song_views
 
         if total_rows > total_songs:
-            Thread(target=lambda: self.__display_songs(songs)).start()
+            self.__display_songs(songs)
             self.__hide_items_after_index(total_songs)
             return self.__song_views[0:len(songs)]
 
@@ -192,7 +191,7 @@ class SongTableBodyView(SmoothVerticalScrollArea, BaseView):
         for i in range(0, total_lacking_rows):
             self.__add_new_row_to_menu()
 
-        Thread(target=lambda: self.__display_songs(songs)).start()
+        self.__display_songs(songs)
 
         return self.__song_views
 
