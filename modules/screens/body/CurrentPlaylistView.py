@@ -114,6 +114,9 @@ class CurrentPlaylistView(QWidget, BaseView):
     def set_progress_in_download_dialog_at(self, index: int, value: float) -> None:
         self.__menu.set_progress_at(index, value)
 
+    def get_scrolling_song_index(self) -> int:
+        return self.__menu.get_scrolling_song_index()
+
     def is_opening_download_dialog(self) -> bool:
         return self.__menu.is_opening_download_dialog()
 

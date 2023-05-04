@@ -59,8 +59,8 @@ def binary_search(
 
 
 def linear_search(
-    _list: list[Generic[T]],
-    search_item: Generic[R],
+    _list: list[T],
+    search_item: T,
     comparator: Callable[[T, T], int] = lambda x, y: 0 if x == y else -1
 ) -> int:
     for index, item in enumerate(_list):
@@ -68,3 +68,23 @@ def linear_search(
             return index
     # Not found
     return -1
+
+
+def nearest_linear_search(
+    _list: list[T],
+    search_item: T,
+    comparator: Callable[[T, T], int] = lambda x, y: 0 if x == y else -1
+) -> int:
+    if len(_list) == 0:
+        return 0
+
+    nearest_post = 0
+    last_item = list[0]
+    for index, item in enumerate(_list):
+        if comparator(search_item, item) == 0:
+            return index
+        if comparator(last_item, item) < 0:
+            nearest_post = index
+            last_item = item
+    # Not found
+    return nearest_post

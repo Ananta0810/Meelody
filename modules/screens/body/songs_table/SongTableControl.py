@@ -35,8 +35,8 @@ class SongTableControl(SongTableView, BaseControl):
 
     def select_song_at(self, index: int) -> None:
         if not self.__is_choosing_song:
-            self._body.select_song_at(index)
+            self._menu.select_song_at(index)
 
     def love_song(self, is_loved: bool) -> None:
         index = self.__player.get_current_song_index()
-        self._body.set_song_love_state_at_index(index, is_loved)
+        self._menu.set_song_love_state_at_index(index, is_loved)

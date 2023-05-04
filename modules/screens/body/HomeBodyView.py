@@ -137,6 +137,9 @@ class HomeBodyView(QScrollArea, BaseView):
     def set_progress_in_download_dialog_at(self, index: int, value: float) -> None:
         self.__current_playlist.set_progress_in_download_dialog_at(index, value)
 
+    def get_scrolling_song_index(self) -> int:
+        return self.__current_playlist.get_scrolling_song_index()
+
     def is_opening_download_dialog(self) -> bool:
         return self.__current_playlist.is_opening_download_dialog()
 

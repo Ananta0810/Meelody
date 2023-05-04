@@ -4,8 +4,8 @@ from PyQt5.QtCore import pyqtSignal, QVariantAnimation, QEasingCurve
 from PyQt5.QtGui import QWheelEvent
 from PyQt5.QtWidgets import QScrollArea, QWidget
 
-from modules.helpers.types.Decorators import override
 from modules.helpers.types import Numbers
+from modules.helpers.types.Decorators import override
 from modules.models.view.Background import Background
 from modules.models.view.builder.BackgroundThemeBuilder import BackgroundThemeBuilder
 from modules.statics.view.Material import Backgrounds
@@ -45,6 +45,9 @@ class SmoothVerticalScrollArea(QScrollArea):
         self.__animation.setEndValue(endValue)
         self.__animation.start()
 
+    def get_current_item_index(self):
+        return self.verticalScrollBar().value() // self.__itemHeight
+
     def __smooth_scroll(self, value: int) -> None:
         self.verticalScrollBar().setValue(value)
 
@@ -61,7 +64,8 @@ class SmoothVerticalScrollArea(QScrollArea):
                     QScrollArea > QWidget > QWidget { background: transparent; border: none; }
                     QScrollArea > QWidget > QScrollBar { background: palette(base); border: none; }
                 """,
-                BackgroundThemeBuilder.build(element=f"QScrollBar::handle:{element_type}", element_size=length, background=background),
+                BackgroundThemeBuilder.build(element=f"QScrollBar::handle:{element_type}", element_size=length,
+                                             background=background),
                 f"QScrollBar:{element_type}{{border:none;background-color:transparent;width:{length}px}}",
                 f"QScrollBar::sub-line:{element_type}{{border:none}}",
                 f"QScrollBar::add-line:{element_type}{{border:none}}",

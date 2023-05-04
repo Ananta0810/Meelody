@@ -14,7 +14,7 @@ from modules.widgets.Dialogs import Dialogs
 from modules.widgets.ScrollAreas import SmoothVerticalScrollArea
 
 
-class SongTableBodyView(SmoothVerticalScrollArea, BaseView):
+class SongMenu(SmoothVerticalScrollArea, BaseView):
     __inner: QWidget
     __menu: QVBoxLayout
 
@@ -143,17 +143,11 @@ class SongTableBodyView(SmoothVerticalScrollArea, BaseView):
         try:
             key = chr(event.key())
             index = self.__on_keypress_fn(key)
+            if index == -1:
+                return
             self._scroll_to_item_at(index)
         except ValueError:
             pass
-
-    def display_song_info_at_index(self, index: int, cover: bytes, title: str, artist: str, length: float) -> None:
-        song = self.get_song_at(index)
-        song.show()
-        song.set_cover(cover)
-        song.set_title(title)
-        song.set_artist(artist)
-        song.set_length(length)
 
     def set_song_cover_at_index(self, index: int, cover: bytes) -> None:
         self.get_song_at(index).set_cover(cover)
@@ -262,6 +256,9 @@ class SongTableBodyView(SmoothVerticalScrollArea, BaseView):
 
     def select_song_at(self, index: int) -> None:
         self._scroll_to_item_at(index)
+
+    def get_scrolling_song_index(self) -> int:
+        return self.get_current_item_index()
 
     def get_song_at(self, index: int) -> SongTableRowView:
         return self.__song_views[index]

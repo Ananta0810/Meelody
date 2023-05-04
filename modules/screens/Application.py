@@ -40,9 +40,10 @@ class Application:
             - Add shortcut to exit alert, dialog. | DONE
             - Add sidebar.
             - Sort by title, length, artist.
+            - Allow to auto modify volume so that every song has same vibe.
             
             - Update UI for inputs. | DONE
-            - Use shortcut to go to song start with key only.
+            - Use shortcut to go to next song which start with key. | DONE
             - Change icon for minimize button. | CANCELED
             - Only show icon on tray when hidden. | DONE
             - Run thread when import songs.

@@ -139,6 +139,17 @@ class MainWindowControl(MainWindowView, BaseControl):
             self._body.enable_edit_of_song_at(displaying_song_index, False)
             self._body.enable_delete_song_at(displaying_song_index, False)
 
+        self.__create_title_map()
+
+    def __create_title_map(self) -> None:
+        songs = self.__displaying_playlist.get_songs().get_songs()
+        self.__titles = {}
+        for index, song in enumerate(songs):
+            first_char = song.get_title()[0]
+            if first_char not in self.__titles:
+                self.__titles[first_char] = []
+            self.__titles[first_char].append(index)
+
     def __choose_favourites(self) -> None:
         favourite_songs: list[Song] = list(filter(lambda song: song.is_loved(), self.__library.get_songs().get_songs()))
         playlist = Playlist.create(name="Favourites",
@@ -562,14 +573,25 @@ class MainWindowControl(MainWindowView, BaseControl):
         self._body.refresh_menu()
         self.__settings.set_is_shuffle(shuffled)
         Database().settings.save(self.__settings)
+        self.__create_title_map()
 
     def __loop(self, looping: bool) -> None:
         self.__settings.set_is_looping(looping)
         Database().settings.save(self.__settings)
 
-    def __go_to_song_that_title_start_with(self, title: str) -> int:
-        # return self.__displaying_playlist.get_songs().find_nearest_song_index_by_title(title)
-        return 0
+    def __go_to_song_that_title_start_with(self, key: str) -> int:
+        if key not in self.__titles:
+            return -1
+        indexes = self.__titles[key]
+        if len(indexes) == 0:
+            return -1
+
+        current_index = self._body.get_scrolling_song_index()
+        next_index = Lists.nearest_linear_search(indexes, current_index) + 1
+        try:
+            return indexes[next_index]
+        except IndexError:
+            return indexes[0]
 
     def __song_at(self, index: int) -> Song:
         playlist = self.__player.get_playlist()
