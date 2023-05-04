@@ -42,6 +42,7 @@ class Application:
             - Sort by title, length, artist.
             
             - Update UI for inputs. | DONE
+            - Use shortcut to go to song start with key only.
             - Change icon for minimize button. | CANCELED
             - Only show icon on tray when hidden. | DONE
             - Run thread when import songs.
@@ -49,7 +50,7 @@ class Application:
             - Scroll wheel on playlist carousel to scroll. | DONE
             
             - Fix 3 alerts show up at the same time.
-            - Fix edit when shuffling is wrong.
+            - Fix edit when shuffling is wrong. | CANCELED
             - Fix first time hear song. | DONE
             - Fix color dominant in playlist. | DONE
             - Fix bug when choose songs for playlist. | DONE

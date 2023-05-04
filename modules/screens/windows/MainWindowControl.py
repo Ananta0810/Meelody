@@ -390,8 +390,8 @@ class MainWindowControl(MainWindowView, BaseControl):
         return new_songs
 
     def __save_library(self):
-        Database().songs.save(self.__library.get_songs().get_songs())
-        Database().covers.save(self.__library.get_songs().get_songs())
+        Database().songs.save(self.__library.get_songs().get_original_songs())
+        Database().covers.save(self.__library.get_songs().get_original_songs())
 
     @staticmethod
     def __add_songs_from_path(paths):
