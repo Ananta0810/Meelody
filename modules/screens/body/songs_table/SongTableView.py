@@ -143,13 +143,7 @@ class SongTableView(QWidget, BaseView):
                 song_view.apply_light_mode()
 
     def _load_choosing_playlist(self, songs: list[Song]) -> None:
-        song_views: list[SongTableRowView] = self._body.load_choosing_playlist(songs)
-        if self.__is_dark_mode:
-            for song_view in song_views:
-                song_view.apply_dark_mode()
-        else:
-            for song_view in song_views:
-                song_view.apply_light_mode()
+        self._body.load_choosing_playlist(songs)
 
     def update_song_at(self, index: int, song: Song) -> None:
         song_view: SongTableRowView = self._body.get_song_at(index)

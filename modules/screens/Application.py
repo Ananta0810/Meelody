@@ -35,22 +35,25 @@ class Application:
             - Add alert when update something failed. | DONE
             - Add alert when download youtube music failed. | DONE
             - Add progress bar to show which one is downloading. | DONE
-            - Add sidebar.
-            - Fix first time hear song. | DONE
-            - Fix edit when shuffling is wrong.
-            - Update UI for inputs. | DONE
             - Add button to edit favourite playlist cover. | DONE
+            - Add play buttons on taskbar.
+            - Add shortcut to exit alert, dialog. | DONE
+            - Add sidebar.
+            - Sort by title, length, artist.
+            
+            - Update UI for inputs. | DONE
             - Change icon for minimize button. | CANCELED
             - Only show icon on tray when hidden. | DONE
-            - Add play buttons on taskbar.
-            - Sort by title, length, artist.
-            - Fix 3 alerts show up at the same time.
             - Run thread when import songs.
             - Improve performance for menu.
-            - Fix bug when choose songs for playlist.
             - Scroll wheel on playlist carousel to scroll. | DONE
-            - Add shortcut to exit alert, dialog.
+            
+            - Fix 3 alerts show up at the same time.
+            - Fix edit when shuffling is wrong.
+            - Fix first time hear song. | DONE
             - Fix color dominant in playlist. | DONE
+            - Fix bug when choose songs for playlist. | DONE
+            - Fix first time playing on other playlist failed.
             - Refactor structure.
         """
 

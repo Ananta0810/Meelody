@@ -232,12 +232,11 @@ class SongTableBodyView(SmoothVerticalScrollArea, BaseView):
         self.__menu.addWidget(song_view)
         return song_view
 
-    def load_choosing_playlist(self, songs: list[Song]) -> list[SongTableRowView]:
-        song_views = self.load_songs(songs)
-        for i, song_view in enumerate(song_views):
-            song_view.set_is_chosen(songs[i].is_loved())
+    def load_choosing_playlist(self, songs: list[Song]) -> None:
+        self.load_songs(songs)
+        for i, song_view in enumerate(self.__song_views):
             song_view.enable_choosing(True)
-        return song_views
+            song_view.set_is_chosen(songs[i].is_loved())
 
     def enable_choosing_song(self, is_choosing: bool) -> None:
         for song in self.__song_views:
