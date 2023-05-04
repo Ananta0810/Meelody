@@ -57,7 +57,7 @@ class PlaylistCardData:
         self.__onchange_cover = fn
 
 
-class PlaylistCarouselView(QScrollArea, BaseView):
+class PlaylistCarousel(QScrollArea, BaseView):
     __HOVER_ANIMATION: Animation = Animation(1.0, 1.1, 250)
 
     __inner: QWidget
@@ -76,7 +76,7 @@ class PlaylistCarouselView(QScrollArea, BaseView):
     __on_add_playlist_fn: Callable[[str, bytes], bool] = None
 
     def __init__(self, parent: Optional["QWidget"] = None):
-        super(PlaylistCarouselView, self).__init__(parent)
+        super(PlaylistCarousel, self).__init__(parent)
         self.__init_ui()
         self.__playlist_library.set_label_text("Library")
         self.__playlist_favourites.set_label_text("Favourites")
@@ -88,10 +88,6 @@ class PlaylistCarouselView(QScrollArea, BaseView):
 
         self.__inner = QWidget()
         self.setWidget(self.__inner)
-
-        self.__main_layout = QHBoxLayout(self.__inner)
-        self.__main_layout.setAlignment(Qt.AlignLeft)
-        self.__main_layout.setSpacing(32)
 
         # =================Library=================
         self.__playlist_library = self.__create_library_playlist()
@@ -122,12 +118,24 @@ class PlaylistCarouselView(QScrollArea, BaseView):
         self.__btn_add_playlist.move(self.__add_playlist_card.rect().center() - self.__btn_add_playlist.rect().center())
         self.__btn_add_playlist.clicked.connect(lambda: self.__open_dialog())
 
+        self.__main_layout = QHBoxLayout(self.__inner)
+        self.__main_layout.setAlignment(Qt.AlignLeft)
+        self.__main_layout.setSpacing(32)
+        self.__main_layout.setContentsMargins(0, 0, 0, 0)
+
         self.__main_layout.addLayout(self.__default_playlists)
         self.__main_layout.addLayout(self.__user_playlists)
         self.__main_layout.addWidget(self.__add_playlist_card)
         self.__main_layout.addStretch()
 
         self.__add_playlist_dialog = NewPlaylistWindow()
+
+    @override
+    def wheelEvent(self, event):
+        delta = event.angleDelta().y()
+
+        x = self.horizontalScrollBar().value()
+        self.horizontalScrollBar().setValue(x - delta)
 
     @override
     def setContentsMargins(self, left: int, top: int, right: int, bottom: int) -> None:
@@ -203,7 +211,7 @@ class PlaylistCarouselView(QScrollArea, BaseView):
         playlist_view.set_cover(
             src.default_cover()
             if content.cover is None
-            else PlaylistCarouselView.__create_cover(content.cover)
+            else PlaylistCarousel.__create_cover(content.cover)
         )
 
     def set_on_change_favourites_cover(self, fn: Callable[[str], bytes]) -> None:
@@ -227,8 +235,8 @@ class PlaylistCarouselView(QScrollArea, BaseView):
         playlist = PlaylistCard(FontBuilder.build(size=16, bold=True))
         playlist.setFixedSize(256, 320)
         playlist.setCursor(Cursors.HAND)
-        playlist.set_default_cover(PlaylistCarouselView.__create_cover(Images.NULL_IMAGE))
-        playlist.set_animation(PlaylistCarouselView.__HOVER_ANIMATION)
+        playlist.set_default_cover(PlaylistCarousel.__create_cover(Images.NULL_IMAGE))
+        playlist.set_animation(PlaylistCarousel.__HOVER_ANIMATION)
         return playlist
 
     @staticmethod
@@ -236,8 +244,8 @@ class PlaylistCarouselView(QScrollArea, BaseView):
         playlist = FavouritePlaylistCard(FontBuilder.build(size=16, bold=True))
         playlist.setFixedSize(256, 320)
         playlist.setCursor(Cursors.HAND)
-        playlist.set_default_cover(PlaylistCarouselView.__create_cover(Images.NULL_IMAGE))
-        playlist.set_animation(PlaylistCarouselView.__HOVER_ANIMATION)
+        playlist.set_default_cover(PlaylistCarousel.__create_cover(Images.NULL_IMAGE))
+        playlist.set_animation(PlaylistCarousel.__HOVER_ANIMATION)
         return playlist
 
     @staticmethod
@@ -245,8 +253,8 @@ class PlaylistCarouselView(QScrollArea, BaseView):
         playlist = UserPlaylistCard(FontBuilder.build(size=16, bold=True))
         playlist.setFixedSize(256, 320)
         playlist.setCursor(Cursors.HAND)
-        playlist.set_default_cover(PlaylistCarouselView.__create_cover(Images.NULL_IMAGE))
-        playlist.set_animation(PlaylistCarouselView.__HOVER_ANIMATION)
+        playlist.set_default_cover(PlaylistCarousel.__create_cover(Images.NULL_IMAGE))
+        playlist.set_animation(PlaylistCarousel.__HOVER_ANIMATION)
         return playlist
 
     @staticmethod

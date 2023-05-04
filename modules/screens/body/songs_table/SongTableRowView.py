@@ -381,7 +381,7 @@ class SongTableRowView(BackgroundWidget, BaseView):
         dialog = UpdateSongDialog()
         dialog.set_song_title(self.__label_title.text())
         dialog.set_song_artist(self.__label_artist.text())
-        dialog.on_apply_change(lambda: self.__on_update_info_fn())
+        dialog.on_apply_change(lambda title, artist: self.__on_update_info_fn(title, artist))
         Dialogs.Dialogs.show_dialog(dialog)
 
     def __clicked_add_btn(self) -> None:

@@ -18,7 +18,7 @@ from modules.models.PlaylistInformation import PlaylistInformation
 from modules.models.PlaylistSongs import PlaylistSongs
 from modules.models.Song import Song
 from modules.screens.AbstractScreen import BaseControl
-from modules.screens.body.PlaylistCarouselView import PlaylistCardData
+from modules.screens.body.PlaylistCarousel import PlaylistCardData
 from modules.screens.windows.MainWindowView import MainWindowView
 from modules.statics.view.Material import Images
 from modules.widgets.Dialogs import Dialogs

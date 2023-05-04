@@ -29,7 +29,7 @@ class MainWindowView(FramelessWindow, BaseView):
         self._body.setVerticalScrollBarPolicy(Qt.ScrollBarAlwaysOff)
         self._body.setHorizontalScrollBarPolicy(Qt.ScrollBarAlwaysOff)
         self._body.setWidgetResizable(True)
-        self._body.setContentsMargins(72, 0, 50, 0)
+        self._body.setContentsMargins(72, 20, 50, 0)
 
         self._music_player = MusicPlayerControl()
         self._music_player.setFixedHeight(96)
