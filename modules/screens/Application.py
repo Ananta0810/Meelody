@@ -36,7 +36,7 @@ class Application:
             - Add alert when download youtube music failed. | DONE
             - Add progress bar to show which one is downloading. | DONE
             - Add button to edit favourite playlist cover. | DONE
-            - Add play buttons on taskbar.
+            - Add play buttons on taskbar. | DONE
             - Add shortcut to exit alert, dialog. | DONE
             - Add sidebar.
             - Sort by title, length, artist.

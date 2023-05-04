@@ -1,8 +1,10 @@
 from typing import Optional, Callable, Union
 
+from PyQt5 import QtGui
 from PyQt5.QtCore import Qt
 from PyQt5.QtGui import QKeyEvent, QResizeEvent
-from PyQt5.QtWidgets import QWidget, QMenu, QAction, QSystemTrayIcon, QGraphicsDropShadowEffect
+from PyQt5.QtWidgets import QWidget, QMenu, QAction, QSystemTrayIcon, QGraphicsDropShadowEffect, QStyle
+from PyQt5.QtWinExtras import QWinThumbnailToolBar, QWinThumbnailToolButton
 
 from modules.helpers.types.Decorators import override, connector
 from modules.models.view.Background import Background
@@ -50,8 +52,10 @@ class MainWindowView(FramelessWindow, BaseView):
         self.__tray.setIcon(Icons.LOGO)
         self.__tray.setToolTip("Meelody")
 
-        tray_menu = QMenu()
-        tray_menu.setStyleSheet(
+        self._overlay = WindowOverlay(self._inner)
+
+        self.__tray_menu = QMenu()
+        self.__tray_menu.setStyleSheet(
             """
                 QMenu {
                     background-color: rgb(250, 250, 250);
@@ -72,27 +76,47 @@ class MainWindowView(FramelessWindow, BaseView):
 
         show_action = QAction("Show", self)
         show_action.triggered.connect(lambda: self.__clicked_show_btn())
-        tray_menu.addAction(show_action)
+        self.__tray_menu.addAction(show_action)
 
         self.__play_action_btn = QAction(self)
         self.__play_action_btn.triggered.connect(lambda: self.__onclick_pause())
-        tray_menu.addAction(self.__play_action_btn)
+        self.__tray_menu.addAction(self.__play_action_btn)
 
         prev_action = QAction("Previous song", self)
         prev_action.triggered.connect(lambda: self.__onclick_prev_fn())
-        tray_menu.addAction(prev_action)
+        self.__tray_menu.addAction(prev_action)
 
         next_action = QAction("Next song", self)
         next_action.triggered.connect(lambda: self.__onclick_next_fn())
-        tray_menu.addAction(next_action)
+        self.__tray_menu.addAction(next_action)
 
         exit_action = QAction("Exit", self)
         exit_action.triggered.connect(lambda: self.__exit())
-        tray_menu.addAction(exit_action)
+        self.__tray_menu.addAction(exit_action)
 
-        self.__tray.setContextMenu(tray_menu)
+        self.__tray.setContextMenu(self.__tray_menu)
 
-        self._overlay = WindowOverlay(self._inner)
+        self.__toolbar = QWinThumbnailToolBar(self)
+
+        # Prev, Play/Pause, Next
+        self.__toolbar_prev_btn = QWinThumbnailToolButton(self.__toolbar)
+        self.__toolbar_prev_btn.setToolTip('Prev')
+        self.__toolbar_prev_btn.setIcon(self.style().standardIcon(QStyle.SP_MediaSkipBackward))
+        self.__toolbar_prev_btn.clicked.connect(lambda: self.__onclick_prev_fn())
+        self.__toolbar.addButton(self.__toolbar_prev_btn)
+
+        self.__toolbar_play_btn = QWinThumbnailToolButton(self.__toolbar)
+        self.__toolbar_play_btn.setToolTip('Play')
+        self.__toolbar_play_btn.setProperty('status', 0)
+        self.__toolbar_play_btn.setIcon(self.style().standardIcon(QStyle.SP_MediaPlay))
+        self.__toolbar_play_btn.clicked.connect(lambda: self.__onclick_pause())
+        self.__toolbar.addButton(self.__toolbar_play_btn)
+
+        self.__toolbar_next_btn = QWinThumbnailToolButton(self.__toolbar)
+        self.__toolbar_next_btn.setToolTip('Next')
+        self.__toolbar_next_btn.setIcon(self.style().standardIcon(QStyle.SP_MediaSkipForward))
+        self.__toolbar_next_btn.clicked.connect(lambda: self.__onclick_next_fn())
+        self.__toolbar.addButton(self.__toolbar_next_btn)
 
     @override
     def resizeEvent(self, event: QResizeEvent) -> None:
@@ -109,6 +133,11 @@ class MainWindowView(FramelessWindow, BaseView):
             fn() if fn is not None else None
 
         return super().keyPressEvent(event)
+
+    def showEvent(self, a0: QtGui.QShowEvent) -> None:
+        super().showEvent(a0)
+        if not self.__toolbar.window():
+            self.__toolbar.setWindow(self.windowHandle())
 
     @override
     def apply_light_mode(self) -> None:
@@ -149,7 +178,14 @@ class MainWindowView(FramelessWindow, BaseView):
         self.__set_play_btn_text(self.__is_playing)
 
     def __set_play_btn_text(self, is_playing: bool) -> None:
-        self.__play_action_btn.setText("Pause" if is_playing else "Play")
+        text = "Pause" if is_playing else "Play"
+        self.__play_action_btn.setText(text)
+        self.__toolbar_play_btn.setToolTip(text)
+        self.__toolbar_play_btn.setIcon(
+            self.style().standardIcon(QStyle.SP_MediaPause)
+            if is_playing
+            else self.style().standardIcon(QStyle.SP_MediaPlay)
+        )
 
     @connector
     def __onclick_play(self) -> None:

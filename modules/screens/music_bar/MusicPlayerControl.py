@@ -46,16 +46,16 @@ class MusicPlayerControl(MusicPlayerBarView, BaseControl):
         self.__onclick_play_fn = fn
 
     @connector
+    def set_onclick_pause(self, fn: Callable[[int], None]) -> None:
+        self.__onclick_pause_fn = fn
+
+    @connector
     def set_onclick_prev(self, fn: Callable[[int], None]) -> None:
         self.__onclick_prev_fn = fn
 
     @connector
     def set_onclick_next(self, fn: Callable[[int], None]) -> None:
         self.__onclick_next_fn = fn
-
-    @connector
-    def set_onclick_pause(self, fn: Callable[[int], None]) -> None:
-        self.__onclick_pause_fn = fn
 
     @connector
     def set_onclick_shuffle(self, fn: Callable[[bool], None]) -> None:
@@ -120,6 +120,8 @@ class MusicPlayerControl(MusicPlayerBarView, BaseControl):
             print(f"Paused {song.get_title()} at {playing_time}")
         self.__player.pause()
         self.set_is_playing(False)
+        if self.__onclick_pause_fn is not None:
+            self.__onclick_pause_fn(self.__player.get_current_song_index())
 
     @handler
     def stop_current_song(self) -> None:
