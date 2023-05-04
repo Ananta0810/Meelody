@@ -5,6 +5,8 @@ from PIL import Image
 from PyQt5.QtCore import QByteArray, QBuffer, QIODevice, QRect, Qt
 from PyQt5.QtGui import QPixmap, QPainter, QPainterPath
 
+from modules.models.view.Color import Color
+
 
 def get_pixmap_from_bytes(image_byte: bytes) -> Union[QPixmap, None]:
     if image_byte is None:
@@ -78,10 +80,10 @@ def round_pixmap(pixmap: QPixmap, radius: float = 0) -> QPixmap:
     return target
 
 
-def get_luminance(pixmap: QPixmap) -> float:
+def get_dominant_color(pixmap: QPixmap) -> Color:
     pixmap_bytes: bytes = get_bytes_from_pixmap(pixmap)
     image: Image = Image.open(BytesIO(pixmap_bytes))
-    BLURRED_IMAGE_SIZE: int = 100
+    BLURRED_IMAGE_SIZE: int = 200
 
     image.thumbnail((BLURRED_IMAGE_SIZE, BLURRED_IMAGE_SIZE))
 
@@ -90,8 +92,8 @@ def get_luminance(pixmap: QPixmap) -> float:
     color_count = sorted(image_palette.getcolors(), reverse=True)
     palette_index = color_count[0][1]
     red, green, blue = image_palette.getpalette()[palette_index * 3: palette_index * 3 + 3]
-    return red * 0.2126 + green * 0.7152 + blue * 0.0722
+    return Color(red, green, blue)
 
 
-def check_contrast_at(pixmap: QPixmap, rect: QRect) -> bool:
-    return get_luminance(pixmap.copy(rect)) < 140
+def get_dominant_color_at(rect: QRect, of: QPixmap) -> Color:
+    return get_dominant_color(of.copy(rect))

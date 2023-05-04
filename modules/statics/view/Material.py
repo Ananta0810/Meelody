@@ -38,6 +38,50 @@ class Colors:
     GRAY = Color(128, 128, 128)
     TRANSPARENT = Color(255, 255, 255, 0)
 
+    __RED = 0.2126
+    __GREEN = 0.7152
+    __BLUE = 0.0722
+
+    @staticmethod
+    def luminance(color: Color) -> float:
+        """
+            View https://stackoverflow.com/a/9733420 for more information
+        """
+        return (
+            Colors._luminance_of_height(color.red) * Colors.__RED +
+            Colors._luminance_of_height(color.green) * Colors.__GREEN +
+            Colors._luminance_of_height(color.blue) * Colors.__BLUE
+        )
+
+    @staticmethod
+    def contrast_between(color: Color, other: Color) -> float:
+        """
+            View https://stackoverflow.com/a/9733420 for more information
+        """
+        lum1 = Colors.luminance(color)
+        lum2 = Colors.luminance(other)
+        brightest = max(lum1, lum2)
+        darkest = min(lum1, lum2)
+        result = (brightest + 0.05) / (darkest + 0.05)
+        return result if result > 1 else 1 / result
+
+    @staticmethod
+    def choose_color_for(bg_color: Color, light_color: Color, dark_color: Color) -> Color:
+        main_lum = Colors.luminance(bg_color)
+        return dark_color if main_lum > 0.5 else light_color
+
+    @staticmethod
+    def _luminance_of_height(color_part: int) -> float:
+        v = color_part / 255
+        return (
+            v / 12.92 if v <= 0.03928
+            else pow((v + 0.055) / 1.055, 2.4)
+        )
+
+    @staticmethod
+    def is_dark_mode(color: Color) -> bool:
+        return Colors.luminance(color) < 0.5
+
 
 class ColorBoxes:
     TRANSPARENT = ColorBox(Colors.TRANSPARENT)

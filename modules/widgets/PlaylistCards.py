@@ -325,8 +325,9 @@ class PlaylistCard(QWidget):
         self._adapt_theme_to_cover(pixmap.content())
 
     def _adapt_theme_to_cover(self, pixmap: QPixmap):
-        rect = self.__get_label_rect()
-        should_dark_mode_for_label = Pixmaps.check_contrast_at(pixmap, rect)
+        main_color = Pixmaps.get_dominant_color_at(self.__get_label_rect(), of=pixmap)
+        should_dark_mode_for_label = Colors.is_dark_mode(main_color)
+
         if should_dark_mode_for_label:
             self._label.apply_dark_mode()
         else:
@@ -335,7 +336,7 @@ class PlaylistCard(QWidget):
     def __get_label_rect(self):
         return QRect(self._label.pos().x(),
                      self._label.pos().y(),
-                     self._label.rect().width(),
+                     self._label.rect().width() // 2,
                      self._label.rect().height())
 
     def set_default_cover(self, pixmap: CoverProp) -> None:
@@ -374,10 +375,8 @@ class UserPlaylistCard(PlaylistCard):
             padding=Paddings.RELATIVE_50,
             size=Icons.MEDIUM,
             style=IconButtonStyle(
-                light_mode_icon=Icons.EDIT.with_color(Colors.PRIMARY),
-                light_mode_background=Backgrounds.CIRCLE_PRIMARY_10,
-                dark_mode_icon=Icons.EDIT.with_color(Colors.WHITE),
-                dark_mode_background=Backgrounds.CIRCLE_PRIMARY_75,
+                light_mode_icon=Icons.EDIT.with_color(Colors.WHITE),
+                light_mode_background=Backgrounds.CIRCLE_PRIMARY_50,
             ),
         )
         self.__edit_title_btn.apply_light_mode()
@@ -387,13 +386,10 @@ class UserPlaylistCard(PlaylistCard):
             padding=Paddings.RELATIVE_50,
             size=Icons.MEDIUM,
             style=IconButtonStyle(
-                light_mode_icon=Icons.DELETE.with_color(Colors.DANGER),
-                light_mode_background=Backgrounds.CIRCLE_DANGER_10,
-                dark_mode_icon=Icons.DELETE.with_color(Colors.WHITE),
-                dark_mode_background=Backgrounds.CIRCLE_DANGER_75,
+                light_mode_icon=Icons.DELETE.with_color(Colors.WHITE),
+                light_mode_background=Backgrounds.CIRCLE_DANGER_50,
             ),
         )
-        self.__delete_btn.apply_light_mode()
 
         self.__buttons = QVBoxLayout()
         self.__buttons.setContentsMargins(0, 0, 0, 0)
@@ -420,9 +416,12 @@ class UserPlaylistCard(PlaylistCard):
         self._main_layout.addStretch()
         self._main_layout.addWidget(self._label)
 
+        self.__update_dialog = UpdatePlaylistWindow()
+
         self.__delete_btn.clicked.connect(lambda: self.__on_click_delete())
 
-        self.__update_dialog = UpdatePlaylistWindow()
+        self.__edit_title_btn.apply_light_mode()
+        self.__delete_btn.apply_light_mode()
 
     def __open_dialog(self) -> None:
         self.__update_dialog.set_title(self._label.text())
@@ -467,18 +466,6 @@ class UserPlaylistCard(PlaylistCard):
         if path is not None and path != '':
             self.__onchange_cover_fn(path)
 
-    @override
-    def _adapt_theme_to_cover(self, pixmap: QPixmap) -> None:
-        super()._adapt_theme_to_cover(pixmap)
-        rect = self.__get_button_rect()
-        should_dark_mode_for_buttons = Pixmaps.check_contrast_at(pixmap, rect)
-        if should_dark_mode_for_buttons:
-            self.__edit_title_btn.apply_dark_mode()
-            self.__delete_btn.apply_dark_mode()
-        else:
-            self.__edit_title_btn.apply_light_mode()
-            self.__delete_btn.apply_light_mode()
-
     def __get_button_rect(self) -> QRect:
         return QRect(self.__edit_title_btn.pos().x(),
                      self.__edit_title_btn.pos().y(),
@@ -504,10 +491,8 @@ class FavouritePlaylistCard(PlaylistCard):
             padding=Paddings.RELATIVE_50,
             size=Icons.MEDIUM,
             style=IconButtonStyle(
-                light_mode_icon=Icons.IMAGE.with_color(Colors.PRIMARY),
-                light_mode_background=Backgrounds.CIRCLE_PRIMARY_10,
-                dark_mode_icon=Icons.IMAGE.with_color(Colors.WHITE),
-                dark_mode_background=Backgrounds.CIRCLE_PRIMARY_75,
+                light_mode_icon=Icons.IMAGE.with_color(Colors.WHITE),
+                light_mode_background=Backgrounds.CIRCLE_PRIMARY_50,
             ),
         )
         self.__edit_cover_btn.apply_light_mode()
@@ -546,17 +531,8 @@ class FavouritePlaylistCard(PlaylistCard):
 
     def __onclick_select_cover(self) -> None:
         path: str = QFileDialog.getOpenFileName(self, filter=Properties.ImportType.IMAGE)[0]
-        if path is None and path == '':
+        if path is None or path == '':
             return
         cover = self.__onchange_cover_fn(path)
         if cover is not None:
             self.set_favourites_cover(cover)
-
-    @override
-    def _adapt_theme_to_cover(self, pixmap: QPixmap) -> None:
-        super()._adapt_theme_to_cover(pixmap)
-        should_dark_mode_for_buttons = Pixmaps.check_contrast_at(pixmap, self.__edit_cover_btn.rect())
-        if should_dark_mode_for_buttons:
-            self.__edit_cover_btn.apply_dark_mode()
-        else:
-            self.__edit_cover_btn.apply_light_mode()
