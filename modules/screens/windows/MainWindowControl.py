@@ -166,8 +166,6 @@ class MainWindowControl(MainWindowView, BaseControl):
         self._body.enable_delete_songs(False)
 
         print(f"Chose playlist: {playlist.get_info().name}")
-        sogs = self.__player.get_songs()
-        print(sogs)
 
     def __select_playlist(self, playlist: Playlist) -> None:
         self.__selecting_playlist_songs.clear()

@@ -53,7 +53,7 @@ class Application:
             - Fix first time hear song. | DONE
             - Fix color dominant in playlist. | DONE
             - Fix bug when choose songs for playlist. | DONE
-            - Fix first time playing on other playlist failed.
+            - Fix first time playing on other playlist failed. | DONE
             - Refactor structure.
         """
 
