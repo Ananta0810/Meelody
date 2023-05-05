@@ -2,7 +2,8 @@ import math
 from typing import Optional, Callable
 
 from PyQt5.QtCore import Qt, QSize
-from PyQt5.QtWidgets import QHBoxLayout, QWidget, QVBoxLayout
+from PyQt5.QtGui import QKeySequence
+from PyQt5.QtWidgets import QHBoxLayout, QWidget, QVBoxLayout, QShortcut
 
 from modules.helpers.types.Decorators import override, connector
 from modules.models.AudioPlayer import AudioPlayer
@@ -28,8 +29,8 @@ class MusicPlayerRightSide(QHBoxLayout, BaseView):
     __btn_love: ToggleIconButton
     __btn_volume: StatelessIconButton
 
-    __right_boxes: QHBoxLayout
-    __inputs: QWidget
+    __boxes_layout: QHBoxLayout
+    __boxes: QWidget
     __slider_volume: HorizontalSlider
     __btn_timer: IconButton
 
@@ -38,6 +39,7 @@ class MusicPlayerRightSide(QHBoxLayout, BaseView):
     def __init__(self, parent: Optional["QWidget"] = None):
         super().__init__(parent)
         self.__init_ui()
+        self.assign_shortcuts()
 
     def __init_ui(self) -> None:
         self.__btn_loop = self.__build_option_btn_with_icon(icon=Icons.LOOP)
@@ -69,9 +71,9 @@ class MusicPlayerRightSide(QHBoxLayout, BaseView):
         )
         self.__btn_volume.set_change_state_on_pressed(False)
 
-        self.__inputs = QWidget()
-        self.__right_boxes = QHBoxLayout(self.__inputs)
-        self.__right_boxes.setContentsMargins(0, 0, 0, 0)
+        self.__boxes = QWidget()
+        self.__boxes_layout = QHBoxLayout(self.__boxes)
+        self.__boxes_layout.setContentsMargins(0, 0, 0, 0)
 
         self.__slider_volume = HorizontalSlider.build(
             height=48,
@@ -87,7 +89,7 @@ class MusicPlayerRightSide(QHBoxLayout, BaseView):
             ),
         )
         self.__slider_volume.setSliderPosition(100)
-        self.__right_boxes.addWidget(self.__slider_volume)
+        self.__boxes_layout.addWidget(self.__slider_volume)
 
         self.__btn_timer = IconButton.build(
             padding=Paddings.RELATIVE_50,
@@ -106,11 +108,22 @@ class MusicPlayerRightSide(QHBoxLayout, BaseView):
         self.addWidget(self.__btn_shuffle)
         self.addWidget(self.__btn_love)
         self.addWidget(self.__btn_volume)
-        self.addWidget(self.__inputs, 1)
+        self.addWidget(self.__boxes, 1)
         self.addWidget(self.__btn_timer)
 
         self.__time_dialog = TimerDialog()
         self.__time_dialog.on_apply_change(lambda minutes: self.__onchange_timer(minutes))
+
+    @override
+    def assign_shortcuts(self) -> None:
+        loop_shortcut = QShortcut(QKeySequence(Qt.Key_Q), self.__btn_loop)
+        loop_shortcut.activated.connect(lambda: self.set_loop(not self.__btn_loop.is_active()))
+
+        shuffle_shortcut = QShortcut(QKeySequence(Qt.Key_W), self.__btn_shuffle)
+        shuffle_shortcut.activated.connect(lambda: self.set_shuffle(not self.__btn_shuffle.is_active()))
+
+        love_shortcut = QShortcut(QKeySequence(Qt.Key_E), self.__btn_love)
+        love_shortcut.activated.connect(self.__btn_love.click)
 
     @override
     def apply_light_mode(self) -> None:

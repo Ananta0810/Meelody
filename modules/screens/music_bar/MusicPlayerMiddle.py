@@ -69,36 +69,36 @@ class MusicPlayerMiddle(QHBoxLayout, BaseView):
     @override
     def assign_shortcuts(self) -> None:
         shortcut_0 = QShortcut(QKeySequence(Qt.Key_0), self.__slider_time)
-        shortcut_0.activated.connect(lambda: self.__skip__to(0))
+        shortcut_0.activated.connect(lambda: self.__skip_to(0))
 
         shortcut_1 = QShortcut(QKeySequence(Qt.Key_1), self.__slider_time)
-        shortcut_1.activated.connect(lambda: self.__skip__to(10))
+        shortcut_1.activated.connect(lambda: self.__skip_to(10))
 
         shortcut_2 = QShortcut(QKeySequence(Qt.Key_2), self.__slider_time)
-        shortcut_2.activated.connect(lambda: self.__skip__to(20))
+        shortcut_2.activated.connect(lambda: self.__skip_to(20))
 
         shortcut_3 = QShortcut(QKeySequence(Qt.Key_3), self.__slider_time)
-        shortcut_3.activated.connect(lambda: self.__skip__to(30))
+        shortcut_3.activated.connect(lambda: self.__skip_to(30))
 
         shortcut_4 = QShortcut(QKeySequence(Qt.Key_4), self.__slider_time)
-        shortcut_4.activated.connect(lambda: self.__skip__to(40))
+        shortcut_4.activated.connect(lambda: self.__skip_to(40))
 
         shortcut_5 = QShortcut(QKeySequence(Qt.Key_5), self.__slider_time)
-        shortcut_5.activated.connect(lambda: self.__skip__to(50))
+        shortcut_5.activated.connect(lambda: self.__skip_to(50))
 
         shortcut_6 = QShortcut(QKeySequence(Qt.Key_6), self.__slider_time)
-        shortcut_6.activated.connect(lambda: self.__skip__to(60))
+        shortcut_6.activated.connect(lambda: self.__skip_to(60))
 
         shortcut_7 = QShortcut(QKeySequence(Qt.Key_7), self.__slider_time)
-        shortcut_7.activated.connect(lambda: self.__skip__to(70))
+        shortcut_7.activated.connect(lambda: self.__skip_to(70))
 
         shortcut_8 = QShortcut(QKeySequence(Qt.Key_8), self.__slider_time)
-        shortcut_8.activated.connect(lambda: self.__skip__to(80))
+        shortcut_8.activated.connect(lambda: self.__skip_to(80))
 
         shortcut_9 = QShortcut(QKeySequence(Qt.Key_9), self.__slider_time)
-        shortcut_9.activated.connect(lambda: self.__skip__to(90))
+        shortcut_9.activated.connect(lambda: self.__skip_to(90))
 
-    def __skip__to(self, pos: int) -> None:
+    def __skip_to(self, pos: int) -> None:
         self.__slider_time.setValue(pos)
         self.__slider_time.sliderReleased.emit()
 
