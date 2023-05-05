@@ -84,7 +84,7 @@ class MainWindowControl(MainWindow, BaseControl):
         self.__start_download.connect(self.__on_start_download)
 
         # TODO: Reload current playlist
-        # self.__loaded_covers.connect(lambda: self.__choose_library())
+        self.__loaded_covers.connect(lambda: self.__choose_library())
 
     def __on_start_download(self):
         return self._body.add_download_item(Lists.last_of(self.__downloaders).get_video_title())

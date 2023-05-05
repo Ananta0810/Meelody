@@ -41,13 +41,14 @@ class Application:
             - Add sidebar.
             - Sort by title, length, artist.
             - Allow to auto modify volume so that every song has same vibe.
+            - Add timer
             
             - Update UI for inputs. | DONE
             - Use shortcut to go to next song which start with key. | DONE
             - Change icon for minimize button. | CANCELED
             - Only show icon on tray when hidden. | DONE
             - Run thread when import songs.
-            - Improve performance for menu.
+            - Improve performance for menu. | DOING
             - Scroll wheel on playlist carousel to scroll. | DONE
             
             - Fix 3 alerts show up at the same time.

@@ -1,8 +1,9 @@
 from typing import Optional, Callable
 
+from PyQt5 import QtGui
 from PyQt5.QtCore import Qt
 from PyQt5.QtGui import QKeyEvent
-from PyQt5.QtWidgets import QWidget, QVBoxLayout, QFileDialog
+from PyQt5.QtWidgets import QWidget, QFileDialog
 
 from modules.helpers.types.Decorators import override, connector
 from modules.models.Song import Song
@@ -11,12 +12,12 @@ from modules.screens.body.songs_table.SongTableRowView import SongTableRowView
 from modules.statics import Properties
 from modules.statics.view.Material import Images, Backgrounds
 from modules.widgets.Dialogs import Dialogs
+from modules.widgets.HideableLayout import HideableLayout
 from modules.widgets.ScrollAreas import SmoothVerticalScrollArea
 
 
 class SongMenu(SmoothVerticalScrollArea, BaseView):
-    __inner: QWidget
-    __menu: QVBoxLayout
+    __menu: QWidget
 
     __onclick_button_fn: Callable[[int], None] = None
     __onclick_love_fn: Callable[[int], None] = None
@@ -41,13 +42,14 @@ class SongMenu(SmoothVerticalScrollArea, BaseView):
         self.setWidgetResizable(True)
         self.set_item_height(104)
 
-        self.__inner = QWidget(self)
-        self.setWidget(self.__inner)
-        self.__menu = QVBoxLayout(self.__inner)
-        self.__menu.setAlignment(Qt.AlignTop)
-        self.__menu.setSpacing(0)
+        self.__menu = HideableLayout(self)
+        self.setWidget(self.__menu)
         self.__menu.setContentsMargins(8, 0, 8, 8)
-        self.setVerticalScrollBarPolicy(Qt.ScrollBarPolicy.ScrollBarAlwaysOn)
+
+    @override
+    def resizeEvent(self, a0: QtGui.QResizeEvent) -> None:
+        self.__menu.setFixedWidth(self.rect().width() - 4)
+        super().resizeEvent(a0)
 
     @override
     def apply_light_mode(self) -> None:
@@ -170,27 +172,26 @@ class SongMenu(SmoothVerticalScrollArea, BaseView):
     def load_songs(self, songs: list[Song]) -> list[SongTableRowView]:
         total_rows = len(self.__song_views)
         total_songs = len(songs)
-        if total_rows == total_songs:
+
+        is_lacking_rows = total_rows < total_songs
+        if is_lacking_rows:
+            total_lacking_rows = total_songs - total_rows
+
+            self.__add_rows(total_lacking_rows)
             self.__display_songs(songs)
+
             return self.__song_views
 
-        if total_rows > total_songs:
-            self.__display_songs(songs)
-            self.__hide_items_after_index(total_songs)
-            return self.__song_views[0:len(songs)]
+        self.__display_songs(songs)
+        # self.__hide_items_after_index(total_songs)
+        return self.__song_views[0:len(songs)]
 
-        # Lacking rows, need to add.
-        total_lacking_rows = total_songs - total_rows
-
+    def __add_rows(self, total_lacking_rows):
         for i in range(0, total_lacking_rows):
             self.__add_new_row_to_menu()
 
-        self.__display_songs(songs)
-
-        return self.__song_views
-
     def __popular_info(self, song_view: SongTableRowView, song: Song, index: int) -> None:
-        song_view.show()
+        # song_view.show()
         song_view.show_less()
 
         song_view.enable_choosing(False)
@@ -218,7 +219,11 @@ class SongMenu(SmoothVerticalScrollArea, BaseView):
         displaying_rows = self.__song_views[0:len(songs)]
         for i, song_view in enumerate(displaying_rows):
             self.__popular_info(song_view, songs[i], i)
+        self.__show_items(len(songs))
         return displaying_rows
+
+    def __show_items(self, total_items_show: int) -> None:
+        self.__menu.setFixedHeight(total_items_show * 104)
 
     def __add_new_row_to_menu(self) -> SongTableRowView:
         song_view = SongTableRowView()
