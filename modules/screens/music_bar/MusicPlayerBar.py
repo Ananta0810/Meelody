@@ -6,7 +6,7 @@ from PyQt5.QtWidgets import QHBoxLayout, QWidget
 from modules.helpers.types.Decorators import override, connector
 from modules.screens.AbstractScreen import BaseView
 from modules.screens.music_bar.MusicPlayerLeftSide import MusicPlayerLeftSide
-from modules.screens.music_bar.MusicPlayerMiddleView import MusicPlayerMiddleView
+from modules.screens.music_bar.MusicPlayerMiddle import MusicPlayerMiddle
 from modules.screens.music_bar.MusicPlayerRightSide import MusicPlayerRightSide
 from modules.statics.view.Material import Images
 
@@ -14,7 +14,7 @@ from modules.statics.view.Material import Images
 class MusicPlayerBar(QWidget, BaseView):
     __main_layout: QHBoxLayout
     __left: MusicPlayerLeftSide
-    __middle: MusicPlayerMiddleView
+    __middle: MusicPlayerMiddle
     __right: MusicPlayerRightSide
 
     def __init__(self, parent: Optional["QWidget"] = None):
@@ -33,7 +33,7 @@ class MusicPlayerBar(QWidget, BaseView):
         self.__left.setSpacing(12)
         self.__left.set_default_cover(Images.DEFAULT_SONG_COVER)
 
-        self.__middle = MusicPlayerMiddleView()
+        self.__middle = MusicPlayerMiddle()
         self.__middle.setContentsMargins(0, 0, 0, 0)
         self.__middle.setSpacing(4)
 
