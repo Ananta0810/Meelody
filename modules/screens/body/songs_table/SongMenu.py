@@ -12,12 +12,12 @@ from modules.screens.body.songs_table.SongTableRowView import SongTableRowView
 from modules.statics import Properties
 from modules.statics.view.Material import Images, Backgrounds
 from modules.widgets.Dialogs import Dialogs
-from modules.widgets.HideableLayout import HideableLayout
+from modules.widgets.MenuLayout import MenuLayout
 from modules.widgets.ScrollAreas import SmoothVerticalScrollArea
 
 
 class SongMenu(SmoothVerticalScrollArea, BaseView):
-    __menu: QWidget
+    __menu: MenuLayout
 
     __onclick_button_fn: Callable[[int], None] = None
     __onclick_love_fn: Callable[[int], None] = None
@@ -42,7 +42,7 @@ class SongMenu(SmoothVerticalScrollArea, BaseView):
         self.setWidgetResizable(True)
         self.set_item_height(104)
 
-        self.__menu = HideableLayout(self)
+        self.__menu = MenuLayout(self)
         self.setWidget(self.__menu)
         self.__menu.setContentsMargins(8, 0, 8, 8)
 
@@ -167,7 +167,7 @@ class SongMenu(SmoothVerticalScrollArea, BaseView):
         self.get_song_at(index).set_love_state(state)
 
     def get_total_songs(self) -> int:
-        return len(self.__song_views)
+        return self.__menu.getTotalDisplaying()
 
     def load_songs(self, songs: list[Song]) -> list[SongTableRowView]:
         total_rows = len(self.__song_views)
@@ -183,15 +183,16 @@ class SongMenu(SmoothVerticalScrollArea, BaseView):
             return self.__song_views
 
         self.__display_songs(songs)
-        # self.__hide_items_after_index(total_songs)
         return self.__song_views[0:len(songs)]
 
     def __add_rows(self, total_lacking_rows):
         for i in range(0, total_lacking_rows):
-            self.__add_new_row_to_menu()
+            song_view = SongTableRowView()
+            self.__song_views.append(song_view)
+            self.__menu.addWidget(song_view)
+            song_view
 
     def __popular_info(self, song_view: SongTableRowView, song: Song, index: int) -> None:
-        # song_view.show()
         song_view.show_less()
 
         song_view.enable_choosing(False)
@@ -210,26 +211,13 @@ class SongMenu(SmoothVerticalScrollArea, BaseView):
         song_view.set_on_update_info(lambda title, artist: self.__onchange_title_fn(index, title, artist))
         song_view.set_on_delete(lambda: self.__confirm_delete_song(index))
 
-    def __hide_items_after_index(self, total_songs):
-        hiding_rows = self.__song_views[total_songs:len(self.__song_views)]
-        for song_view in hiding_rows:
-            song_view.hide()
-
     def __display_songs(self, songs: list[Song]) -> list[SongTableRowView]:
-        displaying_rows = self.__song_views[0:len(songs)]
+        total_display = len(songs)
+        displaying_rows = self.__song_views[0:total_display]
         for i, song_view in enumerate(displaying_rows):
             self.__popular_info(song_view, songs[i], i)
-        self.__show_items(len(songs))
+        self.__menu.displayNFirst(total_display)
         return displaying_rows
-
-    def __show_items(self, total_items_show: int) -> None:
-        self.__menu.setFixedHeight(total_items_show * 104)
-
-    def __add_new_row_to_menu(self) -> SongTableRowView:
-        song_view = SongTableRowView()
-        self.__song_views.append(song_view)
-        self.__menu.addWidget(song_view)
-        return song_view
 
     def load_choosing_playlist(self, songs: list[Song]) -> None:
         self.load_songs(songs)
