@@ -135,6 +135,9 @@ class CurrentPlaylistView(QWidget, BaseView):
     def refresh_menu(self) -> None:
         self.__menu.refresh()
 
+    def update_cover_of_song_at(self, index: int, cover: bytes) -> None:
+        self.__menu.update_cover_of_song_at(index, cover)
+
     def love_song(self, is_loved: bool) -> None:
         self.__menu.love_song(is_loved)
 

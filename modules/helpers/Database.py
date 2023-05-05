@@ -30,7 +30,7 @@ class DataSaver(ABC):
         pass
 
     @abstractmethod
-    def save(self, data: ...) -> None:
+    def save(self, *args) -> None:
         pass
 
 
@@ -49,8 +49,9 @@ class SongSaver(DataSaver):
             if os.path.exists(self.get_path()) \
             else self.__get_songs_from_files(directory, with_extension)
 
-    def save(self, data: list[Song]) -> None:
-        Jsons.write_to_file(self.get_path(), [song.to_dict() for song in data])
+    def save(self, data: list[Song], playing_song: Song | None) -> None:
+        id_ = None if playing_song is None else playing_song.get_id()
+        Jsons.write_to_file(self.get_path(), [song.to_dict(with_cover=song.get_id() == id_) for song in data])
 
     def __get_songs_from_files(self, directory: str, with_extension: str) -> PlaylistSongs:
         playlist = PlaylistSongs()
@@ -58,7 +59,7 @@ class SongSaver(DataSaver):
         files: set = Files.get_files_from(directory, with_extension)
         for file in files:
             playlist.insert(Song.from_file(location=file))
-        self.save(playlist.get_songs())
+        self.save(playlist.get_songs(), None)
         return playlist
 
     def __get_library_songs_from_json(self) -> PlaylistSongs:
@@ -97,7 +98,7 @@ class CoverSaver(DataSaver):
 
     def __create_json_with_covers_of(self, songs: list[Song]):
         self.save(songs)
-        return {song.get_id(): Bytes.encode(song.get_cover()) for song in songs}
+        return {song.get_id(): Bytes.decode(song.get_cover()) for song in songs}
 
 
 class PlaylistSaver(DataSaver):

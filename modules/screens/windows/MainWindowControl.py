@@ -1,5 +1,6 @@
 import shutil
 import tempfile
+import time
 from threading import Thread
 from time import sleep
 
@@ -38,13 +39,25 @@ class MainWindowControl(MainWindow, BaseControl):
     __download_thread: Thread | None = None
 
     __start_download: pyqtSignal = pyqtSignal()
-    __loaded_covers: pyqtSignal = pyqtSignal()
 
     def __init__(self) -> None:
         super(MainWindowControl, self).__init__()
         self._set_default_playlist_cover(Images.DEFAULT_PLAYLIST_COVER)
         self.connect_signals()
         self.set_is_playing(False)
+
+    def __lazy_load_covers(self):
+        covers = Database().covers.load(self.__library.get_songs().get_original_songs())
+        for index, song in enumerate(self.__library.get_songs().get_songs()):
+            try:
+                cover = covers[song.get_id()]
+                if cover is None:
+                    continue
+                song.set_cover(cover)
+                self._body.update_song_cover_at(index, cover)
+                time.sleep(0.02)
+            except KeyError:
+                pass
 
     @override
     def connect_signals(self) -> None:
@@ -83,8 +96,7 @@ class MainWindowControl(MainWindow, BaseControl):
 
         self.__start_download.connect(self.__on_start_download)
 
-        # TODO: Reload current playlist
-        self.__loaded_covers.connect(lambda: self.__choose_library())
+        self.post_show.connect(lambda: Thread(target=lambda: self.__lazy_load_covers()).start())
 
     def __on_start_download(self):
         return self._body.add_download_item(Lists.last_of(self.__downloaders).get_video_title())
@@ -120,7 +132,6 @@ class MainWindowControl(MainWindow, BaseControl):
                 song.set_cover(covers_map_to_id[song.get_id()])
             except KeyError:
                 pass
-        self.__loaded_covers.emit()
 
     def __choose_library(self) -> None:
         self.__select_playlist(self.__library)
@@ -401,8 +412,9 @@ class MainWindowControl(MainWindow, BaseControl):
         return new_songs
 
     def __save_library(self):
-        Database().songs.save(self.__library.get_songs().get_original_songs())
-        Database().covers.save(self.__library.get_songs().get_original_songs())
+        self.__cache_cover_for_playing_song()
+        songs = self.__library.get_songs().get_original_songs()
+        Database().covers.save(songs)
 
     @staticmethod
     def __add_songs_from_path(paths):
@@ -548,6 +560,10 @@ class MainWindowControl(MainWindow, BaseControl):
 
         self.__settings.set_playing_song_id(self.__song_at(index).get_id())
         Database().settings.save(self.__settings)
+        self.__cache_cover_for_playing_song()
+
+    def __cache_cover_for_playing_song(self):
+        Database().songs.save(self.__library.get_songs().get_original_songs(), self.__player.get_current_song())
 
     def __play_song_from_menu_at(self, index: int) -> None:
         self.__playing_playlist = self.__displaying_playlist
@@ -559,6 +575,7 @@ class MainWindowControl(MainWindow, BaseControl):
 
         self.__settings.set_playing_song_id(self.__song_at(index).get_id())
         Database().settings.save(self.__settings)
+        self.__cache_cover_for_playing_song()
 
     def __disable_edit_and_delete_on_libray_of_song_at(self, index):
         if not self.__is_selecting_library:

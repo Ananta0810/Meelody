@@ -159,6 +159,10 @@ class SongTableView(QWidget, BaseView):
         song_view.set_length(song.get_length())
         song_view.set_cover(song.get_cover())
 
+    def update_cover_of_song_at(self, index: int, cover: bytes) -> None:
+        song_view: SongTableRowView = self._menu.get_song_at(index)
+        song_view.set_cover(cover)
+
     def enable_edit_songs(self, enabled: bool) -> None:
         songs = self._menu.get_total_songs()
         for index in range(0, songs):

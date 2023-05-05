@@ -20,7 +20,6 @@ class Application:
 
     def run(self) -> None:
         self.window.show()
-        self.__post_init()
 
     def load_playlist(self):
         """
@@ -69,11 +68,3 @@ class Application:
         self.window.set_appsettings(Database().settings.load())
         self.window.load_library(Playlist.create(name="Library", songs=songs, cover=Images.DEFAULT_PLAYLIST_COVER))
         self.window.load_playlists(Database().playlists.load(songs.get_songs()))
-
-    def __post_init(self) -> None:
-        Thread(target=lambda: self.__lazy_load_covers()).start()
-
-    def __lazy_load_covers(self):
-        sleep(0.5)
-        covers = Database().covers.load()
-        self.window.load_covers(covers)

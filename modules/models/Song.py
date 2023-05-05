@@ -4,6 +4,7 @@ from enum import Enum
 
 from modules.helpers import Printers
 from modules.helpers.types import Strings
+from modules.helpers.types.Bytes import Bytes
 from modules.helpers.types.Decorators import override
 from modules.models.AudioExtractor import AudioExtractor
 
@@ -57,6 +58,7 @@ class Song:
             length=json['length'],
             sample_rate=json['sample_rate'],
             loved=json['is_loved'],
+            cover=Bytes.encode(json['cover'])
         )
         song.__id = json['id']
         return song
@@ -67,7 +69,7 @@ class Song:
         song.__id = self.__id
         return song
 
-    def to_dict(self) -> dict:
+    def to_dict(self, with_cover: bool) -> dict:
         return {
             'id': self.__id,
             'location': self.__location,
@@ -76,6 +78,7 @@ class Song:
             'length': self.__length,
             'sample_rate': self.__sample_rate,
             'is_loved': self.__is_loved,
+            'cover': Bytes.decode(self.__cover) if with_cover else None
         }
 
     def __hash__(self) -> int:
@@ -86,6 +89,8 @@ class Song:
         """
         Check if two songs is the same one.
         """
+        if other is None:
+            return False
         return (
             self.__location == other.__location
             and self.__title == other.__title

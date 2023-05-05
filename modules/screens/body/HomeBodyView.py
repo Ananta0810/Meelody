@@ -6,6 +6,7 @@ from PyQt5.QtWidgets import QScrollArea, QWidget, QVBoxLayout
 
 from modules.helpers.types.Decorators import override, connector
 from modules.models.Playlist import Playlist
+from modules.models.Song import Song
 from modules.screens.AbstractScreen import BaseView
 from modules.screens.body.CurrentPlaylistView import CurrentPlaylistView
 from modules.screens.body.PlaylistCarousel import PlaylistCarousel, PlaylistCardData
@@ -206,6 +207,9 @@ class HomeBodyView(QScrollArea, BaseView):
 
     def refresh_menu(self) -> None:
         self.__current_playlist.refresh_menu()
+
+    def update_song_cover_at(self, index: int, cover: bytes) -> None:
+        self.__current_playlist.update_cover_of_song_at(index, cover)
 
     def love_song(self, is_loved: bool) -> None:
         self.__current_playlist.love_song(is_loved)

@@ -1,7 +1,7 @@
 from typing import Optional, Callable, Union
 
 from PyQt5 import QtGui
-from PyQt5.QtCore import Qt
+from PyQt5.QtCore import Qt, pyqtSignal
 from PyQt5.QtGui import QKeyEvent, QResizeEvent
 from PyQt5.QtWidgets import QWidget, QMenu, QAction, QSystemTrayIcon, QGraphicsDropShadowEffect
 from PyQt5.QtWinExtras import QWinThumbnailToolBar, QWinThumbnailToolButton
@@ -22,6 +22,7 @@ from modules.widgets.Windows import FramelessWindow
 class MainWindow(FramelessWindow, BaseView):
     _body: HomeBodyView
     _music_player: MusicPlayerControl
+    post_show: pyqtSignal = pyqtSignal()
 
     def __init__(self, parent: Optional["QWidget"] = None, width: int = 1280, height: int = 720):
         super(MainWindow, self).__init__(parent)
@@ -138,6 +139,7 @@ class MainWindow(FramelessWindow, BaseView):
         super().showEvent(a0)
         if not self.__toolbar.window():
             self.__toolbar.setWindow(self.windowHandle())
+        self.post_show.emit()
 
     @override
     def apply_light_mode(self) -> None:
