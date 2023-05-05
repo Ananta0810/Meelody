@@ -16,6 +16,8 @@ class AudioPlayer(metaclass=SingletonMeta):
     __time_start_in_sec: float = 0
     __loaded: bool = False
     __offset_rate: float = 1
+    __time_to_stop_as_seconds: int | None = None
+    __elapsed_time_as_seconds: int = 0
 
     def __init__(self):
         mixer.pre_init()
@@ -123,3 +125,27 @@ class AudioPlayer(metaclass=SingletonMeta):
         if mixer.get_init() is None:
             return False
         return mixer.music.get_busy()
+
+    def set_timer(self, minutes: int) -> None:
+        self.__time_to_stop_as_seconds = minutes * 60
+        self.__elapsed_time_as_seconds = 0
+
+    def is_countdown_timer(self) -> None:
+        return self.__time_to_stop_as_seconds is not None
+
+    def is_reached_timer(self) -> bool:
+        return self.__elapsed_time_as_seconds >= self.__time_to_stop_as_seconds if self.is_countdown_timer() else False
+
+    def reset_timer(self) -> None:
+        self.__time_to_stop_as_seconds = None
+        self.__elapsed_time_as_seconds = 0
+
+    def get_time_left_to_timer(self) -> float | None:
+        return (
+            None if self.__time_to_stop_as_seconds is None
+            else (self.__time_to_stop_as_seconds - self.__elapsed_time_as_seconds) / 60
+        )
+
+    def tick(self, seconds: float) -> None:
+        if self.is_countdown_timer():
+            self.__elapsed_time_as_seconds += seconds

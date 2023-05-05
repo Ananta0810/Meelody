@@ -39,6 +39,7 @@ class MusicPlayerControl(MusicPlayerBarView, BaseControl):
         self._set_onclick_loop(lambda: self.change_loop_state())
         self._set_onclick_shuffle(lambda shuffle: self.change_shuffle_state(shuffle))
         self._set_onclick_love(lambda: self.change_love_state())
+        self._set_on_set_timer(self.set_timer)
         self._set_onchange_volume(lambda volume: self.change_volume(volume))
 
     @connector
@@ -191,6 +192,15 @@ class MusicPlayerControl(MusicPlayerBarView, BaseControl):
     def change_volume(self, volume: int) -> None:
         self.__player.set_volume(volume)
 
+    @handler
+    def set_timer(self, minutes: int | None) -> bool:
+        if minutes is None:
+            self.__player.reset_timer()
+            print(f"Reset timer.")
+            return True
+        self.__player.set_timer(minutes)
+        return True
+
     @override
     def set_loop(self, enable: bool) -> None:
         super().set_loop(enable)
@@ -235,7 +245,8 @@ class MusicPlayerControl(MusicPlayerBarView, BaseControl):
         self.__player.play()
 
         while thread_id == self.__thread_id and self.__player.is_playing():
-            self.__do_while_playing_music()
+            self.__update_ui()
+            self.__countdown_timer(interval)
             sys.stdout.flush()
             sleep(interval)
 
@@ -244,9 +255,18 @@ class MusicPlayerControl(MusicPlayerBarView, BaseControl):
         if song_is_finished:
             self.__do_after_song_finished()
 
+    def __countdown_timer(self, interval_in_sec: float) -> None:
+        if not self.__player.is_countdown_timer():
+            return
+        self.__player.tick(interval_in_sec)
+        if self.__player.is_reached_timer():
+            self.pause_current_song()
+            self.__player.reset_timer()
+            print("Paused song because timer is up.")
+
     def do_after_played(self, interval, thread_id):
         while thread_id == self.__thread_id and self.__player.is_playing():
-            self.__do_while_playing_music()
+            self.__update_ui()
             sleep(interval)
 
         playing_this_song: bool = thread_id == self.__thread_id
@@ -264,7 +284,7 @@ class MusicPlayerControl(MusicPlayerBarView, BaseControl):
             max_value=LONGEST_TIME_BREAK_FOR_A_UI_UPDATE_IN_SECONDS
         )
 
-    def __do_while_playing_music(self) -> None:
+    def __update_ui(self) -> None:
         self.set_playing_time(self.__player.get_playing_time())
 
     def __do_after_song_finished(self) -> None:

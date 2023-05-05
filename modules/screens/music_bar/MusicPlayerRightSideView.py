@@ -1,17 +1,25 @@
+import math
 from typing import Optional, Callable
 
-from PyQt5.QtWidgets import QHBoxLayout, QWidget
+from PyQt5.QtCore import Qt, QSize
+from PyQt5.QtWidgets import QHBoxLayout, QWidget, QVBoxLayout
 
 from modules.helpers.types.Decorators import override, connector
-from modules.widgets.Icons import AppIcon
+from modules.models.AudioPlayer import AudioPlayer
 from modules.models.view.Background import Background
 from modules.models.view.Color import Color
+from modules.models.view.builder.FontBuilder import FontBuilder
 from modules.models.view.builder.IconButtonStyle import IconButtonStyle
 from modules.models.view.builder.SliderStyle import SliderStyle
-from modules.statics.view.Material import Icons, Paddings, Colors, Backgrounds, ColorBoxes
+from modules.models.view.builder.TextStyle import TextStyle
 from modules.screens.AbstractScreen import BaseView
+from modules.statics.view.Material import Icons, Paddings, Colors, Backgrounds, ColorBoxes, Images
+from modules.widgets import Dialogs
+from modules.widgets.Buttons import ToggleIconButton, StatelessIconButton, IconButton, ActionButton
+from modules.widgets.Cover import CoverProp, Cover
+from modules.widgets.Icons import AppIcon
+from modules.widgets.Labels import LabelWithDefaultText
 from modules.widgets.Sliders import HorizontalSlider
-from modules.widgets.Buttons import ToggleIconButton, StatelessIconButton, IconButton
 
 
 class MusicPlayerRightSideView(QHBoxLayout, BaseView):
@@ -25,8 +33,11 @@ class MusicPlayerRightSideView(QHBoxLayout, BaseView):
     __slider_volume: HorizontalSlider
     __btn_timer: IconButton
 
+    __onchange_timer: Callable[[int | None], bool] = None
+
     def __init__(self, parent: Optional["QWidget"] = None):
         super(MusicPlayerRightSideView, self).__init__(parent)
+        self.__minutes: int = 0
         self.__init_ui()
 
     def __init_ui(self) -> None:
@@ -87,6 +98,8 @@ class MusicPlayerRightSideView(QHBoxLayout, BaseView):
                 light_mode_background=Backgrounds.CIRCLE_HIDDEN_PRIMARY_10
             )
         )
+
+        self.__btn_timer.clicked.connect(self.__open_timer_dialog)
         self.__btn_volume.clicked.connect(
             lambda signal: self.__slider_volume.setVisible(not self.__slider_volume.isVisible()))
 
@@ -96,6 +109,9 @@ class MusicPlayerRightSideView(QHBoxLayout, BaseView):
         self.addWidget(self.__btn_volume)
         self.addWidget(self.__inputs, 1)
         self.addWidget(self.__btn_timer)
+
+        self.__time_dialog = TimerDialog()
+        self.__time_dialog.on_apply_change(lambda minutes: self.__onchange_timer(minutes))
 
     @override
     def apply_light_mode(self) -> None:
@@ -131,6 +147,10 @@ class MusicPlayerRightSideView(QHBoxLayout, BaseView):
     def set_onchange_volume(self, fn: Callable[[int], None]) -> None:
         self.__slider_volume.valueChanged.connect(lambda: self.__onchange_volume(fn))
 
+    @connector
+    def set_on_set_timer(self, fn: Callable[[int | None], bool]) -> None:
+        self.__onchange_timer = fn
+
     def set_loop(self, enable: bool) -> None:
         return self.__btn_loop.set_active(enable)
 
@@ -163,6 +183,11 @@ class MusicPlayerRightSideView(QHBoxLayout, BaseView):
             icon = VOLUME_UP_ICON
         self.__btn_volume.set_state_index(icon)
 
+    def __open_timer_dialog(self) -> None:
+        minutes = AudioPlayer.get_instance().get_time_left_to_timer()
+        self.__time_dialog.set_minutes_left(minutes)
+        Dialogs.Dialogs.show_dialog(self.__time_dialog)
+
     @staticmethod
     def __build_option_btn_with_icon(
         icon: AppIcon,
@@ -183,3 +208,107 @@ class MusicPlayerRightSideView(QHBoxLayout, BaseView):
                 light_mode_background=inactive_background,
             )
         )
+
+
+class TimerDialog(Dialogs.Dialog):
+    __on_accept_fn: callable = Callable[[str, str], None]
+
+    def __init__(self):
+        super().__init__()
+        self.set_minutes_left(0)
+
+    @override
+    def _build_content(self):
+        self.__image = Cover()
+        self.__image.setAlignment(Qt.AlignHCenter)
+
+        self.__label_time = LabelWithDefaultText.build(
+            font=FontBuilder.build(family="Segoe UI Semibold", size=11),
+            light_mode_style=TextStyle(text_color=ColorBoxes.BLACK),
+            dark_mode_style=TextStyle(text_color=ColorBoxes.WHITE),
+        )
+        self.__label_time.setAlignment(Qt.AlignCenter)
+
+        self.__slider_time = HorizontalSlider.build(
+            height=16,
+            light_mode_style=SliderStyle(
+                handler_color=ColorBoxes.PRIMARY,
+                track_active_color=ColorBoxes.PRIMARY,
+            ),
+            dark_mode_style=SliderStyle(
+                handler_color=ColorBoxes.PRIMARY,
+                track_active_color=ColorBoxes.PRIMARY,
+            ),
+        )
+
+        self.__slider_time.sliderMoved.connect(self.__change_time)
+
+        self.__accept_btn = ActionButton.build(
+            font=FontBuilder.build(family="Segoe UI Semibold", size=11),
+            size=QSize(0, 48),
+            light_mode=TextStyle(text_color=ColorBoxes.WHITE,
+                                 background=Backgrounds.ROUNDED_PRIMARY_75.with_border_radius(8)),
+            dark_mode=TextStyle(text_color=ColorBoxes.WHITE, background=Backgrounds.ROUNDED_WHITE_25)
+        )
+        self.__accept_btn.clicked.connect(lambda: self._on_accepted())
+
+        self.__view_layout = QVBoxLayout(self)
+        self.__view_layout.setAlignment(Qt.AlignVCenter)
+        self.__view_layout.addWidget(self.__image)
+        self.__view_layout.addWidget(self.__label_time)
+        self.__view_layout.addWidget(self.__slider_time)
+        self.__view_layout.addSpacing(8)
+        self.__view_layout.addWidget(self.__accept_btn)
+
+        self.__image.set_cover(CoverProp.from_bytes(Images.TIMER, width=128))
+        self.__label_time.setText("Stop playing")
+        self.__accept_btn.setText("Set Now")
+
+        self.setFixedWidth(360)
+        self.setFixedHeight(self.sizeHint().height())
+
+    @override
+    def apply_dark_mode(self) -> None:
+        super().apply_dark_mode()
+        self.__label_time.apply_dark_mode()
+        self.__slider_time.apply_dark_mode()
+        self.__accept_btn.apply_dark_mode()
+
+    @override
+    def apply_light_mode(self) -> None:
+        super().apply_light_mode()
+        self.__label_time.apply_light_mode()
+        self.__slider_time.apply_light_mode()
+        self.__accept_btn.apply_light_mode()
+
+    @connector
+    def on_apply_change(self, fn: Callable[[int], bool]) -> None:
+        self.__on_accept_fn = fn
+
+    def set_minutes_left(self, minutes: float) -> None:
+        if minutes is None:
+            self.__minutes = None
+            self.__label_time.setText(f"Stop playing")
+            self.__slider_time.setValue(0)
+        else:
+            self.__minutes = int(math.ceil(minutes))
+            self.__label_time.setText(f"Stop after {self.__minutes} minutes")
+            self.__slider_time.setValue(self.__minutes * 98 // 90)
+
+    def __change_time(self) -> None:
+        minutes = int(self.__slider_time.value() / 98 * 90)
+        if minutes == 0:
+            self.__minutes = None
+            self.__label_time.setText(f"Stop playing")
+        else:
+            self.__minutes = minutes
+            self.__label_time.setText(f"Stop after {minutes} minutes")
+
+    def _on_accepted(self) -> None:
+        if self.__on_accept_fn is None:
+            super()._on_accepted()
+            return
+
+        can_close = self.__on_accept_fn(None if self.__minutes == 0 else self.__minutes)
+        if can_close:
+            super()._on_accepted()

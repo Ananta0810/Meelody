@@ -90,6 +90,10 @@ class MusicPlayerBarView(QWidget, BaseView):
         self.__right.set_onclick_love(fn)
 
     @connector
+    def _set_on_set_timer(self, fn: Callable[[int | None], bool]) -> None:
+        self.__right.set_on_set_timer(fn)
+
+    @connector
     def _set_onchange_volume(self, fn: Callable[[int], None]) -> None:
         self.__right.set_onchange_volume(fn)
 

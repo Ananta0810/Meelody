@@ -398,15 +398,16 @@ class Icons:
 
 
 class Images:
-    ERROR_PLAYLIST: bytes = Bytes.get_bytes_from_file("assets\images\defaults\oops.png")
-    DOWNLOAD: bytes = Bytes.get_bytes_from_file("assets\images\defaults\download.png")
-    EDIT: bytes = Bytes.get_bytes_from_file("assets\images\defaults\edit.png")
-    DELETE: bytes = Bytes.get_bytes_from_file("assets\images\defaults\delete.png")
-    WARNING: bytes = Bytes.get_bytes_from_file("assets\images\defaults\warning.png")
-    DEFAULT_SONG_COVER: bytes = Bytes.get_bytes_from_file("assets\images\defaults\song_cover.jpg")
-    DEFAULT_PLAYLIST_COVER: bytes = Bytes.get_bytes_from_file("assets\images\defaults\playlist_cover.jpg")
-    FAVOURITES_PLAYLIST_COVER: bytes = Bytes.get_bytes_from_file("assets\images\defaults\playlist_favourite_cover.jpg")
-    NULL_IMAGE: bytes = Bytes.get_bytes_from_file("assets\images\defaults\playlist_cover.jpg")
+    ERROR_PLAYLIST: bytes = Bytes.get_bytes_from_file("assets/images/defaults/oops.png")
+    TIMER: bytes = Bytes.get_bytes_from_file("assets/images/defaults/timer.png")
+    DOWNLOAD: bytes = Bytes.get_bytes_from_file("assets/images/defaults/download.png")
+    EDIT: bytes = Bytes.get_bytes_from_file("assets/images/defaults/edit.png")
+    DELETE: bytes = Bytes.get_bytes_from_file("assets/images/defaults/delete.png")
+    WARNING: bytes = Bytes.get_bytes_from_file("assets/images/defaults/warning.png")
+    DEFAULT_SONG_COVER: bytes = Bytes.get_bytes_from_file("assets/images/defaults/song_cover.jpg")
+    DEFAULT_PLAYLIST_COVER: bytes = Bytes.get_bytes_from_file("assets/images/defaults/playlist_cover.jpg")
+    FAVOURITES_PLAYLIST_COVER: bytes = Bytes.get_bytes_from_file("assets/images/defaults/playlist_favourite_cover.jpg")
+    NULL_IMAGE: bytes = Bytes.get_bytes_from_file("assets/images/defaults/playlist_cover.jpg")
 
 
 class Cursors:

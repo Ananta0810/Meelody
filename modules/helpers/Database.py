@@ -98,7 +98,7 @@ class CoverSaver(DataSaver):
 
     def __create_json_with_covers_of(self, songs: list[Song]):
         self.save(songs)
-        return {song.get_id(): Bytes.decode(song.get_cover()) for song in songs}
+        return {song.get_id(): song.get_cover() for song in songs}
 
 
 class PlaylistSaver(DataSaver):
