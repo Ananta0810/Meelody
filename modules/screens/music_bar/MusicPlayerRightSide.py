@@ -22,7 +22,7 @@ from modules.widgets.Labels import LabelWithDefaultText
 from modules.widgets.Sliders import HorizontalSlider
 
 
-class MusicPlayerRightSideView(QHBoxLayout, BaseView):
+class MusicPlayerRightSide(QHBoxLayout, BaseView):
     __btn_loop: ToggleIconButton
     __btn_shuffle: ToggleIconButton
     __btn_love: ToggleIconButton
@@ -36,8 +36,7 @@ class MusicPlayerRightSideView(QHBoxLayout, BaseView):
     __onchange_timer: Callable[[int | None], bool] = None
 
     def __init__(self, parent: Optional["QWidget"] = None):
-        super(MusicPlayerRightSideView, self).__init__(parent)
-        self.__minutes: int = 0
+        super().__init__(parent)
         self.__init_ui()
 
     def __init_ui(self) -> None:
@@ -215,6 +214,7 @@ class TimerDialog(Dialogs.Dialog):
 
     def __init__(self):
         super().__init__()
+        self.__minutes: int = 0
         self.set_minutes_left(0)
 
     @override

@@ -10,10 +10,10 @@ from modules.models.AudioPlayer import AudioPlayer
 from modules.models.PlaylistSongs import PlaylistSongs
 from modules.models.Song import Song
 from modules.screens.AbstractScreen import BaseControl
-from modules.screens.music_bar.MusicPlayerBarView import MusicPlayerBarView
+from modules.screens.music_bar.MusicPlayerBar import MusicPlayerBar
 
 
-class MusicPlayerControl(MusicPlayerBarView, BaseControl):
+class MusicPlayerControl(MusicPlayerBar, BaseControl):
     __player: AudioPlayer = AudioPlayer.get_instance()
     __thread_id: int = 0
 

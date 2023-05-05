@@ -5,20 +5,20 @@ from PyQt5.QtWidgets import QHBoxLayout, QWidget
 
 from modules.helpers.types.Decorators import override, connector
 from modules.screens.AbstractScreen import BaseView
-from modules.screens.music_bar.MusicPlayerLeftSideView import MusicPlayerLeftSideView
+from modules.screens.music_bar.MusicPlayerLeftSide import MusicPlayerLeftSide
 from modules.screens.music_bar.MusicPlayerMiddleView import MusicPlayerMiddleView
-from modules.screens.music_bar.MusicPlayerRightSideView import MusicPlayerRightSideView
+from modules.screens.music_bar.MusicPlayerRightSide import MusicPlayerRightSide
 from modules.statics.view.Material import Images
 
 
-class MusicPlayerBarView(QWidget, BaseView):
+class MusicPlayerBar(QWidget, BaseView):
     __main_layout: QHBoxLayout
-    __left: MusicPlayerLeftSideView
+    __left: MusicPlayerLeftSide
     __middle: MusicPlayerMiddleView
-    __right: MusicPlayerRightSideView
+    __right: MusicPlayerRightSide
 
     def __init__(self, parent: Optional["QWidget"] = None):
-        super(MusicPlayerBarView, self).__init__(parent)
+        super().__init__(parent)
         self._totalTime = 0
         self.__init_ui()
 
@@ -28,7 +28,7 @@ class MusicPlayerBarView(QWidget, BaseView):
         self.__main_layout.setContentsMargins(20, 0, 20, 0)
         self.__main_layout.setSpacing(0)
 
-        self.__left = MusicPlayerLeftSideView()
+        self.__left = MusicPlayerLeftSide()
         self.__left.setContentsMargins(4, 0, 0, 0)
         self.__left.setSpacing(12)
         self.__left.set_default_cover(Images.DEFAULT_SONG_COVER)
@@ -37,7 +37,7 @@ class MusicPlayerBarView(QWidget, BaseView):
         self.__middle.setContentsMargins(0, 0, 0, 0)
         self.__middle.setSpacing(4)
 
-        self.__right = MusicPlayerRightSideView()
+        self.__right = MusicPlayerRightSide()
         self.__right.setContentsMargins(0, 0, 0, 0)
         self.__right.setSpacing(8)
 

@@ -19,6 +19,9 @@ class BaseView(metaclass=MixinMeta):
     def apply_light_mode(self) -> None:
         pass
 
+    def assign_shortcuts(self) -> None:
+        pass
+
     def get_shortcut_map(self) -> dict[Shortcut, callable]:
         return {}
 

@@ -1,6 +1,3 @@
-from threading import Thread
-from time import sleep
-
 from modules.helpers.Database import Database
 from modules.models.Playlist import Playlist
 from modules.models.PlaylistSongs import PlaylistSongs
@@ -37,10 +34,12 @@ class Application:
             - Add button to edit favourite playlist cover. | DONE
             - Add play buttons on taskbar. | DONE
             - Add shortcut to exit alert, dialog. | DONE
+            - Add timer | DONE
             - Add sidebar.
             - Sort by title, length, artist.
             - Allow to auto modify volume so that every song has same vibe.
-            - Add timer
+            - Add short cut to play, prev, next
+            - Add settings.
             
             - Update UI for inputs. | DONE
             - Use shortcut to go to next song which start with key. | DONE

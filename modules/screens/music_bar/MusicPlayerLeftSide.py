@@ -1,6 +1,8 @@
 from typing import Optional, Union
 
-from PyQt5.QtWidgets import QHBoxLayout, QWidget, QVBoxLayout
+from PyQt5.QtCore import Qt
+from PyQt5.QtGui import QKeySequence
+from PyQt5.QtWidgets import QHBoxLayout, QWidget, QVBoxLayout, QShortcut
 
 from modules.helpers.types.Decorators import override, connector
 from modules.models.view.builder.FontBuilder import FontBuilder
@@ -8,12 +10,12 @@ from modules.models.view.builder.IconButtonStyle import IconButtonStyle
 from modules.models.view.builder.TextStyle import TextStyle
 from modules.screens.AbstractScreen import BaseView
 from modules.statics.view.Material import Paddings, Icons, Colors, Backgrounds, ColorBoxes
+from modules.widgets.Buttons import IconButton
 from modules.widgets.Cover import Cover, CoverProp
 from modules.widgets.Labels import LabelWithDefaultText
-from modules.widgets.Buttons import IconButton
 
 
-class MusicPlayerLeftSideView(QHBoxLayout, BaseView):
+class MusicPlayerLeftSide(QHBoxLayout, BaseView):
     __song_info_layout: QVBoxLayout = None
     __play_buttons: QHBoxLayout = None
 
@@ -27,9 +29,10 @@ class MusicPlayerLeftSideView(QHBoxLayout, BaseView):
     __btn_next_song: IconButton = None
 
     def __init__(self, parent: Optional["QWidget"] = None):
-        super(MusicPlayerLeftSideView, self).__init__(parent)
+        super().__init__(parent)
         self.__init_ui()
         self.set_is_playing(False)
+        self.assign_shortcuts()
 
     def __init_ui(self) -> None:
         self.__song_cover = Cover()
@@ -109,6 +112,20 @@ class MusicPlayerLeftSideView(QHBoxLayout, BaseView):
             )
         )
         self.__play_buttons.addWidget(self.__btn_next_song)
+
+    @override
+    def assign_shortcuts(self) -> None:
+        play_shortcut = QShortcut(QKeySequence(Qt.Key_Space), self.__btn_play_song)
+        play_shortcut.activated.connect(self.__btn_play_song.click)
+
+        pause_shortcut = QShortcut(QKeySequence(Qt.Key_Space), self.__btn_pause_song)
+        pause_shortcut.activated.connect(self.__btn_pause_song.click)
+
+        prev_shortcut = QShortcut(QKeySequence(Qt.Key_Left), self.__btn_prev_song)
+        prev_shortcut.activated.connect(self.__btn_prev_song.click)
+
+        next_shortcut = QShortcut(QKeySequence(Qt.Key_Right), self.__btn_next_song)
+        next_shortcut.activated.connect(self.__btn_next_song.click)
 
     @override
     def apply_light_mode(self) -> None:
