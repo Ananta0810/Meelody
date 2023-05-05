@@ -3,7 +3,7 @@ from typing import Optional, Callable, Union
 from PyQt5 import QtGui
 from PyQt5.QtCore import Qt
 from PyQt5.QtGui import QKeyEvent, QResizeEvent
-from PyQt5.QtWidgets import QWidget, QMenu, QAction, QSystemTrayIcon, QGraphicsDropShadowEffect, QStyle
+from PyQt5.QtWidgets import QWidget, QMenu, QAction, QSystemTrayIcon, QGraphicsDropShadowEffect
 from PyQt5.QtWinExtras import QWinThumbnailToolBar, QWinThumbnailToolButton
 
 from modules.helpers.types.Decorators import override, connector
@@ -19,12 +19,12 @@ from modules.widgets.Shortcut import Shortcut
 from modules.widgets.Windows import FramelessWindow
 
 
-class MainWindowView(FramelessWindow, BaseView):
+class MainWindow(FramelessWindow, BaseView):
     _body: HomeBodyView
     _music_player: MusicPlayerControl
 
     def __init__(self, parent: Optional["QWidget"] = None, width: int = 1280, height: int = 720):
-        super(MainWindowView, self).__init__(parent)
+        super(MainWindow, self).__init__(parent)
         self.setFixedWidth(width)
         self.setFixedHeight(height)
         self.__init_ui()
@@ -100,21 +100,21 @@ class MainWindowView(FramelessWindow, BaseView):
 
         # Prev, Play/Pause, Next
         self.__toolbar_prev_btn = QWinThumbnailToolButton(self.__toolbar)
-        self.__toolbar_prev_btn.setToolTip('Prev')
-        self.__toolbar_prev_btn.setIcon(self.style().standardIcon(QStyle.SP_MediaSkipBackward))
+        self.__toolbar_prev_btn.setToolTip('Previous')
+        self.__toolbar_prev_btn.setIcon(Icons.PREVIOUS.with_color(Colors.PRIMARY))
         self.__toolbar_prev_btn.clicked.connect(lambda: self.__onclick_prev_fn())
         self.__toolbar.addButton(self.__toolbar_prev_btn)
 
         self.__toolbar_play_btn = QWinThumbnailToolButton(self.__toolbar)
         self.__toolbar_play_btn.setToolTip('Play')
         self.__toolbar_play_btn.setProperty('status', 0)
-        self.__toolbar_play_btn.setIcon(self.style().standardIcon(QStyle.SP_MediaPlay))
+        self.__toolbar_play_btn.setIcon(Icons.PLAY.with_color(Colors.PRIMARY))
         self.__toolbar_play_btn.clicked.connect(lambda: self.__onclick_pause())
         self.__toolbar.addButton(self.__toolbar_play_btn)
 
         self.__toolbar_next_btn = QWinThumbnailToolButton(self.__toolbar)
         self.__toolbar_next_btn.setToolTip('Next')
-        self.__toolbar_next_btn.setIcon(self.style().standardIcon(QStyle.SP_MediaSkipForward))
+        self.__toolbar_next_btn.setIcon(Icons.NEXT.with_color(Colors.PRIMARY))
         self.__toolbar_next_btn.clicked.connect(lambda: self.__onclick_next_fn())
         self.__toolbar.addButton(self.__toolbar_next_btn)
 
@@ -182,9 +182,9 @@ class MainWindowView(FramelessWindow, BaseView):
         self.__play_action_btn.setText(text)
         self.__toolbar_play_btn.setToolTip(text)
         self.__toolbar_play_btn.setIcon(
-            self.style().standardIcon(QStyle.SP_MediaPause)
+            Icons.PAUSE.with_color(Colors.PRIMARY)
             if is_playing
-            else self.style().standardIcon(QStyle.SP_MediaPlay)
+            else Icons.PLAY.with_color(Colors.PRIMARY)
         )
 
     @connector

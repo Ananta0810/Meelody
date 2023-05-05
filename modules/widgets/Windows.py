@@ -80,6 +80,8 @@ class FramelessWindow(QMainWindow, DialogWindow, BaseView):
         self.__title_bar.addWidget(self.__btn_minimize)
         self.__title_bar.addWidget(self.__btn_close)
 
+        self.addLayout(self.__title_bar)
+
     @override
     def resizeEvent(self, event: QResizeEvent) -> None:
         self.__background.resize(self.size())

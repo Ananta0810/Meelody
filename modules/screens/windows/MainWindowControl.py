@@ -19,12 +19,12 @@ from modules.models.PlaylistSongs import PlaylistSongs
 from modules.models.Song import Song
 from modules.screens.AbstractScreen import BaseControl
 from modules.screens.body.PlaylistCarousel import PlaylistCardData
-from modules.screens.windows.MainWindowView import MainWindowView
+from modules.screens.windows.MainWindow import MainWindow
 from modules.statics.view.Material import Images
 from modules.widgets.Dialogs import Dialogs
 
 
-class MainWindowControl(MainWindowView, BaseControl):
+class MainWindowControl(MainWindow, BaseControl):
     __library: Playlist
     __displaying_playlist: Playlist = None
     __playing_playlist: Playlist = None
