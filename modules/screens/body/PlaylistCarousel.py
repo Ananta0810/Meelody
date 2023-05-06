@@ -12,7 +12,6 @@ from modules.screens.AbstractScreen import BaseView
 from modules.statics.view.Material import Icons, Colors, Cursors, Paddings, Backgrounds, Images
 from modules.widgets.Buttons import IconButton
 from modules.widgets.Cover import CoverProp
-from modules.widgets.Dialogs import Dialogs
 from modules.widgets.PlaylistCards import PlaylistCard, FavouritePlaylistCard, UserPlaylistCard, NewPlaylistWindow
 
 
@@ -167,7 +166,7 @@ class PlaylistCarousel(QScrollArea, BaseView):
         self.__add_playlist_dialog.set_title("Untitled")
         self.__add_playlist_dialog.set_cover(Images.DEFAULT_PLAYLIST_COVER)
         self.__add_playlist_dialog.on_apply_change(self.__on_add_playlist_fn)
-        Dialogs.show_dialog(self.__add_playlist_dialog)
+        self.__add_playlist_dialog.show()
 
     def set_default_playlist_cover(self, cover: bytes) -> None:
         self.__default_cover = self.__create_cover(cover)

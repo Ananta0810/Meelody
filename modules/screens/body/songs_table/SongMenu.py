@@ -11,7 +11,7 @@ from modules.screens.AbstractScreen import BaseView
 from modules.screens.body.songs_table.SongTableRowView import SongTableRowView
 from modules.statics import Properties
 from modules.statics.view.Material import Images, Backgrounds
-from modules.widgets.Dialogs import Dialogs
+from modules.widgets import Dialogs
 from modules.widgets.MenuLayout import MenuLayout
 from modules.widgets.ScrollAreas import SmoothVerticalScrollArea
 

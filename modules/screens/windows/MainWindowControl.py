@@ -22,7 +22,7 @@ from modules.screens.AbstractScreen import BaseControl
 from modules.screens.body.PlaylistCarousel import PlaylistCardData
 from modules.screens.windows.MainWindow import MainWindow
 from modules.statics.view.Material import Images
-from modules.widgets.Dialogs import Dialogs
+from modules.widgets import Dialogs
 
 
 class MainWindowControl(MainWindow, BaseControl):
@@ -490,7 +490,7 @@ class MainWindowControl(MainWindow, BaseControl):
             Dialogs.alert(
                 image=Images.WARNING,
                 header="Warning",
-                message=f"Please enter new information for song."
+                message=f"Please enter new information for song.",
             )
             return False
 

@@ -198,7 +198,7 @@ class MusicPlayerRightSide(QHBoxLayout, BaseView):
     def __open_timer_dialog(self) -> None:
         minutes = AudioPlayer.get_instance().get_time_left_to_timer()
         self.__time_dialog.set_minutes_left(minutes)
-        Dialogs.Dialogs.show_dialog(self.__time_dialog)
+        self.__time_dialog.show()
 
     @staticmethod
     def __build_option_btn_with_icon(
@@ -231,7 +231,7 @@ class TimerDialog(Dialogs.Dialog):
         self.set_minutes_left(0)
 
     @override
-    def _build_content(self):
+    def _build_content(self, parent: QWidget) -> None:
         self.__image = Cover()
         self.__image.setAlignment(Qt.AlignHCenter)
 
@@ -265,7 +265,7 @@ class TimerDialog(Dialogs.Dialog):
         )
         self.__accept_btn.clicked.connect(lambda: self._on_accepted())
 
-        self.__view_layout = QVBoxLayout(self)
+        self.__view_layout = QVBoxLayout(parent)
         self.__view_layout.setAlignment(Qt.AlignVCenter)
         self.__view_layout.addWidget(self.__image)
         self.__view_layout.addWidget(self.__label_time)

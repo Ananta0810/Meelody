@@ -30,7 +30,7 @@ class NewPlaylistWindow(Dialogs.Dialog):
     __cover_data = None
 
     @override
-    def _build_content(self):
+    def _build_content(self, parent: QWidget) -> None:
         self.__cover = Cover()
         cover_edge = 360 - self.contentsMargins().left() - self.contentsMargins().right()
         self.__cover.setFixedSize(cover_edge, cover_edge)
@@ -63,7 +63,7 @@ class NewPlaylistWindow(Dialogs.Dialog):
             dark_mode=TextStyle(text_color=ColorBoxes.WHITE, background=Backgrounds.ROUNDED_WHITE_25)
         )
 
-        self.__view_layout = QVBoxLayout(self)
+        self.__view_layout = QVBoxLayout(parent)
         self.__view_layout.setContentsMargins(0, 12, 0, 0)
         self.__view_layout.setAlignment(Qt.AlignVCenter)
         self.__view_layout.addWidget(self.__cover)
@@ -78,7 +78,7 @@ class NewPlaylistWindow(Dialogs.Dialog):
             light_mode=TextStyle(text_color=ColorBoxes.WHITE,
                                  background=Backgrounds.ROUNDED_PRIMARY.with_border_radius(8)),
             dark_mode=TextStyle(text_color=ColorBoxes.WHITE, background=Backgrounds.ROUNDED_WHITE_25),
-            parent=self
+            parent=parent
         )
         self.__edit_cover_btn.setText("Choose cover")
         self.__edit_cover_btn.apply_light_mode()
@@ -147,7 +147,7 @@ class UpdatePlaylistWindow(Dialogs.Dialog):
     __onclick_choose_cover: callable = None
 
     @override
-    def _build_content(self):
+    def _build_content(self, parent: QWidget) -> None:
         self.__cover = Cover()
         cover_edge = 360 - self.contentsMargins().left() - self.contentsMargins().right()
         self.__cover.setFixedSize(cover_edge, cover_edge)
@@ -180,7 +180,7 @@ class UpdatePlaylistWindow(Dialogs.Dialog):
             dark_mode=TextStyle(text_color=ColorBoxes.WHITE, background=Backgrounds.ROUNDED_WHITE_25)
         )
 
-        self.__view_layout = QVBoxLayout(self)
+        self.__view_layout = QVBoxLayout(parent)
         self.__view_layout.setContentsMargins(0, 12, 0, 0)
         self.__view_layout.setAlignment(Qt.AlignVCenter)
         self.__view_layout.addWidget(self.__cover)
@@ -195,7 +195,7 @@ class UpdatePlaylistWindow(Dialogs.Dialog):
             light_mode=TextStyle(text_color=ColorBoxes.WHITE,
                                  background=Backgrounds.ROUNDED_PRIMARY.with_border_radius(8)),
             dark_mode=TextStyle(text_color=ColorBoxes.WHITE, background=Backgrounds.ROUNDED_WHITE_25),
-            parent=self
+            parent=parent
         )
         self.__edit_cover_btn.setText("Choose cover")
         self.__edit_cover_btn.apply_light_mode()
@@ -427,7 +427,7 @@ class UserPlaylistCard(PlaylistCard):
         self.__update_dialog.on_apply_change(self.__on_change_title)
         self.__update_dialog.onclick_choose_cover(
             lambda: self.__onclick_select_cover() if self.__onchange_cover_fn is not None else None)
-        Dialogs.Dialogs.show_dialog(self.__update_dialog)
+        self.__update_dialog.show()
 
     def __on_change_title(self, title: str) -> bool:
         changed_success = self.__onchange_title_fn(title)
@@ -436,7 +436,7 @@ class UserPlaylistCard(PlaylistCard):
         return changed_success
 
     def __on_click_delete(self) -> None:
-        Dialogs.Dialogs.confirm(
+        Dialogs.confirm(
             image=Images.DELETE,
             header="Warning",
             message="Are you sure want to delete this playlist?\n The playlist will be deleted permanently.",

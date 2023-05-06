@@ -38,7 +38,7 @@ class Application:
             - Add sidebar.
             - Sort by title, length, artist.
             - Allow to auto modify volume so that every song has same vibe.
-            - Add short cut to play, prev, next
+            - Add short cut to play, prev, next | DONE
             - Add settings.
             
             - Update UI for inputs. | DONE

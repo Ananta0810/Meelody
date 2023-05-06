@@ -28,7 +28,7 @@ class UpdateSongDialog(Dialogs.Dialog):
     __on_accept_fn: callable = Callable[[str, str], None]
 
     @override
-    def _build_content(self):
+    def _build_content(self, parent: QWidget) -> None:
         self.__image = Cover()
         self.__image.setAlignment(Qt.AlignHCenter)
         self.__header = LabelWithDefaultText.build(
@@ -77,7 +77,8 @@ class UpdateSongDialog(Dialogs.Dialog):
         )
         self.__accept_btn.clicked.connect(lambda: self._on_accepted())
 
-        self.__view_layout = QVBoxLayout(self)
+        self.__view_layout = QVBoxLayout(parent)
+        self.__view_layout.setContentsMargins(0, 0, 0, 0)
         self.__view_layout.setAlignment(Qt.AlignVCenter)
         self.__view_layout.addWidget(self.__image)
         self.__view_layout.addWidget(self.__header)
@@ -121,8 +122,10 @@ class UpdateSongDialog(Dialogs.Dialog):
     @override
     def resizeEvent(self, event: QResizeEvent) -> None:
         super().resizeEvent(event)
-        self.__input_title.setFixedWidth(self.__accept_btn.size().width())
-        self.__input_artist.setFixedWidth(self.__accept_btn.size().width())
+        width = self.width() - self.contentsMargins().left() - self.contentsMargins().right()
+
+        self.__input_title.setFixedWidth(width)
+        self.__input_artist.setFixedWidth(width)
 
     @connector
     def on_apply_change(self, fn: Callable[[str, str], bool]) -> None:
@@ -382,7 +385,7 @@ class SongTableRowView(BackgroundWidget, BaseView):
         dialog.set_song_title(self.__label_title.text())
         dialog.set_song_artist(self.__label_artist.text())
         dialog.on_apply_change(lambda title, artist: self.__on_update_info_fn(title, artist))
-        Dialogs.Dialogs.show_dialog(dialog)
+        dialog.show()
 
     def __clicked_add_btn(self) -> None:
         self.__btn_remove_from_playlist.show()

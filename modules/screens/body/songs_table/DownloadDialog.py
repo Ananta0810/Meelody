@@ -1,7 +1,7 @@
 from typing import Callable
 
 from PyQt5.QtCore import QSize, Qt
-from PyQt5.QtWidgets import QVBoxLayout
+from PyQt5.QtWidgets import QVBoxLayout, QWidget
 
 from modules.helpers.types.Decorators import override, connector
 from modules.models.view.Background import Background
@@ -12,18 +12,18 @@ from modules.models.view.builder.FontBuilder import FontBuilder
 from modules.models.view.builder.TextStyle import TextStyle
 from modules.screens.body.songs_table.DownloadMenu import DownloadMenu
 from modules.statics.view.Material import ColorBoxes, Backgrounds, Colors, Images
-from modules.widgets.BaseDialogs import Dialog
+from modules.widgets import Dialogs
 from modules.widgets.Buttons import ActionButton
 from modules.widgets.Cover import Cover, CoverProp
 from modules.widgets.Labels import LabelWithDefaultText, Input
 
 
-class DownloadDialog(Dialog):
+class DownloadDialog(Dialogs.Dialog):
     __on_accept_fn: callable = None
     __close_fns: list[callable] = []
 
     @override
-    def _build_content(self):
+    def _build_content(self, parent: QWidget) -> None:
         self.__image = Cover()
         self.__image.setAlignment(Qt.AlignHCenter)
         self.__header = LabelWithDefaultText.build(
@@ -56,7 +56,7 @@ class DownloadDialog(Dialog):
 
         self.__menu = DownloadMenu()
 
-        self.__view_layout = QVBoxLayout(self)
+        self.__view_layout = QVBoxLayout(parent)
         self.__view_layout.setAlignment(Qt.AlignVCenter)
         self.__view_layout.addWidget(self.__image)
         self.__view_layout.addWidget(self.__header)

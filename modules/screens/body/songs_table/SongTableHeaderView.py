@@ -12,12 +12,9 @@ from modules.models.view.builder.TextStyle import TextStyle
 from modules.screens.AbstractScreen import BaseView
 from modules.screens.body.songs_table.DownloadDialog import DownloadDialog
 from modules.statics.view.Material import ColorBoxes, Icons, Paddings, Colors, Backgrounds
-from modules.widgets import Dialogs
 from modules.widgets.Buttons import IconButton
 from modules.widgets.Icons import AppIcon
 from modules.widgets.Labels import LabelWithDefaultText
-
-
 
 
 class SongTableHeaderView(QWidget, BaseView):
@@ -43,6 +40,9 @@ class SongTableHeaderView(QWidget, BaseView):
         self.__init_ui()
 
     def __init_ui(self) -> None:
+        self.__download_dialog = DownloadDialog()
+        self.__download_dialog.on_download(lambda url: self.__on_download_songs_to_library_fn(url))
+
         SCROLLBAR_WIDTH = 4
         font = FontBuilder.build(size=9)
 
@@ -80,7 +80,7 @@ class SongTableHeaderView(QWidget, BaseView):
         self.__buttons_layout.addSpacing(8)
 
         self.__btn_download_songs_to_library = self.__create_button(Icons.DOWNLOAD, Paddings.RELATIVE_50)
-        self.__btn_download_songs_to_library.clicked.connect(self.__show_download_dialog)
+        self.__btn_download_songs_to_library.clicked.connect(self.__download_dialog.show)
         self.__btn_download_songs_to_library.setToolTip("Download songs from Youtube.")
         self.__buttons_layout.addWidget(self.__btn_download_songs_to_library)
 
@@ -106,9 +106,6 @@ class SongTableHeaderView(QWidget, BaseView):
         self.__info.addWidget(self.__label_length)
         self.__info.addWidget(self.__buttons)
 
-        self.__download_dialog = DownloadDialog()
-        self.__download_dialog.on_download(lambda url: self.__on_download_songs_to_library_fn(url))
-
     def clicked_apply_songs(self) -> None:
         self.__btn_select_songs.show()
         self.__btn_apply_add_songs.hide()
@@ -118,9 +115,6 @@ class SongTableHeaderView(QWidget, BaseView):
         self.__btn_select_songs.hide()
         self.__btn_apply_add_songs.show()
         return self.__onclick_select_songs_to_playlist_fn()
-
-    def __show_download_dialog(self) -> None:
-        Dialogs.Dialogs.show_dialog(self.__download_dialog)
 
     def __select_song_paths_to_add_to_library(self) -> None:
         paths = QFileDialog.getOpenFileNames(self, filter="MP3 (*.MP3 *.mp3)")[0]

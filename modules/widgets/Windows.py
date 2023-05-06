@@ -9,10 +9,9 @@ from modules.models.view.builder.IconButtonStyle import IconButtonStyle
 from modules.screens.AbstractScreen import BaseView
 from modules.statics.view.Material import Paddings, Icons, Colors, Backgrounds
 from modules.widgets.Buttons import IconButton
-from modules.widgets.DialogWindow import DialogWindow
 
 
-class FramelessWindow(QMainWindow, DialogWindow, BaseView):
+class FramelessWindow(QMainWindow, BaseView):
     __main_layout: QVBoxLayout
     _inner: QWidget
     __title_bar: QHBoxLayout
