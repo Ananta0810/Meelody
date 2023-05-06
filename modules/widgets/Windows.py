@@ -1,14 +1,15 @@
-from typing import Union, Callable, overload
+from typing import Callable, overload, Union
 
 from PyQt5.QtCore import Qt, QSize, QMargins
 from PyQt5.QtGui import QResizeEvent, QMouseEvent, QShowEvent
-from PyQt5.QtWidgets import QWidget, QVBoxLayout, QHBoxLayout, QLayout, QDesktopWidget, QMainWindow, \
-    QGraphicsDropShadowEffect
+from PyQt5.QtWidgets import QWidget, QVBoxLayout, QHBoxLayout, QDesktopWidget, QMainWindow, \
+    QGraphicsDropShadowEffect, QLayout
 
 from modules.helpers.types.Decorators import override, connector
 from modules.models.view.builder.IconButtonStyle import IconButtonStyle
 from modules.screens.AbstractScreen import BaseView
-from modules.statics.view.Material import Paddings, Icons, Colors, Backgrounds
+from modules.statics.view.Material import Paddings, Icons, Colors, Backgrounds, Images
+from modules.widgets import Dialogs
 from modules.widgets.Buttons import IconButton
 
 
@@ -23,6 +24,7 @@ class FramelessWindow(QMainWindow):
 
         self.__background = QWidget(self.__outer)
         self.__inner = QWidget(self.__outer)
+        self.__main_layout = QVBoxLayout(self.__inner)
 
         self.__init_ui()
 
@@ -41,10 +43,8 @@ class FramelessWindow(QMainWindow):
         self.__background.move(32, 32)
         self.__background.setAutoFillBackground(True)
 
-        self._addBodyTo(self.__inner)
-
-    def _addBodyTo(self, parent: QWidget) -> None:
-        ...
+        self.__main_layout.setContentsMargins(0, 0, 0, 0)
+        self.__main_layout.setSpacing(0)
 
     def setTitleHeight(self, height: int) -> None:
         self.__titleBarHeight = height
@@ -54,6 +54,22 @@ class FramelessWindow(QMainWindow):
         centerPoint = QDesktopWidget().availableGeometry().center()
         qtRectangle.moveCenter(centerPoint)
         self.move(qtRectangle.topLeft())
+
+    @override
+    def addLayout(self, widget: QLayout) -> None:
+        self.__main_layout.addLayout(widget)
+
+    @override
+    def addWidget(
+        self,
+        layout: QWidget,
+        stretch: int = 0,
+        alignment: Union[Qt.Alignment, Qt.AlignmentFlag] = None
+    ) -> None:
+        if alignment is None:
+            self.__main_layout.addWidget(layout, stretch=stretch)
+            return
+        self.__main_layout.addWidget(layout, stretch=stretch, alignment=alignment)
 
     @override
     def setFixedHeight(self, h: int) -> None:
@@ -82,6 +98,14 @@ class FramelessWindow(QMainWindow):
         self.__background.setFixedSize(a0)
         self.__inner.setFixedSize(a0)
 
+    @override
+    def width(self) -> int:
+        return self.__inner.sizeHint().width()
+
+    @override
+    def height(self) -> int:
+        return self.__inner.sizeHint().height()
+
     @overload
     @override
     def setContentsMargins(self, left: int, top: int, right: int, bottom: int) -> None:
@@ -100,13 +124,14 @@ class FramelessWindow(QMainWindow):
         self.__inner.setContentsMargins(left, top, right, bottom)
 
     def showEvent(self, a0: QShowEvent) -> None:
-        self.__outer.setFixedSize(self.__background.width() + 64, self.__background.height() + 64)
         super().showEvent(a0)
+        self.__outer.setFixedSize(self.__inner.width() + 64, self.__inner.height() + 64)
 
     @override
     def resizeEvent(self, event: QResizeEvent) -> None:
         super().resizeEvent(event)
         self.__background.resize(self.size())
+        self.__outer.setFixedSize(self.__inner.width() + 64, self.__inner.height() + 64)
 
     @override
     def mousePressEvent(self, event: QMouseEvent) -> None:
@@ -140,11 +165,11 @@ class CloseableWindow(FramelessWindow, BaseView):
     __on_exit_fn: Callable[[], None] = None
     __onclick_minimize_fn: Callable[[], None] = None
 
-    def _addBodyTo(self, parent: QWidget) -> None:
-        self.__main_layout = QVBoxLayout(parent)
-        self.__main_layout.setContentsMargins(0, 0, 0, 0)
-        self.__main_layout.setSpacing(0)
+    def __init__(self):
+        super().__init__()
+        self._init_ui()
 
+    def _init_ui(self) -> None:
         self.__title_bar = QHBoxLayout()
         self.__title_bar.setContentsMargins(12, 12, 12, 12)
         self.__title_bar.setSpacing(8)
@@ -189,22 +214,6 @@ class CloseableWindow(FramelessWindow, BaseView):
         self.__btn_minimize.apply_dark_mode()
         self.__btn_close.apply_dark_mode()
 
-    @override
-    def addLayout(self, widget: QLayout) -> None:
-        self.__main_layout.addLayout(widget)
-
-    @override
-    def addWidget(
-        self,
-        layout: QWidget,
-        stretch: int = 0,
-        alignment: Union[Qt.Alignment, Qt.AlignmentFlag] = None
-    ) -> None:
-        if alignment is None:
-            self.__main_layout.addWidget(layout, stretch=stretch)
-            return
-        self.__main_layout.addWidget(layout, stretch=stretch, alignment=alignment)
-
     @connector
     def set_onclick_collapse(self, fn: Callable[[], None]) -> None:
         self.__onclick_collapse_fn = fn
@@ -223,9 +232,10 @@ class CloseableWindow(FramelessWindow, BaseView):
             self.__onclick_collapse_fn()
 
     def __click_minimize(self) -> None:
-        self.showMinimized()
-        if self.__onclick_minimize_fn is not None:
-            self.__onclick_minimize_fn()
+        Dialogs.alert(Images.TIMER, "Dmo", "Demo")
+        # self.showMinimized()
+        # if self.__onclick_minimize_fn is not None:
+        #     self.__onclick_minimize_fn()
 
     def __exit(self) -> None:
         self.close()

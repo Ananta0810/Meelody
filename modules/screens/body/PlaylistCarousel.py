@@ -142,13 +142,15 @@ class PlaylistCarousel(QScrollArea, BaseView):
 
     @override
     def apply_light_mode(self) -> None:
-        self.__btn_add_playlist.apply_light_mode()
         self.__add_playlist_card.setStyleSheet(Backgrounds.CIRCLE_PRIMARY_10.to_stylesheet(border_radius_size=48))
+        self.__add_playlist_dialog.apply_light_mode()
+        self.__btn_add_playlist.apply_light_mode()
 
     @override
     def apply_dark_mode(self) -> None:
-        self.__btn_add_playlist.apply_dark_mode()
         self.__add_playlist_card.setStyleSheet(Backgrounds.CIRCLE_WHITE_25.to_stylesheet(border_radius_size=48))
+        self.__add_playlist_dialog.apply_dark_mode()
+        self.__btn_add_playlist.apply_dark_mode()
 
     @connector
     def set_onclick_library(self, fn: Callable[[], None]) -> None:

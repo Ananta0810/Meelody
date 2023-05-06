@@ -1,9 +1,8 @@
 from typing import Callable
 
-from PyQt5 import QtCore
 from PyQt5.QtCore import Qt, QSize
-from PyQt5.QtGui import QResizeEvent
-from PyQt5.QtWidgets import QWidget, QVBoxLayout, QHBoxLayout
+from PyQt5.QtGui import QResizeEvent, QShowEvent
+from PyQt5.QtWidgets import QVBoxLayout, QHBoxLayout
 
 from modules.helpers.types.Decorators import override
 from modules.models.view.Border import Border
@@ -13,8 +12,8 @@ from modules.models.view.builder.FontBuilder import FontBuilder
 from modules.models.view.builder.IconButtonStyle import IconButtonStyle
 from modules.models.view.builder.TextStyle import TextStyle
 from modules.screens.AbstractScreen import BaseView
-from modules.statics.view.Material import Backgrounds, Colors, Paddings, Icons, ColorBoxes
-from modules.widgets.Buttons import IconButton, ActionButton
+from modules.statics.view.Material import Backgrounds, ColorBoxes, Paddings, Icons, Colors
+from modules.widgets.Buttons import ActionButton, IconButton
 from modules.widgets.Cover import CoverProp, Cover
 from modules.widgets.Labels import LabelWithDefaultText
 from modules.widgets.Windows import FramelessWindow
@@ -54,62 +53,56 @@ class Dialog(FramelessWindow, BaseView):
     def __init__(self):
         super().__init__()
         self.setWindowModality(Qt.ApplicationModal)
-        self.apply_light_mode()
+        self.__init_ui()
 
-    def _addBodyTo(self, parent: QWidget) -> None:
-        self._parent = parent
-        parent.setContentsMargins(24, 24, 24, 24)
-        self.__background = QWidget(parent)
-
+    def __init_ui(self) -> None:
+        self.__layout = QHBoxLayout()
         self._btn_close = IconButton.build(
             padding=Paddings.RELATIVE_50,
             size=Icons.MEDIUM,
             style=IconButtonStyle(
                 light_mode_icon=Icons.CLOSE.with_color(Colors.GRAY),
                 light_mode_background=Backgrounds.ROUNDED_HIDDEN_GRAY_25
-            ),
-            parent=parent
+            )
         )
+        self.__layout.addStretch(1)
+        self.__layout.addWidget(self._btn_close)
+        self.addLayout(self.__layout)
         self._btn_close.clicked.connect(self.close)
-        self._build_content(parent)
+        self.__layout.setContentsMargins(8, 8, 8, 0)
 
-    def _build_content(self, parent: QWidget) -> None:
+        self._build_content()
+
+    def _build_content(self) -> None:
         ...
+
+    def showEvent(self, a0: QShowEvent) -> None:
+        super().showEvent(a0)
+        self.moveToCenter()
 
     @override
     def resizeEvent(self, event: QResizeEvent) -> None:
-        self.__background.resize(self.size())
-        self._btn_close.move(self.size().width() - self._btn_close.width() - 4, 4)
+        super().resizeEvent(event)
+        self._btn_close.move(self.width() - self._btn_close.width() - 4, 4)
         if self.__on_change_size_fn is not None:
             self.__on_change_size_fn()
-
-    @override
-    def width(self) -> int:
-        return self._parent.size().width()
-
-    @override
-    def height(self) -> int:
-        return self._parent.height()
-
-    @override
-    def contentsMargins(self) -> QtCore.QMargins:
-        return self._parent.contentsMargins()
+        self.setFixedHeight(self.height())
 
     @override
     def apply_dark_mode(self) -> None:
-        self.__background.setStyleSheet(Backgrounds.ROUNDED_BLACK.with_border_radius(12).to_stylesheet())
+        self.setStyleSheet(Backgrounds.ROUNDED_BLACK.with_border_radius(12).to_stylesheet())
         self._btn_close.apply_dark_mode()
 
     @override
     def apply_light_mode(self) -> None:
-        self.__background.setStyleSheet(Backgrounds.ROUNDED_WHITE.with_border_radius(12).to_stylesheet())
+        self.setStyleSheet(Backgrounds.ROUNDED_WHITE.with_border_radius(12).to_stylesheet())
         self._btn_close.apply_light_mode()
 
 
 class _AlertDialog(Dialog, BaseView):
     _onclick_accept_fn: Callable[[], bool]
 
-    def _build_content(self, parent: QWidget) -> None:
+    def _build_content(self) -> None:
         self.__image = Cover()
         self.__image.setAlignment(Qt.AlignHCenter)
 
@@ -142,7 +135,7 @@ class _AlertDialog(Dialog, BaseView):
         self.__accept_btn.clicked.connect(self.close)
         self.__button_box.addWidget(self.__accept_btn)
 
-        self.__view_layout = QVBoxLayout(parent)
+        self.__view_layout = QVBoxLayout()
         self.__view_layout.setAlignment(Qt.AlignVCenter)
         self.__view_layout.setSpacing(12)
 
@@ -151,7 +144,9 @@ class _AlertDialog(Dialog, BaseView):
         self.__view_layout.addWidget(self.__message)
         self.__view_layout.addLayout(self.__button_box)
         self.setFixedWidth(360)
-        self._btn_close.hide()
+        # self._btn_close.hide()
+
+        self.setLayout(self.__view_layout)
 
     def set_info(self, image: bytes, header: str, message: str, accept_text: str) -> None:
         self.__image.set_cover(CoverProp.from_bytes(image, width=128))
@@ -179,7 +174,7 @@ class _ConfirmDialog(Dialog, BaseView):
     __on_accept_fn: callable = None
     __on_cancel_fn: callable = None
 
-    def _build_content(self, parent: QWidget) -> None:
+    def _build_content(self) -> None:
         self.__image = Cover()
         self.__image.setAlignment(Qt.AlignHCenter)
 
@@ -225,7 +220,7 @@ class _ConfirmDialog(Dialog, BaseView):
         self.__accept_btn.clicked.connect(self.close)
         self.__button_box.addWidget(self.__accept_btn)
 
-        self.__view_layout = QVBoxLayout(parent)
+        self.__view_layout = QVBoxLayout()
         self.__view_layout.setAlignment(Qt.AlignVCenter)
         self.__view_layout.addWidget(self.__image)
         self.__view_layout.addWidget(self.__header)
@@ -233,6 +228,7 @@ class _ConfirmDialog(Dialog, BaseView):
         self.__view_layout.addSpacing(8)
         self.__view_layout.addLayout(self.__button_box)
 
+        self.setLayout(self.__view_layout)
         self.setFixedWidth(360)
         self._btn_close.hide()
 

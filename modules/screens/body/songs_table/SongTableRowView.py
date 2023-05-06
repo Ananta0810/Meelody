@@ -28,7 +28,7 @@ class UpdateSongDialog(Dialogs.Dialog):
     __on_accept_fn: callable = Callable[[str, str], None]
 
     @override
-    def _build_content(self, parent: QWidget) -> None:
+    def _build_content(self) -> None:
         self.__image = Cover()
         self.__image.setAlignment(Qt.AlignHCenter)
         self.__header = LabelWithDefaultText.build(
@@ -77,7 +77,7 @@ class UpdateSongDialog(Dialogs.Dialog):
         )
         self.__accept_btn.clicked.connect(lambda: self._on_accepted())
 
-        self.__view_layout = QVBoxLayout(parent)
+        self.__view_layout = QVBoxLayout()
         self.__view_layout.setContentsMargins(0, 0, 0, 0)
         self.__view_layout.setAlignment(Qt.AlignVCenter)
         self.__view_layout.addWidget(self.__image)
@@ -89,6 +89,7 @@ class UpdateSongDialog(Dialogs.Dialog):
         self.__view_layout.addWidget(self.__input_artist)
         self.__view_layout.addSpacing(8)
         self.__view_layout.addWidget(self.__accept_btn)
+        self.setLayout(self.__view_layout)
 
         self.__label_title.setText("Title")
         self.__label_artist.setText("Artist")

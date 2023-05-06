@@ -231,7 +231,7 @@ class TimerDialog(Dialogs.Dialog):
         self.set_minutes_left(0)
 
     @override
-    def _build_content(self, parent: QWidget) -> None:
+    def _build_content(self) -> None:
         self.__image = Cover()
         self.__image.setAlignment(Qt.AlignHCenter)
 
@@ -265,13 +265,14 @@ class TimerDialog(Dialogs.Dialog):
         )
         self.__accept_btn.clicked.connect(lambda: self._on_accepted())
 
-        self.__view_layout = QVBoxLayout(parent)
+        self.__view_layout = QVBoxLayout()
         self.__view_layout.setAlignment(Qt.AlignVCenter)
         self.__view_layout.addWidget(self.__image)
         self.__view_layout.addWidget(self.__label_time)
         self.__view_layout.addWidget(self.__slider_time)
         self.__view_layout.addSpacing(8)
         self.__view_layout.addWidget(self.__accept_btn)
+        self.addLayout(self.__view_layout)
 
         self.__image.set_cover(CoverProp.from_bytes(Images.TIMER, width=128))
         self.__label_time.setText("Stop playing")

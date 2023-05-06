@@ -30,7 +30,7 @@ class NewPlaylistWindow(Dialogs.Dialog):
     __cover_data = None
 
     @override
-    def _build_content(self, parent: QWidget) -> None:
+    def _build_content(self) -> None:
         self.__cover = Cover()
         cover_edge = 360 - self.contentsMargins().left() - self.contentsMargins().right()
         self.__cover.setFixedSize(cover_edge, cover_edge)
@@ -63,8 +63,10 @@ class NewPlaylistWindow(Dialogs.Dialog):
             dark_mode=TextStyle(text_color=ColorBoxes.WHITE, background=Backgrounds.ROUNDED_WHITE_25)
         )
 
-        self.__view_layout = QVBoxLayout(parent)
-        self.__view_layout.setContentsMargins(0, 12, 0, 0)
+        self.__main_view = QWidget()
+        self.__main_view.setContentsMargins(24, 24, 24, 24)
+        self.__view_layout = QVBoxLayout(self.__main_view)
+        self.__view_layout.setContentsMargins(0, 0, 0, 0)
         self.__view_layout.setAlignment(Qt.AlignVCenter)
         self.__view_layout.addWidget(self.__cover)
         self.__view_layout.addWidget(self.__label_title)
@@ -72,13 +74,15 @@ class NewPlaylistWindow(Dialogs.Dialog):
         self.__view_layout.addSpacing(8)
         self.__view_layout.addWidget(self.__create_btn)
 
+        self.addWidget(self.__main_view)
+
         self.__edit_cover_btn = ActionButton.build(
             font=FontBuilder.build(family="Segoe UI Semibold", size=9),
             padding=Padding(12, 12),
             light_mode=TextStyle(text_color=ColorBoxes.WHITE,
                                  background=Backgrounds.ROUNDED_PRIMARY.with_border_radius(8)),
             dark_mode=TextStyle(text_color=ColorBoxes.WHITE, background=Backgrounds.ROUNDED_WHITE_25),
-            parent=parent
+            parent=self.__main_view
         )
         self.__edit_cover_btn.setText("Choose cover")
         self.__edit_cover_btn.apply_light_mode()
@@ -87,10 +91,14 @@ class NewPlaylistWindow(Dialogs.Dialog):
         self.__create_btn.setText("Create Now")
 
         self.setFixedWidth(360)
-        self.setFixedHeight(self.sizeHint().height())
 
         self.__create_btn.clicked.connect(self._on_accepted)
         self.__edit_cover_btn.clicked.connect(lambda: self.__onclick_select_cover())
+
+    def setFixedWidth(self, w: int) -> None:
+        super().setFixedWidth(
+            w + self.__main_view.contentsMargins().left() + self.__main_view.contentsMargins().right()
+        )
 
     @override
     def apply_dark_mode(self) -> None:
@@ -109,11 +117,11 @@ class NewPlaylistWindow(Dialogs.Dialog):
     @override
     def resizeEvent(self, event: QResizeEvent) -> None:
         super().resizeEvent(event)
-        self.__input_title.setFixedWidth(self.__create_btn.size().width())
         self.__edit_cover_btn.move(
             self.__cover.x() + self.__cover.width() - self.__edit_cover_btn.width() - 8,
             self.__cover.y() + 8,
         )
+        self.setFixedHeight(self.height())
 
     @connector
     def on_apply_change(self, fn: Callable[[str, bytes], bool]) -> None:
@@ -147,7 +155,7 @@ class UpdatePlaylistWindow(Dialogs.Dialog):
     __onclick_choose_cover: callable = None
 
     @override
-    def _build_content(self, parent: QWidget) -> None:
+    def _build_content(self) -> None:
         self.__cover = Cover()
         cover_edge = 360 - self.contentsMargins().left() - self.contentsMargins().right()
         self.__cover.setFixedSize(cover_edge, cover_edge)
@@ -180,7 +188,7 @@ class UpdatePlaylistWindow(Dialogs.Dialog):
             dark_mode=TextStyle(text_color=ColorBoxes.WHITE, background=Backgrounds.ROUNDED_WHITE_25)
         )
 
-        self.__view_layout = QVBoxLayout(parent)
+        self.__view_layout = QVBoxLayout()
         self.__view_layout.setContentsMargins(0, 12, 0, 0)
         self.__view_layout.setAlignment(Qt.AlignVCenter)
         self.__view_layout.addWidget(self.__cover)
@@ -188,6 +196,7 @@ class UpdatePlaylistWindow(Dialogs.Dialog):
         self.__view_layout.addWidget(self.__input_title)
         self.__view_layout.addSpacing(8)
         self.__view_layout.addWidget(self.__accept_btn)
+        self.addLayout(self.__view_layout)
 
         self.__edit_cover_btn = ActionButton.build(
             font=FontBuilder.build(family="Segoe UI Semibold", size=9),
@@ -195,7 +204,7 @@ class UpdatePlaylistWindow(Dialogs.Dialog):
             light_mode=TextStyle(text_color=ColorBoxes.WHITE,
                                  background=Backgrounds.ROUNDED_PRIMARY.with_border_radius(8)),
             dark_mode=TextStyle(text_color=ColorBoxes.WHITE, background=Backgrounds.ROUNDED_WHITE_25),
-            parent=parent
+            # parent=parent
         )
         self.__edit_cover_btn.setText("Choose cover")
         self.__edit_cover_btn.apply_light_mode()

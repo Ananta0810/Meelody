@@ -41,7 +41,7 @@ class MainWindowControl(MainWindow, BaseControl):
     __start_download: pyqtSignal = pyqtSignal()
 
     def __init__(self) -> None:
-        super(MainWindowControl, self).__init__()
+        super().__init__()
         self._set_default_playlist_cover(Images.DEFAULT_PLAYLIST_COVER)
         self.connect_signals()
         self.set_is_playing(False)
