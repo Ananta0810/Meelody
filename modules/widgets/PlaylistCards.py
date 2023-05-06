@@ -64,7 +64,7 @@ class NewPlaylistDialog(Dialogs.Dialog):
         )
 
         self.__main_view = QWidget()
-        self.__main_view.setContentsMargins(24, 24, 24, 24)
+        self.__main_view.setContentsMargins(24, 4, 24, 24)
         self.__view_layout = QVBoxLayout(self.__main_view)
         self.__view_layout.setContentsMargins(0, 0, 0, 0)
         self.__view_layout.setAlignment(Qt.AlignVCenter)
@@ -190,7 +190,7 @@ class UpdatePlaylistDialog(Dialogs.Dialog):
         )
 
         self.__main_view = QWidget()
-        self.__main_view.setContentsMargins(24, 24, 24, 24)
+        self.__main_view.setContentsMargins(24, 4, 24, 24)
         self.__view_layout = QVBoxLayout(self.__main_view)
         self.__view_layout.setContentsMargins(0, 0, 0, 0)
         self.__view_layout.setAlignment(Qt.AlignVCenter)
@@ -211,15 +211,13 @@ class UpdatePlaylistDialog(Dialogs.Dialog):
         )
         self.__edit_cover_btn.setText("Choose cover")
         self.__edit_cover_btn.apply_light_mode()
+        self.__edit_cover_btn.clicked.connect(lambda: self.__onclick_choose_cover())
+        self.__accept_btn.clicked.connect(self._on_accepted)
 
         self.__label_title.setText("Enter title")
         self.__accept_btn.setText("Apply")
 
         self.setFixedWidth(360)
-        self.setFixedHeight(self.sizeHint().height())
-
-        self.__accept_btn.clicked.connect(self._on_accepted)
-        self.__edit_cover_btn.clicked.connect(lambda: self.__onclick_choose_cover())
 
     @override
     def setFixedWidth(self, w: int) -> None:

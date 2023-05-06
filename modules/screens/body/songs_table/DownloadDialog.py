@@ -10,6 +10,7 @@ from modules.models.view.Color import Color
 from modules.models.view.ColorBox import ColorBox
 from modules.models.view.builder.FontBuilder import FontBuilder
 from modules.models.view.builder.TextStyle import TextStyle
+from modules.screens.AbstractScreen import BaseView
 from modules.screens.body.songs_table.DownloadMenu import DownloadMenu
 from modules.statics.view.Material import ColorBoxes, Backgrounds, Colors, Images
 from modules.widgets import Dialogs
@@ -18,7 +19,7 @@ from modules.widgets.Cover import Cover, CoverProp
 from modules.widgets.Labels import LabelWithDefaultText, Input
 
 
-class DownloadDialog(Dialogs.Dialog):
+class DownloadDialog(Dialogs.Dialog, BaseView):
     __on_accept_fn: callable = None
     __close_fns: list[callable] = []
 

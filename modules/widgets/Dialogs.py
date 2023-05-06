@@ -1,8 +1,7 @@
-from typing import Callable
-
-from PyQt5.QtCore import Qt, QSize
+from PyQt5 import QtWidgets
+from PyQt5.QtCore import Qt, QSize, pyqtSignal
 from PyQt5.QtGui import QResizeEvent, QShowEvent
-from PyQt5.QtWidgets import QVBoxLayout, QHBoxLayout
+from PyQt5.QtWidgets import QVBoxLayout, QHBoxLayout, QWidget, QGraphicsDropShadowEffect
 
 from modules.helpers.types.Decorators import override
 from modules.models.view.Border import Border
@@ -27,7 +26,8 @@ def alert(
 ) -> None:
     dialog = _AlertDialog()
     dialog.set_info(image, header, message, accept_text)
-    dialog.show()
+    dialog.apply_light_mode()
+    dialog.exec_()
 
 
 def confirm(
@@ -39,10 +39,12 @@ def confirm(
     on_accept: callable = None,
     on_cancel: callable = None
 ) -> None:
-    dialog = _ConfirmDialog()
+    dialog = ConfirmDialog()
     dialog.set_info(image, header, message, accept_text, cancel_text)
-    dialog.on_accept(on_accept)
-    dialog.on_cancel(on_cancel)
+    if on_accept is not None:
+        dialog.accepted.connect(on_accept)
+    if on_cancel is not None:
+        dialog.canceled.connect(on_cancel)
     dialog.show()
 
 
@@ -87,6 +89,8 @@ class Dialog(FramelessWindow, BaseView):
         if self.__on_change_size_fn is not None:
             self.__on_change_size_fn()
         self.setFixedHeight(self.height())
+        print(self.width())
+        print(self.height())
 
     @override
     def apply_dark_mode(self) -> None:
@@ -99,20 +103,21 @@ class Dialog(FramelessWindow, BaseView):
         self._btn_close.apply_light_mode()
 
 
-class _AlertDialog(Dialog, BaseView):
-    _onclick_accept_fn: Callable[[], bool]
+class _AlertDialog(QtWidgets.QDialog, BaseView):
 
-    def _build_content(self) -> None:
+    def __init__(self) -> None:
+        super().__init__()
+        self.__outer = QWidget(self)
+        self.__background = QWidget(self.__outer)
+        self.__inner = QWidget(self.__outer)
+        self.__view_layout = QVBoxLayout(self.__inner)
+
         self.__image = Cover()
-        self.__image.setAlignment(Qt.AlignHCenter)
-
         self.__header = LabelWithDefaultText.build(
             font=FontBuilder.build(family="Segoe UI Semibold", size=16, bold=True),
             light_mode_style=TextStyle(text_color=ColorBoxes.BLACK),
             dark_mode_style=TextStyle(text_color=ColorBoxes.WHITE),
-            allow_multiple_lines=True
         )
-        self.__header.setAlignment(Qt.AlignCenter)
 
         self.__message = LabelWithDefaultText.build(
             font=FontBuilder.build(size=11),
@@ -120,34 +125,55 @@ class _AlertDialog(Dialog, BaseView):
             dark_mode_style=TextStyle(text_color=ColorBoxes.WHITE),
             allow_multiple_lines=True
         )
-        self.__message.setAlignment(Qt.AlignCenter)
-
-        self.__button_box = QHBoxLayout()
-        self.__button_box.setContentsMargins(0, 0, 0, 0)
 
         self.__accept_btn = ActionButton.build(
-            font=FontBuilder.build(size=12, family="Segoe UI Semibold"),
+            font=FontBuilder.build(family="Segoe UI Semibold", size=11),
             size=QSize(0, 48),
             light_mode=TextStyle(text_color=ColorBoxes.WHITE,
                                  background=Backgrounds.ROUNDED_PRIMARY_75.with_border_radius(8)),
             dark_mode=TextStyle(text_color=ColorBoxes.WHITE, background=Backgrounds.ROUNDED_WHITE_25)
         )
+
+        self.__init_ui()
+
+    def __init_ui(self) -> None:
+        self.setWindowFlags(Qt.Window | Qt.FramelessWindowHint | Qt.WindowMinMaxButtonsHint)
+        self.setAttribute(Qt.WA_TranslucentBackground)
+
+        shadow = QGraphicsDropShadowEffect(
+            blurRadius=50, color=Colors.PRIMARY.with_alpha(33).to_QColor(), xOffset=0, yOffset=3
+        )
+        self.__outer.setGraphicsEffect(shadow)
+
+        self.__inner.move(32, 32)
+        self.__background.move(32, 32)
+        self.__background.setAutoFillBackground(True)
+
+        self.__image.setAlignment(Qt.AlignHCenter)
+        self.__header = LabelWithDefaultText.build(
+            font=FontBuilder.build(family="Segoe UI Semibold", size=16, bold=True),
+            light_mode_style=TextStyle(text_color=ColorBoxes.BLACK),
+            dark_mode_style=TextStyle(text_color=ColorBoxes.WHITE),
+        )
+        self.__header.setAlignment(Qt.AlignCenter)
+        self.__message.setAlignment(Qt.AlignCenter)
+
         self.__accept_btn.clicked.connect(self.close)
-        self.__button_box.addWidget(self.__accept_btn)
 
-        self.__view_layout = QVBoxLayout()
+        self.__inner.setContentsMargins(24, 24, 24, 24)
         self.__view_layout.setAlignment(Qt.AlignVCenter)
-        self.__view_layout.setSpacing(12)
-
+        self.__view_layout.setContentsMargins(0, 0, 0, 0)
         self.__view_layout.addWidget(self.__image)
         self.__view_layout.addWidget(self.__header)
         self.__view_layout.addWidget(self.__message)
-        self.__view_layout.addLayout(self.__button_box)
+        self.__view_layout.addWidget(self.__accept_btn)
 
-        self.setFixedWidth(360)
-        self._btn_close.hide()
-
-        self.addLayout(self.__view_layout)
+    def setFixedSize(self, w: int, h: int) -> None:
+        margins = self.__inner.contentsMargins()
+        super().setFixedSize(w + margins.left() + margins.right(), h + margins.top() + margins.bottom())
+        self.__outer.setFixedSize(w + margins.left() + margins.right(), h + margins.top() + margins.bottom())
+        self.__inner.setFixedSize(w, h)
+        self.__background.setFixedSize(w, h)
 
     def set_info(self, image: bytes, header: str, message: str, accept_text: str) -> None:
         self.__image.set_cover(CoverProp.from_bytes(image, width=128))
@@ -155,25 +181,30 @@ class _AlertDialog(Dialog, BaseView):
         self.__message.setText(message)
         self.__accept_btn.setText(accept_text)
         self.setMaximumHeight(self.sizeHint().height())
+        self.setFixedSize(360, self.__inner.sizeHint().height())
 
     @override
     def apply_dark_mode(self) -> None:
-        super().apply_dark_mode()
+        self.setStyleSheet(Backgrounds.ROUNDED_BLACK.with_border_radius(12).to_stylesheet())
         self.__header.apply_dark_mode()
         self.__message.apply_dark_mode()
         self.__accept_btn.apply_dark_mode()
 
     @override
     def apply_light_mode(self) -> None:
-        super().apply_light_mode()
+        self.setStyleSheet(Backgrounds.ROUNDED_WHITE.with_border_radius(12).to_stylesheet())
         self.__header.apply_light_mode()
         self.__message.apply_light_mode()
         self.__accept_btn.apply_light_mode()
 
 
-class _ConfirmDialog(Dialog, BaseView):
-    __on_accept_fn: callable = None
-    __on_cancel_fn: callable = None
+class ConfirmDialog(Dialog, BaseView):
+    accepted: pyqtSignal() = pyqtSignal()
+    canceled: pyqtSignal() = pyqtSignal()
+
+    def __init__(self):
+        super().__init__()
+        self.accepted.connect(self.close)
 
     def _build_content(self) -> None:
         self.__image = Cover()
@@ -208,7 +239,7 @@ class _ConfirmDialog(Dialog, BaseView):
                                  ),
             dark_mode=TextStyle(text_color=ColorBoxes.WHITE, background=Backgrounds.ROUNDED_WHITE_25)
         )
-        self.__cancel_btn.clicked.connect(lambda: self._on_cancel())
+        self.__cancel_btn.clicked.connect(self.canceled.emit)
         self.__button_box.addWidget(self.__cancel_btn)
 
         self.__accept_btn = ActionButton.build(
@@ -218,7 +249,7 @@ class _ConfirmDialog(Dialog, BaseView):
                                  background=Backgrounds.ROUNDED_DANGER_75.with_border_radius(8)),
             dark_mode=TextStyle(text_color=ColorBoxes.WHITE, background=Backgrounds.ROUNDED_WHITE_25)
         )
-        self.__accept_btn.clicked.connect(self.close)
+        self.__accept_btn.clicked.connect(self.accepted.emit)
         self.__button_box.addWidget(self.__accept_btn)
 
         self.__view_layout = QVBoxLayout()
