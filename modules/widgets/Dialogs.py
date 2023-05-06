@@ -16,8 +16,8 @@ from modules.screens.AbstractScreen import BaseView
 from modules.statics.view.Material import Backgrounds, Colors, Paddings, Icons, ColorBoxes
 from modules.widgets.Buttons import IconButton, ActionButton
 from modules.widgets.Cover import CoverProp, Cover
-from modules.widgets.FramelessWindow import FramelessWindow
 from modules.widgets.Labels import LabelWithDefaultText
+from modules.widgets.Windows import FramelessWindow
 
 
 def alert(
@@ -56,7 +56,7 @@ class Dialog(FramelessWindow, BaseView):
         self.setWindowModality(Qt.ApplicationModal)
         self.apply_light_mode()
 
-    def _add_body_to(self, parent: QWidget) -> None:
+    def _addBodyTo(self, parent: QWidget) -> None:
         self._parent = parent
         parent.setContentsMargins(24, 24, 24, 24)
         self.__background = QWidget(parent)

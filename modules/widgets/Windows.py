@@ -1,8 +1,8 @@
-from typing import Union, Optional, Callable
+from typing import Union, Callable, overload
 
-from PyQt5.QtCore import Qt
-from PyQt5.QtGui import QResizeEvent
-from PyQt5.QtWidgets import QMainWindow, QWidget, QVBoxLayout, QHBoxLayout, QLayout, QSystemTrayIcon, QAction
+from PyQt5.QtCore import Qt, QSize, QMargins
+from PyQt5.QtGui import QResizeEvent, QMouseEvent
+from PyQt5.QtWidgets import QWidget, QVBoxLayout, QHBoxLayout, QLayout, QDesktopWidget, QMainWindow
 
 from modules.helpers.types.Decorators import override, connector
 from modules.models.view.builder.IconButtonStyle import IconButtonStyle
@@ -11,39 +11,119 @@ from modules.statics.view.Material import Paddings, Icons, Colors, Backgrounds
 from modules.widgets.Buttons import IconButton
 
 
-class FramelessWindow(QMainWindow, BaseView):
-    __main_layout: QVBoxLayout
-    _inner: QWidget
-    __title_bar: QHBoxLayout
-    __background: QWidget
-    __btn_close: IconButton
-    __btn_minimize: IconButton
-    __title_bar_height: int = 72
-    __offset: int = 0
-    __onclick_collapse_fn: Callable[[], None] = None
-    __on_exit_fn: Callable[[], None] = None
-    __onclick_minimize_fn: Callable[[], None] = None
-    __tray: QSystemTrayIcon
-    __play_action_btn: QAction
-    __onclick_play_fn: Callable[[], None]
-    __onclick_pause_fn: Callable[[], None]
-    __onclick_prev_fn: Callable[[], None]
-    __onclick_next_fn: Callable[[], None]
-    __is_playing: bool = False
+class FramelessWindow(QMainWindow):
 
-    def __init__(self, parent: Optional["QWidget"] = None):
-        super().__init__(parent)
+    def __init__(self):
+        super().__init__()
+        self.__titleBarHeight: int = 72
+        self.__offset: int = 0
+
+        self.__background = QWidget(self)
+        self.__inner = QWidget(self)
+
         self.__init_ui()
 
     def __init_ui(self) -> None:
         self.setWindowFlags(Qt.Window | Qt.FramelessWindowHint | Qt.WindowMinMaxButtonsHint)
         self.setAttribute(Qt.WA_TranslucentBackground)
+        self.setCentralWidget(self.__inner)
+        self._addBodyTo(self.__inner)
 
-        self.__background = QWidget(self)
-        self._inner = QWidget(self)
-        self.setCentralWidget(self._inner)
+    def _addBodyTo(self, parent: QWidget) -> None:
+        ...
 
-        self.__main_layout = QVBoxLayout(self._inner)
+    def setTitleHeight(self, height: int) -> None:
+        self.__titleBarHeight = height
+
+    def moveToCenter(self):
+        qtRectangle = self.frameGeometry()
+        centerPoint = QDesktopWidget().availableGeometry().center()
+        qtRectangle.moveCenter(centerPoint)
+        self.move(qtRectangle.topLeft())
+
+    @override
+    def setFixedHeight(self, h: int) -> None:
+        self.__background.setFixedHeight(h)
+        self.__inner.setFixedHeight(h)
+
+    @override
+    def setFixedWidth(self, w: int) -> None:
+        self.__background.setFixedWidth(w)
+        self.__inner.setFixedWidth(w)
+
+    @overload
+    @override
+    def setFixedSize(self, a0: QSize) -> None:
+        self.__background.setFixedWidth(a0)
+        self.__inner.setFixedWidth(a0)
+
+    @overload
+    @override
+    def setFixedSize(self, w: int, h: int) -> None:
+        self.__background.setFixedWidth(w, h)
+        self.__inner.setFixedWidth(w, h)
+
+    @override
+    def setFixedSize(self, a0: QSize) -> None:
+        self.__background.setFixedSize(a0)
+        self.__inner.setFixedSize(a0)
+
+    @overload
+    @override
+    def setContentsMargins(self, left: int, top: int, right: int, bottom: int) -> None:
+        self.__background.setContentsMargins(left, top, right, bottom)
+        self.__inner.setContentsMargins(left, top, right, bottom)
+
+    @overload
+    @override
+    def setContentsMargins(self, margins: QMargins) -> None:
+        self.__background.setContentsMargins(margins)
+        self.__inner.setContentsMargins(margins)
+
+    @override
+    def setContentsMargins(self, left: int, top: int, right: int, bottom: int) -> None:
+        self.__background.setContentsMargins(left, top, right, bottom)
+        self.__inner.setContentsMargins(left, top, right, bottom)
+
+    @override
+    def resizeEvent(self, event: QResizeEvent) -> None:
+        self.__background.resize(self.size())
+        return super().resizeEvent(event)
+
+    @override
+    def mousePressEvent(self, event: QMouseEvent) -> None:
+        super().mousePressEvent(event)
+        if event.pos().y() < self.__titleBarHeight and event.button() == Qt.LeftButton:
+            self.__offset = event.pos()
+
+    @override
+    def mouseReleaseEvent(self, event: QMouseEvent) -> None:
+        super().mouseReleaseEvent(event)
+        self.__offset = 0
+
+    @override
+    def mouseMoveEvent(self, event: QMouseEvent) -> None:
+        super().mouseMoveEvent(event)
+        if self.__offset == 0:
+            return
+        delta = event.pos() - self.__offset
+        self.move(self.pos() + delta)
+
+    @override
+    def setStyleSheet(self, style: str) -> None:
+        self.__background.setStyleSheet(style)
+
+
+class CloseableWindow(FramelessWindow, BaseView):
+    __title_bar: QHBoxLayout
+    __btn_close: IconButton
+    __btn_minimize: IconButton
+    __onclick_collapse_fn: Callable[[], None] = None
+    __on_exit_fn: Callable[[], None] = None
+    __onclick_minimize_fn: Callable[[], None] = None
+
+    def _addBodyTo(self, parent: QWidget) -> None:
+        self.__main_layout = QVBoxLayout(parent)
         self.__main_layout.setContentsMargins(0, 0, 0, 0)
         self.__main_layout.setSpacing(0)
 
@@ -82,54 +162,6 @@ class FramelessWindow(QMainWindow, BaseView):
         self.addLayout(self.__title_bar)
 
     @override
-    def resizeEvent(self, event: QResizeEvent) -> None:
-        self.__background.resize(self.size())
-        return super().resizeEvent(event)
-
-    def with_title_bar_height(self, height: int) -> 'FramelessWindow':
-        self.__title_bar_height = height
-        return self
-
-    def show_minimize_button(self, enable: bool) -> None:
-        self.__btn_minimize.setVisible(enable)
-
-    def show_close_button(self, enable: bool) -> None:
-        self.__btn_close.setVisible(enable)
-
-    def __clicked_show_btn(self) -> None:
-        self.show()
-        self.__tray.hide()
-
-    @connector
-    def set_onclick_collapse(self, fn: Callable[[], None]) -> None:
-        self.__onclick_collapse_fn = fn
-
-    def __click_collapse(self):
-        self.hide()
-        self.__tray.setVisible(True)
-        if self.__onclick_collapse_fn is not None:
-            self.__onclick_collapse_fn()
-
-    @connector
-    def set_on_exit(self, fn: Callable[[], None]) -> None:
-        self.__on_exit_fn = fn
-
-    @connector
-    def set_onclick_minimize(self, fn: Callable[[], None]) -> None:
-        self.__onclick_minimize_fn = fn
-
-    def __click_minimize(self) -> None:
-        self.showMinimized()
-        self.__tray.show()
-        if self.__onclick_minimize_fn is not None:
-            self.__onclick_minimize_fn()
-
-    def __exit(self) -> None:
-        self.close()
-        if self.__on_exit_fn is not None:
-            self.__on_exit_fn()
-
-    @override
     def apply_light_mode(self) -> None:
         self.__btn_minimize.apply_light_mode()
         self.__btn_close.apply_light_mode()
@@ -155,25 +187,35 @@ class FramelessWindow(QMainWindow, BaseView):
             return
         self.__main_layout.addWidget(layout, stretch=stretch, alignment=alignment)
 
-    @override
-    def setStyleSheet(self, style_sheet: str) -> None:
-        self.__background.setStyleSheet(style_sheet)
+    @connector
+    def set_onclick_collapse(self, fn: Callable[[], None]) -> None:
+        self.__onclick_collapse_fn = fn
 
-    @override
-    def mousePressEvent(self, event):
-        super().mousePressEvent(event)
-        if event.pos().y() < self.__title_bar_height and event.button() == Qt.LeftButton:
-            self.__offset = event.pos()
+    @connector
+    def set_on_exit(self, fn: Callable[[], None]) -> None:
+        self.__on_exit_fn = fn
 
-    @override
-    def mouseReleaseEvent(self, event):
-        super().mouseReleaseEvent(event)
-        self.__offset = 0
+    @connector
+    def set_onclick_minimize(self, fn: Callable[[], None]) -> None:
+        self.__onclick_minimize_fn = fn
 
-    @override
-    def mouseMoveEvent(self, event):
-        super().mouseMoveEvent(event)
-        if self.__offset == 0:
-            return
-        delta = event.pos() - self.__offset
-        self.move(self.pos() + delta)
+    def __click_collapse(self):
+        self.hide()
+        if self.__onclick_collapse_fn is not None:
+            self.__onclick_collapse_fn()
+
+    def __click_minimize(self) -> None:
+        self.showMinimized()
+        if self.__onclick_minimize_fn is not None:
+            self.__onclick_minimize_fn()
+
+    def __exit(self) -> None:
+        self.close()
+        if self.__on_exit_fn is not None:
+            self.__on_exit_fn()
+
+    def show_minimize_button(self, enable: bool) -> None:
+        self.__btn_minimize.setVisible(enable)
+
+    def show_close_button(self, enable: bool) -> None:
+        self.__btn_close.setVisible(enable)

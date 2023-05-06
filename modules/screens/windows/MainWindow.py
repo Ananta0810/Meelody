@@ -1,9 +1,9 @@
-from typing import Optional, Callable
+from typing import Callable
 
 from PyQt5 import QtGui
 from PyQt5.QtCore import Qt, pyqtSignal
 from PyQt5.QtGui import QKeyEvent
-from PyQt5.QtWidgets import QWidget, QMenu, QAction, QSystemTrayIcon
+from PyQt5.QtWidgets import QMenu, QAction, QSystemTrayIcon
 from PyQt5.QtWinExtras import QWinThumbnailToolBar, QWinThumbnailToolButton
 
 from modules.helpers.types.Decorators import override, connector
@@ -13,16 +13,18 @@ from modules.screens.body.HomeBodyView import HomeBodyView
 from modules.screens.music_bar.MusicPlayerControl import MusicPlayerControl
 from modules.statics.view.Material import ColorBoxes, Icons, Colors
 from modules.widgets.Shortcut import Shortcut
-from modules.widgets.Windows import FramelessWindow
+from modules.widgets.Windows import CloseableWindow
 
 
-class MainWindow(FramelessWindow, BaseView):
+class MainWindow(CloseableWindow, BaseView):
     _body: HomeBodyView
     _music_player: MusicPlayerControl
     post_show: pyqtSignal = pyqtSignal()
 
-    def __init__(self, parent: Optional["QWidget"] = None, width: int = 1280, height: int = 720):
-        super(MainWindow, self).__init__(parent)
+    def __init__(self, width: int = 1280, height: int = 720):
+        super().__init__()
+        self.__is_first_load = True
+
         self.setFixedWidth(width)
         self.setFixedHeight(height)
         self.__init_ui()
@@ -69,7 +71,7 @@ class MainWindow(FramelessWindow, BaseView):
         )
 
         show_action = QAction("Show", self)
-        show_action.triggered.connect(lambda: self.__clicked_show_btn())
+        show_action.triggered.connect(self.show)
         self.__tray_menu.addAction(show_action)
 
         self.__play_action_btn = QAction(self)
@@ -122,11 +124,22 @@ class MainWindow(FramelessWindow, BaseView):
 
         return super().keyPressEvent(event)
 
+    def show(self) -> None:
+        self.__tray.hide()
+        super().show()
+
+    def hide(self) -> None:
+        self.__tray.show()
+        super().hide()
+
     def showEvent(self, a0: QtGui.QShowEvent) -> None:
         super().showEvent(a0)
         if not self.__toolbar.window():
             self.__toolbar.setWindow(self.windowHandle())
-        self.post_show.emit()
+        if self.__is_first_load:
+            self.post_show.emit()
+            self.__is_first_load = False
+            self.moveToCenter()
 
     @override
     def apply_light_mode(self) -> None:

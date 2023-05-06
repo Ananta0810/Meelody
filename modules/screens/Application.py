@@ -49,7 +49,7 @@ class Application:
             - Improve performance for menu. | DOING
             - Scroll wheel on playlist carousel to scroll. | DONE
             
-            - Fix 3 alerts show up at the same time.
+            - Fix 3 alerts show up at the same time. | DONE
             - Fix edit when shuffling is wrong. | CANCELED
             - Fix first time hear song. | DONE
             - Fix color dominant in playlist. | DONE
