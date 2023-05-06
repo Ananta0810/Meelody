@@ -54,7 +54,6 @@ class Dialog(FramelessWindow, BaseView):
 
     def __init__(self):
         super().__init__()
-        self.setWindowModality(Qt.ApplicationModal)
         self.__init_ui()
 
     def __init_ui(self) -> None:
@@ -74,6 +73,7 @@ class Dialog(FramelessWindow, BaseView):
         self.__layout.setContentsMargins(8, 8, 8, 0)
 
         self._build_content()
+        self.setWindowModality(Qt.ApplicationModal)
 
     def _build_content(self) -> None:
         ...
@@ -107,9 +107,8 @@ class _AlertDialog(QtWidgets.QDialog, BaseView):
 
     def __init__(self) -> None:
         super().__init__()
-        self.__outer = QWidget(self)
-        self.__background = QWidget(self.__outer)
-        self.__inner = QWidget(self.__outer)
+        self.__background = QWidget(self)
+        self.__inner = QWidget(self)
         self.__view_layout = QVBoxLayout(self.__inner)
 
         self.__image = Cover()
@@ -139,11 +138,12 @@ class _AlertDialog(QtWidgets.QDialog, BaseView):
     def __init_ui(self) -> None:
         self.setWindowFlags(Qt.Window | Qt.FramelessWindowHint | Qt.WindowMinMaxButtonsHint)
         self.setAttribute(Qt.WA_TranslucentBackground)
+        self.setWindowModality(Qt.ApplicationModal)
 
         shadow = QGraphicsDropShadowEffect(
             blurRadius=50, color=Colors.PRIMARY.with_alpha(33).to_QColor(), xOffset=0, yOffset=3
         )
-        self.__outer.setGraphicsEffect(shadow)
+        self.setGraphicsEffect(shadow)
 
         self.__inner.move(32, 32)
         self.__background.move(32, 32)
@@ -171,7 +171,6 @@ class _AlertDialog(QtWidgets.QDialog, BaseView):
     def setFixedSize(self, w: int, h: int) -> None:
         margins = self.__inner.contentsMargins()
         super().setFixedSize(w + margins.left() + margins.right(), h + margins.top() + margins.bottom())
-        self.__outer.setFixedSize(w + margins.left() + margins.right(), h + margins.top() + margins.bottom())
         self.__inner.setFixedSize(w, h)
         self.__background.setFixedSize(w, h)
 
