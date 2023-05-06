@@ -178,7 +178,7 @@ class SongTableHeaderView(QWidget, BaseView):
             self.__btn_apply_add_songs.setVisible(False)
 
     def set_onclose_download_dialog(self, fn: callable) -> None:
-        self.__download_dialog.on_close(fn)
+        self.__download_dialog.closed.connect(fn)
 
     def set_onclick_download_songs_to_library_fn(self, fn: Callable[[str], None]) -> None:
         self.__on_download_songs_to_library_fn = fn

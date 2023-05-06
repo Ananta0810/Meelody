@@ -1,6 +1,6 @@
 from typing import Callable
 
-from PyQt5.QtCore import QSize, Qt
+from PyQt5.QtCore import QSize, Qt, pyqtSignal
 from PyQt5.QtGui import QKeySequence
 from PyQt5.QtWidgets import QVBoxLayout, QWidget, QShortcut
 
@@ -21,8 +21,8 @@ from modules.widgets.Labels import LabelWithDefaultText, Input
 
 
 class DownloadDialog(Dialogs.Dialog, BaseView):
+    closed: pyqtSignal() = pyqtSignal()
     __on_accept_fn: callable = None
-    __close_fns: list[callable] = []
 
     @override
     def _build_content(self) -> None:
@@ -54,7 +54,6 @@ class DownloadDialog(Dialogs.Dialog, BaseView):
                                  background=Backgrounds.ROUNDED_PRIMARY_75.with_border_radius(8)),
             dark_mode=TextStyle(text_color=ColorBoxes.WHITE, background=Backgrounds.ROUNDED_WHITE_25)
         )
-        self.__accept_btn.clicked.connect(lambda: self._on_accepted())
 
         self.__menu = DownloadMenu()
 
@@ -78,6 +77,15 @@ class DownloadDialog(Dialogs.Dialog, BaseView):
 
         self.setFixedWidth(640)
         self.setFixedHeight(self.sizeHint().height())
+
+    @override
+    def connectToSignalSlot(self):
+        super().connectToSignalSlot()
+        self.__accept_btn.clicked.connect(lambda: self._on_accepted())
+
+    def close(self) -> bool:
+        self.closed.emit()
+        return super().close()
 
     @override
     def assignShortcuts(self) -> None:
@@ -109,13 +117,6 @@ class DownloadDialog(Dialogs.Dialog, BaseView):
     @connector
     def on_download(self, fn: Callable[[str], None]) -> None:
         self.__on_accept_fn = fn
-
-    def on_close(self, fn: callable) -> None:
-        self.__close_fns.append(fn)
-
-    def _call_close_fn(self):
-        for fn in self.__close_fns:
-            fn()
 
     def _on_accepted(self) -> None:
         if self.__on_accept_fn is not None:

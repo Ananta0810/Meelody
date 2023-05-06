@@ -56,6 +56,7 @@ class Dialog(FramelessWindow, BaseView):
     def __init__(self):
         super().__init__()
         self.__init_ui()
+        self.connectToSignalSlot()
         self.assignShortcuts()
 
     def __init_ui(self) -> None:

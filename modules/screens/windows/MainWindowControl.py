@@ -313,6 +313,7 @@ class MainWindowControl(MainWindow, BaseControl):
             downloader.download_to(download_temp_dir)
         except ValueError as e:
             Dialogs.alert(image=Images.WARNING, header="Warning", message=str(e))
+            return
 
         if self.__download_thread is None:
             self.__download_thread = Thread(target=lambda: self.__update_progress_items())
@@ -384,9 +385,6 @@ class MainWindowControl(MainWindow, BaseControl):
             header="Download successfully",
             message=f"Your video with title '{song.get_title()}' has been downloaded successfully."
         )
-
-        if not self._body.is_opening_download_dialog():
-            self.__on_close_download_dialog()
 
     def __on_close_download_dialog(self) -> None:
         if self.__is_selecting_library:
