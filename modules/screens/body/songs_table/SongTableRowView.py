@@ -77,9 +77,10 @@ class UpdateSongDialog(Dialogs.Dialog):
         )
         self.__accept_btn.clicked.connect(lambda: self._on_accepted())
 
-        self.__view_layout = QVBoxLayout()
+        self.__main_view = QWidget()
+        self.__main_view.setContentsMargins(24, 24, 24, 24)
+        self.__view_layout = QVBoxLayout(self.__main_view)
         self.__view_layout.setContentsMargins(0, 0, 0, 0)
-        self.__view_layout.setAlignment(Qt.AlignVCenter)
         self.__view_layout.addWidget(self.__image)
         self.__view_layout.addWidget(self.__header)
         self.__view_layout.addWidget(self.__label_title)
@@ -89,7 +90,8 @@ class UpdateSongDialog(Dialogs.Dialog):
         self.__view_layout.addWidget(self.__input_artist)
         self.__view_layout.addSpacing(8)
         self.__view_layout.addWidget(self.__accept_btn)
-        self.setLayout(self.__view_layout)
+
+        self.addWidget(self.__main_view)
 
         self.__label_title.setText("Title")
         self.__label_artist.setText("Artist")
@@ -119,14 +121,6 @@ class UpdateSongDialog(Dialogs.Dialog):
         self.__label_artist.apply_light_mode()
         self.__input_artist.apply_light_mode()
         self.__accept_btn.apply_light_mode()
-
-    @override
-    def resizeEvent(self, event: QResizeEvent) -> None:
-        super().resizeEvent(event)
-        width = self.width() - self.contentsMargins().left() - self.contentsMargins().right()
-
-        self.__input_title.setFixedWidth(width)
-        self.__input_artist.setFixedWidth(width)
 
     @connector
     def on_apply_change(self, fn: Callable[[str, str], bool]) -> None:
@@ -175,9 +169,12 @@ class SongTableRowView(BackgroundWidget, BaseView):
     __on_update_info_fn: Callable[[str, str], bool] = None
     __on_delete_info_fn: callable = None
 
+    __is_light_mode: bool = True
+
     def __init__(self, parent: Optional["QWidget"] = None):
         super().__init__(parent)
         self.default_artist = ""
+        self.__is_light_mode = True
         self.__init_ui()
         self.show_less()
 
@@ -314,6 +311,7 @@ class SongTableRowView(BackgroundWidget, BaseView):
 
     @override
     def apply_light_mode(self) -> None:
+        self.__is_light_mode = True
         style = BackgroundThemeBuilder.build("QWidget", 16, Backgrounds.CIRCLE_HIDDEN_GRAY_10.with_border_radius(1))
         self.setStyleSheet(style)
         self.__label_title.apply_light_mode()
@@ -333,6 +331,7 @@ class SongTableRowView(BackgroundWidget, BaseView):
 
     @override
     def apply_dark_mode(self) -> None:
+        self.__is_light_mode = False
         style = BackgroundThemeBuilder.build("QWidget", 16, Backgrounds.CIRCLE_HIDDEN_GRAY_10.with_border_radius(1))
         self.setStyleSheet(style)
         self.__label_title.apply_dark_mode()
@@ -386,6 +385,10 @@ class SongTableRowView(BackgroundWidget, BaseView):
         dialog.set_song_title(self.__label_title.text())
         dialog.set_song_artist(self.__label_artist.text())
         dialog.on_apply_change(lambda title, artist: self.__on_update_info_fn(title, artist))
+        if self.__is_light_mode:
+            dialog.apply_light_mode()
+        else:
+            dialog.apply_dark_mode()
         dialog.show()
 
     def __clicked_add_btn(self) -> None:

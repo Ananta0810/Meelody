@@ -1,7 +1,7 @@
 from typing import Callable
 
 from PyQt5.QtCore import QSize, Qt
-from PyQt5.QtWidgets import QVBoxLayout
+from PyQt5.QtWidgets import QVBoxLayout, QWidget
 
 from modules.helpers.types.Decorators import override, connector
 from modules.models.view.Background import Background
@@ -56,7 +56,10 @@ class DownloadDialog(Dialogs.Dialog):
 
         self.__menu = DownloadMenu()
 
-        self.__view_layout = QVBoxLayout()
+        self.__main_view = QWidget()
+        self.__main_view.setContentsMargins(24, 24, 24, 24)
+        self.__view_layout = QVBoxLayout(self.__main_view)
+        self.__view_layout.setContentsMargins(0, 0, 0, 0)
         self.__view_layout.setAlignment(Qt.AlignVCenter)
         self.__view_layout.addWidget(self.__image)
         self.__view_layout.addWidget(self.__header)
@@ -65,7 +68,7 @@ class DownloadDialog(Dialogs.Dialog):
         self.__view_layout.addSpacing(8)
         self.__view_layout.addWidget(self.__accept_btn)
         self.__view_layout.addWidget(self.__menu)
-        self.setLayout(self.__view_layout)
+        self.addWidget(self.__main_view)
 
         self.__image.set_cover(CoverProp.from_bytes(Images.DOWNLOAD, width=128))
         self.__header.setText("Download Youtube Song")

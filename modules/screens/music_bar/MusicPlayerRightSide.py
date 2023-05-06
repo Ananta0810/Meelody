@@ -111,8 +111,8 @@ class MusicPlayerRightSide(QHBoxLayout, BaseView):
         self.addWidget(self.__boxes, 1)
         self.addWidget(self.__btn_timer)
 
-        self.__time_dialog = TimerDialog()
-        self.__time_dialog.on_apply_change(lambda minutes: self.__onchange_timer(minutes))
+        self.__timer_dialog = TimerDialog()
+        self.__timer_dialog.on_apply_change(lambda minutes: self.__onchange_timer(minutes))
 
     @override
     def assign_shortcuts(self) -> None:
@@ -133,6 +133,7 @@ class MusicPlayerRightSide(QHBoxLayout, BaseView):
         self.__btn_volume.apply_light_mode()
         self.__btn_timer.apply_light_mode()
         self.__slider_volume.apply_light_mode()
+        self.__timer_dialog.apply_light_mode()
 
     @override
     def apply_dark_mode(self) -> None:
@@ -142,6 +143,7 @@ class MusicPlayerRightSide(QHBoxLayout, BaseView):
         self.__btn_volume.apply_dark_mode()
         self.__btn_timer.apply_dark_mode()
         self.__slider_volume.apply_dark_mode()
+        self.__timer_dialog.apply_dark_mode()
 
     @connector
     def set_onclick_loop(self, fn: callable) -> None:
@@ -197,8 +199,8 @@ class MusicPlayerRightSide(QHBoxLayout, BaseView):
 
     def __open_timer_dialog(self) -> None:
         minutes = AudioPlayer.get_instance().get_time_left_to_timer()
-        self.__time_dialog.set_minutes_left(minutes)
-        self.__time_dialog.show()
+        self.__timer_dialog.set_minutes_left(minutes)
+        self.__timer_dialog.show()
 
     @staticmethod
     def __build_option_btn_with_icon(
@@ -265,14 +267,17 @@ class TimerDialog(Dialogs.Dialog):
         )
         self.__accept_btn.clicked.connect(lambda: self._on_accepted())
 
-        self.__view_layout = QVBoxLayout()
+        self.__main_view = QWidget()
+        self.__main_view.setContentsMargins(24, 24, 24, 24)
+        self.__view_layout = QVBoxLayout(self.__main_view)
+        self.__view_layout.setContentsMargins(0, 0, 0, 0)
         self.__view_layout.setAlignment(Qt.AlignVCenter)
         self.__view_layout.addWidget(self.__image)
         self.__view_layout.addWidget(self.__label_time)
         self.__view_layout.addWidget(self.__slider_time)
         self.__view_layout.addSpacing(8)
         self.__view_layout.addWidget(self.__accept_btn)
-        self.addLayout(self.__view_layout)
+        self.addWidget(self.__main_view)
 
         self.__image.set_cover(CoverProp.from_bytes(Images.TIMER, width=128))
         self.__label_time.setText("Stop playing")

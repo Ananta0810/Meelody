@@ -24,7 +24,7 @@ from modules.widgets.Cover import Cover, CoverProp
 from modules.widgets.Labels import LabelWithDefaultText, Input
 
 
-class NewPlaylistWindow(Dialogs.Dialog):
+class NewPlaylistDialog(Dialogs.Dialog):
     __on_accept_fn: Callable[[str, bytes], bool] = None
     __onclick_choose_cover: callable = None
     __cover_data = None
@@ -95,6 +95,7 @@ class NewPlaylistWindow(Dialogs.Dialog):
         self.__create_btn.clicked.connect(self._on_accepted)
         self.__edit_cover_btn.clicked.connect(lambda: self.__onclick_select_cover())
 
+    @override
     def setFixedWidth(self, w: int) -> None:
         super().setFixedWidth(
             w + self.__main_view.contentsMargins().left() + self.__main_view.contentsMargins().right()
@@ -142,15 +143,15 @@ class NewPlaylistWindow(Dialogs.Dialog):
 
     def _on_accepted(self) -> None:
         if self.__on_accept_fn is None:
-            super()._on_accepted()
+            self.close()
             return
 
         can_close = self.__on_accept_fn(self.__input_title.text(), self.__cover_data)
         if can_close:
-            super()._on_accepted()
+            self.close()
 
 
-class UpdatePlaylistWindow(Dialogs.Dialog):
+class UpdatePlaylistDialog(Dialogs.Dialog):
     __on_accept_fn: Callable[[str], bool] = None
     __onclick_choose_cover: callable = None
 
@@ -188,15 +189,17 @@ class UpdatePlaylistWindow(Dialogs.Dialog):
             dark_mode=TextStyle(text_color=ColorBoxes.WHITE, background=Backgrounds.ROUNDED_WHITE_25)
         )
 
-        self.__view_layout = QVBoxLayout()
-        self.__view_layout.setContentsMargins(0, 12, 0, 0)
+        self.__main_view = QWidget()
+        self.__main_view.setContentsMargins(24, 24, 24, 24)
+        self.__view_layout = QVBoxLayout(self.__main_view)
+        self.__view_layout.setContentsMargins(0, 0, 0, 0)
         self.__view_layout.setAlignment(Qt.AlignVCenter)
         self.__view_layout.addWidget(self.__cover)
         self.__view_layout.addWidget(self.__label_title)
         self.__view_layout.addWidget(self.__input_title)
         self.__view_layout.addSpacing(8)
         self.__view_layout.addWidget(self.__accept_btn)
-        self.addLayout(self.__view_layout)
+        self.addWidget(self.__main_view)
 
         self.__edit_cover_btn = ActionButton.build(
             font=FontBuilder.build(family="Segoe UI Semibold", size=9),
@@ -204,7 +207,7 @@ class UpdatePlaylistWindow(Dialogs.Dialog):
             light_mode=TextStyle(text_color=ColorBoxes.WHITE,
                                  background=Backgrounds.ROUNDED_PRIMARY.with_border_radius(8)),
             dark_mode=TextStyle(text_color=ColorBoxes.WHITE, background=Backgrounds.ROUNDED_WHITE_25),
-            # parent=parent
+            parent=self.__main_view
         )
         self.__edit_cover_btn.setText("Choose cover")
         self.__edit_cover_btn.apply_light_mode()
@@ -217,6 +220,12 @@ class UpdatePlaylistWindow(Dialogs.Dialog):
 
         self.__accept_btn.clicked.connect(self._on_accepted)
         self.__edit_cover_btn.clicked.connect(lambda: self.__onclick_choose_cover())
+
+    @override
+    def setFixedWidth(self, w: int) -> None:
+        super().setFixedWidth(
+            w + self.__main_view.contentsMargins().left() + self.__main_view.contentsMargins().right()
+        )
 
     @override
     def apply_dark_mode(self) -> None:
@@ -257,12 +266,13 @@ class UpdatePlaylistWindow(Dialogs.Dialog):
 
     def _on_accepted(self) -> None:
         if self.__on_accept_fn is None:
-            super()._on_accepted()
+            super().__on_accept_fn()
+            self.close()
             return
 
         can_close = self.__on_accept_fn(self.__input_title.text())
         if can_close:
-            super()._on_accepted()
+            self.close()
 
     def __onclick_select_cover(self) -> None:
         path = QFileDialog.getOpenFileName(self, filter=Properties.ImportType.IMAGE)[0]
@@ -423,7 +433,8 @@ class UserPlaylistCard(PlaylistCard):
         self._main_layout.addStretch()
         self._main_layout.addWidget(self._label)
 
-        self.__update_dialog = UpdatePlaylistWindow()
+        self.__update_dialog = UpdatePlaylistDialog()
+        self.__update_dialog.apply_light_mode()
 
         self.__delete_btn.clicked.connect(lambda: self.__on_click_delete())
 

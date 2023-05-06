@@ -143,10 +143,11 @@ class _AlertDialog(Dialog, BaseView):
         self.__view_layout.addWidget(self.__header)
         self.__view_layout.addWidget(self.__message)
         self.__view_layout.addLayout(self.__button_box)
-        self.setFixedWidth(360)
-        # self._btn_close.hide()
 
-        self.setLayout(self.__view_layout)
+        self.setFixedWidth(360)
+        self._btn_close.hide()
+
+        self.addLayout(self.__view_layout)
 
     def set_info(self, image: bytes, header: str, message: str, accept_text: str) -> None:
         self.__image.set_cover(CoverProp.from_bytes(image, width=128))

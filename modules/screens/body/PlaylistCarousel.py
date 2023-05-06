@@ -12,7 +12,7 @@ from modules.screens.AbstractScreen import BaseView
 from modules.statics.view.Material import Icons, Colors, Cursors, Paddings, Backgrounds, Images
 from modules.widgets.Buttons import IconButton
 from modules.widgets.Cover import CoverProp
-from modules.widgets.PlaylistCards import PlaylistCard, FavouritePlaylistCard, UserPlaylistCard, NewPlaylistWindow
+from modules.widgets.PlaylistCards import PlaylistCard, FavouritePlaylistCard, UserPlaylistCard, NewPlaylistDialog
 
 
 class PlaylistCardData:
@@ -127,7 +127,7 @@ class PlaylistCarousel(QScrollArea, BaseView):
         self.__main_layout.addWidget(self.__add_playlist_card)
         self.__main_layout.addStretch()
 
-        self.__add_playlist_dialog = NewPlaylistWindow()
+        self.__add_playlist_dialog = NewPlaylistDialog()
 
     @override
     def wheelEvent(self, event):

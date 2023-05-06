@@ -130,6 +130,7 @@ class SongTableHeaderView(QWidget, BaseView):
         self.__btn_add_songs_to_library.apply_light_mode()
         self.__btn_select_songs.apply_light_mode()
         self.__btn_apply_add_songs.apply_light_mode()
+        self.__download_dialog.apply_light_mode()
 
     @override
     def apply_dark_mode(self) -> None:
@@ -140,6 +141,7 @@ class SongTableHeaderView(QWidget, BaseView):
         self.__btn_add_songs_to_library.apply_dark_mode()
         self.__btn_select_songs.apply_dark_mode()
         self.__btn_apply_add_songs.apply_dark_mode()
+        self.__download_dialog.apply_dark_mode()
 
     @override
     def setText(self, track: str = "TRACK", artist: str = "ARTIST", length: str = "LENGTH") -> None:
