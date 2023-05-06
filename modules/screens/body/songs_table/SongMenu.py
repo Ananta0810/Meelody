@@ -104,8 +104,8 @@ class SongMenu(SmoothVerticalScrollArea, BaseView):
             image=Images.DELETE,
             header="Warning",
             message="Are you sure want to delete this song?\n The song will be deleted permanently\n from the storage.",
-            accept_text="Delete",
-            cancel_text="Cancel",
+            acceptText="Delete",
+            cancelText="Cancel",
             on_accept=lambda: self.__on_delete_fn(index)
         )
 

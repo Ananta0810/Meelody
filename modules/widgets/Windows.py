@@ -33,7 +33,7 @@ class FramelessWindow(QMainWindow):
         self.setAttribute(Qt.WA_TranslucentBackground)
         self.setCentralWidget(self.__outer)
 
-        shadow = QGraphicsDropShadowEffect(blurRadius=50,
+        shadow = QGraphicsDropShadowEffect(blurRadius=32,
                                            color=Colors.PRIMARY.with_alpha(33).to_QColor(),
                                            xOffset=0,
                                            yOffset=3)

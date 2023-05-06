@@ -458,8 +458,8 @@ class UserPlaylistCard(PlaylistCard):
             image=Images.DELETE,
             header="Warning",
             message="Are you sure want to delete this playlist?\n The playlist will be deleted permanently.",
-            accept_text="Delete",
-            cancel_text="Cancel",
+            acceptText="Delete",
+            cancelText="Cancel",
             on_accept=lambda: self.__delete_fn() if self.__delete_fn is not None else None
         )
 
