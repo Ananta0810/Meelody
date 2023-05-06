@@ -1,8 +1,9 @@
 from typing import Union, Callable, overload
 
 from PyQt5.QtCore import Qt, QSize, QMargins
-from PyQt5.QtGui import QResizeEvent, QMouseEvent
-from PyQt5.QtWidgets import QWidget, QVBoxLayout, QHBoxLayout, QLayout, QDesktopWidget, QMainWindow
+from PyQt5.QtGui import QResizeEvent, QMouseEvent, QShowEvent
+from PyQt5.QtWidgets import QWidget, QVBoxLayout, QHBoxLayout, QLayout, QDesktopWidget, QMainWindow, \
+    QGraphicsDropShadowEffect
 
 from modules.helpers.types.Decorators import override, connector
 from modules.models.view.builder.IconButtonStyle import IconButtonStyle
@@ -18,15 +19,28 @@ class FramelessWindow(QMainWindow):
         self.__titleBarHeight: int = 72
         self.__offset: int = 0
 
-        self.__background = QWidget(self)
-        self.__inner = QWidget(self)
+        self.__outer = QWidget()
+
+        self.__background = QWidget(self.__outer)
+        self.__inner = QWidget(self.__outer)
 
         self.__init_ui()
 
     def __init_ui(self) -> None:
         self.setWindowFlags(Qt.Window | Qt.FramelessWindowHint | Qt.WindowMinMaxButtonsHint)
         self.setAttribute(Qt.WA_TranslucentBackground)
-        self.setCentralWidget(self.__inner)
+        self.setCentralWidget(self.__outer)
+
+        shadow = QGraphicsDropShadowEffect(blurRadius=50,
+                                           color=Colors.PRIMARY.with_alpha(33).to_QColor(),
+                                           xOffset=0,
+                                           yOffset=3)
+        self.__outer.setGraphicsEffect(shadow)
+
+        self.__inner.move(32, 32)
+        self.__background.move(32, 32)
+        self.__background.setAutoFillBackground(True)
+
         self._addBodyTo(self.__inner)
 
     def _addBodyTo(self, parent: QWidget) -> None:
@@ -36,7 +50,7 @@ class FramelessWindow(QMainWindow):
         self.__titleBarHeight = height
 
     def moveToCenter(self):
-        qtRectangle = self.frameGeometry()
+        qtRectangle = self.__outer.frameGeometry()
         centerPoint = QDesktopWidget().availableGeometry().center()
         qtRectangle.moveCenter(centerPoint)
         self.move(qtRectangle.topLeft())
@@ -85,10 +99,14 @@ class FramelessWindow(QMainWindow):
         self.__background.setContentsMargins(left, top, right, bottom)
         self.__inner.setContentsMargins(left, top, right, bottom)
 
+    def showEvent(self, a0: QShowEvent) -> None:
+        self.__outer.setFixedSize(self.__background.width() + 64, self.__background.height() + 64)
+        super().showEvent(a0)
+
     @override
     def resizeEvent(self, event: QResizeEvent) -> None:
+        super().resizeEvent(event)
         self.__background.resize(self.size())
-        return super().resizeEvent(event)
 
     @override
     def mousePressEvent(self, event: QMouseEvent) -> None:
