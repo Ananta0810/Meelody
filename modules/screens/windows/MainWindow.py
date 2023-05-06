@@ -2,7 +2,6 @@ from typing import Callable
 
 from PyQt5 import QtGui
 from PyQt5.QtCore import Qt, pyqtSignal
-from PyQt5.QtGui import QKeyEvent
 from PyQt5.QtWidgets import QMenu, QAction, QSystemTrayIcon
 from PyQt5.QtWinExtras import QWinThumbnailToolBar, QWinThumbnailToolButton
 
@@ -12,7 +11,6 @@ from modules.screens.AbstractScreen import BaseView
 from modules.screens.body.HomeBodyView import HomeBodyView
 from modules.screens.music_bar.MusicPlayerControl import MusicPlayerControl
 from modules.statics.view.Material import ColorBoxes, Icons, Colors
-from modules.widgets.Shortcut import Shortcut
 from modules.widgets.Windows import CloseableWindow
 
 
@@ -113,16 +111,6 @@ class MainWindow(CloseableWindow, BaseView):
         self.__toolbar_next_btn.setIcon(Icons.NEXT.with_color(Colors.PRIMARY))
         self.__toolbar_next_btn.clicked.connect(lambda: self.__onclick_next_fn())
         self.__toolbar.addButton(self.__toolbar_next_btn)
-
-    @override
-    def keyPressEvent(self, event: QKeyEvent) -> None:
-        shortcut = Shortcut.of(event.modifiers(), event.key())
-        shortcut_map = self.get_shortcut_map()
-        if shortcut in shortcut_map:
-            fn = shortcut_map[shortcut]
-            fn() if fn is not None else None
-
-        return super().keyPressEvent(event)
 
     def show(self) -> None:
         self.__tray.hide()

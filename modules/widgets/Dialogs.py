@@ -1,7 +1,7 @@
 from PyQt5 import QtWidgets
 from PyQt5.QtCore import Qt, QSize, pyqtSignal
-from PyQt5.QtGui import QResizeEvent, QShowEvent
-from PyQt5.QtWidgets import QVBoxLayout, QHBoxLayout, QWidget, QGraphicsDropShadowEffect
+from PyQt5.QtGui import QResizeEvent, QShowEvent, QKeySequence
+from PyQt5.QtWidgets import QVBoxLayout, QHBoxLayout, QWidget, QGraphicsDropShadowEffect, QShortcut
 
 from modules.helpers.types.Decorators import override
 from modules.models.view.Border import Border
@@ -52,12 +52,11 @@ def confirm(
 
 
 class Dialog(FramelessWindow, BaseView):
-    __on_close_fn: callable = None
-    __on_change_size_fn: callable = None
 
     def __init__(self):
         super().__init__()
         self.__init_ui()
+        self.assignShortcuts()
 
     def __init_ui(self) -> None:
         self.__layout = QHBoxLayout()
@@ -78,6 +77,13 @@ class Dialog(FramelessWindow, BaseView):
         self._build_content()
         self.setWindowModality(Qt.ApplicationModal)
 
+    def connectToSignalSlot(self):
+        self._btn_close.clicked.connect(self.close)
+
+    def assignShortcuts(self) -> None:
+        cancelShortcut = QShortcut(QKeySequence(Qt.Key_Escape), self._btn_close)
+        cancelShortcut.activated.connect(self._btn_close.click)
+
     def _build_content(self) -> None:
         ...
 
@@ -89,11 +95,8 @@ class Dialog(FramelessWindow, BaseView):
     def resizeEvent(self, event: QResizeEvent) -> None:
         super().resizeEvent(event)
         self._btn_close.move(self.width() - self._btn_close.width() - 4, 4)
-        if self.__on_change_size_fn is not None:
-            self.__on_change_size_fn()
         self.setFixedHeight(self.height())
-        print(self.width())
-        print(self.height())
+        self.moveToCenter()
 
     @override
     def apply_dark_mode(self) -> None:
@@ -138,6 +141,7 @@ class _AlertDialog(QtWidgets.QDialog, BaseView):
 
         self.__initUi()
         self.connectToSignalSlot()
+        self.assignShortcuts()
 
     def __initUi(self) -> None:
         self.setWindowFlags(Qt.Window | Qt.FramelessWindowHint | Qt.WindowMinMaxButtonsHint)
@@ -167,6 +171,13 @@ class _AlertDialog(QtWidgets.QDialog, BaseView):
 
     def connectToSignalSlot(self):
         self.__accept_btn.clicked.connect(self.close)
+
+    def assignShortcuts(self):
+        exitShortcut1 = QShortcut(QKeySequence(Qt.Key_Return), self.__accept_btn)
+        exitShortcut1.activated.connect(self.close)
+
+        exitShortcut2 = QShortcut(QKeySequence(Qt.Key_Escape), self.__accept_btn)
+        exitShortcut2.activated.connect(self.close)
 
     @override
     def setFixedSize(self, w: int, h: int) -> None:
@@ -243,6 +254,7 @@ class _ConfirmDialog(QtWidgets.QDialog, BaseView):
 
         self.__initUi()
         self.connectToSignalSlot()
+        self.assignShortcuts()
 
     def __initUi(self) -> None:
         self.setWindowFlags(Qt.Window | Qt.FramelessWindowHint | Qt.WindowMinMaxButtonsHint)
@@ -275,10 +287,17 @@ class _ConfirmDialog(QtWidgets.QDialog, BaseView):
         self.__view_layout.addLayout(self.__button_box)
 
     def connectToSignalSlot(self):
-        self.__cancel_btn.clicked.connect(self.canceled.emit)
         self.__accept_btn.clicked.connect(self.accepted.emit)
+        self.__cancel_btn.clicked.connect(self.canceled.emit)
         self.accepted.connect(self.close)
         self.canceled.connect(self.close)
+
+    def assignShortcuts(self):
+        acceptShortcut = QShortcut(QKeySequence(Qt.Key_Return), self.__accept_btn)
+        acceptShortcut.activated.connect(self.accepted.emit)
+
+        cancelShortcut = QShortcut(QKeySequence(Qt.Key_Escape), self.__cancel_btn)
+        cancelShortcut.activated.connect(self.canceled.emit)
 
     @override
     def setFixedSize(self, w: int, h: int) -> None:

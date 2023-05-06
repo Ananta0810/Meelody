@@ -1,8 +1,8 @@
 from typing import Optional, Union, Callable
 
 from PyQt5.QtCore import Qt, QSize
-from PyQt5.QtGui import QFont, QResizeEvent
-from PyQt5.QtWidgets import QWidget, QHBoxLayout, QVBoxLayout
+from PyQt5.QtGui import QFont, QResizeEvent, QKeySequence
+from PyQt5.QtWidgets import QWidget, QHBoxLayout, QVBoxLayout, QShortcut
 
 from modules.helpers import Times
 from modules.helpers.types.Decorators import override, connector
@@ -101,6 +101,12 @@ class UpdateSongDialog(Dialogs.Dialog):
 
         self.setFixedWidth(480)
         self.setFixedHeight(self.sizeHint().height())
+
+    @override
+    def assignShortcuts(self) -> None:
+        super().assignShortcuts()
+        acceptShortcut = QShortcut(QKeySequence(Qt.Key_Return), self.__accept_btn)
+        acceptShortcut.activated.connect(self.__accept_btn.click)
 
     @override
     def apply_dark_mode(self) -> None:

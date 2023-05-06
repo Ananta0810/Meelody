@@ -287,6 +287,12 @@ class TimerDialog(Dialogs.Dialog):
         self.setFixedHeight(self.sizeHint().height())
 
     @override
+    def assignShortcuts(self) -> None:
+        super().assignShortcuts()
+        acceptShortcut = QShortcut(QKeySequence(Qt.Key_Return), self.__accept_btn)
+        acceptShortcut.activated.connect(self.__accept_btn.click)
+
+    @override
     def apply_dark_mode(self) -> None:
         super().apply_dark_mode()
         self.__label_time.apply_dark_mode()

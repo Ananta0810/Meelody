@@ -1,7 +1,8 @@
 from typing import Callable
 
 from PyQt5.QtCore import QSize, Qt
-from PyQt5.QtWidgets import QVBoxLayout, QWidget
+from PyQt5.QtGui import QKeySequence
+from PyQt5.QtWidgets import QVBoxLayout, QWidget, QShortcut
 
 from modules.helpers.types.Decorators import override, connector
 from modules.models.view.Background import Background
@@ -77,6 +78,12 @@ class DownloadDialog(Dialogs.Dialog, BaseView):
 
         self.setFixedWidth(640)
         self.setFixedHeight(self.sizeHint().height())
+
+    @override
+    def assignShortcuts(self) -> None:
+        super().assignShortcuts()
+        acceptShortcut = QShortcut(QKeySequence(Qt.Key_Return), self.__accept_btn)
+        acceptShortcut.activated.connect(self.__accept_btn.click)
 
     @override
     def apply_dark_mode(self) -> None:

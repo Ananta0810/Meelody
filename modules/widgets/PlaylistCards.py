@@ -1,8 +1,8 @@
 from typing import Optional, Callable
 
 from PyQt5.QtCore import pyqtSignal, QEvent, Qt, QRect, QSize
-from PyQt5.QtGui import QFont, QCursor, QResizeEvent, QPixmap
-from PyQt5.QtWidgets import QWidget, QVBoxLayout, QHBoxLayout, QSizePolicy, QFileDialog
+from PyQt5.QtGui import QFont, QCursor, QResizeEvent, QPixmap, QKeySequence
+from PyQt5.QtWidgets import QWidget, QVBoxLayout, QHBoxLayout, QSizePolicy, QFileDialog, QShortcut
 
 from modules.helpers import Pixmaps
 from modules.helpers.types.Bytes import Bytes
@@ -94,6 +94,12 @@ class NewPlaylistDialog(Dialogs.Dialog):
 
         self.__create_btn.clicked.connect(self._on_accepted)
         self.__edit_cover_btn.clicked.connect(lambda: self.__onclick_select_cover())
+
+    @override
+    def assignShortcuts(self) -> None:
+        super().assignShortcuts()
+        acceptShortcut = QShortcut(QKeySequence(Qt.Key_Return), self.__create_btn)
+        acceptShortcut.activated.connect(self.__create_btn.click)
 
     @override
     def setFixedWidth(self, w: int) -> None:
@@ -218,6 +224,12 @@ class UpdatePlaylistDialog(Dialogs.Dialog):
         self.__accept_btn.setText("Apply")
 
         self.setFixedWidth(360)
+
+    @override
+    def assignShortcuts(self) -> None:
+        super().assignShortcuts()
+        acceptShortcut = QShortcut(QKeySequence(Qt.Key_Return), self.__accept_btn)
+        acceptShortcut.activated.connect(self.__accept_btn.click)
 
     @override
     def setFixedWidth(self, w: int) -> None:
