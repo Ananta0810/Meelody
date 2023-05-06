@@ -325,9 +325,10 @@ class TimerDialog(Dialogs.Dialog):
 
     def _on_accepted(self) -> None:
         if self.__on_accept_fn is None:
-            super()._on_accepted()
+            super().__on_accept_fn()
+            self.close()
             return
 
         can_close = self.__on_accept_fn(None if self.__minutes == 0 else self.__minutes)
         if can_close:
-            super()._on_accepted()
+            self.close()
