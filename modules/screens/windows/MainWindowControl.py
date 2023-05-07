@@ -39,6 +39,7 @@ class MainWindowControl(MainWindow, BaseControl):
     __download_thread: Thread | None = None
 
     __start_download: pyqtSignal = pyqtSignal()
+    __error_occurred: pyqtSignal = pyqtSignal(str, str)
 
     def __init__(self) -> None:
         super().__init__()
@@ -95,8 +96,8 @@ class MainWindowControl(MainWindow, BaseControl):
         self.set_onclick_next_on_tray(self.play_next_song)
 
         self.__start_download.connect(self.__on_start_download)
-
         self.post_show.connect(lambda: Thread(target=lambda: self.__lazy_load_covers()).start())
+        self.__error_occurred.connect(lambda header, message: Dialogs.alert(Images.WARNING, header, message))
 
     def __on_start_download(self):
         return self._body.add_download_item(Lists.last_of(self.__downloaders).get_video_title())
@@ -312,7 +313,7 @@ class MainWindowControl(MainWindow, BaseControl):
             print(f"Downloading song from youtube with url '{youtube_url}'")
             downloader.download_to(download_temp_dir)
         except ValueError as e:
-            Dialogs.alert(image=Images.WARNING, header="Warning", message=str(e))
+            self.__error_occurred.emit("Warning", str(e))
             return
 
         if self.__download_thread is None:

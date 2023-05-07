@@ -170,9 +170,19 @@ class _AlertDialog(QtWidgets.QDialog, BaseView):
         self.__view_layout.addWidget(self.__message)
         self.__view_layout.addWidget(self.__accept_btn)
 
+    def setInfo(self, image: bytes, header: str, message: str, accept_text: str) -> None:
+        self.__image.set_cover(CoverProp.from_bytes(image, width=128))
+        self.__header.setText(header)
+        self.__message.setText(message)
+        self.__accept_btn.setText(accept_text)
+        self.setMaximumHeight(self.sizeHint().height())
+        self.setFixedSize(360, self.__inner.sizeHint().height())
+
+    @override
     def connectToSignalSlot(self):
         self.__accept_btn.clicked.connect(self.close)
 
+    @override
     def assignShortcuts(self):
         exitShortcut1 = QShortcut(QKeySequence(Qt.Key_Return), self.__accept_btn)
         exitShortcut1.activated.connect(self.close)
@@ -186,14 +196,6 @@ class _AlertDialog(QtWidgets.QDialog, BaseView):
         super().setFixedSize(w + margins.left() + margins.right(), h + margins.top() + margins.bottom())
         self.__inner.setFixedSize(w, h)
         self.__background.setFixedSize(w, h)
-
-    def setInfo(self, image: bytes, header: str, message: str, accept_text: str) -> None:
-        self.__image.set_cover(CoverProp.from_bytes(image, width=128))
-        self.__header.setText(header)
-        self.__message.setText(message)
-        self.__accept_btn.setText(accept_text)
-        self.setMaximumHeight(self.sizeHint().height())
-        self.setFixedSize(360, self.__inner.sizeHint().height())
 
     @override
     def apply_dark_mode(self) -> None:
