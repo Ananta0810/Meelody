@@ -382,7 +382,7 @@ class MainWindowControl(MainWindow, BaseControl):
         print(f"Downloaded song from youtube successfully with title '{downloader.get_video_title()}'.")
         download_files = Files.get_files_from(download_temp_dir, with_extension="mp3")
         if len(download_files) == 0:
-            self.__received_alert.emit(Images.DOWNLOAD, "Download failed",
+            self.__received_alert.emit(Images.WARNING, "Download failed",
                                        f"Something is wrong while converting music.")
             return
 
@@ -391,7 +391,7 @@ class MainWindowControl(MainWindow, BaseControl):
 
         self._body.mark_succeed_download_at(self.__downloaders.index(downloader))
 
-        self.__received_alert.emit(Images.DOWNLOAD, "Download successfully",
+        self.__received_alert.emit(Images.SUCCESS, "Download successfully",
                                    f"Your video with title '{song.get_title()}' has been downloaded successfully.")
 
     def __on_close_download_dialog(self) -> None:

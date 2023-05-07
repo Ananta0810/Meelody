@@ -65,10 +65,14 @@ class DownloadDialog(Dialogs.Dialog, BaseView):
         self.__main_view = QWidget()
         self.__main_view.setContentsMargins(24, 24, 24, 0)
 
+        cover_wrapper_layout = QVBoxLayout()
+        self.__image.setFixedHeight(156)
+        cover_wrapper_layout.addWidget(self.__image)
+
         self.__view_layout = QVBoxLayout(self.__main_view)
         self.__view_layout.setContentsMargins(0, 0, 0, 0)
         self.__view_layout.setAlignment(Qt.AlignVCenter)
-        self.__view_layout.addWidget(self.__image)
+        self.__view_layout.addLayout(cover_wrapper_layout)
         self.__view_layout.addWidget(self.__header)
         self.__view_layout.addSpacing(4)
         self.__view_layout.addWidget(self.__input)
