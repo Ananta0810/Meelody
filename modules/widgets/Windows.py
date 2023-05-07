@@ -8,8 +8,7 @@ from PyQt5.QtWidgets import QWidget, QVBoxLayout, QHBoxLayout, QDesktopWidget, Q
 from modules.helpers.types.Decorators import override, connector
 from modules.models.view.builder.IconButtonStyle import IconButtonStyle
 from modules.screens.AbstractScreen import BaseView
-from modules.statics.view.Material import Paddings, Icons, Colors, Backgrounds, Images
-from modules.widgets import Dialogs
+from modules.statics.view.Material import Paddings, Icons, Colors, Backgrounds
 from modules.widgets.Buttons import IconButton
 
 
@@ -238,10 +237,9 @@ class CloseableWindow(FramelessWindow, BaseView):
             self.__onclick_collapse_fn()
 
     def __click_minimize(self) -> None:
-        Dialogs.alert(Images.TIMER, "Dmo", "Demo")
-        # self.showMinimized()
-        # if self.__onclick_minimize_fn is not None:
-        #     self.__onclick_minimize_fn()
+        self.showMinimized()
+        if self.__onclick_minimize_fn is not None:
+            self.__onclick_minimize_fn()
 
     def __exit(self) -> None:
         self.close()

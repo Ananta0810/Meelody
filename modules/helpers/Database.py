@@ -1,6 +1,5 @@
 import os.path
 from abc import ABC, abstractmethod
-from logging import getLogger
 
 from modules.helpers import Files, Printers
 from modules.helpers import Jsons
@@ -55,7 +54,6 @@ class SongSaver(DataSaver):
 
     def __get_songs_from_files(self, directory: str, with_extension: str) -> PlaylistSongs:
         playlist = PlaylistSongs()
-        getLogger().setLevel("ERROR")
         files: set = Files.get_files_from(directory, with_extension)
         for file in files:
             playlist.insert(Song.from_file(location=file))

@@ -61,6 +61,33 @@ class AudioPlayer(metaclass=SingletonMeta):
         mixer.music.unload()
         mixer.music.load(song.get_location())
 
+        # location = self.speed_change(song.get_location(), song.get_title(), 1.25)
+        # dBFS = self.get_loud_level(song.get_location())
+        # self.set_volume(dBFS * -4)
+
+    # @staticmethod
+    # def get_loud_level(location):
+    #     sound = AudioSegment.from_file(location, format="mp3")
+    #     return sound.dBFS
+    #
+    # @staticmethod
+    # def speed_change(location, title, speed=1.0):
+    #     sound = AudioSegment.from_file(location)
+    #     download_temp_dir = tempfile.mkdtemp()
+    #     temp_1 = download_temp_dir + "/" + title + ".wav"
+    #     temp_2 = download_temp_dir + "/" + title + "__xx" + ".wav"
+    #     result = download_temp_dir + "/" + title + ".mp3"
+    #     sound.export(temp_1, format="wav")
+    #
+    #     y, fs = librosa.load(temp_1)
+    #     song_2_times_faster = librosa.effects.time_stretch(y, rate=speed)
+    #
+    #     wavfile.write(temp_2, rate=int(fs), data=song_2_times_faster)
+    #
+    #     sound = AudioSegment.from_wav(temp_2)
+    #     sound.export(result, format="mp3")
+    #     return result
+
     def play(self):
         mixer.music.play(start=self.__get_playing_time())
 

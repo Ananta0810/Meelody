@@ -24,41 +24,6 @@ class Application:
             - pip install Pillow==9.0.0
         """
 
-        """
-        TODO:
-            - Add alert when delete song and playlist. | DONE
-            - Add alert when song already existed. | DONE
-            - Add alert when update something failed. | DONE
-            - Add alert when download youtube music failed. | DONE
-            - Add progress bar to show which one is downloading. | DONE
-            - Add button to edit favourite playlist cover. | DONE
-            - Add play buttons on taskbar. | DONE
-            - Add shortcut to exit alert, dialog. | DONE
-            - Add timer | DONE
-            - Add sidebar.
-            - Sort by title, length, artist.
-            - Allow to auto modify volume so that every song has same vibe.
-            - Add short cut to play, prev, next | DONE
-            - Add settings.
-            
-            - Update UI for inputs. | DONE
-            - Use shortcut to go to next song which start with key. | DONE
-            - Change icon for minimize button. | CANCELED
-            - Only show icon on tray when hidden. | DONE
-            - Run thread when import songs.
-            - Improve performance for menu. | DOING
-            - Scroll wheel on playlist carousel to scroll. | DONE
-            
-            - Fix 3 alerts show up at the same time. | DONE
-            - Fix edit when shuffling is wrong. | CANCELED
-            - Fix first time hear song. | DONE
-            - Fix color dominant in playlist. | DONE
-            - Fix bug when choose songs for playlist. | DONE
-            - Fix first time playing on other playlist failed. | DONE
-            - Fix bug click Ok button after download song | DONE
-            - Refactor structure.
-        """
-
         Database().settings.set_path("configuration/settings.json")
         Database().songs.set_path("configuration/library.json")
         Database().playlists.set_path("configuration/playlists.json")
