@@ -75,28 +75,33 @@ class FramelessWindow(QMainWindow):
     def setFixedHeight(self, h: int) -> None:
         self.__background.setFixedHeight(h)
         self.__inner.setFixedHeight(h)
+        self.__outer.setFixedSize(self.__inner.width() + 64, self.__inner.height() + 64)
 
     @override
     def setFixedWidth(self, w: int) -> None:
         self.__background.setFixedWidth(w)
         self.__inner.setFixedWidth(w)
+        self.__outer.setFixedSize(self.__inner.width() + 64, self.__inner.height() + 64)
 
     @overload
     @override
     def setFixedSize(self, a0: QSize) -> None:
         self.__background.setFixedWidth(a0)
         self.__inner.setFixedWidth(a0)
+        self.__outer.setFixedSize(self.__inner.width() + 64, self.__inner.height() + 64)
 
     @overload
     @override
     def setFixedSize(self, w: int, h: int) -> None:
         self.__background.setFixedWidth(w, h)
         self.__inner.setFixedWidth(w, h)
+        self.__outer.setFixedSize(self.__inner.width() + 64, self.__inner.height() + 64)
 
     @override
     def setFixedSize(self, a0: QSize) -> None:
         self.__background.setFixedSize(a0)
         self.__inner.setFixedSize(a0)
+        self.__outer.setFixedSize(self.__inner.width() + 64, self.__inner.height() + 64)
 
     @override
     def width(self) -> int:
@@ -131,7 +136,8 @@ class FramelessWindow(QMainWindow):
     def resizeEvent(self, event: QResizeEvent) -> None:
         super().resizeEvent(event)
         self.__background.resize(self.size())
-        self.__outer.setFixedSize(self.__inner.width() + 64, self.__inner.height() + 64)
+        height_ = self.__inner.height() + 64
+        self.__outer.setFixedSize(self.__inner.width() + 64, height_)
 
     @override
     def mousePressEvent(self, event: QMouseEvent) -> None:

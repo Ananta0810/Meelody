@@ -1,6 +1,6 @@
 from PyQt5 import QtWidgets
 from PyQt5.QtCore import Qt, QSize, pyqtSignal
-from PyQt5.QtGui import QResizeEvent, QShowEvent, QKeySequence
+from PyQt5.QtGui import QKeySequence
 from PyQt5.QtWidgets import QVBoxLayout, QHBoxLayout, QWidget, QGraphicsDropShadowEffect, QShortcut
 
 from modules.helpers.types.Decorators import override
@@ -60,6 +60,8 @@ class Dialog(FramelessWindow, BaseView):
         self.assignShortcuts()
 
     def __init_ui(self) -> None:
+        self.setWindowModality(Qt.ApplicationModal)
+
         self.__layout = QHBoxLayout()
         self._btn_close = IconButton.build(
             padding=Paddings.RELATIVE_50,
@@ -76,7 +78,6 @@ class Dialog(FramelessWindow, BaseView):
         self.__layout.setContentsMargins(8, 8, 8, 0)
 
         self._build_content()
-        self.setWindowModality(Qt.ApplicationModal)
 
     def connectToSignalSlot(self):
         self._btn_close.clicked.connect(self.close)
@@ -88,15 +89,14 @@ class Dialog(FramelessWindow, BaseView):
     def _build_content(self) -> None:
         ...
 
-    def showEvent(self, a0: QShowEvent) -> None:
-        super().showEvent(a0)
-        self.moveToCenter()
+    @override
+    def setFixedWidth(self, w: int) -> None:
+        super().setFixedWidth(w)
+        self._btn_close.move(w - self._btn_close.width() - 4, 4)
 
     @override
-    def resizeEvent(self, event: QResizeEvent) -> None:
-        super().resizeEvent(event)
-        self._btn_close.move(self.width() - self._btn_close.width() - 4, 4)
-        self.setFixedHeight(self.height())
+    def setFixedHeight(self, h: int) -> None:
+        super().setFixedHeight(h)
         self.moveToCenter()
 
     @override

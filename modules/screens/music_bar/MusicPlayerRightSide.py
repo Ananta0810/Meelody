@@ -284,7 +284,8 @@ class TimerDialog(Dialogs.Dialog):
         self.__accept_btn.setText("Set Now")
 
         self.setFixedWidth(360)
-        self.setFixedHeight(self.sizeHint().height())
+        self.setFixedHeight(self.height())
+        self.moveToCenter()
 
     @override
     def assignShortcuts(self) -> None:

@@ -100,7 +100,8 @@ class UpdateSongDialog(Dialogs.Dialog):
         self.__accept_btn.setText("Apply")
 
         self.setFixedWidth(480)
-        self.setFixedHeight(self.sizeHint().height())
+        self.setFixedHeight(self.height())
+        self.moveToCenter()
 
     @override
     def assignShortcuts(self) -> None:

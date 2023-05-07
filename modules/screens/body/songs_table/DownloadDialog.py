@@ -55,10 +55,16 @@ class DownloadDialog(Dialogs.Dialog, BaseView):
             dark_mode=TextStyle(text_color=ColorBoxes.WHITE, background=Backgrounds.ROUNDED_WHITE_25)
         )
 
+        self.__menu_outer = QWidget()
+        self.__menu_outer.setContentsMargins(24, 12, 24, 24)
+        layout = QVBoxLayout(self.__menu_outer)
+        layout.setContentsMargins(0, 0, 0, 0)
         self.__menu = DownloadMenu()
+        layout.addWidget(self.__menu)
 
         self.__main_view = QWidget()
-        self.__main_view.setContentsMargins(24, 24, 24, 24)
+        self.__main_view.setContentsMargins(24, 24, 24, 0)
+
         self.__view_layout = QVBoxLayout(self.__main_view)
         self.__view_layout.setContentsMargins(0, 0, 0, 0)
         self.__view_layout.setAlignment(Qt.AlignVCenter)
@@ -68,30 +74,32 @@ class DownloadDialog(Dialogs.Dialog, BaseView):
         self.__view_layout.addWidget(self.__input)
         self.__view_layout.addSpacing(8)
         self.__view_layout.addWidget(self.__accept_btn)
-        self.__view_layout.addWidget(self.__menu)
+
         self.addWidget(self.__main_view)
+        self.addWidget(self.__menu_outer)
 
         self.__image.set_cover(CoverProp.from_bytes(Images.DOWNLOAD, width=128))
         self.__header.setText("Download Youtube Song")
         self.__accept_btn.setText("Download")
 
         self.setFixedWidth(640)
-        self.setFixedHeight(self.sizeHint().height())
+        self.setFixedHeight(self.__height())
 
     @override
     def connectToSignalSlot(self):
         super().connectToSignalSlot()
         self.__accept_btn.clicked.connect(lambda: self._on_accepted())
 
-    def close(self) -> bool:
-        self.closed.emit()
-        return super().close()
-
     @override
     def assignShortcuts(self) -> None:
         super().assignShortcuts()
         acceptShortcut = QShortcut(QKeySequence(Qt.Key_Return), self.__accept_btn)
         acceptShortcut.activated.connect(self.__accept_btn.click)
+
+    @override
+    def close(self) -> bool:
+        self.closed.emit()
+        return super().close()
 
     @override
     def apply_dark_mode(self) -> None:
@@ -124,7 +132,10 @@ class DownloadDialog(Dialogs.Dialog, BaseView):
 
     def add_item(self, label: str) -> None:
         self.__menu.add(label)
-        self.setFixedHeight(self.sizeHint().height())
+        self.setFixedHeight(self.__height())
+
+    def __height(self):
+        return self.__main_view.sizeHint().height() + self.__menu_outer.sizeHint().height()
 
     def mark_succeed_at(self, index: int) -> None:
         self.__menu.mark_succeed_at(index)

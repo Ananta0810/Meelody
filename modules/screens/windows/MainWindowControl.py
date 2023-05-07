@@ -39,7 +39,7 @@ class MainWindowControl(MainWindow, BaseControl):
     __download_thread: Thread | None = None
 
     __start_download: pyqtSignal = pyqtSignal()
-    __error_occurred: pyqtSignal = pyqtSignal(str, str)
+    __received_alert: pyqtSignal = pyqtSignal(bytearray, str, str)
 
     def __init__(self) -> None:
         super().__init__()
@@ -97,7 +97,7 @@ class MainWindowControl(MainWindow, BaseControl):
 
         self.__start_download.connect(self.__on_start_download)
         self.post_show.connect(lambda: Thread(target=lambda: self.__lazy_load_covers()).start())
-        self.__error_occurred.connect(lambda header, message: Dialogs.alert(Images.WARNING, header, message))
+        self.__received_alert.connect(lambda image, header, message: Dialogs.alert(image, header, message))
 
     def __on_start_download(self):
         return self._body.add_download_item(Lists.last_of(self.__downloaders).get_video_title())
@@ -313,7 +313,7 @@ class MainWindowControl(MainWindow, BaseControl):
             print(f"Downloading song from youtube with url '{youtube_url}'")
             downloader.download_to(download_temp_dir)
         except ValueError as e:
-            self.__error_occurred.emit("Warning", str(e))
+            self.__received_alert.emit(Images.WARNING, "Warning", str(e))
             return
 
         if self.__download_thread is None:
@@ -375,17 +375,19 @@ class MainWindowControl(MainWindow, BaseControl):
 
     def __download_song_succeed(self, downloader: YoutubeDownloader, download_temp_dir: str) -> None:
         print(f"Downloaded song from youtube successfully with title '{downloader.get_video_title()}'.")
-
         download_files = Files.get_files_from(download_temp_dir, with_extension="mp3")
+        if len(download_files) == 0:
+            self.__received_alert.emit(Images.DOWNLOAD, "Download failed",
+                                       f"Something is wrong while converting music.")
+            return
+
         song = self.__add_songs_to_library(download_files)[0]
         shutil.rmtree(download_temp_dir)
 
         self._body.mark_succeed_download_at(self.__downloaders.index(downloader))
-        Dialogs.alert(
-            image=Images.DOWNLOAD,
-            header="Download successfully",
-            message=f"Your video with title '{song.get_title()}' has been downloaded successfully."
-        )
+
+        self.__received_alert.emit(Images.DOWNLOAD, "Download successfully",
+                                   f"Your video with title '{song.get_title()}' has been downloaded successfully.")
 
     def __on_close_download_dialog(self) -> None:
         if self.__is_selecting_library:
