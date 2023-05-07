@@ -16,7 +16,6 @@ class SongTableView(QWidget, BaseView):
     _header: SongTableHeaderView
     _menu: SongMenu
     __is_dark_mode: bool = False
-    __applied_theme_mode = False
 
     def __init__(self, parent: Optional["QWidget"] = None) -> None:
         super().__init__(parent)
@@ -138,16 +137,7 @@ class SongTableView(QWidget, BaseView):
         self._header.enable_select_songs_to_playlist(visible)
 
     def _load_songs(self, songs: list[Song]) -> None:
-        song_views: list[SongTableRowView] = self._menu.load_songs(songs)
-        if self.__applied_theme_mode:
-            return
-        if self.__is_dark_mode:
-            for song_view in song_views:
-                song_view.apply_dark_mode()
-        else:
-            for song_view in song_views:
-                song_view.apply_light_mode()
-        self.__applied_theme_mode = True
+        self._menu.load_songs(songs)
 
     def _load_choosing_playlist(self, songs: list[Song]) -> None:
         self._menu.load_choosing_playlist(songs)

@@ -55,7 +55,7 @@ class Application:
             - Fix color dominant in playlist. | DONE
             - Fix bug when choose songs for playlist. | DONE
             - Fix first time playing on other playlist failed. | DONE
-            - Fix bug click Ok button after download song
+            - Fix bug click Ok button after download song | DONE
             - Refactor structure.
         """
 

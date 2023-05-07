@@ -44,6 +44,8 @@ class MenuLayout(QWidget):
         self.__next_y += height
 
     def displayNFirst(self, total_items: int) -> None:
+        if self.__total_displaying == total_items:
+            return
         self.__total_displaying = total_items
         display_items = self.__y_post_to_last_item_list[0: total_items]
         self.setFixedHeight(sum(display_items))

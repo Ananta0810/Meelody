@@ -33,6 +33,7 @@ class SongMenu(SmoothVerticalScrollArea, BaseView):
         self.start: int = 0
         self.last: int = 6
         self.__song_views: list[SongTableRowView] = []
+        self.__is_light_mode = True
         self._current_song_index: list[int] = []
         self.__init_ui()
 
@@ -53,12 +54,14 @@ class SongMenu(SmoothVerticalScrollArea, BaseView):
 
     @override
     def apply_light_mode(self) -> None:
+        self.__is_light_mode = True
         self.setStyleSheet(SmoothVerticalScrollArea.build_style(background=Backgrounds.CIRCLE_PRIMARY))
         for song in self.__song_views:
             song.apply_light_mode()
 
     @override
     def apply_dark_mode(self) -> None:
+        self.__is_light_mode = False
         self.setStyleSheet(SmoothVerticalScrollArea.build_style(background=Backgrounds.CIRCLE_PRIMARY))
         for song in self.__song_views:
             song.apply_dark_mode()
@@ -169,7 +172,7 @@ class SongMenu(SmoothVerticalScrollArea, BaseView):
     def get_total_songs(self) -> int:
         return self.__menu.getTotalDisplaying()
 
-    def load_songs(self, songs: list[Song]) -> list[SongTableRowView]:
+    def load_songs(self, songs: list[Song]) -> None:
         total_rows = len(self.__song_views)
         total_songs = len(songs)
 
@@ -179,21 +182,23 @@ class SongMenu(SmoothVerticalScrollArea, BaseView):
 
             self.__add_rows(total_lacking_rows)
             self.__display_songs(songs)
-
-            return self.__song_views
+            return
 
         self.__display_songs(songs)
-        return self.__song_views[0:len(songs)]
 
-    def __add_rows(self, total_lacking_rows):
+    def __add_rows(self, total_lacking_rows) -> None:
         for i in range(0, total_lacking_rows):
             song_view = SongTableRowView()
             self.__song_views.append(song_view)
             self.__menu.addWidget(song_view)
-            song_view
+            if self.__is_light_mode:
+                song_view.apply_light_mode()
+            else:
+                song_view.apply_dark_mode()
 
     def __popular_info(self, song_view: SongTableRowView, song: Song, index: int) -> None:
         song_view.show_less()
+        song_view.show()
 
         song_view.enable_choosing(False)
         song_view.set_default_cover(Images.DEFAULT_SONG_COVER)
