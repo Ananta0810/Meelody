@@ -32,8 +32,7 @@ class NewPlaylistDialog(Dialogs.Dialog):
     @override
     def _build_content(self) -> None:
         self.__cover = Cover()
-        cover_edge = 360 - self.contentsMargins().left() - self.contentsMargins().right()
-        self.__cover.setFixedSize(cover_edge, cover_edge)
+        self.__cover.setFixedSize(320, 320)
 
         self.__label_title = LabelWithDefaultText.build(
             font=FontBuilder.build(size=11),
@@ -53,7 +52,7 @@ class NewPlaylistDialog(Dialogs.Dialog):
             ),
             padding=8
         )
-        self.__input_title.setFixedHeight(48)
+        self.__input_title.setFixedSize(320, 48)
 
         self.__create_btn = ActionButton.build(
             font=FontBuilder.build(family="Segoe UI Semibold", size=11),
@@ -90,10 +89,12 @@ class NewPlaylistDialog(Dialogs.Dialog):
         self.__label_title.setText("Enter title")
         self.__create_btn.setText("Create Now")
 
-        self.setFixedWidth(360)
-
         self.__create_btn.clicked.connect(self._on_accepted)
         self.__edit_cover_btn.clicked.connect(lambda: self.__onclick_select_cover())
+
+        self.setFixedWidth(320)
+        self.setFixedHeight(self.height())
+        self.moveToCenter()
 
     @override
     def assignShortcuts(self) -> None:
@@ -124,9 +125,10 @@ class NewPlaylistDialog(Dialogs.Dialog):
     @override
     def resizeEvent(self, event: QResizeEvent) -> None:
         super().resizeEvent(event)
+        margin = self.__main_view.contentsMargins()
         self.__edit_cover_btn.move(
-            self.__cover.x() + self.__cover.width() - self.__edit_cover_btn.width() - 8,
-            self.__cover.y() + 8,
+            self.__cover.x() + self.__cover.width() - self.__edit_cover_btn.width() - 8 + margin.right(),
+            self.__cover.y() + 8 + margin.top(),
         )
         self.setFixedHeight(self.height())
 
@@ -164,8 +166,7 @@ class UpdatePlaylistDialog(Dialogs.Dialog):
     @override
     def _build_content(self) -> None:
         self.__cover = Cover()
-        cover_edge = 360 - self.contentsMargins().left() - self.contentsMargins().right()
-        self.__cover.setFixedSize(cover_edge, cover_edge)
+        self.__cover.setFixedSize(320, 320)
 
         self.__label_title = LabelWithDefaultText.build(
             font=FontBuilder.build(size=11),
@@ -185,7 +186,7 @@ class UpdatePlaylistDialog(Dialogs.Dialog):
             ),
             padding=8
         )
-        self.__input_title.setFixedHeight(48)
+        self.__input_title.setFixedSize(320, 48)
 
         self.__accept_btn = ActionButton.build(
             font=FontBuilder.build(family="Segoe UI Semibold", size=11),
@@ -223,7 +224,9 @@ class UpdatePlaylistDialog(Dialogs.Dialog):
         self.__label_title.setText("Enter title")
         self.__accept_btn.setText("Apply")
 
-        self.setFixedWidth(360)
+        self.setFixedWidth(320)
+        self.setFixedHeight(self.height())
+        self.moveToCenter()
 
     @override
     def assignShortcuts(self) -> None:
@@ -254,10 +257,10 @@ class UpdatePlaylistDialog(Dialogs.Dialog):
     @override
     def resizeEvent(self, event: QResizeEvent) -> None:
         super().resizeEvent(event)
-        self.__input_title.setFixedWidth(self.__accept_btn.size().width())
+        margin = self.__main_view.contentsMargins()
         self.__edit_cover_btn.move(
-            self.__cover.x() + self.__cover.width() - self.__edit_cover_btn.width() - 8,
-            self.__cover.y() + 8,
+            self.__cover.x() + self.__cover.width() - self.__edit_cover_btn.width() - 8 + margin.right(),
+            self.__cover.y() + 8 + margin.top(),
         )
 
     @connector

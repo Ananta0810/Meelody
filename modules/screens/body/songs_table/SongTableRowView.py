@@ -99,8 +99,8 @@ class UpdateSongDialog(Dialogs.Dialog):
         self.__header.setText("Update Song")
         self.__accept_btn.setText("Apply")
 
-        self.setFixedWidth(480)
         self.setFixedHeight(self.height())
+        self.setFixedWidth(480 + 24 * 2)
         self.moveToCenter()
 
     @override
@@ -135,6 +135,7 @@ class UpdateSongDialog(Dialogs.Dialog):
 
     def set_song_title(self, title: str) -> None:
         self.__input_title.setText(title)
+        self.__input_title.setFixedWidth(480)
 
     def set_song_artist(self, artist: str) -> None:
         self.__input_artist.setText(artist)
