@@ -79,7 +79,9 @@ class MainWindowControl(MainWindow, BaseControl):
         self._body.set_on_delete_song_on_menu(self.__delete_song_at)
         self._body.set_onclick_download_songs_to_library_fn(self.__add_songs_to_library_from_youtube)
         self._body.set_onclose_download_dialog(self.__on_close_download_dialog)
-        self._body.set_onclick_add_songs_to_library_fn(self.__add_songs_to_library_from_computer)
+        self._body.set_onclick_add_songs_to_library_fn(
+            lambda paths: Thread(target=self.__add_songs_to_library_from_computer(paths)).start()
+        )
         self._body.set_onclick_select_songs_to_playlist_fn(self.__start_select_songs_from_library_to_playlist)
         self._body.set_onclick_apply_select_songs_to_playlist_fn(self.__finish_select_songs_from_library_to_playlist)
         self._body.set_on_keypress(self.__go_to_song_that_title_start_with)
@@ -281,6 +283,9 @@ class MainWindowControl(MainWindow, BaseControl):
         new_songs = self.__add_songs_to_library(paths)
         if len(new_songs) == 0:
             return
+        self.__received_alert.emit(Images.SUCCESS, "Import succeed",
+                                   f"You have imported successfully \n{len(new_songs)} songs from storage.")
+
         if self.__is_selecting_library:
             self.__choose_library()
         for song in new_songs:
