@@ -1,11 +1,10 @@
-from re import sub
 from threading import Thread
 from typing import Callable
 
 from yt_dlp import YoutubeDL, DownloadError
 
 from modules.helpers import Printers
-from modules.helpers.types import Strings
+from modules.helpers.types import Strings, Numbers
 
 
 def _clean_youtube_url(url: str) -> str:
@@ -14,11 +13,13 @@ def _clean_youtube_url(url: str) -> str:
         url = url[:index]
     return url
 
+
 _init = 0
 _downloading = 1
 _processing = 2
 _succeed = 3
 _failed = 4
+
 
 class YoutubeDownloader:
     __on_succeed_fn: Callable[[str], None] = None
@@ -110,11 +111,14 @@ class YoutubeDownloader:
     def __track_percentage(self, info: dict) -> None:
         status = info['status']
         if status == 'downloading':
-            self.__state = _downloading
-            self.__percentage = float(info['_percent_str'].replace('%', ''))
-            self.__downloaded_size = info['downloaded_bytes']
-            self.__size = info['total_bytes']
-            self.__remain_sec = info['eta']
+            try:
+                self.__state = _downloading
+                self.__downloaded_size = info['downloaded_bytes']
+                self.__size = info['total_bytes']
+                self.__remain_sec = info['eta']
+                self.__percentage = Numbers.clamp(self.__downloaded_size / self.__size * 100, 0, 100)
+            except:
+                pass
             return
         if status == 'finished':
             self.__state = _processing
