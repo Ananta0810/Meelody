@@ -1,3 +1,5 @@
+import io
+import sys
 from sys import argv, exit
 
 from PyQt5.QtWidgets import QApplication
@@ -5,6 +7,10 @@ from PyQt5.QtWidgets import QApplication
 from modules.helpers import Times
 from modules.screens.Application import Application
 from modules.statics.view.Material import Icons
+
+stream = io.StringIO()
+sys.stdout = stream
+sys.stderr = stream
 
 
 def run_application():
