@@ -6,6 +6,7 @@ from PyQt5.QtWidgets import QWidget, QVBoxLayout, QHBoxLayout, QDesktopWidget, Q
     QGraphicsDropShadowEffect, QLayout
 
 from modules.helpers.types.Decorators import override, connector
+from modules.models.AudioPlayer import AudioPlayer
 from modules.models.view.builder.IconButtonStyle import IconButtonStyle
 from modules.screens.AbstractScreen import BaseView
 from modules.statics.view.Material import Paddings, Icons, Colors, Backgrounds
@@ -31,6 +32,7 @@ class FramelessWindow(QMainWindow):
         self.setWindowFlags(Qt.Window | Qt.FramelessWindowHint | Qt.WindowMinMaxButtonsHint)
         self.setAttribute(Qt.WA_TranslucentBackground)
         self.setCentralWidget(self.__outer)
+        self.setWindowIcon(Icons.LOGO)
 
         shadow = QGraphicsDropShadowEffect(blurRadius=32,
                                            color=Colors.PRIMARY.with_alpha(33).to_QColor(),
@@ -166,7 +168,6 @@ class CloseableWindow(FramelessWindow, BaseView):
     __title_bar: QHBoxLayout
     __btn_close: IconButton
     __btn_minimize: IconButton
-    __onclick_collapse_fn: Callable[[], None] = None
     __on_exit_fn: Callable[[], None] = None
     __onclick_minimize_fn: Callable[[], None] = None
 
@@ -201,7 +202,7 @@ class CloseableWindow(FramelessWindow, BaseView):
         )
 
         self.__btn_minimize.clicked.connect(lambda: self.__click_minimize())
-        self.__btn_close.clicked.connect(lambda: self.__click_collapse())
+        self.__btn_close.clicked.connect(lambda: self.__click_close())
 
         self.__title_bar.addStretch()
         self.__title_bar.addWidget(self.__btn_minimize)
@@ -220,10 +221,6 @@ class CloseableWindow(FramelessWindow, BaseView):
         self.__btn_close.apply_dark_mode()
 
     @connector
-    def set_onclick_collapse(self, fn: Callable[[], None]) -> None:
-        self.__onclick_collapse_fn = fn
-
-    @connector
     def set_on_exit(self, fn: Callable[[], None]) -> None:
         self.__on_exit_fn = fn
 
@@ -231,20 +228,22 @@ class CloseableWindow(FramelessWindow, BaseView):
     def set_onclick_minimize(self, fn: Callable[[], None]) -> None:
         self.__onclick_minimize_fn = fn
 
-    def __click_collapse(self):
-        self.hide()
-        if self.__onclick_collapse_fn is not None:
-            self.__onclick_collapse_fn()
+    def __click_close(self):
+        if AudioPlayer.get_instance().is_playing():
+            self.hide()
+            return
+        self._exit()
 
     def __click_minimize(self) -> None:
         self.showMinimized()
         if self.__onclick_minimize_fn is not None:
             self.__onclick_minimize_fn()
 
-    def __exit(self) -> None:
-        self.close()
+    def _exit(self) -> None:
         if self.__on_exit_fn is not None:
             self.__on_exit_fn()
+        self.hide()
+        self.close()
 
     def show_minimize_button(self, enable: bool) -> None:
         self.__btn_minimize.setVisible(enable)

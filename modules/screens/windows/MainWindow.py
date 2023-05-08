@@ -85,7 +85,7 @@ class MainWindow(CloseableWindow, BaseView):
         self.__tray_menu.addAction(next_action)
 
         exit_action = QAction("Exit", self)
-        exit_action.triggered.connect(lambda: self.__exit())
+        exit_action.triggered.connect(lambda: self._exit())
         self.__tray_menu.addAction(exit_action)
 
         self.__tray.setContextMenu(self.__tray_menu)

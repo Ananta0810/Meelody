@@ -53,6 +53,8 @@ class SongSaver(DataSaver):
         Jsons.write_to_file(self.get_path(), [song.to_dict(with_cover=song.get_id() == id_) for song in data])
 
     def __get_songs_from_files(self, directory: str, with_extension: str) -> PlaylistSongs:
+        if not os.path.exists(directory):
+            os.mkdir(directory)
         playlist = PlaylistSongs()
         files: set = Files.get_files_from(directory, with_extension)
         for file in files:

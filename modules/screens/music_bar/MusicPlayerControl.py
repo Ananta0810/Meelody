@@ -1,4 +1,3 @@
-import sys
 from threading import Thread
 from time import sleep
 from typing import Callable
@@ -247,7 +246,7 @@ class MusicPlayerControl(MusicPlayerBar, BaseControl):
         while thread_id == self.__thread_id and self.__player.is_playing():
             self.__update_ui()
             self.__countdown_timer(interval)
-            sys.stdout.flush()
+            # sys.stdout.flush()
             sleep(interval)
 
         playing_this_song: bool = thread_id == self.__thread_id
@@ -263,16 +262,6 @@ class MusicPlayerControl(MusicPlayerBar, BaseControl):
             self.pause_current_song()
             self.__player.reset_timer()
             print("Paused song because timer is up.")
-
-    def do_after_played(self, interval, thread_id):
-        while thread_id == self.__thread_id and self.__player.is_playing():
-            self.__update_ui()
-            sleep(interval)
-
-        playing_this_song: bool = thread_id == self.__thread_id
-        song_is_finished: bool = playing_this_song and self.is_playing()
-        if song_is_finished:
-            self.__do_after_song_finished()
 
     def __calculate_refresh_ui_interval(self) -> float:
         TIMES_THAT_UI_HAS_TO_UPDATE_FOR_SLIDER_WHILE_PLAYING: int = 100
