@@ -230,7 +230,7 @@ class CloseableWindow(FramelessWindow, BaseView):
 
     def __click_close(self):
         if AudioPlayer.get_instance().is_playing():
-            self.hide()
+            self.showMinimized()
             return
         self._exit()
 

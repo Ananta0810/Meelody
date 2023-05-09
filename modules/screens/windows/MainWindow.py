@@ -112,14 +112,17 @@ class MainWindow(CloseableWindow, BaseView):
         self.__toolbar_next_btn.clicked.connect(lambda: self.__onclick_next_fn())
         self.__toolbar.addButton(self.__toolbar_next_btn)
 
+    @override
     def show(self) -> None:
         self.__tray.hide()
         super().show()
 
-    def hide(self) -> None:
+    @override
+    def showMinimized(self) -> None:
         self.__tray.show()
-        super().hide()
+        super().showMinimized()
 
+    @override
     def showEvent(self, a0: QtGui.QShowEvent) -> None:
         super().showEvent(a0)
         if not self.__toolbar.window():
