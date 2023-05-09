@@ -8,9 +8,10 @@ from modules.helpers import Times
 from modules.screens.Application import Application
 from modules.statics.view.Material import Icons
 
-stream = io.StringIO()
-sys.stdout = stream
-sys.stderr = stream
+if sys.stderr is None:
+    stream = io.StringIO()
+    sys.stdout = stream
+    sys.stderr = stream
 
 
 def run_application():

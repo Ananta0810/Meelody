@@ -15,7 +15,6 @@ class AudioPlayer(metaclass=SingletonMeta):
     __current_song_index: int = 0
     __time_start_in_sec: float = 0
     __loaded: bool = False
-    __offset_rate: float = 1
     __time_to_stop_as_seconds: int | None = None
     __elapsed_time_as_seconds: int = 0
 
@@ -56,7 +55,6 @@ class AudioPlayer(metaclass=SingletonMeta):
             return
         self.reset_time()
         self.__current_song = song
-        self.__offset_rate = 48000 / song.get_sample_rate()
         self.__loaded = True
         mixer.music.unload()
         mixer.music.load(song.get_location())
@@ -117,7 +115,7 @@ class AudioPlayer(metaclass=SingletonMeta):
 
     def skip_to_time(self, time: float) -> None:
         self.pause()
-        self.set_time_start(time / self.__offset_rate)
+        self.set_time_start(time)
 
     def pause(self) -> None:
         if not self.is_playing():
@@ -145,7 +143,7 @@ class AudioPlayer(metaclass=SingletonMeta):
         return self.__time_start_in_sec + mixer.music.get_pos() / 1000
 
     def get_playing_time(self) -> float:
-        return self.__get_playing_time() * self.__offset_rate
+        return self.__get_playing_time()
 
     @staticmethod
     def is_playing() -> bool:
