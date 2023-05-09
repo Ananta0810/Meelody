@@ -118,9 +118,9 @@ class MainWindow(CloseableWindow, BaseView):
         super().show()
 
     @override
-    def showMinimized(self) -> None:
+    def hide(self) -> None:
         self.__tray.show()
-        super().showMinimized()
+        super().hide()
 
     @override
     def showEvent(self, a0: QtGui.QShowEvent) -> None:
