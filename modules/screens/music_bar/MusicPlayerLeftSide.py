@@ -30,6 +30,7 @@ class MusicPlayerLeftSide(QHBoxLayout, BaseView):
 
     def __init__(self, parent: Optional["QWidget"] = None):
         super().__init__(parent)
+        self.__is_playing_song = False
         self.__init_ui()
         self.set_is_playing(False)
         self.assign_shortcuts()
@@ -189,11 +190,12 @@ class MusicPlayerLeftSide(QHBoxLayout, BaseView):
         self.__label_song_artist.setText(text)
 
     def set_is_playing(self, enable: bool) -> None:
+        self.__is_playing_song = enable
         self.__btn_play_song.setVisible(not enable)
         self.__btn_pause_song.setVisible(enable)
 
     def is_playing(self) -> bool:
-        return self.__btn_pause_song.isVisible()
+        return self.__is_playing_song
 
     @staticmethod
     def __create_cover(byte_pixmap: bytes) -> Union[CoverProp, None]:
