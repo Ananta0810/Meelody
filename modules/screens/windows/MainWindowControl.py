@@ -362,9 +362,9 @@ class MainWindowControl(MainWindow, BaseControl):
 
     def __show_download_progress(self, index: int, downloader: YoutubeDownloader) -> None:
         try:
-            percentage = downloader.get_percentage()
-            download_size = round(downloader.get_downloaded_size() / 1000000, 2)
-            total_size = round(downloader.get_size() / 1000000, 2)
+            percentage = round(downloader.get_percentage(), 2)
+            download_size = round(downloader.get_downloaded_size() / 1_048_576, 2)
+            total_size = round(downloader.get_size() / 1_048_576, 2)
             remain_sec = Times.string_of(float(downloader.get_remain_seconds()))
             description = f"{percentage}%   |   {download_size}/{total_size}MB   |  estimate: {remain_sec}"
             self._body.set_description_in_download_dialog_at(index, description)
