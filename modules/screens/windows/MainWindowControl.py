@@ -4,7 +4,7 @@ import time
 from threading import Thread
 from time import sleep
 
-from PyQt5.QtCore import pyqtSignal
+from PyQt5.QtCore import pyqtSignal, Qt
 
 from modules.helpers import Files, Times, Printers
 from modules.helpers.Database import Database
@@ -46,6 +46,14 @@ class MainWindowControl(MainWindow, BaseControl):
         self._set_default_playlist_cover(Images.DEFAULT_PLAYLIST_COVER)
         self.connect_signals()
         self.set_is_playing(False)
+
+    def receiveMessage(self, msg: str) -> None:
+        if msg != "show":
+            return
+        if self.windowState() & Qt.WindowMinimized:
+            self.showNormal()
+        else:
+            self.show()
 
     def __lazy_load_covers(self):
         covers = Database().covers.load(self.__library.get_songs().get_original_songs())

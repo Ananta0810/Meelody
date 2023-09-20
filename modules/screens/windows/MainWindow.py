@@ -47,6 +47,8 @@ class MainWindow(CloseableWindow, BaseView):
         self.__tray = QSystemTrayIcon()
         self.__tray.setIcon(Icons.LOGO)
         self.__tray.setToolTip("Meelody")
+        self.__tray.activated.connect(self.__clicked_tray_icon)
+
 
         self.__tray_menu = QMenu()
         self.__tray_menu.setStyleSheet(
@@ -67,10 +69,6 @@ class MainWindow(CloseableWindow, BaseView):
                 }
             """
         )
-
-        show_action = QAction("Show", self)
-        show_action.triggered.connect(self.show)
-        self.__tray_menu.addAction(show_action)
 
         self.__play_action_btn = QAction(self)
         self.__play_action_btn.triggered.connect(lambda: self.__onclick_pause())
@@ -147,6 +145,10 @@ class MainWindow(CloseableWindow, BaseView):
         self._body.apply_dark_mode()
         self._music_player.setStyleSheet("QWidget#musicPlayer{border-top: 1px solid #202020};border-radius:0px")
         self._music_player.apply_dark_mode()
+
+    def __clicked_tray_icon(self, reason: int) -> None:
+        if reason == QSystemTrayIcon.Trigger:
+            self.show()
 
     def _set_default_playlist_cover(self, cover: bytes):
         self._body.set_default_playlist_cover(cover)
