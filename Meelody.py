@@ -6,9 +6,7 @@ from sys import argv, exit
 
 from PyQt5.QtCore import Qt
 
-from modules.helpers import Times
-from modules.screens.Application import Application
-from modules.statics.view.Material import Icons
+from app.views.main_window import MainWindow
 from modules.widgets.Applications import SingletonApplication
 
 
@@ -35,11 +33,10 @@ def run_application():
     app = SingletonApplication(argv, APP_NAME)
     app.setAttribute(Qt.AA_DontCreateNativeWidgetSiblings)
     app.setApplicationName(APP_NAME)
-    application = Application()
-    app.messageSent.connect(application.receiveMessage)
-    app.setWindowIcon(Icons.LOGO)
+    application = MainWindow()
+    application.show()
 
-    Times.measure(lambda: application.run(), lambda time: print(f"Time to start application: {time}"))
+    # Times.measure(lambda: application, lambda time: print(f"Time to start application: {time}"))
 
     exit(app.exec_())
 
