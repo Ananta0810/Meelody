@@ -1,12 +1,14 @@
 import io
 from io import BytesIO
+from typing import final
 
 from PIL import Image
 
 
+@final
 class Bytes:
     @staticmethod
-    def get_bytes_from_file(path_name: str) -> bytes:
+    def fromFile(path_name: str) -> bytes:
         with open(path_name, "rb") as file:
             return bytearray(file.read())
 
@@ -30,7 +32,7 @@ class BytesModifier:
     def of(data: bytes) -> 'BytesModifier':
         return BytesModifier(Image.open(BytesIO(data)))
 
-    def get_size(self) -> tuple:
+    def getSize(self) -> tuple:
         if self.isBroken():
             return 0, 0
         return self._data.size
@@ -77,7 +79,7 @@ class BytesModifier:
         image: Image = self._data.copy().resize((width, height), Image.ANTIALIAS)
         return BytesModifier(image)
 
-    def to_bytes(self) -> bytes:
+    def toBytes(self) -> bytes:
         byteIO = io.BytesIO()
         self._data.save(byteIO, format='PNG')
         return byteIO.getvalue()
