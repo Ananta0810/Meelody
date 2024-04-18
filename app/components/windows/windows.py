@@ -20,9 +20,9 @@ class FramelessWindow(QMainWindow):
         self.__inner = QWidget(self.__outer)
         self.__main_layout = QVBoxLayout(self.__inner)
 
-        self.__init_ui()
+        self.createUI()
 
-    def __init_ui(self) -> None:
+    def createUI(self) -> None:
         self.setWindowFlags(Qt.Window | Qt.FramelessWindowHint | Qt.WindowMinMaxButtonsHint)
         self.setAttribute(Qt.WA_TranslucentBackground)
         self.setCentralWidget(self.__outer)
