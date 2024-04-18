@@ -173,9 +173,9 @@ class CloseableWindow(FramelessWindow, BaseView):
 
     def __init__(self):
         super().__init__()
-        self._init_ui()
+        self.initUI()
 
-    def _init_ui(self) -> None:
+    def initUI(self) -> None:
         self.__title_bar = QHBoxLayout()
         self.__title_bar.setContentsMargins(12, 12, 12, 12)
         self.__title_bar.setSpacing(8)

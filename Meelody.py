@@ -28,7 +28,7 @@ def _run_ffmpeg():
 
 def run_application():
     _initConsole()
-    _run_ffmpeg()
+    # _run_ffmpeg()
 
     APP_NAME = "Meelody"
 

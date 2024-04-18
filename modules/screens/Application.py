@@ -17,17 +17,19 @@ class Application:
 
     def run(self) -> None:
         self.window.show()
+        self.window.apply_light_mode()
 
     def receiveMessage(self, msg: str) -> None:
         self.window.receiveMessage(msg)
 
     def load_playlist(self):
         """
+            - pip install PyQt5
             - pip install pygame
             - pip install eyed3
-            - pip install PyQt5
             - pip install yt-dlp==2023.2.17
             - pip install Pillow==9.0.0
+            - pip install pillow
         """
 
         Database().settings.set_path("configuration/settings.json")
