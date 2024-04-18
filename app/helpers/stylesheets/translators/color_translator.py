@@ -1,6 +1,6 @@
 from typing import List
 
-from app.helpers import override
+from app.helpers.base import override
 from app.helpers.stylesheets import Color
 from app.helpers.stylesheets.translators.css_translator import CssTranslator
 

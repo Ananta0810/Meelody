@@ -6,7 +6,7 @@ R = TypeVar('R')
 
 
 @final
-class Numbers(ABC):
+class Lists(ABC):
 
     @staticmethod
     def indexOf(

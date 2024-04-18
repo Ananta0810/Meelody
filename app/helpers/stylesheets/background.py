@@ -1,8 +1,12 @@
-from app.helpers import override
-from modules.models.view import StylesheetElement, Border, ColorBox
+from abc import ABC
+
+from app.helpers.base import override
+from .border import Border
+from .color_box import ColorBox
+from .stylesheet_props import StylesheetProps
 
 
-class Background(StylesheetElement):
+class Background(StylesheetProps, ABC):
 
     def __init__(self, border: Border = None, borderRadius: float = 0, color: ColorBox = None):
         self.border = border

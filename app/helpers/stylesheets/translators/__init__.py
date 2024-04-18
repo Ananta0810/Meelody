@@ -1,1 +1,1 @@
-from css_translators import CssTranslators
+from .css_translators import CssTranslators

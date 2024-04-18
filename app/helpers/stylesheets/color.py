@@ -3,7 +3,7 @@ from dataclasses import dataclass
 
 from PyQt5.QtGui import QColor
 
-from app.helpers import override, Numbers
+from app.helpers.base import override, Numbers
 from app.helpers.stylesheets.stylesheet_props import StylesheetProps
 
 

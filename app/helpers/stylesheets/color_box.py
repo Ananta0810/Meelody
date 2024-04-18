@@ -1,6 +1,6 @@
 from abc import ABC
 
-from app.helpers import override
+from app.helpers.base import override
 from app.helpers.stylesheets.color import Color
 from app.helpers.stylesheets.stylesheet_props import StylesheetProps
 

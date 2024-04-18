@@ -1,6 +1,6 @@
-from app.helpers import override
-from app.helpers.stylesheets.color_box import ColorBox
-from app.helpers.stylesheets.stylesheet_props import StylesheetProps
+from app.helpers.base import override
+from .color_box import ColorBox
+from .stylesheet_props import StylesheetProps
 
 
 class Border(StylesheetProps):
