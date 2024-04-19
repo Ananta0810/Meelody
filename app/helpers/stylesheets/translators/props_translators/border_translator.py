@@ -28,7 +28,7 @@ class BorderTranslator(PropsTranslator[Border]):
     __defaultStyle = "solid"
 
     def id(self) -> str:
-        return "bg"
+        return "border"
 
     def translate(self, names: List[str]) -> Border:
         dictionary = dict([_toProps(name) for name in names])
