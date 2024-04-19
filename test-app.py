@@ -1,4 +1,4 @@
-from app.helpers.stylesheets.translators import CssTranslators
+from app.helpers.stylesheets.translators.classname_translator import ClassNameTranslator
 
 if __name__ == '__main__':
-    print(CssTranslators.Color.translate(["white-75", 'gray']))
+    print(ClassNameTranslator.translate("border border-gray-50"))

@@ -2,7 +2,7 @@ from typing import List
 
 from app.helpers.base import override
 from app.helpers.stylesheets import Color
-from app.helpers.stylesheets.translators.css_translator import CssTranslator
+from app.helpers.stylesheets.translators.value_translators.value_translator import ValueTranslator
 
 variants: dict[str, Color] = {
     "primary": Color(128, 64, 255),
@@ -18,7 +18,7 @@ variants: dict[str, Color] = {
 }
 
 
-class ColorTranslator(CssTranslator[Color]):
+class ColorTranslator(ValueTranslator[Color]):
 
     @override
     def translate(self, classNames: List[str]) -> Color:
