@@ -1,14 +1,12 @@
 from abc import ABC, abstractmethod
-from typing import List, TypeVar, Generic
-
-T = TypeVar("T")
+from typing import List
 
 
-class PropsTranslator(Generic[T], ABC):
+class PropsTranslator(ABC):
     @abstractmethod
     def id(self) -> str:
         pass
 
     @abstractmethod
-    def translate(self, classNames: List[str]) -> T:
+    def translate(self, classNames: List[str]) -> str:
         pass

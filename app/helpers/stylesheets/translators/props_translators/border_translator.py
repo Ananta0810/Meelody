@@ -1,7 +1,7 @@
 from typing import List
 
 from app.helpers.base import Dicts
-from app.helpers.stylesheets import Border, Color
+from app.helpers.stylesheets import Color
 from app.helpers.stylesheets.translators.props_translators.props_translator import PropsTranslator
 from app.helpers.stylesheets.translators.value_translators.color_translator import ColorTranslator
 
@@ -22,7 +22,7 @@ def _toProps(name: str):
     return "color", translator.translate(color)
 
 
-class BorderTranslator(PropsTranslator[Border]):
+class BorderTranslator(PropsTranslator):
     __defaultSize = 1
     __defaultColor = Color(128, 128, 128)
     __defaultStyle = "solid"
@@ -30,8 +30,11 @@ class BorderTranslator(PropsTranslator[Border]):
     def id(self) -> str:
         return "border"
 
-    def translate(self, names: List[str]) -> Border:
+    def translate(self, names: List[str]) -> str:
         dictionary = dict([_toProps(name) for name in names])
-        return Border(Dicts.getFrom(dictionary, 'size', otherwise=BorderTranslator.__defaultSize),
-                      Dicts.getFrom(dictionary, 'color', otherwise=BorderTranslator.__defaultColor),
-                      Dicts.getFrom(dictionary, 'style', otherwise=BorderTranslator.__defaultStyle))
+
+        size = Dicts.getFrom(dictionary, 'size', otherwise=BorderTranslator.__defaultSize)
+        color = Dicts.getFrom(dictionary, 'color', otherwise=BorderTranslator.__defaultColor)
+        style = Dicts.getFrom(dictionary, 'style', otherwise=BorderTranslator.__defaultStyle)
+
+        return f"border: {size}px {style} {color.toStylesheet()}"

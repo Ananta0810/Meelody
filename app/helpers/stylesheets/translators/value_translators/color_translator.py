@@ -28,17 +28,14 @@ class ColorTranslator(ValueTranslator[Color]):
     def isValid(self, cn: str) -> bool:
         parts = cn.split("-")
         length = len(parts)
-        if length == 1:
+        if length <= 2:
             return parts[0] in variants
-        if length == 2:
-            return parts[0] in variants
-        if length == 3:
-            return parts[1] in variants
         return False
 
     def transform(self, cn: str) -> Color:
         parts = cn.split("-")
-        color = variants[parts[0 if len(parts) == 1 else 1]]
+        color_variant = parts[0]
+        color = variants[color_variant]
         try:
             return color.withOpacity(int(parts[-1]))
         except ValueError:
