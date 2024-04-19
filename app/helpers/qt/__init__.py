@@ -1,0 +1,1 @@
+from .pixmaps import Pixmaps

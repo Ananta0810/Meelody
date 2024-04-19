@@ -27,7 +27,14 @@ class ColorTranslator(CssTranslator[Color]):
 
     def isValid(self, cn: str) -> bool:
         parts = cn.split("-")
-        return parts[0 if len(parts) == 1 else 1] in variants
+        length = len(parts)
+        if length == 1:
+            return parts[0] in variants
+        if length == 2:
+            return parts[0] in variants
+        if length == 3:
+            return parts[1] in variants
+        return False
 
     def transform(self, cn: str) -> Color:
         parts = cn.split("-")
