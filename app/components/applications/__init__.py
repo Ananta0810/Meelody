@@ -1,1 +1,1 @@
-from singleton_application import *
+from .singleton_application import *

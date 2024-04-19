@@ -12,6 +12,14 @@ setlocale(LC_ALL, "")
 class Strings(ABC):
 
     @staticmethod
+    def isBlank(value: str) -> bool:
+        return value is None or value.strip() == ""
+
+    @staticmethod
+    def isNotBlank(value: str) -> bool:
+        return not Strings.isBlank(value)
+
+    @staticmethod
     def unaccent(value: str) -> str:
         if value is None:
             return ''

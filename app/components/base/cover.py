@@ -48,24 +48,24 @@ class CoverProps:
 
     @staticmethod
     def fromBytes(
-        image_byte: bytes,
+        imageByte: bytes,
         width: int = 0,
         height: int = 0,
         radius: int = 0,
-        crop_center: bool = True,
+        cropCenter: bool = True,
     ) -> Union['CoverProps', None]:
-        cover = CoverProps(image_byte, width, height, radius)
+        cover = CoverProps(imageByte, width, height, radius)
         if cover in CoverProps.__createdCovers:
             pixmap = CoverProps.__createdCovers[cover]
             cover.__setPixmap(pixmap)
             return cover
 
-        pixmap = Pixmaps.toQPixmap(image_byte)
+        pixmap = Pixmaps.toQPixmap(imageByte)
         if pixmap.isNull():
             return None
         if width > 0 or height > 0:
             pixmap = Pixmaps.scaleKeepingRatio(pixmap, max(width, height))
-            pixmap = Pixmaps.crop(pixmap, width, height, crop_center)
+            pixmap = Pixmaps.crop(pixmap, width, height, cropCenter)
         if radius > 0:
             pixmap = Pixmaps.round(pixmap, radius)
 

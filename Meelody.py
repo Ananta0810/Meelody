@@ -1,31 +1,27 @@
-import io
-import os
-import subprocess
-import sys
 from sys import argv, exit
 
 from PyQt5.QtCore import Qt
 
+from app.components.applications import SingletonApplication
 from app.views.main_window import MainWindow
-from modules.widgets.Applications import SingletonApplication
 
 
-def _initConsole():
-    if sys.stderr is None:
-        stream = io.StringIO()
-        sys.stdout = stream
-        sys.stderr = stream
+# def _initConsole():
+#     if sys.stderr is None:
+#         stream = io.StringIO()
+#         sys.stdout = stream
+#         sys.stderr = stream
 
 
-def _run_ffmpeg():
-    basedir = str(os.path.dirname(os.path.abspath(__file__)))
-    startupInfo = subprocess.STARTUPINFO()
-    startupInfo.dwFlags |= subprocess.STARTF_USESHOWWINDOW
-    subprocess.call(f'{basedir}/ffmpeg.exe', startupinfo=startupInfo)
+# def _run_ffmpeg():
+#     basedir = str(os.path.dirname(os.path.abspath(__file__)))
+#     startupInfo = subprocess.STARTUPINFO()
+#     startupInfo.dwFlags |= subprocess.STARTF_USESHOWWINDOW
+#     subprocess.call(f'{basedir}/ffmpeg.exe', startupinfo=startupInfo)
 
 
 def run_application():
-    _initConsole()
+    # _initConsole()
     # _run_ffmpeg()
 
     APP_NAME = "Meelody"

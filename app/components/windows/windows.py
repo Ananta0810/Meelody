@@ -4,7 +4,7 @@ from PyQt5.QtCore import Qt, QSize, QMargins
 from PyQt5.QtGui import QShowEvent, QResizeEvent, QMouseEvent
 from PyQt5.QtWidgets import QMainWindow, QWidget, QVBoxLayout, QDesktopWidget, QLayout
 
-from app.helpers import override
+from modules.helpers.types.Decorators import override
 
 
 class FramelessWindow(QMainWindow):

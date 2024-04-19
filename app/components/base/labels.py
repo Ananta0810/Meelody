@@ -4,7 +4,7 @@ from PyQt5.QtCore import Qt, pyqtSignal
 from PyQt5.QtGui import QFontMetrics, QResizeEvent
 from PyQt5.QtWidgets import QLabel, QLineEdit
 
-from app.helpers.base import override
+from app.helpers.base import override, Strings
 
 
 class LabelWithDefaultText(QLabel):
@@ -15,8 +15,13 @@ class LabelWithDefaultText(QLabel):
     def __init__(self, parent: Optional["QWidget"] = None):
         super().__init__(parent)
 
-    def enable_ellipsis(self, a0: bool) -> None:
+    def enableEllipsis(self, a0: bool = True) -> None:
         self.__ellipsis = a0
+        super().setWordWrap(not a0)
+
+    def setWordWrap(self, on: bool) -> None:
+        super().setWordWrap(on)
+        self.__ellipsis = not on
 
     @override
     def resizeEvent(self, a0: QResizeEvent) -> None:
@@ -38,6 +43,8 @@ class LabelWithDefaultText(QLabel):
 
     def setDefaultText(self, text: str) -> None:
         self.__defaultText = text
+        if Strings.isBlank(self.text()):
+            self.setText(text)
 
 
 class Input(QLineEdit):
