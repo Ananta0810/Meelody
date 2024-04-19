@@ -33,3 +33,6 @@ class Border(StylesheetProps):
     @override
     def toStylesheet(self, active: bool = False) -> str:
         return f"{self.size}px {self.style} {self.color.toStylesheet(active)}"
+
+    def __str__(self) -> str:
+        return f"(size: {self.size}, style: {self.style}, color: {self.color})"
