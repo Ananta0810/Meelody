@@ -1,1 +1,3 @@
-from .Images import Images
+from .cursors import Cursors
+from .icons import Icons
+from .images import Images

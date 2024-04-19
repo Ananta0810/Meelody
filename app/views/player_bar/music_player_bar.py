@@ -6,7 +6,8 @@ from PyQt5.QtWidgets import QHBoxLayout, QVBoxLayout, QWidget
 
 from app.components.base import Component, Cover, LabelWithDefaultText, Factory
 from app.components.base.cover import CoverProps
-from app.resource.qt import Images
+from app.helpers.stylesheets import Color
+from app.resource.qt import Images, Icons
 
 
 class MusicPlayerBar(QWidget, Component, ABC):
@@ -15,7 +16,6 @@ class MusicPlayerBar(QWidget, Component, ABC):
         super().__init__(parent)
         self._createUI()
         self.setDefaultCover(Images.DEFAULT_SONG_COVER)
-        self.setStyleSheet("background: red")
         self._assignShortcuts()
 
     def _createUI(self) -> None:
@@ -25,6 +25,12 @@ class MusicPlayerBar(QWidget, Component, ABC):
         self._mainLayout.setContentsMargins(20, 0, 20, 0)
         self._mainLayout.setSpacing(0)
 
+        self._left = QHBoxLayout()
+        self._left.setContentsMargins(4, 0, 0, 0)
+        self._left.setSpacing(12)
+        self._left.setAlignment(Qt.AlignVCenter)
+
+        # =================COVER - TITLE - ARTIST=================
         self._songCover = Cover()
         self._songCover.setFixedSize(64, 64)
 
@@ -49,14 +55,23 @@ class MusicPlayerBar(QWidget, Component, ABC):
         self._infoLayout.addWidget(self._songArtist)
         self._infoLayout.addStretch(0)
 
+        # =================PREVIOUS - PLAY - NEXT=================
         self._playButtons = QHBoxLayout()
         self._playButtons.setContentsMargins(0, 0, 0, 0)
         self._playButtons.setSpacing(8)
 
-        self._left = QHBoxLayout()
-        self._left.setContentsMargins(4, 0, 0, 0)
-        self._left.setSpacing(12)
-        self._left.setAlignment(Qt.AlignVCenter)
+        self._btnPrevSong = Factory.createIconButton(size=Icons.LARGE)
+        self._btnPrevSong.setLightModeIcon(Icons.PREVIOUS.withColor(Color(128, 64, 255)))
+
+        self._btnPlaySong = Factory.createIconButton(size=Icons.LARGE)
+        self._btnPlaySong.setLightModeIcon(Icons.PLAY.withColor(Color(128, 64, 255)))
+
+        self._btnNextSong = Factory.createIconButton(size=Icons.LARGE)
+        self._btnNextSong.setLightModeIcon(Icons.NEXT.withColor(Color(128, 64, 255)))
+
+        self._playButtons.addWidget(self._btnPrevSong)
+        self._playButtons.addWidget(self._btnPlaySong)
+        self._playButtons.addWidget(self._btnNextSong)
 
         self._left.addWidget(self._songCover)
         self._left.addLayout(self._infoLayout, stretch=1)

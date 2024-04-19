@@ -3,6 +3,7 @@ from sys import argv, exit
 from PyQt5.QtCore import Qt
 
 from app.components.applications import SingletonApplication
+from app.resource.qt import Icons
 from app.views.main_window import MainWindow
 
 
@@ -29,6 +30,8 @@ def run_application():
     app = SingletonApplication(argv, APP_NAME)
     app.setAttribute(Qt.AA_DontCreateNativeWidgetSiblings)
     app.setApplicationName(APP_NAME)
+    
+    Icons.init()
     application = MainWindow()
     application.show()
 

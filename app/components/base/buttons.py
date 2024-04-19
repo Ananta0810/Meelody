@@ -3,15 +3,14 @@ from typing import Optional
 
 from PyQt5.QtWidgets import QWidget, QPushButton
 
-from modules.helpers.types.Decorators import override
-from modules.models.view.Padding import Padding
-from modules.screens.AbstractScreen import BaseView
-from modules.statics.view.Material import Paddings
-from modules.widgets.Icons import AppIcon
+from app.components.base.app_icon import AppIcon
+from app.components.base.base_component import Component
+from app.helpers.base import override
+from app.helpers.stylesheets import Padding
 
 
-class ActionButton(QPushButton, BaseView, ABC):
-    padding: Padding = Paddings.DEFAULT
+class ActionButton(QPushButton, Component, ABC):
+    padding: Padding = None
 
     def __init__(self, parent: Optional[QWidget] = None):
         super().__init__(parent)
@@ -25,7 +24,7 @@ class ActionButton(QPushButton, BaseView, ABC):
         self.__paddingText()
 
     def __paddingText(self) -> None:
-        if self.padding is Paddings.DEFAULT:
+        if self.padding is None:
             return
         textSize = self.sizeHint()
         self.setFixedSize(
@@ -60,7 +59,7 @@ class StatelessIconButtonThemeData:
         self.darkModeBackground = darkModeBackground or lightModeBackground
 
 
-class StatelessIconButton(QPushButton, BaseView, ABC):
+class StatelessIconButton(QPushButton, Component, ABC):
     _children: list[StatelessIconButtonThemeData] = []
     _currentIndex: int = 0
     __changeStateOnPressed: bool = True
@@ -150,7 +149,7 @@ class ToggleIconButton(StatelessIconButton, ABC):
         return self._currentIndex == 1
 
 
-class IconButton(QPushButton, BaseView, ABC):
+class IconButton(QPushButton, Component, ABC):
     __isDarkMode: bool = False
     __lightModeIcon: AppIcon
     __darkModeIcon: AppIcon
@@ -167,6 +166,7 @@ class IconButton(QPushButton, BaseView, ABC):
 
     def setLightModeIcon(self, icon: AppIcon) -> None:
         self.__lightModeIcon = icon
+        self.setIcon(icon)
 
     def setDarkModeIcon(self, icon: AppIcon) -> None:
         self.__darkModeIcon = icon
@@ -176,3 +176,18 @@ class IconButton(QPushButton, BaseView, ABC):
 
     def setDarkModeBackground(self, style: str) -> None:
         self.__darkModeBackground = style
+
+    def _createUI(self) -> None:
+        pass
+
+    def _connectSignalSlots(self) -> None:
+        pass
+
+    def _assignShortcuts(self) -> None:
+        pass
+
+    def applyDarkMode(self) -> None:
+        pass
+
+    def applyLightMode(self) -> None:
+        pass
