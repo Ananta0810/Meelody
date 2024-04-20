@@ -25,12 +25,12 @@ def run_application():
     # _initConsole()
     # _run_ffmpeg()
 
-    APP_NAME = "Meelody"
+    APP_NAME = "MeelodX"
 
     app = SingletonApplication(argv, APP_NAME)
     app.setAttribute(Qt.AA_DontCreateNativeWidgetSiblings)
     app.setApplicationName(APP_NAME)
-    
+
     Icons.init()
     application = MainWindow()
     application.show()

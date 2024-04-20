@@ -1,5 +1,7 @@
 from typing import List
 
+from PyQt5.QtWidgets import QWidget
+
 from app.helpers.stylesheets import Color
 from app.helpers.stylesheets.translators.props_translators.class_name import ClassName
 from app.helpers.stylesheets.translators.props_translators.props_translator import PropsTranslator
@@ -29,6 +31,6 @@ class BackgroundTranslator(PropsTranslator):
     def id(self) -> str:
         return "bg"
 
-    def translate(self, names: List[ClassName]) -> str:
+    def translate(self, names: List[ClassName], target: QWidget) -> str:
         color = _toProps(names[-1])
         return f"background: {'None' if color is None else color.toStylesheet()}"
