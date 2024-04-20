@@ -58,7 +58,7 @@ class Strings(ABC):
         return Strings.compare(text, other) == 0
 
     @staticmethod
-    def join(collection: list[str], separator: str) -> str | None:
+    def join(collection: list[str] | tuple[str], separator: str) -> str | None:
         if collection is None or len(collection) == 0:
             return None
         return separator.join([item for item in collection if item is not None])

@@ -1,20 +1,20 @@
 from typing import List
 
 from app.helpers.base import override
-from app.helpers.stylesheets import Color
+from app.helpers.stylesheets import Color, Colors
 from app.helpers.stylesheets.translators.value_translators.value_translator import ValueTranslator
 
 variants: dict[str, Color] = {
-    "primary": Color(128, 64, 255),
+    "primary": Colors.PRIMARY,
 
-    "success": Color(50, 216, 100),
-    "danger": Color(255, 80, 80),
-    "warning": Color(255, 170, 28),
+    "success": Colors.SUCCESS,
+    "danger": Colors.DANGER,
+    "warning": Colors.WARNING,
 
-    "white": Color(255, 255, 255),
-    "black": Color(0, 0, 0),
-    "gray": Color(128, 128, 128),
-    "none": Color(255, 255, 255, 0),
+    "white": Colors.WHITE,
+    "black": Colors.BLACK,
+    "gray": Colors.GRAY,
+    "none": Colors.NONE,
 }
 
 

@@ -1,5 +1,6 @@
 from abc import ABC
 from dataclasses import dataclass
+from typing import final
 
 from PyQt5.QtGui import QColor
 
@@ -31,3 +32,15 @@ class Color(StylesheetProps, ABC):
 
     def toQColor(self) -> QColor:
         return QColor(self.red, self.green, self.blue, int(self.alpha))
+
+
+@final
+class Colors:
+    PRIMARY = Color(128, 64, 255)
+    SUCCESS = Color(50, 216, 100)
+    DANGER = Color(255, 80, 80)
+    WARNING = Color(255, 170, 28)
+    WHITE = Color(255, 255, 255)
+    BLACK = Color(0, 0, 0)
+    GRAY = Color(128, 128, 128)
+    NONE = Color(255, 255, 255, 0)
