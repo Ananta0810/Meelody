@@ -58,6 +58,12 @@ class Strings(ABC):
         return Strings.compare(text, other) == 0
 
     @staticmethod
+    def join(collection: list[str], separator: str) -> str | None:
+        if collection is None or len(collection) == 0:
+            return None
+        return separator.join(collection)
+
+    @staticmethod
     def unindent(value: str):
         return '\n'.join(map(str.lstrip, [line for line in value.splitlines() if line != "\n"]))
 

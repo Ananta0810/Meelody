@@ -27,6 +27,20 @@ class Lists(ABC):
         return collection[len(collection) - 1]
 
     @staticmethod
+    def elementAt(index: int, collection: list[Generic[T]]) -> T | None:
+        try:
+            return collection[index]
+        except IndexError:
+            return None
+
+    @staticmethod
+    def elementsAfter(index: int, collection: list[Generic[T]]) -> list[T]:
+        try:
+            return collection[index + 1:]
+        except IndexError:
+            return []
+
+    @staticmethod
     def moveElement(list_: list[Generic[T]], from_index: int, to_index: int) -> None:
         start: int = from_index
         end: int = to_index
