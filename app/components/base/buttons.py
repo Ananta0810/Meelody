@@ -153,8 +153,6 @@ class IconButton(QPushButton, Component, ABC):
     __isDarkMode: bool = False
     __lightModeIcon: AppIcon
     __darkModeIcon: AppIcon
-    __lightModeBackground: str
-    __darkModeBackground: str
 
     def __init__(self, parent: Optional["QWidget"] = None):
         super().__init__(parent)
@@ -166,16 +164,13 @@ class IconButton(QPushButton, Component, ABC):
 
     def setLightModeIcon(self, icon: AppIcon) -> None:
         self.__lightModeIcon = icon
-        self.setIcon(icon)
+        if self.icon() is None:
+            self.setIcon(icon)
 
     def setDarkModeIcon(self, icon: AppIcon) -> None:
         self.__darkModeIcon = icon
-
-    def setLightModeBackground(self, style: str) -> None:
-        self.__lightModeBackground = style
-
-    def setDarkModeBackground(self, style: str) -> None:
-        self.__darkModeBackground = style
+        if self.icon() is None:
+            self.setIcon(icon)
 
     def _createUI(self) -> None:
         pass
@@ -186,8 +181,11 @@ class IconButton(QPushButton, Component, ABC):
     def _assignShortcuts(self) -> None:
         pass
 
-    def applyDarkMode(self) -> None:
-        pass
-
     def applyLightMode(self) -> None:
-        pass
+        super().applyLightMode()
+        self.setIcon(self.__lightModeIcon)
+
+    def applyDarkMode(self) -> None:
+        super().applyDarkMode()
+        print(self._darkModeStyle)
+        self.setIcon(self.__darkModeIcon or self.__lightModeIcon)

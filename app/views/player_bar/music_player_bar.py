@@ -6,7 +6,7 @@ from PyQt5.QtWidgets import QHBoxLayout, QVBoxLayout, QWidget
 
 from app.components.base import Component, Cover, LabelWithDefaultText, Factory
 from app.components.base.cover import CoverProps
-from app.helpers.stylesheets import Color
+from app.helpers.stylesheets import Colors, Paddings
 from app.resource.qt import Images, Icons
 
 
@@ -17,6 +17,10 @@ class MusicPlayerBar(QWidget, Component, ABC):
         self._createUI()
         self.setDefaultCover(Images.DEFAULT_SONG_COVER)
         self._assignShortcuts()
+        self._btnPrevSong.applyDarkMode()
+        self._btnPlaySong.applyDarkMode()
+        self._btnPauseSong.applyDarkMode()
+        self._btnNextSong.applyDarkMode()
 
     def _createUI(self) -> None:
         self.setAttribute(Qt.WA_StyledBackground, True)
@@ -60,20 +64,34 @@ class MusicPlayerBar(QWidget, Component, ABC):
         self._playButtons.setContentsMargins(0, 0, 0, 0)
         self._playButtons.setSpacing(8)
 
-        self._btnPrevSong = Factory.createIconButton(size=Icons.LARGE)
-        self._btnPrevSong.setLightModeIcon(Icons.PREVIOUS.withColor(Color(128, 64, 255)))
-        self._btnPrevSong.setClassName("hover:bg-primary-10 bg-none rounded-full")
+        self._btnPrevSong = Factory.createIconButton(size=Icons.LARGE, padding=Paddings.RELATIVE_50)
+        self._btnPrevSong.setLightModeIcon(Icons.PREVIOUS.withColor(Colors.PRIMARY))
+        self._btnPrevSong.setDarkModeIcon(Icons.NEXT.withColor(Colors.WHITE))
+        self._btnPrevSong.setClassName("hover:bg-primary-10 bg-none rounded-full",
+                                       "dark:bg-primary-25 dark:hover:bg-primary")
 
-        self._btnPlaySong = Factory.createIconButton(size=Icons.LARGE)
-        self._btnPlaySong.setLightModeIcon(Icons.PLAY.withColor(Color(128, 64, 255)))
-        self._btnPlaySong.setClassName("hover:bg-primary-25 bg-primary-10 rounded-full")
+        self._btnPlaySong = Factory.createIconButton(size=Icons.X_LARGE, padding=Paddings.RELATIVE_50)
+        self._btnPlaySong.setLightModeIcon(Icons.PLAY.withColor(Colors.PRIMARY))
+        self._btnPlaySong.setDarkModeIcon(Icons.PLAY.withColor(Colors.WHITE))
+        self._btnPlaySong.setClassName("hover:bg-primary-25 bg-primary-10 rounded-full",
+                                       "dark:bg-primary dark:hover:bg-primary")
 
-        self._btnNextSong = Factory.createIconButton(size=Icons.LARGE)
-        self._btnNextSong.setLightModeIcon(Icons.NEXT.withColor(Color(128, 64, 255)))
-        self._btnNextSong.setClassName("hover:bg-primary-10 bg-none rounded-full")
+        self._btnPauseSong = Factory.createIconButton(size=Icons.X_LARGE, padding=Paddings.RELATIVE_50)
+        self._btnPauseSong.setLightModeIcon(Icons.PAUSE.withColor(Colors.PRIMARY))
+        self._btnPauseSong.setDarkModeIcon(Icons.PAUSE.withColor(Colors.WHITE))
+        self._btnPauseSong.setClassName("hover:bg-primary-25 bg-primary-10 rounded-full",
+                                        "dark:bg-primary dark:hover:bg-primary")
+        self._btnPauseSong.hide()
+
+        self._btnNextSong = Factory.createIconButton(size=Icons.LARGE, padding=Paddings.RELATIVE_50)
+        self._btnNextSong.setLightModeIcon(Icons.NEXT.withColor(Colors.PRIMARY))
+        self._btnNextSong.setDarkModeIcon(Icons.NEXT.withColor(Colors.WHITE))
+        self._btnNextSong.setClassName("hover:bg-primary-10 bg-none rounded-full",
+                                       "dark:bg-primary-25 dark:hover:bg-primary")
 
         self._playButtons.addWidget(self._btnPrevSong)
         self._playButtons.addWidget(self._btnPlaySong)
+        self._playButtons.addWidget(self._btnPauseSong)
         self._playButtons.addWidget(self._btnNextSong)
 
         self._left.addWidget(self._songCover)
@@ -88,12 +106,8 @@ class MusicPlayerBar(QWidget, Component, ABC):
 
     def _assignShortcuts(self) -> None:
         super()._assignShortcuts()
-
-    def applyDarkMode(self) -> None:
-        pass
-
-    def applyLightMode(self) -> None:
-        pass
+        self._btnPlaySong.clicked.connect(lambda: self.setPlay(False))
+        self._btnPauseSong.clicked.connect(lambda: self.setPlay(True))
 
     def setDefaultCover(self, cover: bytes) -> None:
         self._songCover.setDefaultCover(self.__createCover(cover))
@@ -103,3 +117,7 @@ class MusicPlayerBar(QWidget, Component, ABC):
         if data is None:
             return None
         return CoverProps.fromBytes(data, width=64, height=64, radius=16)
+
+    def setPlay(self, isPlaying: bool) -> None:
+        self._btnPlaySong.setVisible(isPlaying)
+        self._btnPauseSong.setVisible(not isPlaying)
