@@ -28,8 +28,8 @@ class ActionButton(QPushButton, Component, ABC):
             return
         textSize = self.sizeHint()
         self.setFixedSize(
-            textSize.width() + self.padding.get_width(textSize.width()),
-            textSize.height() + self.padding.get_height(textSize.height()),
+            textSize.width() + self.padding.getWidth(textSize.width()),
+            textSize.height() + self.padding.getHeight(textSize.height()),
         )
 
     def __setLightModeBackground(self, style: str) -> None:

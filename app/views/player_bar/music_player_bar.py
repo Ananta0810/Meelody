@@ -62,12 +62,15 @@ class MusicPlayerBar(QWidget, Component, ABC):
 
         self._btnPrevSong = Factory.createIconButton(size=Icons.LARGE)
         self._btnPrevSong.setLightModeIcon(Icons.PREVIOUS.withColor(Color(128, 64, 255)))
+        self._btnPrevSong.setClassName("hover:bg-primary-10 bg-none rounded-full")
 
         self._btnPlaySong = Factory.createIconButton(size=Icons.LARGE)
         self._btnPlaySong.setLightModeIcon(Icons.PLAY.withColor(Color(128, 64, 255)))
+        self._btnPlaySong.setClassName("hover:bg-primary-25 bg-primary-10 rounded-full")
 
         self._btnNextSong = Factory.createIconButton(size=Icons.LARGE)
         self._btnNextSong.setLightModeIcon(Icons.NEXT.withColor(Color(128, 64, 255)))
+        self._btnNextSong.setClassName("hover:bg-primary-10 bg-none rounded-full")
 
         self._playButtons.addWidget(self._btnPrevSong)
         self._playButtons.addWidget(self._btnPlaySong)

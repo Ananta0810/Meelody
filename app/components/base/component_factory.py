@@ -4,6 +4,7 @@ from PyQt5.QtCore import QSize, QObject
 from PyQt5.QtGui import QFont
 
 from app.components.base.buttons import IconButton
+from app.resource.qt import Cursors
 
 
 @final
@@ -20,6 +21,7 @@ class Factory:
     def createIconButton(size: QSize, parent: QObject = None) -> IconButton:
         button = IconButton(parent)
         # button.setIconSize(size - padding.getWidth(size))
+        button.setCursor(Cursors.HAND)
         button.setFixedSize(size)
 
         return button

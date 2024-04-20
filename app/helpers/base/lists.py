@@ -1,5 +1,5 @@
 from abc import ABC
-from typing import TypeVar, Generic, Callable, final
+from typing import TypeVar, Callable, final
 
 T = TypeVar('T')
 R = TypeVar('R')
@@ -9,59 +9,55 @@ R = TypeVar('R')
 class Lists(ABC):
 
     @staticmethod
-    def nonNull(collection: list[Generic[T]]) -> list[Generic[T]]:
+    def nonNull(collection: list[T]) -> list[T]:
         if collection is None:
             return []
         return [item for item in collection if item is not None]
 
     @staticmethod
-    def indexOf(
-        condition: Callable[[Generic[T]], bool],
-        collection: list[Generic[T]],
-        index_if_not_found: int = -1
-    ) -> int:
+    def indexOf(condition: Callable[[T], bool], collection: list[T], indexIfNotFound: int = -1) -> int:
         for index, item in enumerate(collection):
             if condition(item):
                 return index
-        return index_if_not_found
+        return indexIfNotFound
 
     @staticmethod
-    def lastOf(collection: list[Generic[T]]) -> T | None:
+    def lastOf(collection: list[T]) -> T | None:
         if collection is None:
             return None
 
         return collection[len(collection) - 1]
 
     @staticmethod
-    def elementAt(index: int, collection: list[Generic[T]]) -> T | None:
+    def elementAt(index: int, collection: list[T]) -> T | None:
         try:
             return collection[index]
         except IndexError:
             return None
 
     @staticmethod
-    def elementsAfter(index: int, collection: list[Generic[T]]) -> list[T]:
+    def elementsAfter(index: int, collection: list[T]) -> list[T]:
         try:
             return collection[index + 1:]
         except IndexError:
             return []
 
     @staticmethod
-    def moveElement(list_: list[Generic[T]], from_index: int, to_index: int) -> None:
-        start: int = from_index
-        end: int = to_index
+    def moveElement(collection: list[T], fromIndex: int, toIndex: int) -> None:
+        start: int = fromIndex
+        end: int = toIndex
         if start == end:
             return
 
-        list_.insert(end, list_[start])
+        collection.insert(end, collection[start])
 
         if start > end:
             start += 1
-        list_.pop(start)
+        collection.pop(start)
 
     @staticmethod
     def binarySearch(
-        collection: list[Generic[T]],
+        collection: list[T],
         item: T,
         comparator: Callable[[T, T], int] = lambda x, y: x == y,
         nearest: bool = False
@@ -103,13 +99,13 @@ class Lists(ABC):
         if len(collection) == 0:
             return 0
 
-        nearest_post = 0
-        last_item = list[0]
+        nearestPost = 0
+        lastItem = list[0]
         for index, element in enumerate(collection):
             if comparator(item, element) == 0:
                 return index
-            if comparator(last_item, element) < 0:
-                nearest_post = index
-                last_item = element
+            if comparator(lastItem, element) < 0:
+                nearestPost = index
+                lastItem = element
         # Not found
-        return nearest_post
+        return nearestPost
