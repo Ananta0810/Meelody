@@ -61,7 +61,7 @@ class Strings(ABC):
     def join(collection: list[str], separator: str) -> str | None:
         if collection is None or len(collection) == 0:
             return None
-        return separator.join(collection)
+        return separator.join([item for item in collection if item is not None])
 
     @staticmethod
     def unindent(value: str):

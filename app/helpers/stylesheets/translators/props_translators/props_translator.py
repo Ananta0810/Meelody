@@ -1,6 +1,8 @@
 from abc import ABC, abstractmethod
 from typing import List
 
+from .class_name import ClassName
+
 
 class PropsTranslator(ABC):
     @abstractmethod
@@ -8,5 +10,5 @@ class PropsTranslator(ABC):
         pass
 
     @abstractmethod
-    def translate(self, classNames: List[str]) -> str:
+    def translate(self, classNames: List[ClassName]) -> str:
         pass

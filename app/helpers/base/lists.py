@@ -9,6 +9,12 @@ R = TypeVar('R')
 class Lists(ABC):
 
     @staticmethod
+    def nonNull(collection: list[Generic[T]]) -> list[Generic[T]]:
+        if collection is None:
+            return []
+        return [item for item in collection if item is not None]
+
+    @staticmethod
     def indexOf(
         condition: Callable[[Generic[T]], bool],
         collection: list[Generic[T]],

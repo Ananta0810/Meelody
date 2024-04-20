@@ -8,3 +8,4 @@ from app.helpers.stylesheets.translators.props_translators.border_translator imp
 class PropsTranslators:
     Border = BorderTranslator()
     Background = BackgroundTranslator()
+    Translators = [Border, Background]
