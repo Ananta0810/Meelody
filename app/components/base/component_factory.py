@@ -3,7 +3,7 @@ from typing import final
 from PyQt5.QtCore import QSize, QObject
 from PyQt5.QtGui import QFont
 
-from app.components.base.buttons import IconButton
+from app.components.base.buttons import IconButton, ToggleIconButton, MultiStatesIconButton
 from app.helpers.stylesheets import Padding, Paddings
 from app.resource.qt import Cursors
 
@@ -21,8 +21,29 @@ class Factory:
     @staticmethod
     def createIconButton(size: QSize, padding: Padding = Paddings.DEFAULT, parent: QObject = None) -> IconButton:
         button = IconButton(parent)
-        button.setIconSize(size - padding.getWidth(size))
         button.setCursor(Cursors.HAND)
+
+        button.setIconSize(size - padding.getWidth(size))
+        button.setFixedSize(size)
+
+        return button
+
+    @staticmethod
+    def createToggleButton(size: QSize, padding: Padding = Paddings.DEFAULT, parent: QObject = None) -> ToggleIconButton:
+        button = ToggleIconButton(parent)
+        button.setCursor(Cursors.HAND)
+
+        button.setIconSize(size - padding.getWidth(size))
+        button.setFixedSize(size)
+
+        return button
+
+    @staticmethod
+    def createMultiStatesButton(size: QSize, padding: Padding = Paddings.DEFAULT, parent: QObject = None) -> MultiStatesIconButton:
+        button = MultiStatesIconButton(parent)
+        button.setCursor(Cursors.HAND)
+
+        button.setIconSize(size - padding.getWidth(size))
         button.setFixedSize(size)
 
         return button

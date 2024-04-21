@@ -39,31 +39,20 @@ class ActionButton(QPushButton, Component, ABC):
         self.__darkModeBackground = style
 
 
-class StatelessIconButtonThemeData:
+class StateIcon:
     lightModeIcon: AppIcon
-    lightModeBackground: str
     darkModeIcon: AppIcon
-    darkModeBackground: str
 
-    def __init__(
-        self,
-        lightModeIcon: AppIcon,
-        lightModeBackground: str,
-        darkModeIcon: AppIcon = None,
-        darkModeBackground: str = None
-    ):
+    def __init__(self, lightModeIcon: AppIcon, darkModeIcon: AppIcon = None) -> None:
         self.lightModeIcon = lightModeIcon
-        self.lightModeBackground = lightModeBackground
-
         self.darkModeIcon = darkModeIcon or lightModeIcon
-        self.darkModeBackground = darkModeBackground or lightModeBackground
 
 
-class StatelessIconButton(QPushButton, Component, ABC):
-    _children: list[StatelessIconButtonThemeData] = []
+class MultiStatesIconButton(QPushButton, Component, ABC):
+    _icons: list[StateIcon] = []
     _currentIndex: int = 0
-    __changeStateOnPressed: bool = True
-    __isDarkMode: bool = False
+    _changeStateOnPressed: bool = True
+    _isDarkMode: bool = False
 
     def __init__(self, parent: Optional["QWidget"] = None):
         super().__init__(parent)
@@ -73,47 +62,48 @@ class StatelessIconButton(QPushButton, Component, ABC):
         policy.setRetainSizeWhenHidden(True)
         self.setSizePolicy(policy)
 
-    def setChildren(self, children: list[StatelessIconButtonThemeData]) -> None:
-        self._children = children
+    def setIcons(self, icons: list[StateIcon]) -> None:
+        self._icons = icons
 
-    def addChild(self, child: StatelessIconButtonThemeData) -> None:
-        self._children.append(child)
+    def addChild(self, child: StateIcon) -> None:
+        self._icons.append(child)
 
     def setChangeStateOnPressed(self, a0: bool) -> None:
-        self.__changeStateOnPressed = a0
+        self._changeStateOnPressed = a0
 
-    def setStateIndex(self, index: int) -> None:
-        if index >= len(self._children):
+    def setActiveState(self, index: int) -> None:
+        if index >= len(self._icons):
             return
         self._currentIndex = index
         self._changeButtonBasedOnState()
 
     def toNextState(self) -> None:
-        self.setStateIndex((self._currentIndex + 1) % len(self._children))
+        self.setActiveState((self._currentIndex + 1) % len(self._icons))
 
     def _changeButtonBasedOnState(self) -> None:
-        button = self._children[self._currentIndex]
+        button = self._icons[self._currentIndex]
 
-        if self.__isDarkMode:
+        if self._isDarkMode:
             self.setIcon(button.darkModeIcon)
-            self.setStyleSheet(button.darkModeBackground)
+            self.applyDarkMode()
             return
 
         self.setIcon(button.lightModeIcon)
-        self.setStyleSheet(button.lightModeBackground)
+        self.applyLightMode()
 
     @override
     def mousePressEvent(self, event) -> None:
         super().mousePressEvent(event)
-        if self.__changeStateOnPressed:
+        if self._changeStateOnPressed:
             self.toNextState()
 
 
-class ToggleIconButton(StatelessIconButton, ABC):
+class ToggleIconButton(MultiStatesIconButton, ABC):
     __isActive: bool = True
 
     def __init__(self, parent: Optional["QWidget"] = None):
         super().__init__(parent)
+        self.setCheckable(True)
 
     def keepSpaceWhenHiding(self) -> None:
         policy = self.sizePolicy()
@@ -122,25 +112,22 @@ class ToggleIconButton(StatelessIconButton, ABC):
 
     def setActive(self, active: bool) -> None:
         self.__isActive = active
-        self.setStateIndex(0 if active else 1)
+        self.setActiveState(0 if active else 1)
         super()._changeButtonBasedOnState()
 
-    def setActiveBtn(self, button: StatelessIconButtonThemeData) -> None:
-        if len(self._children) > 0:
-            self._children[0] = button
+    def setActiveIcon(self, lightModeIcon: AppIcon, darkModeIcon: AppIcon = None) -> None:
+        icon = StateIcon(lightModeIcon, darkModeIcon)
+        if len(self._icons) > 0:
+            self._icons[0] = icon
             return
-        self._children.append(button)
+        self._icons.append(icon)
 
-    def setInactiveBtn(self, button: StatelessIconButtonThemeData) -> None:
-        if len(self._children) > 1:
-            self._children[1] = button
+    def setInactiveIcon(self, lightModeIcon: AppIcon, darkModeIcon: AppIcon = None) -> None:
+        icon = StateIcon(lightModeIcon, darkModeIcon)
+        if len(self._icons) > 1:
+            self._icons[1] = icon
             return
-        self._children.append(button)
-
-    def setButtons(self, activeButton: StatelessIconButtonThemeData,
-                   inactiveButton: StatelessIconButtonThemeData) -> None:
-        self.setActive_btn(activeButton)
-        self.setInactiveBtn(inactiveButton)
+        self._icons.append(icon)
 
     def isActive(self) -> bool:
         return self._currentIndex == 0
