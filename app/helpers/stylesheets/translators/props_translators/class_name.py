@@ -5,33 +5,37 @@ from app.helpers.base import Strings, Lists
 
 class ClassName:
 
-    def __init__(self, state: str, key: str, value: str) -> None:
+    def __init__(self, element: str, state: str, key: str, value: str) -> None:
+        self.element = element
         self.state = state
         self.key = key
         self.value = value
         super().__init__()
 
     def __str__(self) -> str:
-        return f"className(state: {self.state}, key: {self.key}, value: {self.value})"
+        return f"className(element: {self.element}, state: {self.state}, key: {self.key}, value: {self.value})"
 
     @staticmethod
     def of(name: str) -> Optional['ClassName']:
         if name is None:
             return None
-        state, props = ClassName.partsOfCn(name)
-        key, value = ClassName.propsDetail(props)
+        element, others = ClassName.__separateElementAndOthers(name)
+        state, props = ClassName.__separateStateAndProps(others)
+        key, value = ClassName.__separateProps(props)
 
-        return ClassName(state, key, value)
-
-    @staticmethod
-    def propsDetail(props):
-        classDetail = props.split("-")
-        if len(classDetail) == 0:
-            return classDetail[0], None
-        return classDetail[0], Strings.join(classDetail[1:], "-")
+        return ClassName(element, state, key, value)
 
     @staticmethod
-    def partsOfCn(name) -> (str, str):
+    def __separateElementAndOthers(name) -> (str, str):
+        parts = name.split("/", maxsplit=1)
+        totalParts = len(parts)
+        if totalParts == 1:
+            return None, parts[0]
+
+        return parts[0], parts[1]
+
+    @staticmethod
+    def __separateStateAndProps(name) -> (str, str):
         parts = name.split(":")
         totalParts = len(parts)
         if totalParts == 1:
@@ -42,3 +46,10 @@ class ClassName:
         if totalParts == 2:
             return (None, props) if parts[0] == "dark" else (parts[0], props)
         return parts[1], props
+
+    @staticmethod
+    def __separateProps(props) -> (str, str):
+        classDetail = props.split("-")
+        if len(classDetail) == 0:
+            return classDetail[0], None
+        return classDetail[0], Strings.join(classDetail[1:], "-")

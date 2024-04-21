@@ -1,4 +1,5 @@
 from .bytes import Bytes
+from .classes import Classes
 from .decorators import override
 from .dictionaries import Dicts
 from .lists import Lists
