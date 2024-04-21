@@ -123,10 +123,10 @@ class MusicPlayerBar(QWidget, Component, ABC):
         self._sliderTime = HorizontalSlider()
         self._sliderTime.setFixedWidth(250)
         self._sliderTime.setFixedHeight(12)
+        self._sliderTime.setSliderSize(handle=10)
+        self._sliderTime.setPageStep(0)
         self._sliderTime.setMaximum(100)
         self._sliderTime.setProperty("value", 0)
-        self._sliderTime.setPageStep(0)
-        self._sliderTime.setClassName("handler/bg-primary track/bg-primary")
 
         self._labelTotalTime = LabelWithDefaultText()
         self._labelTotalTime.setFixedWidth(60)
