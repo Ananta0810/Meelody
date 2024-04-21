@@ -6,6 +6,8 @@ from PyQt5.QtWidgets import QHBoxLayout, QVBoxLayout, QWidget
 
 from app.components.base import Component, Cover, LabelWithDefaultText, Factory
 from app.components.base.cover import CoverProps
+from app.components.sliders import HorizontalSlider
+from app.helpers.others import Times
 from app.helpers.stylesheets import Colors, Paddings
 from app.resource.qt import Images, Icons
 
@@ -15,12 +17,17 @@ class MusicPlayerBar(QWidget, Component, ABC):
     def __init__(self, parent: Optional["QWidget"] = None):
         super().__init__(parent)
         self._createUI()
-        self.setDefaultCover(Images.DEFAULT_SONG_COVER)
+        self._connectSignalSlots()
         self._assignShortcuts()
-        self._btnPrevSong.applyDarkMode()
-        self._btnPlaySong.applyDarkMode()
-        self._btnPauseSong.applyDarkMode()
-        self._btnNextSong.applyDarkMode()
+
+        self.setDefaultCover(Images.DEFAULT_SONG_COVER)
+        self._btnPrevSong.applyLightMode()
+        self._btnPlaySong.applyLightMode()
+        self._btnPauseSong.applyLightMode()
+        self._btnNextSong.applyLightMode()
+        self._sliderTime.applyLightMode()
+        self.setTotalTime(60)
+        self.setPlayingTime(60)
 
     def _createUI(self) -> None:
         self.setAttribute(Qt.WA_StyledBackground, True)
@@ -33,6 +40,15 @@ class MusicPlayerBar(QWidget, Component, ABC):
         self._left.setContentsMargins(4, 0, 0, 0)
         self._left.setSpacing(12)
         self._left.setAlignment(Qt.AlignVCenter)
+
+        self._middle = QHBoxLayout()
+        self._middle.setContentsMargins(0, 0, 0, 0)
+        self._middle.setSpacing(12)
+        self._middle.setAlignment(Qt.AlignVCenter)
+
+        self._mainLayout.addLayout(self._left)
+        self._mainLayout.addLayout(self._middle)
+        self._mainLayout.addStretch()
 
         # =================COVER - TITLE - ARTIST=================
         self._songCover = Cover()
@@ -66,7 +82,7 @@ class MusicPlayerBar(QWidget, Component, ABC):
 
         self._btnPrevSong = Factory.createIconButton(size=Icons.LARGE, padding=Paddings.RELATIVE_50)
         self._btnPrevSong.setLightModeIcon(Icons.PREVIOUS.withColor(Colors.PRIMARY))
-        self._btnPrevSong.setDarkModeIcon(Icons.NEXT.withColor(Colors.WHITE))
+        self._btnPrevSong.setDarkModeIcon(Icons.PREVIOUS.withColor(Colors.WHITE))
         self._btnPrevSong.setClassName("hover:bg-primary-10 bg-none rounded-full",
                                        "dark:bg-primary-25 dark:hover:bg-primary")
 
@@ -98,16 +114,36 @@ class MusicPlayerBar(QWidget, Component, ABC):
         self._left.addLayout(self._infoLayout, stretch=1)
         self._left.addLayout(self._playButtons)
 
-        self._mainLayout.addLayout(self._left)
-        self._mainLayout.addStretch()
+        self._labelPlayingTime = LabelWithDefaultText()
+        self._labelPlayingTime.setFixedWidth(60)
+        self._labelPlayingTime.setFont(Factory.createFont(size=9))
+        self._labelPlayingTime.setClassName("text-black dark:text-white")
+        self._labelPlayingTime.setAlignment(Qt.AlignRight | Qt.AlignVCenter)
+
+        self._sliderTime = HorizontalSlider()
+        self._sliderTime.setFixedWidth(250)
+        self._sliderTime.setFixedHeight(12)
+        self._sliderTime.setMaximum(100)
+        self._sliderTime.setProperty("value", 0)
+        self._sliderTime.setPageStep(0)
+        self._sliderTime.setClassName("handler/bg-primary track/bg-primary")
+
+        self._labelTotalTime = LabelWithDefaultText()
+        self._labelTotalTime.setFixedWidth(60)
+        self._labelTotalTime.setFont(Factory.createFont(size=9))
+        self._labelTotalTime.setClassName("text-black dark:text-white")
+        self._labelTotalTime.setAlignment(Qt.AlignRight | Qt.AlignVCenter)
+
+        self._middle.addWidget(self._labelPlayingTime)
+        self._middle.addWidget(self._sliderTime)
+        self._middle.addWidget(self._labelTotalTime)
 
     def _connectSignalSlots(self) -> None:
-        pass
-
-    def _assignShortcuts(self) -> None:
-        super()._assignShortcuts()
         self._btnPlaySong.clicked.connect(lambda: self.setPlay(False))
         self._btnPauseSong.clicked.connect(lambda: self.setPlay(True))
+
+    def _assignShortcuts(self) -> None:
+        pass
 
     def setDefaultCover(self, cover: bytes) -> None:
         self._songCover.setDefaultCover(self.__createCover(cover))
@@ -121,3 +157,9 @@ class MusicPlayerBar(QWidget, Component, ABC):
     def setPlay(self, isPlaying: bool) -> None:
         self._btnPlaySong.setVisible(isPlaying)
         self._btnPauseSong.setVisible(not isPlaying)
+
+    def setPlayingTime(self, time: float) -> None:
+        self._labelPlayingTime.setText(Times.toString(time))
+
+    def setTotalTime(self, time: float) -> None:
+        self._labelTotalTime.setText(Times.toString(time))

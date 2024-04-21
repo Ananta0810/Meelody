@@ -1,4 +1,4 @@
-from abc import ABCMeta, abstractmethod
+from abc import ABCMeta
 
 from PyQt5.QtWidgets import QWidget
 
@@ -14,15 +14,12 @@ class Component(metaclass=MixinMeta):
     _lightModeStyle: str = None
     _darkModeStyle: str = None
 
-    @abstractmethod
     def _createUI(self) -> None:
         pass
 
-    @abstractmethod
     def _connectSignalSlots(self) -> None:
         pass
 
-    @abstractmethod
     def _assignShortcuts(self) -> None:
         pass
 

@@ -1,13 +1,15 @@
+from abc import ABC
 from typing import Optional
 
 from PyQt5.QtCore import Qt, pyqtSignal
 from PyQt5.QtGui import QFontMetrics, QResizeEvent
 from PyQt5.QtWidgets import QLabel, QLineEdit
 
+from app.components.base import Component
 from app.helpers.base import override, Strings
 
 
-class LabelWithDefaultText(QLabel):
+class LabelWithDefaultText(QLabel, Component, ABC):
     __defaultText: str = ""
     __displayingText: str = ""
     __ellipsis: bool = True
