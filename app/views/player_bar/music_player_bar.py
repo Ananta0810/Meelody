@@ -26,6 +26,7 @@ class MusicPlayerBar(QWidget, Component, ABC):
         self._btnNextSong.applyLightMode()
         self._sliderTime.applyLightMode()
         self._btnTimer.applyLightMode()
+        self._sliderVolume.applyLightMode()
 
         self.setTotalTime(60)
         self.setPlayingTime(60)
@@ -45,6 +46,7 @@ class MusicPlayerBar(QWidget, Component, ABC):
         self._middle = QHBoxLayout()
         self._middle.setContentsMargins(0, 0, 0, 0)
         self._middle.setSpacing(4)
+        self._left.setAlignment(Qt.AlignVCenter)
 
         self._right = QHBoxLayout()
         self._right.setContentsMargins(0, 0, 0, 0)
@@ -172,6 +174,17 @@ class MusicPlayerBar(QWidget, Component, ABC):
         self._volumeBoxLayout = QHBoxLayout(self._volumeBox)
         self._volumeBoxLayout.setContentsMargins(0, 0, 0, 0)
 
+        self._sliderVolume = HorizontalSlider()
+        self._sliderVolume.setFixedHeight(40)
+        self._sliderVolume.setPageStep(0)
+        self._sliderVolume.setMaximum(100)
+        self._sliderVolume.setProperty("value", 0)
+        self._sliderVolume.setClassName("rounded-8 bg-primary-10")
+        self._sliderVolume.setSliderPosition(100)
+        self._sliderVolume.hide()
+
+        self._volumeBoxLayout.addWidget(self._sliderVolume)
+
         self._btnTimer = Factory.createIconButton(size=Icons.LARGE, padding=Paddings.RELATIVE_50)
         self._btnTimer.setLightModeIcon(Icons.TIMER.withColor(Colors.PRIMARY))
         self._btnTimer.setClassName("bg-none hover:bg-primary-10 rounded-full", "dark:bg-primary-25 dark:hover:bg-primary")
@@ -186,6 +199,7 @@ class MusicPlayerBar(QWidget, Component, ABC):
     def _connectSignalSlots(self) -> None:
         self._btnPlaySong.clicked.connect(lambda: self.setPlay(False))
         self._btnPauseSong.clicked.connect(lambda: self.setPlay(True))
+        self._btnVolume.clicked.connect(lambda: self._sliderVolume.setVisible(not self._sliderVolume.isVisible()))
 
     def _assignShortcuts(self) -> None:
         pass
