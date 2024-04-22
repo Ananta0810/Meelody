@@ -19,11 +19,14 @@ class MusicPlayerBar(QWidget, Component, ABC):
     def __init__(self, parent: Optional["QWidget"] = None):
         super().__init__(parent)
         self.__songLength: float = 0
+        self.__canRunTimeSlider = True
 
         self._createUI()
         self._createThreads()
         self._connectSignalSlots()
         self._assignShortcuts()
+
+        self.setPlayingTime(0)
 
         self.setDefaultCover(Images.DEFAULT_SONG_COVER)
         self._btnPrevSong.applyLightMode()
@@ -33,9 +36,6 @@ class MusicPlayerBar(QWidget, Component, ABC):
         self._sliderTime.applyLightMode()
         self._btnTimer.applyLightMode()
         self._sliderVolume.applyLightMode()
-
-        self.setPlayingTime(0)
-        self.setTotalTime(77)
 
     def _createUI(self) -> None:
         self.setAttribute(Qt.WA_StyledBackground, True)
@@ -209,9 +209,14 @@ class MusicPlayerBar(QWidget, Component, ABC):
         self._btnPlaySong.clicked.connect(lambda: self.setPlay(False))
         self._btnPauseSong.clicked.connect(lambda: self.setPlay(True))
         self._btnVolume.clicked.connect(lambda: self._sliderVolume.setVisible(not self._sliderVolume.isVisible()))
+
+        self._sliderTime.sliderPressed.connect(lambda: self.__setCanRunTimeSlider(False))
+        self._sliderTime.sliderReleased.connect(lambda: self.__setCanRunTimeSlider(True))
+
         self._btnPlaySong.clicked.connect(lambda: MUSIC_PLAYER.play())
         self._btnPauseSong.clicked.connect(lambda: MUSIC_PLAYER.pause())
         self._sliderVolume.valueChanged.connect(lambda: MUSIC_PLAYER.setVolume(self._sliderVolume.value()))
+        self._sliderTime.sliderReleased.connect(lambda: self.__skipTo(self._sliderTime.sliderPosition()))
 
         MUSIC_PLAYER.played.connect(lambda: self._playerTrackingThread.start())
         MUSIC_PLAYER.paused.connect(lambda: self._playerTrackingThread.quit())
@@ -287,9 +292,14 @@ class MusicPlayerBar(QWidget, Component, ABC):
         self._labelTotalTime.setText(Times.toString(time))
 
     def setPlayingTime(self, time: float) -> None:
+        if not self.__canRunTimeSlider:
+            return
         self._labelPlayingTime.setText(Times.toString(time))
         position = 0 if self.__songLength == 0 else int(time * 100 / self.__songLength)
         self._sliderTime.setSliderPosition(position)
+
+    def __setCanRunTimeSlider(self, enable: bool) -> None:
+        self.__canRunTimeSlider = enable
 
     def __selectSong(self, song: Song) -> None:
         self.setTotalTime(song.getLength())
