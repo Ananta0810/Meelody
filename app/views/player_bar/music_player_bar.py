@@ -2,8 +2,10 @@ from abc import ABC
 from typing import Optional, Union
 
 from PyQt5.QtCore import Qt
-from PyQt5.QtWidgets import QHBoxLayout, QVBoxLayout, QWidget
+from PyQt5.QtGui import QKeySequence
+from PyQt5.QtWidgets import QHBoxLayout, QVBoxLayout, QWidget, QShortcut
 
+from app.common.instances import MUSIC_PLAYER
 from app.components.base import Component, Cover, LabelWithDefaultText, Factory, StateIcon, CoverProps
 from app.components.sliders import HorizontalSlider
 from app.helpers.others import Times
@@ -200,9 +202,59 @@ class MusicPlayerBar(QWidget, Component, ABC):
         self._btnPlaySong.clicked.connect(lambda: self.setPlay(False))
         self._btnPauseSong.clicked.connect(lambda: self.setPlay(True))
         self._btnVolume.clicked.connect(lambda: self._sliderVolume.setVisible(not self._sliderVolume.isVisible()))
+        self._btnPlaySong.clicked.connect(lambda: MUSIC_PLAYER.play())
+        self._btnPauseSong.clicked.connect(lambda: MUSIC_PLAYER.pause())
 
     def _assignShortcuts(self) -> None:
-        pass
+        play_shortcut = QShortcut(QKeySequence(Qt.Key_Space), self._btnPlaySong)
+        play_shortcut.activated.connect(self._btnPlaySong.click)
+
+        pause_shortcut = QShortcut(QKeySequence(Qt.Key_Space), self._btnPauseSong)
+        pause_shortcut.activated.connect(self._btnPauseSong.click)
+
+        prev_shortcut = QShortcut(QKeySequence(Qt.Key_Left), self._btnPrevSong)
+        prev_shortcut.activated.connect(self._btnPrevSong.click)
+
+        next_shortcut = QShortcut(QKeySequence(Qt.Key_Right), self._btnNextSong)
+        next_shortcut.activated.connect(self._btnNextSong.click)
+
+        shortcut_0 = QShortcut(QKeySequence(Qt.Key_0), self._sliderTime)
+        shortcut_0.activated.connect(lambda: self.__skipTo(0))
+
+        shortcut_1 = QShortcut(QKeySequence(Qt.Key_1), self._sliderTime)
+        shortcut_1.activated.connect(lambda: self.__skipTo(10))
+
+        shortcut_2 = QShortcut(QKeySequence(Qt.Key_2), self._sliderTime)
+        shortcut_2.activated.connect(lambda: self.__skipTo(20))
+
+        shortcut_3 = QShortcut(QKeySequence(Qt.Key_3), self._sliderTime)
+        shortcut_3.activated.connect(lambda: self.__skipTo(30))
+
+        shortcut_4 = QShortcut(QKeySequence(Qt.Key_4), self._sliderTime)
+        shortcut_4.activated.connect(lambda: self.__skipTo(40))
+
+        shortcut_5 = QShortcut(QKeySequence(Qt.Key_5), self._sliderTime)
+        shortcut_5.activated.connect(lambda: self.__skipTo(50))
+
+        shortcut_6 = QShortcut(QKeySequence(Qt.Key_6), self._sliderTime)
+        shortcut_6.activated.connect(lambda: self.__skipTo(60))
+
+        shortcut_7 = QShortcut(QKeySequence(Qt.Key_7), self._sliderTime)
+        shortcut_7.activated.connect(lambda: self.__skipTo(70))
+
+        shortcut_8 = QShortcut(QKeySequence(Qt.Key_8), self._sliderTime)
+        shortcut_8.activated.connect(lambda: self.__skipTo(80))
+
+        shortcut_9 = QShortcut(QKeySequence(Qt.Key_9), self._sliderTime)
+        shortcut_9.activated.connect(lambda: self.__skipTo(90))
+
+    def __skipTo(self, position: int) -> None:
+        self._sliderTime.setValue(position)
+        try:
+            MUSIC_PLAYER.skipToTime(MUSIC_PLAYER.getCurrentSong().getLength() * position / 100)
+            MUSIC_PLAYER.play()
+        except AttributeError:
+            self._sliderTime.setValue(0)
 
     def setDefaultCover(self, cover: bytes) -> None:
         self._songCover.setDefaultCover(self.__createCover(cover))
