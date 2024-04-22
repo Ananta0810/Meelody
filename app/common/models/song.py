@@ -1,6 +1,11 @@
 import os
 import uuid
 from enum import Enum
+from typing import Optional
+
+from eyed3 import load, mp3
+
+from app.helpers.base import Strings
 
 
 class Song:
@@ -25,23 +30,30 @@ class Song:
         artist: str = None,
         cover: bytes = None,
         length: float = 0,
-        sample_rate: float = 48000,
+        sampleRate: float = 48000,
         loved: bool = False,
     ):
+        self.__id = str(uuid.uuid4())
         self.__location = location
         self.__title = title
         self.__artist = artist
         self.__cover = cover
         self.__length = length
-        self.__sampleRate = sample_rate
+        self.__sampleRate = sampleRate
         self.__isLoved = loved
 
     @staticmethod
     def fromFile(location: str) -> 'Song':
-        song = Song(location)
-        song.__id = str(uuid.uuid4())
-        song.__loadInfoFrom(location)
-        return song
+        song = SongReader(location)
+
+        return Song(
+            location,
+            title=Strings.getFileBasename(location),
+            artist=song.getArtist(),
+            cover=song.getCover(),
+            length=song.getLength(),
+            sampleRate=song.getSampleRate()
+        )
 
     def clone(self) -> 'Song':
         song = Song(location=self.__location, title=self.__title, artist=self.__artist, cover=self.__cover,
@@ -70,17 +82,6 @@ class Song:
 
     def __str__(self):
         return f"Song({self.__title}, {self.__artist}, {self.__length}, {self.__isLoved})"
-
-    def __loadInfoFrom(self, location: str) -> None:
-        """
-        Load the information of the song when having the audio file
-        """
-        # audio = AudioExtractor.load_from(location)
-        # self.__title = Strings.get_file_basename(location)
-        # self.__artist = audio.get_artist()
-        # self.__cover = audio.get_cover()
-        # self.__length = audio.get_length()
-        # self.__sampleRate = audio.get_sample_rate()
 
     def changeTitle(self, title: str) -> bool:
         """
@@ -165,3 +166,38 @@ class Song:
             self.__isLoved = not self.__isLoved
         else:
             self.__isLoved = state
+
+
+class SongReader:
+    __data: mp3.Mp3AudioFile
+
+    def __init__(self, file: str):
+        self.__data = load(file)
+
+    def getArtist(self) -> str:
+        try:
+            return self.__data.tag.artist
+        except AttributeError:
+            return ''
+
+    def getLength(self) -> int:
+        try:
+            return int(self.__data.info.time_secs)
+        except AttributeError:
+            return 0
+
+    def getCover(self) -> Optional[bytes]:
+        try:
+            images = self.__data.tag.images
+            for image in images:
+                if image.image_data is None:
+                    continue
+                return image.image_data
+        except AttributeError:
+            return None
+
+    def getSampleRate(self) -> int:
+        try:
+            return self.__data.info.sample_freq
+        except AttributeError:
+            return 0

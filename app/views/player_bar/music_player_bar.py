@@ -6,6 +6,7 @@ from PyQt5.QtGui import QKeySequence
 from PyQt5.QtWidgets import QHBoxLayout, QVBoxLayout, QWidget, QShortcut
 
 from app.common.instances import MUSIC_PLAYER
+from app.common.models import Song
 from app.components.base import Component, Cover, LabelWithDefaultText, Factory, StateIcon, CoverProps
 from app.components.sliders import HorizontalSlider
 from app.helpers.others import Times
@@ -202,7 +203,7 @@ class MusicPlayerBar(QWidget, Component, ABC):
         self._right.addWidget(self._btnTimer)
 
     def _createThreads(self):
-        self.playerTrackingThread = PlayerTrackingThread(self)
+        self._playerTrackingThread = PlayerTrackingThread(self)
 
     def _connectSignalSlots(self) -> None:
         self._btnPlaySong.clicked.connect(lambda: self.setPlay(False))
@@ -210,8 +211,10 @@ class MusicPlayerBar(QWidget, Component, ABC):
         self._btnVolume.clicked.connect(lambda: self._sliderVolume.setVisible(not self._sliderVolume.isVisible()))
         self._btnPlaySong.clicked.connect(lambda: MUSIC_PLAYER.play())
         self._btnPauseSong.clicked.connect(lambda: MUSIC_PLAYER.pause())
-        MUSIC_PLAYER.played.connect(lambda: self.playerTrackingThread.start())
-        MUSIC_PLAYER.paused.connect(lambda: self.playerTrackingThread.quit())
+
+        MUSIC_PLAYER.played.connect(lambda: self._playerTrackingThread.start())
+        MUSIC_PLAYER.paused.connect(lambda: self._playerTrackingThread.quit())
+        MUSIC_PLAYER.songChanged.connect(lambda song: self.__selectSong(song))
 
     def _assignShortcuts(self) -> None:
         play_shortcut = QShortcut(QKeySequence(Qt.Key_Space), self._btnPlaySong)
@@ -271,7 +274,7 @@ class MusicPlayerBar(QWidget, Component, ABC):
     def __createCover(data: bytes) -> Union[CoverProps, None]:
         if data is None:
             return None
-        return CoverProps.fromBytes(data, width=64, height=64, radius=16)
+        return CoverProps.fromBytes(data, width=64, height=64, radius=12)
 
     def setPlay(self, isPlaying: bool) -> None:
         self._btnPlaySong.setVisible(isPlaying)
@@ -285,6 +288,12 @@ class MusicPlayerBar(QWidget, Component, ABC):
         self._labelPlayingTime.setText(Times.toString(time))
         position = 0 if self.__songLength == 0 else int(time * 100 / self.__songLength)
         self._sliderTime.setSliderPosition(position)
+
+    def __selectSong(self, song: Song) -> None:
+        self.setTotalTime(song.getLength())
+        self._songTitle.setText(song.getTitle())
+        self._songArtist.setText(song.getArtist())
+        self._songCover.setCover(self.__createCover(song.getCover()))
 
 
 class PlayerTrackingThread(QThread):

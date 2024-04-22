@@ -2,7 +2,7 @@ import os
 
 from PyQt5.QtCore import QObject, pyqtSignal
 
-from .song import Song
+from app.common.models import Song
 
 os.environ['PYGAME_HIDE_SUPPORT_PROMPT'] = "hide"
 
@@ -19,6 +19,7 @@ class MusicPlayer(QObject):
 
     played = pyqtSignal()
     paused = pyqtSignal()
+    songChanged = pyqtSignal(Song)
 
     def __init__(self):
         super().__init__()
@@ -49,6 +50,7 @@ class MusicPlayer(QObject):
 
     def setCurrentSong(self, song: Song) -> None:
         self.__currentSong = song
+        self.songChanged.emit(song)
 
     def getCurrentSong(self) -> Song:
         return self.__currentSong
