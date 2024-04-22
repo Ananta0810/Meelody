@@ -17,6 +17,9 @@ class Component(metaclass=MixinMeta):
     def _createUI(self) -> None:
         pass
 
+    def _createThreads(self) -> None:
+        pass
+
     def _connectSignalSlots(self) -> None:
         pass
 

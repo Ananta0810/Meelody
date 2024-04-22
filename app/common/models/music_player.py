@@ -1,6 +1,7 @@
 import os
 
-from app.helpers.base import SingletonMeta
+from PyQt5.QtCore import QObject, pyqtSignal
+
 from .song import Song
 
 os.environ['PYGAME_HIDE_SUPPORT_PROMPT'] = "hide"
@@ -8,13 +9,16 @@ os.environ['PYGAME_HIDE_SUPPORT_PROMPT'] = "hide"
 from pygame import mixer
 
 
-class MusicPlayer(metaclass=SingletonMeta):
+class MusicPlayer(QObject):
     __currentSong: Song = None
     __currentSongIndex: int = 0
     __timeStartInSec: float = 0
     __loaded: bool = False
     __timeToStopAsSeconds: int | None = None
     __elapsedTimeAsSeconds: int = 0
+
+    played = pyqtSignal()
+    paused = pyqtSignal()
 
     def __init__(self):
         super().__init__()
@@ -37,6 +41,7 @@ class MusicPlayer(metaclass=SingletonMeta):
 
     def play(self):
         mixer.music.play(start=self.__getPlayingTime())
+        self.played.emit()
 
     def setCurrentSongIndex(self, index: int) -> None:
         self.__currentSongIndex = index
@@ -60,6 +65,7 @@ class MusicPlayer(metaclass=SingletonMeta):
             return
         self.setStartTime(self.__getPlayingTime())
         mixer.music.stop()
+        self.paused.emit()
 
     def stop(self) -> None:
         if not self.isPlaying():
@@ -67,6 +73,7 @@ class MusicPlayer(metaclass=SingletonMeta):
         mixer.music.stop()
         mixer.music.unload()
         self.__loaded = False
+        self.paused.emit()
 
     def resetTime(self) -> None:
         self.__timeStartInSec = 0

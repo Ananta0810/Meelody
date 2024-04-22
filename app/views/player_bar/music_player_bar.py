@@ -1,7 +1,7 @@
 from abc import ABC
 from typing import Optional, Union
 
-from PyQt5.QtCore import Qt
+from PyQt5.QtCore import Qt, QThread
 from PyQt5.QtGui import QKeySequence
 from PyQt5.QtWidgets import QHBoxLayout, QVBoxLayout, QWidget, QShortcut
 
@@ -17,7 +17,10 @@ class MusicPlayerBar(QWidget, Component, ABC):
 
     def __init__(self, parent: Optional["QWidget"] = None):
         super().__init__(parent)
+        self.__songLength: float = 0
+
         self._createUI()
+        self._createThreads()
         self._connectSignalSlots()
         self._assignShortcuts()
 
@@ -30,8 +33,8 @@ class MusicPlayerBar(QWidget, Component, ABC):
         self._btnTimer.applyLightMode()
         self._sliderVolume.applyLightMode()
 
-        self.setTotalTime(60)
-        self.setPlayingTime(60)
+        self.setPlayingTime(0)
+        self.setTotalTime(77)
 
     def _createUI(self) -> None:
         self.setAttribute(Qt.WA_StyledBackground, True)
@@ -198,12 +201,17 @@ class MusicPlayerBar(QWidget, Component, ABC):
         self._right.addWidget(self._volumeBox, 1)
         self._right.addWidget(self._btnTimer)
 
+    def _createThreads(self):
+        self.playerTrackingThread = PlayerTrackingThread(self)
+
     def _connectSignalSlots(self) -> None:
         self._btnPlaySong.clicked.connect(lambda: self.setPlay(False))
         self._btnPauseSong.clicked.connect(lambda: self.setPlay(True))
         self._btnVolume.clicked.connect(lambda: self._sliderVolume.setVisible(not self._sliderVolume.isVisible()))
         self._btnPlaySong.clicked.connect(lambda: MUSIC_PLAYER.play())
         self._btnPauseSong.clicked.connect(lambda: MUSIC_PLAYER.pause())
+        MUSIC_PLAYER.played.connect(lambda: self.playerTrackingThread.start())
+        MUSIC_PLAYER.paused.connect(lambda: self.playerTrackingThread.quit())
 
     def _assignShortcuts(self) -> None:
         play_shortcut = QShortcut(QKeySequence(Qt.Key_Space), self._btnPlaySong)
@@ -269,8 +277,21 @@ class MusicPlayerBar(QWidget, Component, ABC):
         self._btnPlaySong.setVisible(isPlaying)
         self._btnPauseSong.setVisible(not isPlaying)
 
+    def setTotalTime(self, time: float) -> None:
+        self.__songLength = time
+        self._labelTotalTime.setText(Times.toString(time))
+
     def setPlayingTime(self, time: float) -> None:
         self._labelPlayingTime.setText(Times.toString(time))
+        position = 0 if self.__songLength == 0 else int(time * 100 / self.__songLength)
+        self._sliderTime.setSliderPosition(position)
 
-    def setTotalTime(self, time: float) -> None:
-        self._labelTotalTime.setText(Times.toString(time))
+
+class PlayerTrackingThread(QThread):
+    def __init__(self, musicPlayer: MusicPlayerBar) -> None:
+        super().__init__()
+        self.musicPlayer = musicPlayer
+
+    def run(self) -> None:
+        while MUSIC_PLAYER.isPlaying():
+            self.musicPlayer.setPlayingTime(MUSIC_PLAYER.getPlayingTime())
