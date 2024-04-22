@@ -14,7 +14,7 @@ class HorizontalSlider(QSlider, Component, ABC):
 
     def __init__(self, parent: QWidget | None = None):
         QSlider.__init__(self, parent)
-        self.__currentClassName = ""
+        self._currentClassName = ""
         self._handleHeight = 10
         self._trackSize = 2
         self.setOrientation(Qt.Horizontal)
@@ -22,12 +22,12 @@ class HorizontalSlider(QSlider, Component, ABC):
     def setSliderSize(self, handle: int, track: int = 2) -> None:
         self._handleHeight = handle
         self._trackSize = track
-        self.setClassName(self.__currentClassName)
+        self.setClassName(self._currentClassName)
 
     def setClassName(self, *classNames: str) -> None:
-        self.__currentClassName = Strings.join(classNames, " ")
+        self._currentClassName = Strings.join(" ", classNames)
 
-        light, dark = ClassNameTranslator.translateElements(self.__currentClassName, self)
+        light, dark = ClassNameTranslator.translateElements(self._currentClassName, self)
 
         self._lightModeStyle = self.__buildStyle(light)
         self._darkModeStyle = self.__buildStyle(dark)

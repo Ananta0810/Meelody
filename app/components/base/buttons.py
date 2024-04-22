@@ -5,14 +5,16 @@ from PyQt5.QtWidgets import QWidget, QPushButton
 
 from app.components.base.app_icon import AppIcon
 from app.components.base.base_component import Component
-from app.helpers.base import override
+from app.helpers.base import override, Strings
 from app.helpers.stylesheets import Padding
+from app.helpers.stylesheets.translators import ClassNameTranslator
+from app.helpers.stylesheets.translators.classname_translator import ClassNameTheme
 
 
 class ActionButton(QPushButton, Component, ABC):
-    padding: Padding = None
 
     def __init__(self, parent: Optional[QWidget] = None):
+        self.padding: Optional[Padding] = None
         super().__init__(parent)
 
     def setPadding(self, padding: Padding) -> None:
@@ -49,12 +51,13 @@ class StateIcon:
 
 
 class MultiStatesIconButton(QPushButton, Component, ABC):
-    _icons: list[StateIcon] = []
-    _currentIndex: int = 0
-    _changeStateOnPressed: bool = True
-    _isDarkMode: bool = False
 
     def __init__(self, parent: Optional["QWidget"] = None):
+        self._icons: list[StateIcon] = []
+        self._currentIndex: int = 0
+        self._changeStateOnPressed: bool = True
+        self._isDarkMode: bool = False
+        self._currentClassName = ""
         super().__init__(parent)
 
     def keepSpaceWhenHiding(self) -> None:
@@ -83,6 +86,7 @@ class MultiStatesIconButton(QPushButton, Component, ABC):
     def _changeButtonBasedOnState(self) -> None:
         button = self._icons[self._currentIndex]
 
+        self.setClassName(self._currentClassName)
         if self._isDarkMode:
             self.setIcon(button.darkModeIcon)
             self.applyDarkMode()
@@ -90,6 +94,10 @@ class MultiStatesIconButton(QPushButton, Component, ABC):
 
         self.setIcon(button.lightModeIcon)
         self.applyLightMode()
+
+    def setClassName(self, *classNames: str) -> None:
+        self._currentClassName = Strings.join(" ", classNames)
+        super().setClassName(self._currentClassName)
 
     @override
     def mousePressEvent(self, event) -> None:
@@ -134,6 +142,22 @@ class ToggleIconButton(MultiStatesIconButton, ABC):
 
     def isInactive(self) -> bool:
         return self._currentIndex == 1
+
+    def setClassName(self, *classNames: str) -> None:
+        self._currentClassName = Strings.join(" ", classNames)
+
+        light, dark = ClassNameTranslator.translateElements(self._currentClassName, self)
+        self._lightModeStyle = self.__buildStyle(light)
+        self._darkModeStyle = self.__buildStyle(dark)
+
+    def __buildStyle(self, theme: ClassNameTheme) -> str:
+        normal = theme.getElement("none")
+        active = theme.getElement("active" if self.isActive() else "inactive")
+
+        return f"""
+             QPushButton {{{Strings.joinStyles([normal.state("none").toProps(), active.state("none").toProps()])}}}
+             QPushButton::hover {{{Strings.joinStyles([normal.state("hover").toProps(), active.state("hover").toProps()])}}}
+             """
 
 
 class IconButton(QPushButton, Component, ABC):

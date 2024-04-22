@@ -24,7 +24,7 @@ class Component(metaclass=MixinMeta):
         pass
 
     def setClassName(self, *classNames: str) -> None:
-        light, dark = ClassNameTranslator.translate(Strings.join(classNames, " "), self)
+        light, dark = ClassNameTranslator.translate(Strings.join(" ", classNames), self)
         self._lightModeStyle = light
         self._darkModeStyle = dark
 

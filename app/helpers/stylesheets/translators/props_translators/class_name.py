@@ -52,4 +52,4 @@ class ClassName:
         classDetail = props.split("-")
         if len(classDetail) == 0:
             return classDetail[0], None
-        return classDetail[0], Strings.join(classDetail[1:], "-")
+        return classDetail[0], Strings.join("-", classDetail[1:])

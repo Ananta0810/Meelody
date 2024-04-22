@@ -17,7 +17,10 @@ class ElementStateStyles:
     def toProps(self) -> Optional[str]:
         if self.value is None:
             return None
-        return Strings.join(self.value, ";")
+        return Strings.joinStyles(self.value)
+
+    def toStyleSheet(self) -> str:
+        return f"{self.id} {{{self.toProps()}}}\n"
 
     def id(self) -> str:
         return self.id
@@ -61,9 +64,15 @@ class ClassNameTheme:
         return NULL_ELEMENT
 
 
+NULL_THEME = ClassNameTheme()
+
+
 class ClassNameTranslator:
     @staticmethod
     def translateElements(classNames: str, element: QWidget) -> (ClassNameTheme, ClassNameTheme):
+        if classNames is None:
+            return NULL_THEME, NULL_THEME
+
         darkClassNames = classNames.split(" ")
         darkClassNames.sort(key=lambda cn: 1 if "dark" in cn else 0)
         lightClassNames = [cn for cn in darkClassNames if "dark" not in cn]
@@ -73,8 +82,8 @@ class ClassNameTranslator:
         return lightStyle, darkStyle
 
     @staticmethod
-    def __toElementStyles(classNameList, element) -> ClassNameTheme:
-        eName = element.__class__.__name__
+    def __toElementStyles(classNameList, target) -> ClassNameTheme:
+        eName = target.__class__.__name__
         translators = PropsTranslators.Translators
 
         elements = Dicts.group([ClassName.of(cn) for cn in classNameList], by=lambda c: c.element)
@@ -86,7 +95,7 @@ class ClassNameTranslator:
 
             elementResult = ClassNameElement()
             for state, classes in states.items():
-                props = [ClassNameTranslator.__toProp(classes, translator, element) for translator in translators]
+                props = [ClassNameTranslator.__toProp(classes, translator, target) for translator in translators]
                 props = Lists.nonNull(props)
                 if len(props) > 0:
                     elementResult.addState(state, ElementStateStyles(eName, state, props))
@@ -97,6 +106,8 @@ class ClassNameTranslator:
 
     @staticmethod
     def translate(classNames: str, element: QWidget) -> (str, str):
+        if classNames is None:
+            return None, None
         darkClassNames = classNames.split(" ")
         darkClassNames.sort(key=lambda cn: 1 if "dark" in cn else 0)
         lightClassNames = [cn for cn in darkClassNames if "dark" not in cn]
@@ -113,7 +124,7 @@ class ClassNameTranslator:
         result = ""
         for state, classes in states.items():
             props = [ClassNameTranslator.__toProp(classes, translator, element) for translator in translators]
-            result += f"{eName}{'' if state is None else f':{state}'} {{{Strings.join(props, ';')}}}\n"
+            result += f"{eName}{'' if state is None else f':{state}'} {{{Strings.joinStyles(props)}}}\n"
         return result
 
     @staticmethod
