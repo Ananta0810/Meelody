@@ -211,10 +211,12 @@ class MusicPlayerBar(QWidget, Component, ABC):
         self._btnVolume.clicked.connect(lambda: self._sliderVolume.setVisible(not self._sliderVolume.isVisible()))
         self._btnPlaySong.clicked.connect(lambda: MUSIC_PLAYER.play())
         self._btnPauseSong.clicked.connect(lambda: MUSIC_PLAYER.pause())
+        self._sliderVolume.valueChanged.connect(lambda: MUSIC_PLAYER.setVolume(self._sliderVolume.value()))
 
         MUSIC_PLAYER.played.connect(lambda: self._playerTrackingThread.start())
         MUSIC_PLAYER.paused.connect(lambda: self._playerTrackingThread.quit())
         MUSIC_PLAYER.songChanged.connect(lambda song: self.__selectSong(song))
+        MUSIC_PLAYER.volumeChanged.connect(lambda volume: self.__changeVolumeIcon(volume))
 
     def _assignShortcuts(self) -> None:
         play_shortcut = QShortcut(QKeySequence(Qt.Key_Space), self._btnPlaySong)
@@ -294,6 +296,18 @@ class MusicPlayerBar(QWidget, Component, ABC):
         self._songTitle.setText(song.getTitle())
         self._songArtist.setText(song.getArtist())
         self._songCover.setCover(self.__createCover(song.getCover()))
+
+    def __changeVolumeIcon(self, volume: int) -> None:
+        VOLUME_UP_STATE: int = 0
+        VOLUME_DOWN_STATE: int = 1
+        SILENT_STATE: int = 2
+        state = SILENT_STATE
+
+        if 0 < volume <= 33:
+            state = VOLUME_DOWN_STATE
+        if 33 < volume <= 100:
+            state = VOLUME_UP_STATE
+        self._btnVolume.setActiveState(state)
 
 
 class PlayerTrackingThread(QThread):

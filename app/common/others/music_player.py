@@ -20,6 +20,7 @@ class MusicPlayer(QObject):
     played = pyqtSignal()
     paused = pyqtSignal()
     songChanged = pyqtSignal(Song)
+    volumeChanged = pyqtSignal(int)
 
     def __init__(self):
         super().__init__()
@@ -97,3 +98,4 @@ class MusicPlayer(QObject):
         """
         MAX_VOLUME = 100
         mixer.music.set_volume(volume / MAX_VOLUME)
+        self.volumeChanged.emit(volume)
