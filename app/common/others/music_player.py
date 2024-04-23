@@ -1,4 +1,5 @@
 import os
+import random
 from time import sleep
 from typing import Optional, Callable
 
@@ -17,6 +18,7 @@ class MusicPlayer(QObject):
 
     songChanged = pyqtSignal(Song)
     loopChanged = pyqtSignal(bool)
+    shuffleChanged = pyqtSignal(bool)
     volumeChanged = pyqtSignal(int)
 
     def __init__(self):
@@ -25,6 +27,7 @@ class MusicPlayer(QObject):
         mixer.init()
 
         self.__songs: Optional[Playlist.Songs] = None
+        self.__shuffledSongs: Optional[Playlist.Songs] = None
         self.__currentSong: Optional[Song] = None
         self.__currentSongIndex: int = 0
         self.__timeStartInSec: float = 0
@@ -32,6 +35,7 @@ class MusicPlayer(QObject):
         self.__timeToStopAsSeconds: int | None = None
         self.__elapsedTimeAsSeconds: int = 0
         self.__isLooping = False
+        self.__isShuffle = False
 
         self.__finishTrackerThread = _MusicFinishedTrackThread(self, onSongFinished=self.__onSongFinished)
 
@@ -51,7 +55,8 @@ class MusicPlayer(QObject):
         if self.__loaded:
             return
 
-        song = self.__songs.getSongAt(self.__currentSongIndex)
+        songs = self.__getSongs()
+        song = songs.getSongAt(self.__currentSongIndex)
         if song is None:
             return
 
@@ -61,6 +66,9 @@ class MusicPlayer(QObject):
         mixer.music.unload()
         mixer.music.load(song.getLocation())
         self.songChanged.emit(song)
+
+    def __getSongs(self):
+        return self.__shuffledSongs if self.__isShuffle else self.__songs
 
     def play(self):
         mixer.music.play(start=self.getPlayingTime())
@@ -121,6 +129,21 @@ class MusicPlayer(QObject):
         self.__isLooping = a0
         self.loopChanged.emit(a0)
 
+    def setShuffle(self, a0: bool) -> None:
+        self.__isShuffle = a0
+
+        if self.__isShuffle:
+            songs = self.__songs.getSongs()
+            random.shuffle(songs)
+            self.__shuffledSongs = Playlist.Songs(songs, isSorted=False)
+            if self.__currentSong is not None:
+                currentSongNewIndex = self.__shuffledSongs.indexOf(self.__currentSong)
+                self.__currentSongIndex = currentSongNewIndex
+        else:
+            self.__shuffledSongs = None
+
+        self.shuffleChanged.emit(a0)
+
     def resetTime(self) -> None:
         self.__timeStartInSec = 0
 
@@ -139,12 +162,6 @@ class MusicPlayer(QObject):
         MAX_VOLUME = 100
         mixer.music.set_volume(volume / MAX_VOLUME)
         self.volumeChanged.emit(volume)
-
-    def shuffle(self) -> None:
-        self.__songs.shuffle()
-
-    def unshuffle(self) -> None:
-        self.__songs.unshuffle()
 
     def refreshRate(self) -> float:
         TIMES_THAT_UI_HAS_TO_UPDATE_FOR_SLIDER_WHILE_PLAYING: int = 100

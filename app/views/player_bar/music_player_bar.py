@@ -219,13 +219,15 @@ class MusicPlayerBar(QWidget, Component, ABC):
         self._btnPrevSong.clicked.connect(lambda: MUSIC_PLAYER.playPreviousSong())
         self._btnNextSong.clicked.connect(lambda: MUSIC_PLAYER.playNextSong())
         self._btnLoop.clicked.connect(lambda: MUSIC_PLAYER.setLooping(self._btnLoop.isActive()))
+        self._btnShuffle.clicked.connect(lambda: MUSIC_PLAYER.setShuffle(self._btnShuffle.isActive()))
         self._sliderVolume.valueChanged.connect(lambda: MUSIC_PLAYER.setVolume(self._sliderVolume.value()))
         self._sliderTime.sliderReleased.connect(lambda: self.__skipTo(self._sliderTime.sliderPosition()))
 
         MUSIC_PLAYER.played.connect(lambda: self._playerTrackingThread.start())
         MUSIC_PLAYER.paused.connect(lambda: self._playerTrackingThread.quit())
         MUSIC_PLAYER.songChanged.connect(lambda song: self.__selectSong(song))
-        MUSIC_PLAYER.loopChanged.connect(lambda loop: self._btnLoop.setActive(loop))
+        MUSIC_PLAYER.loopChanged.connect(lambda a0: self._btnLoop.setActive(a0))
+        MUSIC_PLAYER.shuffleChanged.connect(lambda a0: self._btnShuffle.setActive(a0))
         MUSIC_PLAYER.volumeChanged.connect(lambda volume: self.__changeVolumeIcon(volume))
 
     def _assignShortcuts(self) -> None:

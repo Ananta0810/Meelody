@@ -1,4 +1,3 @@
-import random
 import uuid
 from typing import Callable, TypeVar
 
@@ -45,15 +44,14 @@ class Playlist:
 
     class Songs:
         __songs: list[Song]
-        __backupSongs: list[Song]
         __orderBy: Song.Order
         __isSorted: bool
 
-        def __init__(self, songs: list[Song] = None, orderBy: Song.Order = Song.Order.TITLE):
+        def __init__(self, songs: list[Song] = None, isSorted: bool = True, orderBy: Song.Order = Song.Order.TITLE):
             self.__songs = []
             self.__backupSongs = []
             self.__orderBy = orderBy
-            self.__isSorted = True
+            self.__isSorted = isSorted
             if songs is not None:
                 self.insertAll(songs)
 
@@ -119,17 +117,6 @@ class Playlist:
             if songs is not None:
                 for song in songs:
                     self.insert(song)
-
-        def shuffle(self):
-            self.__backupSongs = self.__songs.copy()
-            self.__isSorted = False
-            random.shuffle(self.__songs)
-
-        def unshuffle(self):
-            if len(self.__songs) == len(self.__backupSongs):
-                self.__songs = self.__backupSongs.copy()
-            self.__isSorted = True
-            self.__backupSongs.clear()
 
         def removeSong(self, song: Song) -> None:
             if self.isSorted():
