@@ -71,6 +71,8 @@ class MusicPlayer(QObject):
         return self.__shuffledSongs if self.__isShuffle else self.__songs
 
     def play(self):
+        if not self.__loaded:
+            return
         mixer.music.play(start=self.getPlayingTime())
         self.__finishTrackerThread.start()
         self.played.emit()

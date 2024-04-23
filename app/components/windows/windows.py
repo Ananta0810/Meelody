@@ -2,8 +2,9 @@ from typing import overload, Union
 
 from PyQt5.QtCore import Qt, QSize, QMargins
 from PyQt5.QtGui import QShowEvent, QResizeEvent, QMouseEvent
-from PyQt5.QtWidgets import QMainWindow, QWidget, QVBoxLayout, QDesktopWidget, QLayout
+from PyQt5.QtWidgets import QMainWindow, QWidget, QVBoxLayout, QDesktopWidget, QLayout, QGraphicsDropShadowEffect
 
+from app.helpers.stylesheets import Colors
 from modules.helpers.types.Decorators import override
 
 
@@ -20,19 +21,15 @@ class FramelessWindow(QMainWindow):
         self.__inner = QWidget(self.__outer)
         self.__main_layout = QVBoxLayout(self.__inner)
 
-        self.createUI()
+        self.__createUI()
 
-    def createUI(self) -> None:
+    def __createUI(self) -> None:
         self.setWindowFlags(Qt.Window | Qt.FramelessWindowHint | Qt.WindowMinMaxButtonsHint)
         self.setAttribute(Qt.WA_TranslucentBackground)
         self.setCentralWidget(self.__outer)
 
-        # shadow = QGraphicsDropShadowEffect(blurRadius=32,
-        #                                    color=Colors.PRIMARY.with_alpha(33).to_QColor(),
-        #                                    xOffset=0,
-        #                                    yOffset=3)
-        #
-        # self.__outer.setGraphicsEffect(shadow)
+        shadow = QGraphicsDropShadowEffect(blurRadius=32, color=Colors.PRIMARY.withAlpha(33).toQColor(), xOffset=0, yOffset=3)
+        self.__outer.setGraphicsEffect(shadow)
 
         self.__inner.move(32, 32)
         self.__background.move(32, 32)

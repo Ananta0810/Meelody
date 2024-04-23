@@ -28,7 +28,10 @@ class MusicPlayerBar(QWidget, Component, ABC):
         self._assignShortcuts()
 
         self.setPlayingTime(0)
-
+        self.setTotalTime(0)
+        self._songTitle.setText("Song Title")
+        self._songArtist.setText("Song Artist")
+        
         self.setDefaultCover(Images.DEFAULT_SONG_COVER)
         self._btnPrevSong.applyLightMode()
         self._btnPlaySong.applyLightMode()
@@ -72,13 +75,11 @@ class MusicPlayerBar(QWidget, Component, ABC):
         self._songTitle.enableEllipsis()
         self._songTitle.setFixedWidth(128)
         self._songTitle.setFont(Factory.createFont(size=10, bold=True))
-        self._songTitle.setText("Song Title")
 
         self._songArtist = LabelWithDefaultText()
         self._songArtist.enableEllipsis()
         self._songArtist.setFixedWidth(128)
         self._songArtist.setFont(Factory.createFont(size=9))
-        self._songArtist.setText("Song Artist")
 
         self._infoLayout = QVBoxLayout()
         self._infoLayout.setContentsMargins(0, 0, 0, 0)
@@ -207,10 +208,7 @@ class MusicPlayerBar(QWidget, Component, ABC):
         self._playerTrackingThread = PlayerTrackingThread(self)
 
     def _connectSignalSlots(self) -> None:
-        self._btnPlaySong.clicked.connect(lambda: self.setPlay(False))
-        self._btnPauseSong.clicked.connect(lambda: self.setPlay(True))
         self._btnVolume.clicked.connect(lambda: self._sliderVolume.setVisible(not self._sliderVolume.isVisible()))
-
         self._sliderTime.sliderPressed.connect(lambda: self.__setCanRunTimeSlider(False))
         self._sliderTime.sliderReleased.connect(lambda: self.__setCanRunTimeSlider(True))
 
