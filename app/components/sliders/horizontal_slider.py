@@ -1,4 +1,4 @@
-from abc import ABC
+from typing import Optional
 
 from PyQt5.QtCore import Qt
 from PyQt5.QtWidgets import QSlider, QWidget
@@ -10,10 +10,12 @@ from app.helpers.stylesheets.translators import ClassNameTranslator
 from app.helpers.stylesheets.translators.classname_translator import ClassNameTheme
 
 
-class HorizontalSlider(QSlider, Component, ABC):
+class HorizontalSlider(QSlider, Component):
 
-    def __init__(self, parent: QWidget | None = None):
+    def __init__(self, parent: Optional[QWidget] = None):
         QSlider.__init__(self, parent)
+        super()._initComponent()
+
         self._currentClassName = ""
         self._handleHeight = 10
         self._trackSize = 2

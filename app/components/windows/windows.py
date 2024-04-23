@@ -10,26 +10,25 @@ from modules.helpers.types.Decorators import override
 
 class FramelessWindow(QMainWindow):
 
-    def __init__(self):
+    def __init__(self) -> None:
         super().__init__()
         self.__titleBarHeight: int = 72
         self.__offset: int = 0
 
+        self.__initUI()
+
+    def __initUI(self) -> None:
+        self.setWindowFlags(Qt.Window | Qt.FramelessWindowHint | Qt.WindowMinMaxButtonsHint)
+        self.setAttribute(Qt.WA_TranslucentBackground)
+
         self.__outer = QWidget()
+        self.setCentralWidget(self.__outer)
 
         self.__background = QWidget(self.__outer)
         self.__inner = QWidget(self.__outer)
         self.__main_layout = QVBoxLayout(self.__inner)
 
-        self.__createUI()
-
-    def __createUI(self) -> None:
-        self.setWindowFlags(Qt.Window | Qt.FramelessWindowHint | Qt.WindowMinMaxButtonsHint)
-        self.setAttribute(Qt.WA_TranslucentBackground)
-        self.setCentralWidget(self.__outer)
-
-        shadow = QGraphicsDropShadowEffect(blurRadius=32, color=Colors.PRIMARY.withAlpha(33).toQColor(), xOffset=0, yOffset=3)
-        self.__outer.setGraphicsEffect(shadow)
+        self.__outer.setGraphicsEffect(QGraphicsDropShadowEffect(blurRadius=32, color=Colors.PRIMARY.withAlpha(33).toQColor(), xOffset=0, yOffset=3))
 
         self.__inner.move(32, 32)
         self.__background.move(32, 32)

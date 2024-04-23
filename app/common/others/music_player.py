@@ -203,3 +203,6 @@ class _MusicFinishedTrackThread(QThread):
 
         if thread_id == self.__thread_id:
             self.__onSongFinished()
+
+
+musicPlayer = MusicPlayer()

@@ -1,4 +1,3 @@
-from abc import ABC
 from typing import Optional
 
 from PyQt5.QtWidgets import QWidget, QPushButton
@@ -11,11 +10,12 @@ from app.helpers.stylesheets.translators import ClassNameTranslator
 from app.helpers.stylesheets.translators.classname_translator import ClassNameTheme
 
 
-class ActionButton(QPushButton, Component, ABC):
+class ActionButton(QPushButton, Component):
 
     def __init__(self, parent: Optional[QWidget] = None):
         self.padding: Optional[Padding] = None
         super().__init__(parent)
+        super()._initComponent()
 
     def setPadding(self, padding: Padding) -> None:
         self.padding = padding
@@ -50,7 +50,7 @@ class StateIcon:
         self.darkModeIcon = darkModeIcon or lightModeIcon
 
 
-class MultiStatesIconButton(QPushButton, Component, ABC):
+class MultiStatesIconButton(QPushButton, Component):
 
     def __init__(self, parent: Optional["QWidget"] = None):
         self._icons: list[StateIcon] = []
@@ -59,6 +59,7 @@ class MultiStatesIconButton(QPushButton, Component, ABC):
         self._isDarkMode: bool = False
         self._currentClassName = ""
         super().__init__(parent)
+        super()._initComponent()
 
     def keepSpaceWhenHiding(self) -> None:
         policy = self.sizePolicy()
@@ -106,7 +107,7 @@ class MultiStatesIconButton(QPushButton, Component, ABC):
             self.toNextState()
 
 
-class ToggleIconButton(MultiStatesIconButton, ABC):
+class ToggleIconButton(MultiStatesIconButton):
     __isActive: bool = True
 
     def __init__(self, parent: Optional["QWidget"] = None):
@@ -160,13 +161,14 @@ class ToggleIconButton(MultiStatesIconButton, ABC):
              """
 
 
-class IconButton(QPushButton, Component, ABC):
+class IconButton(QPushButton, Component):
     __isDarkMode: bool = False
     __lightModeIcon: AppIcon
     __darkModeIcon: AppIcon
 
-    def __init__(self, parent: Optional["QWidget"] = None):
+    def __init__(self, parent: Optional[QWidget] = None):
         super().__init__(parent)
+        super()._initComponent()
 
     def keepSpaceWhenHiding(self) -> None:
         policy = self.sizePolicy()
@@ -182,15 +184,6 @@ class IconButton(QPushButton, Component, ABC):
         self.__darkModeIcon = icon
         if self.icon() is None:
             self.setIcon(icon)
-
-    def _createUI(self) -> None:
-        pass
-
-    def _connectSignalSlots(self) -> None:
-        pass
-
-    def _assignShortcuts(self) -> None:
-        pass
 
     def applyLightMode(self) -> None:
         super().applyLightMode()

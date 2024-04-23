@@ -1,3 +1,4 @@
+from app.common.others import signalBus
 from app.resource.qt import Icons, Cursors
 from app.views.windows import MainWindow
 
@@ -13,7 +14,7 @@ class Application:
         self.window = MainWindow()
 
     def __configureDatabase(self):
-        self.window.applyLightMode()
+        signalBus.themeChanged.emit(True)
 
     def run(self) -> None:
         self.window.show()

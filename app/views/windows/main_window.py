@@ -9,7 +9,7 @@ class MainWindow(FramelessWindow, Component):
 
     def __init__(self, width: int = 1280, height: int = 720) -> None:
         super().__init__()
-        self._createUI()
+        super()._initComponent()
 
         self.setFixedWidth(width)
         self.setFixedHeight(height)

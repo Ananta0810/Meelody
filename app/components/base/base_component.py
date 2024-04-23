@@ -1,18 +1,18 @@
-from abc import ABCMeta
-
-from PyQt5.QtWidgets import QWidget
-
+from app.common.others import signalBus
 from app.helpers.base import Strings
 from app.helpers.stylesheets.translators import ClassNameTranslator
 
 
-class MixinMeta(type(QWidget), ABCMeta):
-    pass
-
-
-class Component(metaclass=MixinMeta):
+class Component:
     _lightModeStyle: str = None
     _darkModeStyle: str = None
+
+    def _initComponent(self):
+        self._createUI()
+        self._createThreads()
+        self._connectSignalSlots()
+        self._assignShortcuts()
+        signalBus.themeChanged.connect(lambda light: self.applyLightMode() if light else self.applyDarkMode())
 
     def _createUI(self) -> None:
         pass

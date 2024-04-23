@@ -1,7 +1,6 @@
 import os
 import re
 import string
-from abc import ABC
 from locale import setlocale, LC_ALL
 from typing import final
 
@@ -9,7 +8,7 @@ setlocale(LC_ALL, "")
 
 
 @final
-class Strings(ABC):
+class Strings:
 
     @staticmethod
     def isBlank(value: str) -> bool:

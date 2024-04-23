@@ -1,4 +1,3 @@
-from abc import ABC
 from time import sleep
 from typing import Optional, Union
 
@@ -6,8 +5,8 @@ from PyQt5.QtCore import Qt, QThread
 from PyQt5.QtGui import QKeySequence
 from PyQt5.QtWidgets import QHBoxLayout, QVBoxLayout, QWidget, QShortcut
 
-from app.common.instances import MUSIC_PLAYER
 from app.common.models import Song
+from app.common.others import musicPlayer
 from app.components.base import Component, Cover, LabelWithDefaultText, Factory, StateIcon, CoverProps
 from app.components.sliders import HorizontalSlider
 from app.helpers.others import Times
@@ -15,31 +14,20 @@ from app.helpers.stylesheets import Colors, Paddings
 from app.resource.qt import Images, Icons
 
 
-class MusicPlayerBar(QWidget, Component, ABC):
+class MusicPlayerBar(QWidget, Component):
 
     def __init__(self, parent: Optional["QWidget"] = None):
         super().__init__(parent)
         self.__songLength: float = 0
         self.__canRunTimeSlider = True
 
-        self._createUI()
-        self._createThreads()
-        self._connectSignalSlots()
-        self._assignShortcuts()
+        super()._initComponent()
 
         self._songTitle.setText("Song Title")
         self._songArtist.setText("Song Artist")
         self.setDefaultCover(Images.DEFAULT_SONG_COVER)
         self.setPlayingTime(0)
         self.setTotalTime(0)
-
-        self._btnPrevSong.applyLightMode()
-        self._btnPlaySong.applyLightMode()
-        self._btnPauseSong.applyLightMode()
-        self._btnNextSong.applyLightMode()
-        self._sliderTime.applyLightMode()
-        self._btnTimer.applyLightMode()
-        self._sliderVolume.applyLightMode()
 
     def _createUI(self) -> None:
         self.setAttribute(Qt.WA_StyledBackground, True)
@@ -212,24 +200,24 @@ class MusicPlayerBar(QWidget, Component, ABC):
         self._sliderTime.sliderPressed.connect(lambda: self.__setCanRunTimeSlider(False))
         self._sliderTime.sliderReleased.connect(lambda: self.__setCanRunTimeSlider(True))
 
-        self._btnPlaySong.clicked.connect(lambda: MUSIC_PLAYER.play())
-        self._btnPauseSong.clicked.connect(lambda: MUSIC_PLAYER.pause())
-        self._btnPrevSong.clicked.connect(lambda: MUSIC_PLAYER.playPreviousSong())
-        self._btnNextSong.clicked.connect(lambda: MUSIC_PLAYER.playNextSong())
-        self._btnLoop.clicked.connect(lambda: MUSIC_PLAYER.setLooping(self._btnLoop.isActive()))
-        self._btnShuffle.clicked.connect(lambda: MUSIC_PLAYER.setShuffle(self._btnShuffle.isActive()))
-        self._sliderVolume.valueChanged.connect(lambda: MUSIC_PLAYER.setVolume(self._sliderVolume.value()))
+        self._btnPlaySong.clicked.connect(lambda: musicPlayer.play())
+        self._btnPauseSong.clicked.connect(lambda: musicPlayer.pause())
+        self._btnPrevSong.clicked.connect(lambda: musicPlayer.playPreviousSong())
+        self._btnNextSong.clicked.connect(lambda: musicPlayer.playNextSong())
+        self._btnLoop.clicked.connect(lambda: musicPlayer.setLooping(self._btnLoop.isActive()))
+        self._btnShuffle.clicked.connect(lambda: musicPlayer.setShuffle(self._btnShuffle.isActive()))
+        self._sliderVolume.valueChanged.connect(lambda: musicPlayer.setVolume(self._sliderVolume.value()))
         self._sliderTime.sliderReleased.connect(lambda: self.__skipTo(self._sliderTime.sliderPosition()))
 
-        MUSIC_PLAYER.played.connect(lambda: self.__setPLaying(True))
-        MUSIC_PLAYER.paused.connect(lambda: self.__setPLaying(False))
+        musicPlayer.played.connect(lambda: self.__setPLaying(True))
+        musicPlayer.paused.connect(lambda: self.__setPLaying(False))
 
-        MUSIC_PLAYER.played.connect(lambda: self._playerTrackingThread.start())
-        MUSIC_PLAYER.paused.connect(lambda: self._playerTrackingThread.quit())
-        MUSIC_PLAYER.songChanged.connect(lambda song: self.__selectSong(song))
-        MUSIC_PLAYER.loopChanged.connect(lambda a0: self._btnLoop.setActive(a0))
-        MUSIC_PLAYER.shuffleChanged.connect(lambda a0: self._btnShuffle.setActive(a0))
-        MUSIC_PLAYER.volumeChanged.connect(lambda volume: self.__changeVolumeIcon(volume))
+        musicPlayer.played.connect(lambda: self._playerTrackingThread.start())
+        musicPlayer.paused.connect(lambda: self._playerTrackingThread.quit())
+        musicPlayer.songChanged.connect(lambda song: self.__selectSong(song))
+        musicPlayer.loopChanged.connect(lambda a0: self._btnLoop.setActive(a0))
+        musicPlayer.shuffleChanged.connect(lambda a0: self._btnShuffle.setActive(a0))
+        musicPlayer.volumeChanged.connect(lambda volume: self.__changeVolumeIcon(volume))
 
     def _assignShortcuts(self) -> None:
         play_shortcut = QShortcut(QKeySequence(Qt.Key_Space), self._btnPlaySong)
@@ -277,8 +265,8 @@ class MusicPlayerBar(QWidget, Component, ABC):
     def __skipTo(self, position: int) -> None:
         self._sliderTime.setValue(position)
         try:
-            MUSIC_PLAYER.skipToTime(MUSIC_PLAYER.getCurrentSong().getLength() * position / 100)
-            MUSIC_PLAYER.play()
+            musicPlayer.skipToTime(musicPlayer.getCurrentSong().getLength() * position / 100)
+            musicPlayer.play()
         except AttributeError:
             self._sliderTime.setValue(0)
 
@@ -335,8 +323,8 @@ class PlayerTrackingThread(QThread):
         self.__musicPlayer = musicPlayer
 
     def run(self) -> None:
-        interval: float = MUSIC_PLAYER.refreshRate()
+        interval: float = musicPlayer.refreshRate()
 
-        while MUSIC_PLAYER.isPlaying():
-            self.__musicPlayer.setPlayingTime(MUSIC_PLAYER.getPlayingTime())
+        while musicPlayer.isPlaying():
+            self.__musicPlayer.setPlayingTime(musicPlayer.getPlayingTime())
             sleep(interval)

@@ -1,4 +1,3 @@
-from abc import ABC
 from typing import TypeVar, Callable, final
 
 T = TypeVar('T')
@@ -6,7 +5,7 @@ R = TypeVar('R')
 
 
 @final
-class Lists(ABC):
+class Lists:
 
     @staticmethod
     def nonNull(collection: list[T]) -> list[T]:
