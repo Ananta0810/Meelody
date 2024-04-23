@@ -16,6 +16,7 @@ class MusicPlayer(QObject):
     paused = pyqtSignal()
 
     songChanged = pyqtSignal(Song)
+    loopChanged = pyqtSignal(bool)
     volumeChanged = pyqtSignal(int)
 
     def __init__(self):
@@ -30,6 +31,7 @@ class MusicPlayer(QObject):
         self.__loaded: bool = False
         self.__timeToStopAsSeconds: int | None = None
         self.__elapsedTimeAsSeconds: int = 0
+        self.__isLooping = False
 
         self.__finishTrackerThread = _MusicFinishedTrackThread(self, onSongFinished=self.__onSongFinished)
 
@@ -115,6 +117,10 @@ class MusicPlayer(QObject):
         self.__loaded = False
         self.paused.emit()
 
+    def setLooping(self, a0: bool) -> None:
+        self.__isLooping = a0
+        self.loopChanged.emit(a0)
+
     def resetTime(self) -> None:
         self.__timeStartInSec = 0
 
@@ -151,6 +157,11 @@ class MusicPlayer(QObject):
         )
 
     def __onSongFinished(self) -> None:
+        if self.__isLooping:
+            self.pause(emitSignal=False)
+            self.setStartTime(0)
+            self.play()
+            return
         self.playNextSong()
 
 
