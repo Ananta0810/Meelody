@@ -1,4 +1,5 @@
 from abc import ABC
+from time import sleep
 from typing import Optional, Union
 
 from PyQt5.QtCore import Qt, QThread
@@ -323,10 +324,14 @@ class MusicPlayerBar(QWidget, Component, ABC):
 
 
 class PlayerTrackingThread(QThread):
+
     def __init__(self, musicPlayer: MusicPlayerBar) -> None:
         super().__init__()
-        self.musicPlayer = musicPlayer
+        self.__musicPlayer = musicPlayer
 
     def run(self) -> None:
+        interval: float = MUSIC_PLAYER.refreshRate()
+
         while MUSIC_PLAYER.isPlaying():
-            self.musicPlayer.setPlayingTime(MUSIC_PLAYER.getPlayingTime())
+            self.__musicPlayer.setPlayingTime(MUSIC_PLAYER.getPlayingTime())
+            sleep(interval)
