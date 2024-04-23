@@ -16,8 +16,6 @@ class MainWindow(FramelessWindow, Component):
         self.moveToCenter()
         self.setClassName("rounded-32 bg-white")
 
-        self.applyLightMode()
-
     def _createUI(self) -> None:
         self._musicPlayerBar = MusicPlayerBar()
         self._musicPlayerBar.setFixedHeight(96)

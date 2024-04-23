@@ -3,38 +3,28 @@ from sys import argv, exit
 from PyQt5.QtCore import Qt
 
 from app.components.applications import SingletonApplication
-from app.resource.qt import Icons, Cursors
-from app.views.main_window import MainWindow
+from app.views import Application
 
 
-# def _initConsole():
-#     if sys.stderr is None:
-#         stream = io.StringIO()
-#         sys.stdout = stream
-#         sys.stderr = stream
+# """
+#     - pip install PyQt5
+#     - pip install pygame
+#     - pip install eyed3
+#     - pip install yt-dlp==2023.2.17
+#     - pip install Pillow==9.0.0
+#     - pip install pillow
+# """
 
 
-# def _run_ffmpeg():
-#     basedir = str(os.path.dirname(os.path.abspath(__file__)))
-#     startupInfo = subprocess.STARTUPINFO()
-#     startupInfo.dwFlags |= subprocess.STARTF_USESHOWWINDOW
-#     subprocess.call(f'{basedir}/ffmpeg.exe', startupinfo=startupInfo)
-
-
-def run_application():
-    # _initConsole()
-    # _run_ffmpeg()
-
+def runApplication():
     APP_NAME = "MeelodX"
 
     app = SingletonApplication(argv, APP_NAME)
     app.setAttribute(Qt.AA_DontCreateNativeWidgetSiblings)
     app.setApplicationName(APP_NAME)
 
-    Icons.init()
-    Cursors.init()
-    application = MainWindow()
-    application.show()
+    application = Application()
+    application.run()
 
     # Times.measure(lambda: application, lambda time: print(f"Time to start application: {time}"))
 
@@ -42,4 +32,4 @@ def run_application():
 
 
 if __name__ == '__main__':
-    run_application()
+    runApplication()

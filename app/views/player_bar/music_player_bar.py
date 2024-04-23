@@ -27,12 +27,12 @@ class MusicPlayerBar(QWidget, Component, ABC):
         self._connectSignalSlots()
         self._assignShortcuts()
 
-        self.setPlayingTime(0)
-        self.setTotalTime(0)
         self._songTitle.setText("Song Title")
         self._songArtist.setText("Song Artist")
-        
         self.setDefaultCover(Images.DEFAULT_SONG_COVER)
+        self.setPlayingTime(0)
+        self.setTotalTime(0)
+
         self._btnPrevSong.applyLightMode()
         self._btnPlaySong.applyLightMode()
         self._btnPauseSong.applyLightMode()
@@ -221,6 +221,9 @@ class MusicPlayerBar(QWidget, Component, ABC):
         self._sliderVolume.valueChanged.connect(lambda: MUSIC_PLAYER.setVolume(self._sliderVolume.value()))
         self._sliderTime.sliderReleased.connect(lambda: self.__skipTo(self._sliderTime.sliderPosition()))
 
+        MUSIC_PLAYER.played.connect(lambda: self.__setPLaying(True))
+        MUSIC_PLAYER.paused.connect(lambda: self.__setPLaying(False))
+
         MUSIC_PLAYER.played.connect(lambda: self._playerTrackingThread.start())
         MUSIC_PLAYER.paused.connect(lambda: self._playerTrackingThread.quit())
         MUSIC_PLAYER.songChanged.connect(lambda song: self.__selectSong(song))
@@ -288,9 +291,9 @@ class MusicPlayerBar(QWidget, Component, ABC):
             return None
         return CoverProps.fromBytes(data, width=64, height=64, radius=12)
 
-    def setPlay(self, isPlaying: bool) -> None:
-        self._btnPlaySong.setVisible(isPlaying)
-        self._btnPauseSong.setVisible(not isPlaying)
+    def __setPLaying(self, isPlaying: bool) -> None:
+        self._btnPlaySong.setVisible(not isPlaying)
+        self._btnPauseSong.setVisible(isPlaying)
 
     def setTotalTime(self, time: float) -> None:
         self.__songLength = time
