@@ -215,6 +215,8 @@ class MusicPlayerBar(QWidget, Component, ABC):
 
         self._btnPlaySong.clicked.connect(lambda: MUSIC_PLAYER.play())
         self._btnPauseSong.clicked.connect(lambda: MUSIC_PLAYER.pause())
+        self._btnPrevSong.clicked.connect(lambda: MUSIC_PLAYER.playPreviousSong())
+        self._btnNextSong.clicked.connect(lambda: MUSIC_PLAYER.playNextSong())
         self._sliderVolume.valueChanged.connect(lambda: MUSIC_PLAYER.setVolume(self._sliderVolume.value()))
         self._sliderTime.sliderReleased.connect(lambda: self.__skipTo(self._sliderTime.sliderPosition()))
 

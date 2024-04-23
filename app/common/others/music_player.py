@@ -2,7 +2,7 @@ import os
 
 from PyQt5.QtCore import QObject, pyqtSignal
 
-from app.common.models import Song
+from app.common.models import Song, Playlist
 
 os.environ['PYGAME_HIDE_SUPPORT_PROMPT'] = "hide"
 
@@ -10,6 +10,7 @@ from pygame import mixer
 
 
 class MusicPlayer(QObject):
+    __songs: Playlist.Songs = None
     __currentSong: Song = None
     __currentSongIndex: int = 0
     __timeStartInSec: float = 0
@@ -27,6 +28,12 @@ class MusicPlayer(QObject):
         mixer.pre_init()
         mixer.init()
 
+    def hasAnySong(self):
+        return self.__songs is not None and self.__songs.hasAnySong()
+
+    def loadPlaylist(self, songs: Playlist.Songs) -> None:
+        self.__songs = songs
+
     def setStartTime(self, timeStart: float):
         self.__timeStartInSec = timeStart
 
@@ -36,22 +43,43 @@ class MusicPlayer(QObject):
     def loadSongToPlay(self):
         if self.__loaded:
             return
+
+        song = self.__songs.getSongAt(self.__currentSongIndex)
+        if song is None:
+            return
+
         self.resetTime()
+        self.__currentSong = song
         self.__loaded = True
         mixer.music.unload()
-        mixer.music.load(self.__currentSong.getLocation())
+        mixer.music.load(song.getLocation())
+        self.songChanged.emit(song)
 
     def play(self):
-        mixer.music.play(start=self.__getPlayingTime())
+        mixer.music.play(start=self.getPlayingTime())
         self.played.emit()
+
+    def playPreviousSong(self):
+        if not self.hasAnySong():
+            return
+        self.stop()
+        self.setCurrentSongIndex((self.__currentSongIndex - 1) % self.__songs.size())
+        self.loadSongToPlay()
+        self.setStartTime(0)
+        self.play()
+
+    def playNextSong(self):
+        if not self.hasAnySong():
+            return
+        self.stop()
+        self.setCurrentSongIndex((self.__currentSongIndex + 1) % self.__songs.size())
+        self.loadSongToPlay()
+        self.setStartTime(0)
+        self.play()
 
     def setCurrentSongIndex(self, index: int) -> None:
         self.__currentSongIndex = index
         self.__loaded = False
-
-    def setCurrentSong(self, song: Song) -> None:
-        self.__currentSong = song
-        self.songChanged.emit(song)
 
     def getCurrentSong(self) -> Song:
         return self.__currentSong
@@ -66,7 +94,7 @@ class MusicPlayer(QObject):
     def pause(self) -> None:
         if not self.isPlaying():
             return
-        self.setStartTime(self.__getPlayingTime())
+        self.setStartTime(self.getPlayingTime())
         mixer.music.stop()
         self.paused.emit()
 
@@ -81,11 +109,8 @@ class MusicPlayer(QObject):
     def resetTime(self) -> None:
         self.__timeStartInSec = 0
 
-    def __getPlayingTime(self) -> float:
-        return self.__timeStartInSec + mixer.music.get_pos() / 1000
-
     def getPlayingTime(self) -> float:
-        return self.__getPlayingTime()
+        return self.__timeStartInSec + mixer.music.get_pos() / 1000
 
     def isPlaying(self) -> bool:
         if mixer.get_init() is None:
@@ -99,3 +124,9 @@ class MusicPlayer(QObject):
         MAX_VOLUME = 100
         mixer.music.set_volume(volume / MAX_VOLUME)
         self.volumeChanged.emit(volume)
+
+    def shuffle(self) -> None:
+        self.__songs.shuffle()
+
+    def unshuffle(self) -> None:
+        self.__songs.unshuffle()
