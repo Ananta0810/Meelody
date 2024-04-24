@@ -3,7 +3,8 @@ from typing import Optional
 from PyQt5.QtCore import Qt
 from PyQt5.QtWidgets import QWidget, QVBoxLayout
 
-from app.views.home.songs_menu.songs_table_header import SongsTableHeader
+from app.views.home.songs_table.songs_menu import SongsMenu
+from app.views.home.songs_table.songs_table_header import SongsTableHeader
 
 
 class SongsTable(QWidget):
@@ -22,5 +23,8 @@ class SongsTable(QWidget):
 
         self._header = SongsTableHeader()
         self._header.setFixedHeight(48)
-        
+
+        self._menu = SongsMenu()
+
         self._mainLayout.addWidget(self._header)
+        self._mainLayout.addWidget(self._menu)

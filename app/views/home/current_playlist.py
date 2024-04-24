@@ -6,7 +6,7 @@ from PyQt5.QtWidgets import QWidget, QVBoxLayout, QHBoxLayout
 from app.common.models import Playlist
 from app.components.base import Cover, LabelWithDefaultText, Factory, CoverProps
 from app.resource.qt import Images
-from app.views.home.songs_menu import SongsTable
+from app.views.home.songs_table import SongsTable
 
 
 class Info(QVBoxLayout):
