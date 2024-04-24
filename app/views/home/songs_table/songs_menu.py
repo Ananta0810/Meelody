@@ -72,7 +72,8 @@ class SongsMenu(SmoothVerticalScrollArea):
         self.last: int = 6
         self.__items: list[SongRow] = []
         self._currentSongIndex: list[int] = []
-        self._createUI()
+        self._initComponent()
+        
         for i in range(0, 10):
             song = SongRow()
             self._menu.addWidget(song)
@@ -83,6 +84,7 @@ class SongsMenu(SmoothVerticalScrollArea):
         self.setHorizontalScrollBarPolicy(Qt.ScrollBarAlwaysOff)
         self.setWidgetResizable(True)
         self.setItemHeight(104)
+        self.setClassName("scroll/bg-primary-50 scroll/hover:bg-primary scroll/rounded-2")
 
         self._menu = MenuLayout(self)
         self._menu.setContentsMargins(8, 0, 8, 8)
