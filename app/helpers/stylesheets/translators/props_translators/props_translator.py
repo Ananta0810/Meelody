@@ -1,5 +1,4 @@
 from abc import ABC, abstractmethod
-from typing import List
 
 from PyQt5.QtWidgets import QWidget
 
@@ -12,5 +11,5 @@ class PropsTranslator(ABC):
         pass
 
     @abstractmethod
-    def translate(self, classNames: List[ClassName], target: QWidget) -> str:
+    def translate(self, classNames: list[ClassName], target: QWidget) -> str:
         pass

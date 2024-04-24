@@ -1,5 +1,3 @@
-from typing import List
-
 from PyQt5.QtWidgets import QWidget
 
 from app.helpers.base import Dicts
@@ -32,7 +30,7 @@ class BorderTranslator(PropsTranslator):
     def id(self) -> str:
         return "border"
 
-    def translate(self, names: List[ClassName], target: QWidget) -> str:
+    def translate(self, names: list[ClassName], target: QWidget) -> str:
         dictionary = dict([_toProps(name) for name in names])
 
         size = Dicts.getFrom(dictionary, 'size', otherwise=BorderTranslator.__defaultSize)

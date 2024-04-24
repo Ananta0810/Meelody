@@ -17,7 +17,6 @@ class SongRow(BackgroundWidget):
         super()._initComponent()
 
         self.setClassName("bg-none hover:bg-primary-12 rounded-12")
-        self._cover.setDefaultCover(CoverProps.fromBytes(Images.DEFAULT_SONG_COVER, width=64, height=64, radius=12))
 
         self.__displaySongInfo(song)
 
@@ -32,6 +31,7 @@ class SongRow(BackgroundWidget):
 
         self._cover = Cover(self)
         self._cover.setFixedSize(64, 64)
+        self._cover.setDefaultCover(CoverProps.fromBytes(Images.DEFAULT_SONG_COVER, width=64, height=64, radius=12))
 
         self._labelTitle = LabelWithDefaultText()
         self._labelTitle.enableEllipsis()
@@ -42,11 +42,13 @@ class SongRow(BackgroundWidget):
         self._labelArtist.enableEllipsis()
         self._labelArtist.setFixedWidth(128)
         self._labelArtist.setFont(Factory.createFont(size=10))
+        self._labelArtist.setClassName("text-gray")
 
         self._labelLength = LabelWithDefaultText()
         self._labelLength.enableEllipsis()
         self._labelLength.setFixedWidth(64)
         self._labelLength.setFont(Factory.createFont(size=10))
+        self._labelLength.setClassName("text-gray")
 
         self._info = QHBoxLayout()
         self._info.setSpacing(24)

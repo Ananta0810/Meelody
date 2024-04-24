@@ -1,5 +1,3 @@
-from typing import List
-
 from PyQt5.QtWidgets import QWidget
 
 from app.helpers.base import Lists
@@ -38,7 +36,7 @@ class RoundedTranslator(PropsTranslator):
     def id(self) -> str:
         return "rounded"
 
-    def translate(self, names: List[ClassName], target: QWidget) -> str:
+    def translate(self, names: list[ClassName], target: QWidget) -> str:
         cn = Lists.lastOf(names)
         result = _toProps(cn, target)
 
