@@ -4,7 +4,7 @@ from PyQt5.QtCore import Qt
 from PyQt5.QtWidgets import QWidget, QVBoxLayout
 
 from app.common.models import Song
-from app.common.others import signalBus
+from app.common.others import appCenter
 from app.components.scroll_areas import SmoothVerticalScrollArea
 from app.views.home.songs_table.song_row import SongRow
 
@@ -13,7 +13,6 @@ class SongsMenu(SmoothVerticalScrollArea):
 
     def __init__(self, parent: Optional[QWidget] = None) -> None:
         super().__init__(parent)
-        self.__lightMode = True
         self._initComponent()
 
     def _createUI(self) -> None:
@@ -31,21 +30,13 @@ class SongsMenu(SmoothVerticalScrollArea):
         self.setWidget(self._menu)
 
     def _connectSignalSlots(self) -> None:
-        signalBus.playlistChanged.connect(lambda playlist: self.__setSongs(playlist.getSongs().getSongs()))
+        appCenter.playlistChanged.connect(lambda playlist: self.__setSongs(playlist.getSongs().getSongs()))
 
     def __setSongs(self, songs: list[Song]) -> None:
         for song in songs:
             songRow = SongRow(song)
-            if self.__lightMode:
+            if appCenter.isLightMode:
                 songRow.applyLightMode()
             else:
                 songRow.applyDarkMode()
             self._mainLayout.addWidget(songRow)
-
-    def applyLightMode(self) -> None:
-        super().applyLightMode()
-        self.__lightMode = True
-
-    def applyDarkMode(self) -> None:
-        super().applyDarkMode()
-        self.__lightMode = False

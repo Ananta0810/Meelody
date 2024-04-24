@@ -2,6 +2,7 @@ from typing import Optional
 
 from PyQt5.QtWidgets import QWidget, QPushButton
 
+from app.common.others import appCenter
 from app.components.base.app_icon import AppIcon
 from app.components.base.base_component import Component
 from app.helpers.base import override, Strings
@@ -56,7 +57,6 @@ class MultiStatesIconButton(QPushButton, Component):
         self._icons: list[StateIcon] = []
         self._currentIndex: int = 0
         self._changeStateOnPressed: bool = True
-        self._isDarkMode: bool = False
         self._currentClassName = ""
         super().__init__(parent)
         super()._initComponent()
@@ -86,15 +86,14 @@ class MultiStatesIconButton(QPushButton, Component):
 
     def _changeButtonBasedOnState(self) -> None:
         button = self._icons[self._currentIndex]
-
         self.setClassName(self._currentClassName)
-        if self._isDarkMode:
+
+        if appCenter.isLightMode:
+            self.setIcon(button.lightModeIcon)
+            self.applyLightMode()
+        else:
             self.setIcon(button.darkModeIcon)
             self.applyDarkMode()
-            return
-
-        self.setIcon(button.lightModeIcon)
-        self.applyLightMode()
 
     def setClassName(self, *classNames: str) -> None:
         self._currentClassName = Strings.join(" ", classNames)
@@ -162,7 +161,6 @@ class ToggleIconButton(MultiStatesIconButton):
 
 
 class IconButton(QPushButton, Component):
-    __isDarkMode: bool = False
     __lightModeIcon: AppIcon
     __darkModeIcon: AppIcon
 

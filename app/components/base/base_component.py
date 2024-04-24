@@ -1,4 +1,4 @@
-from app.common.others import signalBus
+from app.common.others import appCenter
 from app.helpers.base import Strings
 from app.helpers.stylesheets.translators import ClassNameTranslator
 
@@ -12,7 +12,7 @@ class Component:
         self._createThreads()
         self._connectSignalSlots()
         self._assignShortcuts()
-        signalBus.themeChanged.connect(lambda light: self.applyLightMode() if light else self.applyDarkMode())
+        appCenter.themeChanged.connect(lambda light: self.applyLightMode() if light else self.applyDarkMode())
 
     def _createUI(self) -> None:
         pass

@@ -1,3 +1,3 @@
+from .application_center import appCenter
 from .database import database
-from .music_player import musicPlayer, MusicPlayer
-from .signal_bus import signalBus
+from .music_player import musicPlayer

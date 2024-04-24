@@ -1,5 +1,5 @@
 from app.common.models import Playlist
-from app.common.others import signalBus, database, musicPlayer
+from app.common.others import appCenter, database, musicPlayer
 from app.resource.qt import Icons, Cursors
 from app.views.windows import MainWindow
 
@@ -21,8 +21,8 @@ class Application:
         musicPlayer.setCurrentSongIndex(0)
         musicPlayer.loadSongToPlay()
 
-        signalBus.playlistChanged.emit(playlist)
-        signalBus.themeChanged.emit(True)
+        appCenter.setActivePlaylist(playlist)
+        appCenter.setLightMode(True)
 
     def run(self) -> 'Application':
         self.window.show()
