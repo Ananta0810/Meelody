@@ -12,8 +12,8 @@ __STYLES = {"solid", "dotted", "dashed", "double", "hidden"}
 
 
 def _toProps(cn: ClassName):
-    if cn.value is None:
-        return "size", 1
+    if cn.value is None or cn.value.lower() == "none":
+        return "size", 0
 
     if cn.value.isdigit():
         return "size", int(cn.value)

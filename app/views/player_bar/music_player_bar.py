@@ -318,13 +318,13 @@ class MusicPlayerBar(QWidget, Component):
 
 class PlayerTrackingThread(QThread):
 
-    def __init__(self, musicPlayer: MusicPlayerBar) -> None:
+    def __init__(self, musicPlayerUI: MusicPlayerBar) -> None:
         super().__init__()
-        self.__musicPlayer = musicPlayer
+        self.__musicPlayerUI = musicPlayerUI
 
     def run(self) -> None:
         interval: float = musicPlayer.refreshRate()
 
         while musicPlayer.isPlaying():
-            self.__musicPlayer.setPlayingTime(musicPlayer.getPlayingTime())
+            self.__musicPlayerUI.setPlayingTime(musicPlayer.getPlayingTime())
             sleep(interval)
