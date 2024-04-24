@@ -1,10 +1,11 @@
 from typing import Optional
 
-from PyQt5.QtGui import QShowEvent, QWheelEvent
-from PyQt5.QtWidgets import QWidget
+from PyQt5.QtGui import QShowEvent
+from PyQt5.QtWidgets import QWidget, QVBoxLayout
 
 from app.components.base import Component
 from app.components.widgets import Body
+from app.views.home.current_playlist import CurrentPlaylist
 
 
 class HomeBody(Body, Component):
@@ -14,20 +15,20 @@ class HomeBody(Body, Component):
         self.setClassName("bg-none border-none")
 
     def _createUI(self) -> None:
-        pass
+        self._inner = QWidget()
+        self.setWidget(self._inner)
 
-    def wheelEvent(self, a0: QWheelEvent) -> None:
-        # carouselY = self.__playlist_carousel.rect().y()
-        # if carouselY <= a0.y() <= carouselY + self.__playlist_carousel.height():
-        #     return
-        return super().wheelEvent(a0)
+        self._mainLayout = QVBoxLayout(self._inner)
+        self._mainLayout.setContentsMargins(0, 0, 0, 0)
+        self._mainLayout.setSpacing(50)
+
+        self._currentPlaylist = CurrentPlaylist()
+        self._mainLayout.addWidget(self._currentPlaylist)
 
     def setContentsMargins(self, left: int, top: int, right: int, bottom: int) -> None:
         self._inner.setContentsMargins(0, top, 0, bottom)
-        # self._playlist_carousel.setContentsMargins(left, 0, right, 0)
-        # self._current_playlist.setContentsMargins(left, 0, right, 0)
+        self._currentPlaylist.setContentsMargins(left, 0, right, 0)
 
     def showEvent(self, event: QShowEvent) -> None:
-        # self._current_playlist.setFixedHeight(self.height())
-        # self._playlist_carousel.setFixedHeight(320)
+        self._currentPlaylist.setFixedHeight(320)
         return super().showEvent(event)

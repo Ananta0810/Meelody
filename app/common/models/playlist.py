@@ -145,21 +145,18 @@ class Playlist:
         def __comparator(self):
             return _comparatorMap[self.__orderBy].comparator()
 
-    __info: 'Info'
-    __songs: 'Songs'
-
-    def __init__(self, info: 'Info', songs: 'Songs'):
+    def __init__(self, info: 'Playlist.Info', songs: 'Playlist.Songs'):
         self.__info = info
         self.__songs = songs
 
     @staticmethod
-    def create(name: str, cover: bytes = None, songs: 'Songs' = None) -> 'Playlist':
+    def create(name: str, cover: bytes = None, songs: 'Playlist.Songs' = None) -> 'Playlist':
         return Playlist(Playlist.Info(name, cover), songs or Playlist.Songs())
 
-    def getInfo(self) -> 'Info':
+    def getInfo(self) -> 'Playlist.Info':
         return self.__info
 
-    def getSongs(self) -> 'Songs':
+    def getSongs(self) -> 'Playlist.Songs':
         return self.__songs
 
     def size(self) -> int:
