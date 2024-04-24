@@ -13,9 +13,13 @@ class Info(QVBoxLayout):
     def __init__(self, parent: Optional[QWidget] = None) -> None:
         super().__init__(parent)
         self.__initUI()
+        self._labelTitle.setText("Library")
+        self._labelTotalSongs.setText("0 TRACKS")
+        self.setDefaultCover(Images.DEFAULT_PLAYLIST_COVER)
 
     def __initUI(self) -> None:
         self.setSpacing(12)
+        self.setAlignment(Qt.AlignTop | Qt.AlignLeft)
 
         self._cover = Cover()
         self._cover.setFixedSize(320, 320)
@@ -37,7 +41,6 @@ class Info(QVBoxLayout):
 
         self.addWidget(self._cover)
         self.addLayout(self._labelsLayout)
-        self.addStretch()
 
     def setPlaylist(self, playlist: Playlist) -> None:
         self._cover.set_cover(self.__createCover(playlist.getInfo().cover))
@@ -48,10 +51,8 @@ class Info(QVBoxLayout):
         self._cover.setDefaultCover(self.__createCover(cover))
 
     @staticmethod
-    def __createCover(pixmapByte: bytes) -> Optional[CoverProps]:
-        if pixmapByte is None:
-            return None
-        return CoverProps.fromBytes(pixmapByte, width=320, height=320, radius=24)
+    def __createCover(data: bytes) -> Optional[CoverProps]:
+        return CoverProps.fromBytes(data, width=320, height=320, radius=24)
 
 
 class CurrentPlaylist(QWidget):
@@ -59,7 +60,6 @@ class CurrentPlaylist(QWidget):
     def __init__(self, parent: Optional[QWidget] = None):
         super().__init__(parent)
         self.__initUI()
-        self._info.setDefaultCover(Images.DEFAULT_PLAYLIST_COVER)
 
     def __initUI(self) -> None:
         self._mainLayout = QHBoxLayout(self)

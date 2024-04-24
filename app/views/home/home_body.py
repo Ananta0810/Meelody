@@ -29,5 +29,4 @@ class HomeBody(QScrollArea, Component):
         self._currentPlaylist.setContentsMargins(left, 0, right, 0)
 
     def showEvent(self, event: QShowEvent) -> None:
-        self._currentPlaylist.setFixedHeight(320)
         return super().showEvent(event)

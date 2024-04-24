@@ -1,22 +1,16 @@
-from typing import Union, Optional, Callable
+from typing import Optional, Callable
 
 from PyQt5.QtCore import QVariantAnimation, QEasingCurve
 from PyQt5.QtGui import QPixmap
-from PyQt5.QtWidgets import QLabel
+from PyQt5.QtWidgets import QLabel, QWidget
 
 from app.helpers.base import Bytes
 from app.helpers.qt.pixmaps import Pixmaps
 
 
 class CoverProps:
-    __createdCovers: dict['CoverProps', QPixmap] = {}
 
-    def __init__(self,
-                 data: bytes,
-                 width: int,
-                 height: int,
-                 radius: int,
-                 ):
+    def __init__(self, data: bytes, width: int, height: int, radius: int, ):
         self.__data: bytes = data
         self.__pixmap: QPixmap | None = None
         self.__width: int = width
@@ -34,9 +28,6 @@ class CoverProps:
     def __hash__(self) -> int:
         return hash((Bytes.decode(self.__data), self.__width, self.__height, self.__radius))
 
-    def __setPixmap(self, pixmap: QPixmap) -> None:
-        self.__pixmap = pixmap
-
     def data(self) -> bytes:
         return self.__data
 
@@ -47,18 +38,11 @@ class CoverProps:
         return self.__pixmap
 
     @staticmethod
-    def fromBytes(
-        imageByte: bytes,
-        width: int = 0,
-        height: int = 0,
-        radius: int = 0,
-        cropCenter: bool = True,
-    ) -> Union['CoverProps', None]:
-        cover = CoverProps(imageByte, width, height, radius)
-        if cover in CoverProps.__createdCovers:
-            pixmap = CoverProps.__createdCovers[cover]
-            cover.__setPixmap(pixmap)
-            return cover
+    def fromBytes(imageByte: bytes, width: int = 0, height: int = 0, radius: int = 0, cropCenter: bool = True, ) -> Optional['CoverProps']:
+        if imageByte is None:
+            return None
+
+        props = CoverProps(imageByte, width, height, radius)
 
         pixmap = Pixmaps.toQPixmap(imageByte)
         if pixmap.isNull():
@@ -69,9 +53,8 @@ class CoverProps:
         if radius > 0:
             pixmap = Pixmaps.round(pixmap, radius)
 
-        cover.__setPixmap(pixmap)
-        CoverProps.__createdCovers[cover] = pixmap
-        return cover
+        props.__pixmap = pixmap
+        return props
 
 
 class Cover(QLabel):
@@ -83,7 +66,7 @@ class Cover(QLabel):
     __radius: int = 0
     __animation: QVariantAnimation
 
-    def __init__(self, parent: Optional["QWidget"] = None):
+    def __init__(self, parent: Optional[QWidget] = None):
         QLabel.__init__(self, parent)
 
     def setDefaultCover(self, cover: CoverProps) -> None:
