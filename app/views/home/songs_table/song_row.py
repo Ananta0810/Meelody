@@ -3,24 +3,24 @@ from typing import Optional
 from PyQt5.QtCore import Qt
 from PyQt5.QtWidgets import QWidget, QHBoxLayout
 
-from app.components.base import Component, Cover, Factory, LabelWithDefaultText
+from app.components.base import Cover, Factory, LabelWithDefaultText
 from app.components.widgets import BackgroundWidget
 from app.helpers.stylesheets import Paddings, Colors
 from app.resource.qt import Icons
 
 
-class SongRow(BackgroundWidget, Component):
+class SongRow(BackgroundWidget):
     def __init__(self, parent: Optional[QWidget] = None):
         self.defaultArtist = ""
 
         super().__init__(parent)
         super()._initComponent()
-        
+
         self.setClassName("bg-none hover:bg-primary-12 rounded-12")
 
     def _createUI(self) -> None:
         self._mainLayout = QHBoxLayout()
-        self._mainLayout.setContentsMargins(20, 12, 20, 12)
+        self._mainLayout.setContentsMargins(20, 0, 20, 0)
         self._mainLayout.setSpacing(0)
         self._mainLayout.setAlignment(Qt.AlignLeft)
         self.setLayout(self._mainLayout)

@@ -4,8 +4,12 @@ from PyQt5.QtCore import Qt, QEvent, QObject
 from PyQt5.QtGui import QResizeEvent
 from PyQt5.QtWidgets import QWidget
 
+from app.components.base import Component
+from app.helpers.base import Strings
+from app.helpers.stylesheets.translators import ClassNameTranslator
 
-class BackgroundWidget(QWidget):
+
+class BackgroundWidget(QWidget, Component):
     __background: QWidget
     __children: list[QWidget]
 
@@ -49,6 +53,11 @@ class BackgroundWidget(QWidget):
             self.__background.style().unpolish(self.__background)
             self.__background.style().polish(self.__background)
         return super().eventFilter(source, event)
+
+    def setClassName(self, *classNames: str) -> None:
+        light, dark = ClassNameTranslator.translate(Strings.join(" ", classNames), self.__background)
+        self._lightModeStyle = light
+        self._darkModeStyle = dark
 
     def setStyleSheet(self, style: str) -> None:
         self.__background.setStyleSheet(style)
