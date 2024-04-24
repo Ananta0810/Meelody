@@ -1,14 +1,13 @@
 from typing import Optional
 
 from PyQt5.QtGui import QShowEvent
-from PyQt5.QtWidgets import QWidget, QVBoxLayout
+from PyQt5.QtWidgets import QWidget, QVBoxLayout, QScrollArea
 
 from app.components.base import Component
-from app.components.widgets import Body
 from app.views.home.current_playlist import CurrentPlaylist
 
 
-class HomeBody(Body, Component):
+class HomeBody(QScrollArea, Component):
     def __init__(self, parent: Optional[QWidget] = None) -> None:
         super().__init__(parent)
         super()._initComponent()
