@@ -6,6 +6,7 @@ from PyQt5.QtWidgets import QWidget, QVBoxLayout, QHBoxLayout
 from app.common.models import Playlist
 from app.components.base import Cover, LabelWithDefaultText, Factory, CoverProps
 from app.resource.qt import Images
+from app.views.home.songs_menu import SongsTable
 
 
 class Info(QVBoxLayout):
@@ -62,11 +63,15 @@ class CurrentPlaylist(QWidget):
 
     def __initUI(self) -> None:
         self._mainLayout = QHBoxLayout(self)
-        self._mainLayout.setAlignment(Qt.AlignLeft)
+        self._mainLayout.setAlignment(Qt.AlignLeft | Qt.AlignTop)
         self._mainLayout.setSpacing(50)
         self._mainLayout.setContentsMargins(0, 0, 0, 0)
 
         self._info = Info()
+        self._menu = SongsTable()
 
         self._mainLayout.addLayout(self._info)
-        # self._mainLayout.addWidget(self.__menu, stretch=2)
+        self._mainLayout.addWidget(self._menu, stretch=2)
+
+    def setPlaylist(self, playlist: Playlist) -> None:
+        self._info.setPlaylist(playlist)

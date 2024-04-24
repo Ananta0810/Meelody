@@ -8,13 +8,14 @@ from app.components.base import Component
 from app.helpers.base import override, Strings
 
 
-class LabelWithDefaultText(QLabel, Component):
-    __defaultText: str = ""
-    __displayingText: str = ""
-    __ellipsis: bool = True
+class EllipsisLabel(QLabel, Component):
 
     def __init__(self, parent: Optional[QWidget] = None):
         super().__init__(parent)
+
+        self.__text: str = ""
+        self.__ellipsis: bool = True
+
         super()._initComponent()
 
     def enableEllipsis(self, a0: bool = True) -> None:
@@ -25,12 +26,46 @@ class LabelWithDefaultText(QLabel, Component):
         super().setWordWrap(on)
         self.__ellipsis = not on
 
-    @override
+    def resizeEvent(self, a0: QResizeEvent) -> None:
+        super().resizeEvent(a0)
+        self.setText(self.__text)
+
+    def setText(self, text: str) -> None:
+        self.__text = text
+        if self.__ellipsis:
+            metrics = QFontMetrics(self.font())
+            ellipsisText = metrics.elidedText(text, Qt.ElideRight, self.width())
+            super().setText(ellipsisText)
+            return
+        return super().setText(self.__text)
+
+    def text(self) -> str:
+        return self.__text
+
+
+class LabelWithDefaultText(QLabel, Component):
+
+    def __init__(self, parent: Optional[QWidget] = None):
+        super().__init__(parent)
+
+        self.__defaultText: str = ""
+        self.__displayingText: str = ""
+        self.__ellipsis: bool = True
+
+        super()._initComponent()
+
+    def enableEllipsis(self, a0: bool = True) -> None:
+        self.__ellipsis = a0
+        super().setWordWrap(not a0)
+
+    def setWordWrap(self, on: bool) -> None:
+        super().setWordWrap(on)
+        self.__ellipsis = not on
+
     def resizeEvent(self, a0: QResizeEvent) -> None:
         super().resizeEvent(a0)
         self.setText(self.__displayingText)
 
-    @override
     def setText(self, text: str) -> None:
         self.__displayingText = text or self.__defaultText
         if self.__ellipsis:
