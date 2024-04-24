@@ -9,7 +9,7 @@ from app.resource.qt import Images
 from app.views.home.songs_table import SongsTable
 
 
-class Info(QVBoxLayout):
+class _Info(QVBoxLayout):
     def __init__(self, parent: Optional[QWidget] = None) -> None:
         super().__init__(parent)
         self.__initUI()
@@ -67,7 +67,7 @@ class CurrentPlaylist(QWidget):
         self._mainLayout.setSpacing(50)
         self._mainLayout.setContentsMargins(0, 0, 0, 0)
 
-        self._info = Info()
+        self._info = _Info()
         self._menu = SongsTable()
 
         self._mainLayout.addLayout(self._info)

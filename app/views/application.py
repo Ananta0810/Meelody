@@ -1,4 +1,5 @@
-from app.common.others import signalBus
+from app.common.models import Playlist
+from app.common.others import signalBus, database
 from app.resource.qt import Icons, Cursors
 from app.views.windows import MainWindow
 
@@ -14,10 +15,13 @@ class Application:
         self.window = MainWindow()
 
     def __configureDatabase(self):
+        playlist = Playlist(Playlist.Info("Library"), Playlist.Songs(database.Songs.load("library", withExtension="mp3")))
+        signalBus.playlistChanged.emit(playlist)
         signalBus.themeChanged.emit(True)
 
-    def run(self) -> None:
+    def run(self) -> 'Application':
         self.window.show()
+        return self
 
     def receiveMessage(self, msg: str) -> None:
         self.window.receiveMessage(msg)

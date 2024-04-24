@@ -3,6 +3,7 @@ from sys import argv, exit
 from PyQt5.QtCore import Qt
 
 from app.components.applications import SingletonApplication
+from app.helpers.others import Times
 from app.views import Application
 
 
@@ -23,10 +24,7 @@ def runApplication():
     app.setAttribute(Qt.AA_DontCreateNativeWidgetSiblings)
     app.setApplicationName(APP_NAME)
 
-    application = Application()
-    application.run()
-
-    # Times.measure(lambda: application, lambda time: print(f"Time to start application: {time}"))
+    Times.measure(lambda: Application().run(), lambda time: print(f"Time to start application: {time}"))
 
     exit(app.exec_())
 
