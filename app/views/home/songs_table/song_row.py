@@ -1,22 +1,25 @@
-from typing import Optional
-
 from PyQt5.QtCore import Qt
 from PyQt5.QtWidgets import QWidget, QHBoxLayout
 
-from app.components.base import Cover, Factory, LabelWithDefaultText
+from app.common.models import Song
+from app.components.base import Cover, Factory, LabelWithDefaultText, CoverProps
 from app.components.widgets import BackgroundWidget
+from app.helpers.others import Times
 from app.helpers.stylesheets import Paddings, Colors
-from app.resource.qt import Icons
+from app.resource.qt import Icons, Images
 
 
 class SongRow(BackgroundWidget):
-    def __init__(self, parent: Optional[QWidget] = None):
-        self.defaultArtist = ""
+    def __init__(self, song: Song):
+        self.__song = song
 
-        super().__init__(parent)
+        super().__init__()
         super()._initComponent()
 
         self.setClassName("bg-none hover:bg-primary-12 rounded-12")
+        self._cover.setDefaultCover(CoverProps.fromBytes(Images.DEFAULT_SONG_COVER, width=64, height=64, radius=12))
+
+        self.__displaySongInfo(song)
 
     def _createUI(self) -> None:
         self._mainLayout = QHBoxLayout()
@@ -78,3 +81,11 @@ class SongRow(BackgroundWidget):
         self._buttonsLayout.addWidget(self._btnLove)
         self._buttonsLayout.addWidget(self._btnPlay)
         self._mainLayout.addWidget(self._buttons)
+
+    def __displaySongInfo(self, song: Song) -> None:
+        self._cover.setCover(CoverProps.fromBytes(song.getCover(), width=64, height=64, radius=12))
+
+        self._labelTitle.setDefaultText(song.getTitle())
+        self._labelArtist.setDefaultText(song.getArtist())
+        self._labelLength.setDefaultText(Times.toString(song.getLength()))
+        self._btnLove.setActive(song.isLoved())
