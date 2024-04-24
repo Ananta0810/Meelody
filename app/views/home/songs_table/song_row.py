@@ -2,6 +2,7 @@ from PyQt5.QtCore import Qt
 from PyQt5.QtWidgets import QWidget, QHBoxLayout
 
 from app.common.models import Song
+from app.common.others import musicPlayer
 from app.components.base import Cover, Factory, LabelWithDefaultText, CoverProps
 from app.components.widgets import BackgroundWidget
 from app.helpers.others import Times
@@ -83,6 +84,12 @@ class SongRow(BackgroundWidget):
         self._buttonsLayout.addWidget(self._btnLove)
         self._buttonsLayout.addWidget(self._btnPlay)
         self._mainLayout.addWidget(self._buttons)
+
+    def _connectSignalSlots(self) -> None:
+        self._btnPlay.clicked.connect(lambda: self.__playCurrentSong())
+
+    def __playCurrentSong(self) -> None:
+        musicPlayer.playSong(self.__song)
 
     def __displaySongInfo(self, song: Song) -> None:
         self._cover.setCover(CoverProps.fromBytes(song.getCover(), width=64, height=64, radius=12))

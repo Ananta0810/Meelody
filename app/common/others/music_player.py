@@ -77,6 +77,17 @@ class MusicPlayer(QObject):
         self.__finishTrackerThread.start()
         self.played.emit()
 
+    def playSong(self, song: Song):
+        if not self.hasAnySong():
+            return
+
+        newIndex = self.__songs.indexOf(song)
+        self.stop()
+        self.setCurrentSongIndex(newIndex)
+        self.loadSongToPlay()
+        self.setStartTime(0)
+        self.play()
+
     def playPreviousSong(self):
         if not self.hasAnySong():
             return
@@ -96,8 +107,9 @@ class MusicPlayer(QObject):
         self.play()
 
     def setCurrentSongIndex(self, index: int) -> None:
-        self.__currentSongIndex = index
-        self.__loaded = False
+        if index != self.__currentSongIndex:
+            self.__currentSongIndex = index
+            self.__loaded = False
 
     def getCurrentSong(self) -> Song:
         return self.__currentSong

@@ -1,5 +1,5 @@
 from app.common.models import Playlist
-from app.common.others import signalBus, database
+from app.common.others import signalBus, database, musicPlayer
 from app.resource.qt import Icons, Cursors
 from app.views.windows import MainWindow
 
@@ -16,6 +16,11 @@ class Application:
 
     def __configureDatabase(self):
         playlist = Playlist(Playlist.Info("Library"), Playlist.Songs(database.Songs.load("library", withExtension="mp3")))
+
+        musicPlayer.loadPlaylist(playlist.getSongs())
+        musicPlayer.setCurrentSongIndex(0)
+        musicPlayer.loadSongToPlay()
+
         signalBus.playlistChanged.emit(playlist)
         signalBus.themeChanged.emit(True)
 
