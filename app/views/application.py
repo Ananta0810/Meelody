@@ -36,7 +36,7 @@ class Application:
             ]
         )
 
-        appCenter.setLightMode(True)
+        appCenter.setLightMode(False)
 
     def run(self) -> 'Application':
         self._mainWindow.show()

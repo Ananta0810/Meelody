@@ -5,7 +5,7 @@ from PyQt5.QtWidgets import QWidget, QPushButton
 from app.common.others import appCenter
 from app.components.base.app_icon import AppIcon
 from app.components.base.base_component import Component
-from app.helpers.base import override, Strings
+from app.helpers.base import Strings
 from app.helpers.stylesheets import Padding
 from app.helpers.stylesheets.translators import ClassNameTranslator
 from app.helpers.stylesheets.translators.classname_translator import ClassNameTheme
@@ -21,7 +21,6 @@ class ActionButton(QPushButton, Component):
     def setPadding(self, padding: Padding) -> None:
         self.padding = padding
 
-    @override
     def setText(self, text: str) -> None:
         super().setText(text)
         self.__paddingText()
@@ -53,7 +52,7 @@ class StateIcon:
 
 class MultiStatesIconButton(QPushButton, Component):
 
-    def __init__(self, parent: Optional["QWidget"] = None):
+    def __init__(self, parent: Optional[QWidget] = None):
         self._icons: list[StateIcon] = []
         self._currentIndex: int = 0
         self._changeStateOnPressed: bool = True
@@ -90,26 +89,31 @@ class MultiStatesIconButton(QPushButton, Component):
 
         if appCenter.isLightMode:
             self.setIcon(button.lightModeIcon)
-            self.applyLightMode()
         else:
-            self.setIcon(button.darkModeIcon)
-            self.applyDarkMode()
+            self.setIcon(button.darkModeIcon or button.lightModeIcon)
 
     def setClassName(self, *classNames: str) -> None:
         self._currentClassName = Strings.join(" ", classNames)
         super().setClassName(self._currentClassName)
 
-    @override
     def mousePressEvent(self, event) -> None:
         super().mousePressEvent(event)
         if self._changeStateOnPressed:
             self.toNextState()
 
+    def applyLightMode(self) -> None:
+        super().applyLightMode()
+        self._changeButtonBasedOnState()
+
+    def applyDarkMode(self) -> None:
+        super().applyDarkMode()
+        self._changeButtonBasedOnState()
+
 
 class ToggleIconButton(MultiStatesIconButton):
     __isActive: bool = True
 
-    def __init__(self, parent: Optional["QWidget"] = None):
+    def __init__(self, parent: Optional[QWidget] = None):
         super().__init__(parent)
         self.setCheckable(True)
 
@@ -161,12 +165,12 @@ class ToggleIconButton(MultiStatesIconButton):
 
 
 class IconButton(QPushButton, Component):
-    __lightModeIcon: AppIcon
-    __darkModeIcon: AppIcon
 
     def __init__(self, parent: Optional[QWidget] = None):
         super().__init__(parent)
         super()._initComponent()
+        self.__lightModeIcon: Optional[AppIcon] = None
+        self.__darkModeIcon: Optional[AppIcon] = None
 
     def keepSpaceWhenHiding(self) -> None:
         policy = self.sizePolicy()
@@ -189,5 +193,4 @@ class IconButton(QPushButton, Component):
 
     def applyDarkMode(self) -> None:
         super().applyDarkMode()
-        print(self._darkModeStyle)
         self.setIcon(self.__darkModeIcon or self.__lightModeIcon)

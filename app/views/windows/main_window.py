@@ -18,7 +18,7 @@ class MainWindow(TitleBarWindow, Component):
         self.moveToCenter()
 
     def _createUI(self) -> None:
-        self.setClassName("rounded-24 bg-white")
+        self.setClassName("rounded-24 bg-white dark:bg-dark")
 
         self._body = HomeBody()
         self._body.setVerticalScrollBarPolicy(Qt.ScrollBarAlwaysOff)
@@ -43,4 +43,4 @@ class MainWindow(TitleBarWindow, Component):
 
     def applyDarkMode(self) -> None:
         super().applyDarkMode()
-        self._musicPlayerBar.setStyleSheet("QWidget#musicPlayer{border-top: 1px solid #202020};border-radius:0px")
+        self._musicPlayerBar.setStyleSheet("QWidget#musicPlayer{border-top: 1px solid #404040};border-radius:0px")

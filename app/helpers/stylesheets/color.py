@@ -41,6 +41,7 @@ class Colors:
     DANGER = Color(255, 80, 80)
     WARNING = Color(255, 170, 28)
     WHITE = Color(255, 255, 255)
+    DARK = Color(24, 24, 24)
     BLACK = Color(0, 0, 0)
     GRAY = Color(128, 128, 128)
     NONE = Color(255, 255, 255, 0)

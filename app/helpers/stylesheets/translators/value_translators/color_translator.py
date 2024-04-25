@@ -11,6 +11,7 @@ variants: dict[str, Color] = {
     "danger": Colors.DANGER,
     "warning": Colors.WARNING,
 
+    "dark": Colors.DARK,
     "white": Colors.WHITE,
     "black": Colors.BLACK,
     "gray": Colors.GRAY,
