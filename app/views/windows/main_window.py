@@ -1,12 +1,12 @@
 from PyQt5.QtCore import Qt
 
 from app.components.base import Component
-from app.components.windows import FramelessWindow
+from app.components.windows.windows import TitleBarWindow
 from app.views.home import HomeBody
 from app.views.player_bar import MusicPlayerBar
 
 
-class MainWindow(FramelessWindow, Component):
+class MainWindow(TitleBarWindow, Component):
 
     def __init__(self, width: int = 1280, height: int = 720) -> None:
         super().__init__()
@@ -15,18 +15,20 @@ class MainWindow(FramelessWindow, Component):
         self.setFixedWidth(width)
         self.setFixedHeight(height)
         self.moveToCenter()
-        self.setClassName("rounded-32 bg-white")
 
     def _createUI(self) -> None:
+        self.setClassName("rounded-24 bg-white")
+
         self._body = HomeBody()
         self._body.setVerticalScrollBarPolicy(Qt.ScrollBarAlwaysOff)
         self._body.setHorizontalScrollBarPolicy(Qt.ScrollBarAlwaysOff)
         self._body.setWidgetResizable(True)
-        self._body.setContentsMargins(72, 50, 50, 0)
+        self._body.setContentsMargins(64, 0, 50, 0)
 
         self._musicPlayerBar = MusicPlayerBar()
         self._musicPlayerBar.setFixedHeight(96)
         self._musicPlayerBar.setObjectName("musicPlayer")
+        self._musicPlayerBar.setContentsMargins(16, 0, 16, 0)
 
         self.addWidget(self._body)
         self.addWidget(self._musicPlayerBar, alignment=Qt.AlignBottom)

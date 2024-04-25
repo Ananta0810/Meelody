@@ -33,7 +33,6 @@ class MusicPlayerBar(QWidget, Component):
         self.setAttribute(Qt.WA_StyledBackground, True)
 
         self._mainLayout = QHBoxLayout(self)
-        self._mainLayout.setContentsMargins(20, 0, 20, 0)
         self._mainLayout.setSpacing(0)
 
         self._left = QHBoxLayout()
@@ -261,6 +260,9 @@ class MusicPlayerBar(QWidget, Component):
 
         shortcut_9 = QShortcut(QKeySequence(Qt.Key_9), self._sliderTime)
         shortcut_9.activated.connect(lambda: self.__skipTo(90))
+
+    def setContentsMargins(self, left: int, top: int, right: int, bottom: int) -> None:
+        self._mainLayout.setContentsMargins(left, top, right, bottom)
 
     def __skipTo(self, position: int) -> None:
         self._sliderTime.setValue(position)
