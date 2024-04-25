@@ -1,6 +1,6 @@
 from typing import Optional, Callable
 
-from PyQt5.QtCore import QVariantAnimation, QEasingCurve
+from PyQt5.QtCore import QVariantAnimation, QEasingCurve, Qt
 from PyQt5.QtGui import QPixmap
 from PyQt5.QtWidgets import QLabel, QWidget
 
@@ -87,10 +87,10 @@ class Cover(QLabel):
         self.setRadius(cover.radius())
         super().setPixmap(cover.content())
 
-    def setAnimation(self, duration: float, start: float, end: float, on_value_changed: Callable) -> None:
+    def setAnimation(self, duration: float, start: float, end: float, onValueChanged: Callable) -> None:
         self.__start = start
         self.__end = end
-        self.__animation = QVariantAnimation(self, valueChanged=on_value_changed, duration=duration)
+        self.__animation = QVariantAnimation(self, valueChanged=onValueChanged, duration=duration)
         self.__animation.setEasingCurve(QEasingCurve.OutCubic)
 
     def zoom(self, value: float) -> None:

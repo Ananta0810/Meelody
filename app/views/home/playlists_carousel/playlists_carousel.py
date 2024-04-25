@@ -7,6 +7,7 @@ from app.components.base import Component, Factory
 from app.components.widgets import StyleWidget
 from app.helpers.stylesheets import Paddings, Colors
 from app.resource.qt import Icons
+from .playlist_card import LibraryPlaylistCard
 
 
 class PlaylistsCarousel(QScrollArea, Component):
@@ -14,7 +15,6 @@ class PlaylistsCarousel(QScrollArea, Component):
     def __init__(self, parent: Optional[QWidget] = None):
         super().__init__(parent)
         self._initComponent()
-        # self._playlistLibrary.setTitle("Library")
         # self._playlistFavourites.setTitle("Favourites")
 
     def _createUI(self):
@@ -26,12 +26,12 @@ class PlaylistsCarousel(QScrollArea, Component):
         self.setWidget(self._inner)
 
         # =================Library=================
-        # self._playlistLibrary = self.__create_library_playlist()
+        self._playlistLibrary = LibraryPlaylistCard()
         # self._playlistFavourites = self.__create_favourite_playlist()
 
         self._defaultPlaylists = QHBoxLayout()
         self._defaultPlaylists.setAlignment(Qt.AlignLeft)
-        # self._defaultPlaylists.addWidget(self._playlistLibrary)
+        self._defaultPlaylists.addWidget(self._playlistLibrary)
         # self._defaultPlaylists.addWidget(self._playlistFavourites)
 
         self._userPlaylists = QHBoxLayout()

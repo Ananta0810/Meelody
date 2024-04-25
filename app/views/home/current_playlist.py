@@ -43,8 +43,8 @@ class _Info(QVBoxLayout):
         self.addLayout(self._labelsLayout)
 
     def setPlaylist(self, playlist: Playlist) -> None:
-        self._cover.set_cover(self.__createCover(playlist.getInfo().cover))
-        self._labelTitle.setText(playlist.getInfo().name)
+        self._cover.set_cover(self.__createCover(playlist.getInfo().__cover))
+        self._labelTitle.setText(playlist.getInfo().__name)
         self._labelTotalSongs.setText(f"{playlist.getSongs().size()} TRACKS")
 
     def setDefaultCover(self, cover: bytes) -> None:

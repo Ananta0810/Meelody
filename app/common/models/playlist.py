@@ -29,18 +29,24 @@ _comparatorMap: dict[Song.Order, _SongComparator] = {
 class Playlist:
     class Info:
         def __init__(self, name: str = None, cover: bytes = None, id: str | None = None):
-            self.name: str = name
-            self.cover: bytes = cover
-            self.id: str = id or str(uuid.uuid4())
+            self.__name: str = name
+            self.__cover: bytes = cover
+            self.__id: str = id or str(uuid.uuid4())
 
         def __eq__(self, other: 'Playlist.Info') -> bool:
-            return Strings.equals(self.name, other.name) and self.cover == other.cover
+            return Strings.equals(self.__name, other.__name) and self.__cover == other.__cover
+
+        def getName(self) -> str:
+            return self.__name
+
+        def getCover(self) -> bytes:
+            return self.__cover
 
         def isNew(self) -> bool:
-            return self.name is None
+            return self.__name is None
 
         def withCover(self, cover: bytes) -> 'Playlist.Info':
-            return Playlist.Info(self.name, cover, self.id)
+            return Playlist.Info(self.__name, cover, self.__id)
 
     class Songs:
         __songs: list[Song]
