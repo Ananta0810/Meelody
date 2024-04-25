@@ -81,132 +81,132 @@ class MusicPlayerBar(QWidget, Component):
         self._playButtons.setContentsMargins(0, 0, 0, 0)
         self._playButtons.setSpacing(8)
 
-        self._btnPrevSong = Factory.createIconButton(size=Icons.LARGE, padding=Paddings.RELATIVE_50)
-        self._btnPrevSong.setLightModeIcon(Icons.PREVIOUS.withColor(Colors.PRIMARY))
-        self._btnPrevSong.setDarkModeIcon(Icons.PREVIOUS.withColor(Colors.WHITE))
-        self._btnPrevSong.setClassName("hover:bg-primary-10 bg-none rounded-full", "dark:bg-primary-25 dark:hover:bg-primary")
+        self._prevSongBtn = Factory.createIconButton(size=Icons.LARGE, padding=Paddings.RELATIVE_50)
+        self._prevSongBtn.setLightModeIcon(Icons.PREVIOUS.withColor(Colors.PRIMARY))
+        self._prevSongBtn.setDarkModeIcon(Icons.PREVIOUS.withColor(Colors.WHITE))
+        self._prevSongBtn.setClassName("hover:bg-primary-10 bg-none rounded-full", "dark:bg-primary-25 dark:hover:bg-primary")
 
-        self._btnPlaySong = Factory.createIconButton(size=Icons.X_LARGE, padding=Paddings.RELATIVE_50)
-        self._btnPlaySong.setLightModeIcon(Icons.PLAY.withColor(Colors.PRIMARY))
-        self._btnPlaySong.setDarkModeIcon(Icons.PLAY.withColor(Colors.WHITE))
-        self._btnPlaySong.setClassName("hover:bg-primary-25 bg-primary-10 rounded-full", "dark:bg-primary dark:hover:bg-primary")
+        self._playSongBtn = Factory.createIconButton(size=Icons.X_LARGE, padding=Paddings.RELATIVE_50)
+        self._playSongBtn.setLightModeIcon(Icons.PLAY.withColor(Colors.PRIMARY))
+        self._playSongBtn.setDarkModeIcon(Icons.PLAY.withColor(Colors.WHITE))
+        self._playSongBtn.setClassName("hover:bg-primary-25 bg-primary-10 rounded-full", "dark:bg-primary dark:hover:bg-primary")
 
-        self._btnPauseSong = Factory.createIconButton(size=Icons.X_LARGE, padding=Paddings.RELATIVE_50)
-        self._btnPauseSong.setLightModeIcon(Icons.PAUSE.withColor(Colors.PRIMARY))
-        self._btnPauseSong.setDarkModeIcon(Icons.PAUSE.withColor(Colors.WHITE))
-        self._btnPauseSong.setClassName("hover:bg-primary-25 bg-primary-10 rounded-full", "dark:bg-primary dark:hover:bg-primary")
-        self._btnPauseSong.hide()
+        self._pauseSongBtn = Factory.createIconButton(size=Icons.X_LARGE, padding=Paddings.RELATIVE_50)
+        self._pauseSongBtn.setLightModeIcon(Icons.PAUSE.withColor(Colors.PRIMARY))
+        self._pauseSongBtn.setDarkModeIcon(Icons.PAUSE.withColor(Colors.WHITE))
+        self._pauseSongBtn.setClassName("hover:bg-primary-25 bg-primary-10 rounded-full", "dark:bg-primary dark:hover:bg-primary")
+        self._pauseSongBtn.hide()
 
-        self._btnNextSong = Factory.createIconButton(size=Icons.LARGE, padding=Paddings.RELATIVE_50)
-        self._btnNextSong.setLightModeIcon(Icons.NEXT.withColor(Colors.PRIMARY))
-        self._btnNextSong.setDarkModeIcon(Icons.NEXT.withColor(Colors.WHITE))
-        self._btnNextSong.setClassName("hover:bg-primary-10 bg-none rounded-full", "dark:bg-primary-25 dark:hover:bg-primary")
+        self._nextSongBtn = Factory.createIconButton(size=Icons.LARGE, padding=Paddings.RELATIVE_50)
+        self._nextSongBtn.setLightModeIcon(Icons.NEXT.withColor(Colors.PRIMARY))
+        self._nextSongBtn.setDarkModeIcon(Icons.NEXT.withColor(Colors.WHITE))
+        self._nextSongBtn.setClassName("hover:bg-primary-10 bg-none rounded-full", "dark:bg-primary-25 dark:hover:bg-primary")
 
-        self._playButtons.addWidget(self._btnPrevSong)
-        self._playButtons.addWidget(self._btnPlaySong)
-        self._playButtons.addWidget(self._btnPauseSong)
-        self._playButtons.addWidget(self._btnNextSong)
+        self._playButtons.addWidget(self._prevSongBtn)
+        self._playButtons.addWidget(self._playSongBtn)
+        self._playButtons.addWidget(self._pauseSongBtn)
+        self._playButtons.addWidget(self._nextSongBtn)
 
         self._left.addWidget(self._songCover)
         self._left.addLayout(self._infoLayout, stretch=1)
         self._left.addLayout(self._playButtons)
 
         # ======================================== MIDDLE ========================================
-        self._labelPlayingTime = LabelWithDefaultText()
-        self._labelPlayingTime.setFixedWidth(60)
-        self._labelPlayingTime.setFont(Factory.createFont(size=9))
-        self._labelPlayingTime.setClassName("text-black dark:text-white")
-        self._labelPlayingTime.setAlignment(Qt.AlignRight | Qt.AlignVCenter)
+        self._playingTimeLabel = LabelWithDefaultText()
+        self._playingTimeLabel.setFixedWidth(60)
+        self._playingTimeLabel.setFont(Factory.createFont(size=9))
+        self._playingTimeLabel.setClassName("text-black dark:text-white")
+        self._playingTimeLabel.setAlignment(Qt.AlignRight | Qt.AlignVCenter)
 
-        self._sliderTime = HorizontalSlider()
-        self._sliderTime.setFixedWidth(250)
-        self._sliderTime.setFixedHeight(12)
-        self._sliderTime.setSliderSize(handle=10)
-        self._sliderTime.setPageStep(0)
-        self._sliderTime.setMaximum(100)
-        self._sliderTime.setProperty("value", 0)
+        self._timeSlider = HorizontalSlider()
+        self._timeSlider.setFixedWidth(250)
+        self._timeSlider.setFixedHeight(12)
+        self._timeSlider.setSliderSize(handle=10)
+        self._timeSlider.setPageStep(0)
+        self._timeSlider.setMaximum(100)
+        self._timeSlider.setProperty("value", 0)
 
-        self._labelTotalTime = LabelWithDefaultText()
-        self._labelTotalTime.setFixedWidth(60)
-        self._labelTotalTime.setFont(Factory.createFont(size=9))
-        self._labelTotalTime.setClassName("text-black dark:text-white")
-        self._labelTotalTime.setAlignment(Qt.AlignLeft | Qt.AlignVCenter)
+        self._totalTimeLabel = LabelWithDefaultText()
+        self._totalTimeLabel.setFixedWidth(60)
+        self._totalTimeLabel.setFont(Factory.createFont(size=9))
+        self._totalTimeLabel.setClassName("text-black dark:text-white")
+        self._totalTimeLabel.setAlignment(Qt.AlignLeft | Qt.AlignVCenter)
 
-        self._middle.addWidget(self._labelPlayingTime)
-        self._middle.addWidget(self._sliderTime)
-        self._middle.addWidget(self._labelTotalTime)
+        self._middle.addWidget(self._playingTimeLabel)
+        self._middle.addWidget(self._timeSlider)
+        self._middle.addWidget(self._totalTimeLabel)
 
         # ======================================== RIGHT ========================================
-        self._btnLoop = Factory.createToggleButton(Icons.LARGE, Paddings.RELATIVE_50)
-        self._btnLoop.setActiveIcon(Icons.LOOP.withColor(Colors.PRIMARY))
-        self._btnLoop.setInactiveIcon(Icons.LOOP.withColor(Colors.GRAY))
-        self._btnLoop.setClassName("rounded-full bg-none active/hover:bg-primary-12 inactive/hover:bg-gray-12")
-        self._btnLoop.setActive(False)
+        self._loopBtn = Factory.createToggleButton(Icons.LARGE, Paddings.RELATIVE_50)
+        self._loopBtn.setActiveIcon(Icons.LOOP.withColor(Colors.PRIMARY))
+        self._loopBtn.setInactiveIcon(Icons.LOOP.withColor(Colors.GRAY))
+        self._loopBtn.setClassName("rounded-full bg-none active/hover:bg-primary-12 inactive/hover:bg-gray-12")
+        self._loopBtn.setActive(False)
 
-        self._btnShuffle = Factory.createToggleButton(Icons.LARGE, Paddings.RELATIVE_50)
-        self._btnShuffle.setActiveIcon(Icons.SHUFFLE.withColor(Colors.PRIMARY))
-        self._btnShuffle.setInactiveIcon(Icons.SHUFFLE.withColor(Colors.GRAY))
-        self._btnShuffle.setClassName("rounded-full bg-none active/hover:bg-primary-12 inactive/hover:bg-gray-12")
-        self._btnShuffle.setActive(False)
+        self._shuffleBtn = Factory.createToggleButton(Icons.LARGE, Paddings.RELATIVE_50)
+        self._shuffleBtn.setActiveIcon(Icons.SHUFFLE.withColor(Colors.PRIMARY))
+        self._shuffleBtn.setInactiveIcon(Icons.SHUFFLE.withColor(Colors.GRAY))
+        self._shuffleBtn.setClassName("rounded-full bg-none active/hover:bg-primary-12 inactive/hover:bg-gray-12")
+        self._shuffleBtn.setActive(False)
 
-        self._btnLove = Factory.createToggleButton(Icons.LARGE, Paddings.RELATIVE_50)
-        self._btnLove.setActiveIcon(Icons.LOVE.withColor(Colors.DANGER))
-        self._btnLove.setInactiveIcon(Icons.LOVE.withColor(Colors.GRAY))
-        self._btnLove.setClassName("rounded-full bg-none active/hover:bg-danger-12 inactive/hover:bg-gray-12")
-        self._btnLove.setActive(False)
+        self._loveBtn = Factory.createToggleButton(Icons.LARGE, Paddings.RELATIVE_50)
+        self._loveBtn.setActiveIcon(Icons.LOVE.withColor(Colors.DANGER))
+        self._loveBtn.setInactiveIcon(Icons.LOVE.withColor(Colors.GRAY))
+        self._loveBtn.setClassName("rounded-full bg-none active/hover:bg-danger-12 inactive/hover:bg-gray-12")
+        self._loveBtn.setActive(False)
 
-        self._btnVolume = Factory.createMultiStatesButton(Icons.LARGE, Paddings.RELATIVE_50)
-        self._btnVolume.setIcons([
+        self._volumeBtn = Factory.createMultiStatesButton(Icons.LARGE, Paddings.RELATIVE_50)
+        self._volumeBtn.setIcons([
             StateIcon(Icons.VOLUME_UP.withColor(Colors.PRIMARY)),
             StateIcon(Icons.VOLUME_DOWN.withColor(Colors.PRIMARY)),
             StateIcon(Icons.VOLUME_SILENT.withColor(Colors.PRIMARY)),
         ])
-        self._btnVolume.setClassName("rounded-full bg-none hover:bg-primary-12")
-        self._btnVolume.setChangeStateOnPressed(False)
-        self._btnVolume.setActiveState(0)
+        self._volumeBtn.setClassName("rounded-full bg-none hover:bg-primary-12")
+        self._volumeBtn.setChangeStateOnPressed(False)
+        self._volumeBtn.setActiveState(0)
 
         self._volumeBox = QWidget()
         self._volumeBoxLayout = QHBoxLayout(self._volumeBox)
         self._volumeBoxLayout.setContentsMargins(0, 0, 0, 0)
 
-        self._sliderVolume = HorizontalSlider()
-        self._sliderVolume.setFixedHeight(40)
-        self._sliderVolume.setPageStep(0)
-        self._sliderVolume.setMaximum(100)
-        self._sliderVolume.setProperty("value", 0)
-        self._sliderVolume.setClassName("rounded-8 bg-primary-10")
-        self._sliderVolume.setSliderPosition(100)
-        self._sliderVolume.hide()
+        self._volumeSlider = HorizontalSlider()
+        self._volumeSlider.setFixedHeight(40)
+        self._volumeSlider.setPageStep(0)
+        self._volumeSlider.setMaximum(100)
+        self._volumeSlider.setProperty("value", 0)
+        self._volumeSlider.setClassName("rounded-8 bg-primary-10")
+        self._volumeSlider.setSliderPosition(100)
+        self._volumeSlider.hide()
 
-        self._volumeBoxLayout.addWidget(self._sliderVolume)
+        self._volumeBoxLayout.addWidget(self._volumeSlider)
 
-        self._btnTimer = Factory.createIconButton(size=Icons.LARGE, padding=Paddings.RELATIVE_50)
-        self._btnTimer.setLightModeIcon(Icons.TIMER.withColor(Colors.PRIMARY))
-        self._btnTimer.setClassName("bg-none hover:bg-primary-10 rounded-full", "dark:bg-primary-25 dark:hover:bg-primary")
+        self._timerBtn = Factory.createIconButton(size=Icons.LARGE, padding=Paddings.RELATIVE_50)
+        self._timerBtn.setLightModeIcon(Icons.TIMER.withColor(Colors.PRIMARY))
+        self._timerBtn.setClassName("bg-none hover:bg-primary-10 rounded-full", "dark:bg-primary-25 dark:hover:bg-primary")
 
-        self._right.addWidget(self._btnLoop)
-        self._right.addWidget(self._btnShuffle)
-        self._right.addWidget(self._btnLove)
-        self._right.addWidget(self._btnVolume)
+        self._right.addWidget(self._loopBtn)
+        self._right.addWidget(self._shuffleBtn)
+        self._right.addWidget(self._loveBtn)
+        self._right.addWidget(self._volumeBtn)
         self._right.addWidget(self._volumeBox, 1)
-        self._right.addWidget(self._btnTimer)
+        self._right.addWidget(self._timerBtn)
 
     def _createThreads(self):
         self._playerTrackingThread = PlayerTrackingThread(self)
 
     def _connectSignalSlots(self) -> None:
-        self._btnVolume.clicked.connect(lambda: self._sliderVolume.setVisible(not self._sliderVolume.isVisible()))
-        self._sliderTime.sliderPressed.connect(lambda: self.__setCanRunTimeSlider(False))
-        self._sliderTime.sliderReleased.connect(lambda: self.__setCanRunTimeSlider(True))
+        self._volumeBtn.clicked.connect(lambda: self._volumeSlider.setVisible(not self._volumeSlider.isVisible()))
+        self._timeSlider.sliderPressed.connect(lambda: self.__setCanRunTimeSlider(False))
+        self._timeSlider.sliderReleased.connect(lambda: self.__setCanRunTimeSlider(True))
 
-        self._btnPlaySong.clicked.connect(lambda: musicPlayer.play())
-        self._btnPauseSong.clicked.connect(lambda: musicPlayer.pause())
-        self._btnPrevSong.clicked.connect(lambda: musicPlayer.playPreviousSong())
-        self._btnNextSong.clicked.connect(lambda: musicPlayer.playNextSong())
-        self._btnLoop.clicked.connect(lambda: musicPlayer.setLooping(self._btnLoop.isActive()))
-        self._btnShuffle.clicked.connect(lambda: musicPlayer.setShuffle(self._btnShuffle.isActive()))
-        self._sliderVolume.valueChanged.connect(lambda: musicPlayer.setVolume(self._sliderVolume.value()))
-        self._sliderTime.sliderReleased.connect(lambda: self.__skipTo(self._sliderTime.sliderPosition()))
+        self._playSongBtn.clicked.connect(lambda: musicPlayer.play())
+        self._pauseSongBtn.clicked.connect(lambda: musicPlayer.pause())
+        self._prevSongBtn.clicked.connect(lambda: musicPlayer.playPreviousSong())
+        self._nextSongBtn.clicked.connect(lambda: musicPlayer.playNextSong())
+        self._loopBtn.clicked.connect(lambda: musicPlayer.setLooping(self._loopBtn.isActive()))
+        self._shuffleBtn.clicked.connect(lambda: musicPlayer.setShuffle(self._shuffleBtn.isActive()))
+        self._volumeSlider.valueChanged.connect(lambda: musicPlayer.setVolume(self._volumeSlider.value()))
+        self._timeSlider.sliderReleased.connect(lambda: self.__skipTo(self._timeSlider.sliderPosition()))
 
         musicPlayer.played.connect(lambda: self.__setPLaying(True))
         musicPlayer.paused.connect(lambda: self.__setPLaying(False))
@@ -214,63 +214,63 @@ class MusicPlayerBar(QWidget, Component):
         musicPlayer.played.connect(lambda: self._playerTrackingThread.start())
         musicPlayer.paused.connect(lambda: self._playerTrackingThread.quit())
         musicPlayer.songChanged.connect(lambda song: self.__selectSong(song))
-        musicPlayer.loopChanged.connect(lambda a0: self._btnLoop.setActive(a0))
-        musicPlayer.shuffleChanged.connect(lambda a0: self._btnShuffle.setActive(a0))
+        musicPlayer.loopChanged.connect(lambda a0: self._loopBtn.setActive(a0))
+        musicPlayer.shuffleChanged.connect(lambda a0: self._shuffleBtn.setActive(a0))
         musicPlayer.volumeChanged.connect(lambda volume: self.__changeVolumeIcon(volume))
 
     def _assignShortcuts(self) -> None:
-        play_shortcut = QShortcut(QKeySequence(Qt.Key_Space), self._btnPlaySong)
-        play_shortcut.activated.connect(self._btnPlaySong.click)
+        play_shortcut = QShortcut(QKeySequence(Qt.Key_Space), self._playSongBtn)
+        play_shortcut.activated.connect(self._playSongBtn.click)
 
-        pause_shortcut = QShortcut(QKeySequence(Qt.Key_Space), self._btnPauseSong)
-        pause_shortcut.activated.connect(self._btnPauseSong.click)
+        pause_shortcut = QShortcut(QKeySequence(Qt.Key_Space), self._pauseSongBtn)
+        pause_shortcut.activated.connect(self._pauseSongBtn.click)
 
-        prev_shortcut = QShortcut(QKeySequence(Qt.Key_Left), self._btnPrevSong)
-        prev_shortcut.activated.connect(self._btnPrevSong.click)
+        prev_shortcut = QShortcut(QKeySequence(Qt.Key_Left), self._prevSongBtn)
+        prev_shortcut.activated.connect(self._prevSongBtn.click)
 
-        next_shortcut = QShortcut(QKeySequence(Qt.Key_Right), self._btnNextSong)
-        next_shortcut.activated.connect(self._btnNextSong.click)
+        next_shortcut = QShortcut(QKeySequence(Qt.Key_Right), self._nextSongBtn)
+        next_shortcut.activated.connect(self._nextSongBtn.click)
 
-        shortcut_0 = QShortcut(QKeySequence(Qt.Key_0), self._sliderTime)
+        shortcut_0 = QShortcut(QKeySequence(Qt.Key_0), self._timeSlider)
         shortcut_0.activated.connect(lambda: self.__skipTo(0))
 
-        shortcut_1 = QShortcut(QKeySequence(Qt.Key_1), self._sliderTime)
+        shortcut_1 = QShortcut(QKeySequence(Qt.Key_1), self._timeSlider)
         shortcut_1.activated.connect(lambda: self.__skipTo(10))
 
-        shortcut_2 = QShortcut(QKeySequence(Qt.Key_2), self._sliderTime)
+        shortcut_2 = QShortcut(QKeySequence(Qt.Key_2), self._timeSlider)
         shortcut_2.activated.connect(lambda: self.__skipTo(20))
 
-        shortcut_3 = QShortcut(QKeySequence(Qt.Key_3), self._sliderTime)
+        shortcut_3 = QShortcut(QKeySequence(Qt.Key_3), self._timeSlider)
         shortcut_3.activated.connect(lambda: self.__skipTo(30))
 
-        shortcut_4 = QShortcut(QKeySequence(Qt.Key_4), self._sliderTime)
+        shortcut_4 = QShortcut(QKeySequence(Qt.Key_4), self._timeSlider)
         shortcut_4.activated.connect(lambda: self.__skipTo(40))
 
-        shortcut_5 = QShortcut(QKeySequence(Qt.Key_5), self._sliderTime)
+        shortcut_5 = QShortcut(QKeySequence(Qt.Key_5), self._timeSlider)
         shortcut_5.activated.connect(lambda: self.__skipTo(50))
 
-        shortcut_6 = QShortcut(QKeySequence(Qt.Key_6), self._sliderTime)
+        shortcut_6 = QShortcut(QKeySequence(Qt.Key_6), self._timeSlider)
         shortcut_6.activated.connect(lambda: self.__skipTo(60))
 
-        shortcut_7 = QShortcut(QKeySequence(Qt.Key_7), self._sliderTime)
+        shortcut_7 = QShortcut(QKeySequence(Qt.Key_7), self._timeSlider)
         shortcut_7.activated.connect(lambda: self.__skipTo(70))
 
-        shortcut_8 = QShortcut(QKeySequence(Qt.Key_8), self._sliderTime)
+        shortcut_8 = QShortcut(QKeySequence(Qt.Key_8), self._timeSlider)
         shortcut_8.activated.connect(lambda: self.__skipTo(80))
 
-        shortcut_9 = QShortcut(QKeySequence(Qt.Key_9), self._sliderTime)
+        shortcut_9 = QShortcut(QKeySequence(Qt.Key_9), self._timeSlider)
         shortcut_9.activated.connect(lambda: self.__skipTo(90))
 
     def setContentsMargins(self, left: int, top: int, right: int, bottom: int) -> None:
         self._mainLayout.setContentsMargins(left, top, right, bottom)
 
     def __skipTo(self, position: int) -> None:
-        self._sliderTime.setValue(position)
+        self._timeSlider.setValue(position)
         try:
             musicPlayer.skipToTime(musicPlayer.getCurrentSong().getLength() * position / 100)
             musicPlayer.play()
         except AttributeError:
-            self._sliderTime.setValue(0)
+            self._timeSlider.setValue(0)
 
     def setDefaultCover(self, cover: bytes) -> None:
         self._songCover.setDefaultCover(self.__createCover(cover))
@@ -282,19 +282,19 @@ class MusicPlayerBar(QWidget, Component):
         return CoverProps.fromBytes(data, width=64, height=64, radius=12)
 
     def __setPLaying(self, isPlaying: bool) -> None:
-        self._btnPlaySong.setVisible(not isPlaying)
-        self._btnPauseSong.setVisible(isPlaying)
+        self._playSongBtn.setVisible(not isPlaying)
+        self._pauseSongBtn.setVisible(isPlaying)
 
     def setTotalTime(self, time: float) -> None:
         self.__songLength = time
-        self._labelTotalTime.setText(Times.toString(time))
+        self._totalTimeLabel.setText(Times.toString(time))
 
     def setPlayingTime(self, time: float) -> None:
         if not self.__canRunTimeSlider:
             return
-        self._labelPlayingTime.setText(Times.toString(time))
+        self._playingTimeLabel.setText(Times.toString(time))
         position = 0 if self.__songLength == 0 else int(time * 100 / self.__songLength)
-        self._sliderTime.setSliderPosition(position)
+        self._timeSlider.setSliderPosition(position)
 
     def __setCanRunTimeSlider(self, enable: bool) -> None:
         self.__canRunTimeSlider = enable
@@ -315,7 +315,7 @@ class MusicPlayerBar(QWidget, Component):
             state = VOLUME_DOWN_STATE
         if 33 < volume <= 100:
             state = VOLUME_UP_STATE
-        self._btnVolume.setActiveState(state)
+        self._volumeBtn.setActiveState(state)
 
 
 class PlayerTrackingThread(QThread):

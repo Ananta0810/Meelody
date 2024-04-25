@@ -13,8 +13,8 @@ class _Info(QVBoxLayout):
     def __init__(self, parent: Optional[QWidget] = None) -> None:
         super().__init__(parent)
         self.__initUI()
-        self._labelTitle.setText("Library")
-        self._labelTotalSongs.setText("0 TRACKS")
+        self._titleLabel.setText("Library")
+        self._totalSongsLabel.setText("0 TRACKS")
         self.setDefaultCover(Images.DEFAULT_PLAYLIST_COVER)
 
     def __initUI(self) -> None:
@@ -27,25 +27,25 @@ class _Info(QVBoxLayout):
         self._labelsLayout = QVBoxLayout()
         self._labelsLayout.setSpacing(0)
 
-        self._labelTitle = LabelWithDefaultText()
-        self._labelTitle.enableEllipsis()
-        self._labelTitle.setFixedWidth(320)
-        self._labelTitle.setFont(Factory.createFont(size=20, bold=True))
+        self._titleLabel = LabelWithDefaultText()
+        self._titleLabel.enableEllipsis()
+        self._titleLabel.setFixedWidth(320)
+        self._titleLabel.setFont(Factory.createFont(size=20, bold=True))
 
-        self._labelTotalSongs = LabelWithDefaultText()
-        self._labelTotalSongs.setFixedWidth(320)
-        self._labelTotalSongs.setFont(Factory.createFont(size=10))
+        self._totalSongsLabel = LabelWithDefaultText()
+        self._totalSongsLabel.setFixedWidth(320)
+        self._totalSongsLabel.setFont(Factory.createFont(size=10))
 
-        self._labelsLayout.addWidget(self._labelTitle)
-        self._labelsLayout.addWidget(self._labelTotalSongs)
+        self._labelsLayout.addWidget(self._titleLabel)
+        self._labelsLayout.addWidget(self._totalSongsLabel)
 
         self.addWidget(self._cover)
         self.addLayout(self._labelsLayout)
 
     def setPlaylist(self, playlist: Playlist) -> None:
         self._cover.set_cover(self.__createCover(playlist.getInfo().__cover))
-        self._labelTitle.setText(playlist.getInfo().__name)
-        self._labelTotalSongs.setText(f"{playlist.getSongs().size()} TRACKS")
+        self._titleLabel.setText(playlist.getInfo().__name)
+        self._totalSongsLabel.setText(f"{playlist.getSongs().size()} TRACKS")
 
     def setDefaultCover(self, cover: bytes) -> None:
         self._cover.setDefaultCover(self.__createCover(cover))

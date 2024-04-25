@@ -36,7 +36,7 @@ class Color(StylesheetProps, ABC):
 
 @final
 class Colors:
-    PRIMARY = Color(128, 64, 255)
+    PRIMARY = Color(100, 32, 255)
     SUCCESS = Color(50, 216, 100)
     DANGER = Color(255, 80, 80)
     WARNING = Color(255, 170, 28)

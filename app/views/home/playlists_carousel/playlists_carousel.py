@@ -41,10 +41,10 @@ class PlaylistsCarousel(QScrollArea, Component):
         self._newPlaylistCard.setFixedSize(256, 320)
         self._newPlaylistCard.setClassName("rounded-24 bg-primary-12")
 
-        self._btnAddPlaylist = Factory.createIconButton(size=Icons.LARGE, padding=Paddings.RELATIVE_67, parent=self._newPlaylistCard)
-        self._btnAddPlaylist.move(self._newPlaylistCard.rect().center() - self._btnAddPlaylist.rect().center())
-        self._btnAddPlaylist.setLightModeIcon(Icons.ADD.withColor(Colors.PRIMARY))
-        self._btnAddPlaylist.setClassName("hover:bg-primary-25 rounded-full")
+        self._addPlaylistBtn = Factory.createIconButton(size=Icons.LARGE, padding=Paddings.RELATIVE_67, parent=self._newPlaylistCard)
+        self._addPlaylistBtn.move(self._newPlaylistCard.rect().center() - self._addPlaylistBtn.rect().center())
+        self._addPlaylistBtn.setLightModeIcon(Icons.ADD.withColor(Colors.PRIMARY))
+        self._addPlaylistBtn.setClassName("hover:bg-primary-25 rounded-full")
 
         self._main_layout = QHBoxLayout(self._inner)
         self._main_layout.setAlignment(Qt.AlignLeft)
