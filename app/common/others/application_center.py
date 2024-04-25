@@ -9,6 +9,7 @@ class ApplicationCenter(QObject):
     themeChanged = pyqtSignal(bool)
     playlistsChanged = pyqtSignal(list)
     currentPlaylistChanged = pyqtSignal(Playlist)
+    exited = pyqtSignal()
 
     def __init__(self) -> None:
         super().__init__()

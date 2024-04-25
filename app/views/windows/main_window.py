@@ -1,5 +1,6 @@
 from PyQt5.QtCore import Qt
 
+from app.common.others import appCenter
 from app.components.base import Component
 from app.components.windows.windows import TitleBarWindow
 from app.views.home import HomeBody
@@ -32,6 +33,9 @@ class MainWindow(TitleBarWindow, Component):
 
         self.addWidget(self._body)
         self.addWidget(self._musicPlayerBar, alignment=Qt.AlignBottom)
+
+    def _connectSignalSlots(self) -> None:
+        self._closeBtn.clicked.connect(lambda: appCenter.exited.emit())
 
     def applyLightMode(self) -> None:
         super().applyLightMode()

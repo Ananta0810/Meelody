@@ -160,10 +160,10 @@ class TitleBarWindow(FramelessWindow):
 
         self._minimizeBtn = Factory.createIconButton(size=Icons.MEDIUM, padding=Paddings.RELATIVE_50)
         self._minimizeBtn.setLightModeIcon(Icons.MINIMIZE.withColor(Colors.PRIMARY))
-        self._minimizeBtn.setClassName("rounded-8 bg-none hover:bg-primary-25")
+        self._minimizeBtn.setClassName("rounded-8 bg-none")
 
         self._closeBtn = Factory.createIconButton(size=Icons.MEDIUM, padding=Paddings.RELATIVE_50)
-        self._closeBtn.setLightModeIcon(Icons.MINIMIZE.withColor(Colors.DANGER))
+        self._closeBtn.setLightModeIcon(Icons.CLOSE.withColor(Colors.DANGER))
         self._closeBtn.setClassName("rounded-8 bg-danger-25 hover:bg-danger-33")
 
         self._titleBarLayout.addStretch()

@@ -7,12 +7,17 @@ from app.views.windows import MainWindow
 class Application:
     def __init__(self):
         self.__createUI()
+        self.__configureApplication()
         self.__configureDatabase()
 
     def __createUI(self):
         Icons.init()
         Cursors.init()
-        self.window = MainWindow()
+        self._mainWindow = MainWindow()
+
+    def __configureApplication(self):
+        appCenter.exited.connect(lambda: musicPlayer.stop())
+        appCenter.exited.connect(lambda: self._mainWindow.close())
 
     def __configureDatabase(self):
         songs = Playlist.Songs(database.Songs.load("library", withExtension="mp3"))
@@ -34,8 +39,8 @@ class Application:
         appCenter.setLightMode(True)
 
     def run(self) -> 'Application':
-        self.window.show()
+        self._mainWindow.show()
         return self
 
     def receiveMessage(self, msg: str) -> None:
-        self.window.receiveMessage(msg)
+        self._mainWindow.receiveMessage(msg)
