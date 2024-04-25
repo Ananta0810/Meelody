@@ -4,26 +4,26 @@ from PyQt5.QtWidgets import QWidget, QHBoxLayout
 from app.common.models import Song
 from app.common.others import musicPlayer
 from app.components.base import Cover, Factory, LabelWithDefaultText, CoverProps
-from app.components.widgets import BackgroundWidget
+from app.components.widgets import StyleWidget
 from app.helpers.others import Times
 from app.helpers.stylesheets import Paddings, Colors
 from app.resource.qt import Icons, Images
 
 
-class SongRow(BackgroundWidget):
+class SongRow(StyleWidget):
     def __init__(self, song: Song):
         self.__song = song
 
         super().__init__()
         super()._initComponent()
 
-        self.setClassName("bg-none hover:bg-primary-12 rounded-12")
+        self.setClassName("bg-none hover:bg-gray-12 rounded-12")
 
         self.__displaySongInfo(song)
 
     def _createUI(self) -> None:
         self._mainLayout = QHBoxLayout()
-        self._mainLayout.setContentsMargins(20, 0, 20, 0)
+        self._mainLayout.setContentsMargins(20, 4, 20, 4)
         self._mainLayout.setSpacing(0)
         self._mainLayout.setAlignment(Qt.AlignLeft)
         self.setLayout(self._mainLayout)

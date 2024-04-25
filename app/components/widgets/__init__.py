@@ -1,1 +1,1 @@
-from .background_widget import BackgroundWidget
+from .style_widget import StyleWidget

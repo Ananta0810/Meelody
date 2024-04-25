@@ -119,19 +119,23 @@ class ClassNameTranslator:
     @staticmethod
     def __toStyle(classNameList, element):
         states = Dicts.group([ClassName.of(cn) for cn in classNameList], by=lambda c: c.state)
-        eName = Classes.typeNameOf(element)
-        translators = PropsTranslators.Translators
+        eName = ClassNameTranslator.__elementId(element)
 
         styles = []
-        
+
         for state, classes in states.items():
-            props = [ClassNameTranslator.__toProp(classes, translator, element) for translator in translators]
+            props = [ClassNameTranslator.__toProp(classes, translator, element) for translator in PropsTranslators.Translators]
             styles.append([f"{eName}{'' if state is None else f':{state}'}", Strings.joinStyles(props)])
 
         if len(styles) == 1:
             return styles[0][1]
 
         return Strings.join("\n", [f"{id} {{{props}}}" for id, props in styles])
+
+    @staticmethod
+    def __elementId(element):
+        eName = Classes.typeNameOf(element)
+        return eName + f"#{element.objectName()}" if Strings.isNotBlank(element.objectName()) else eName
 
     @staticmethod
     def __toProp(classNames: list[ClassName], translator: PropsTranslator, element: QWidget):

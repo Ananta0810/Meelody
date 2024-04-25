@@ -2,9 +2,11 @@ import os
 import re
 import string
 from locale import setlocale, LC_ALL
+from random import choices
 from typing import final
 
 setlocale(LC_ALL, "")
+POPULATION = string.ascii_uppercase + string.digits
 
 
 @final
@@ -17,6 +19,10 @@ class Strings:
     @staticmethod
     def isNotBlank(value: str) -> bool:
         return not Strings.isBlank(value)
+
+    @staticmethod
+    def randomId() -> str:
+        return str.join('', choices(POPULATION, k=13))
 
     @staticmethod
     def unaccent(value: str) -> str:
