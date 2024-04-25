@@ -4,13 +4,13 @@ from PyQt5.QtWidgets import QWidget, QHBoxLayout
 from app.common.models import Song
 from app.common.others import musicPlayer
 from app.components.base import Cover, Factory, LabelWithDefaultText, CoverProps
-from app.components.widgets import StyleWidget
+from app.components.widgets import ExtendableStyleWidget
 from app.helpers.others import Times
 from app.helpers.stylesheets import Paddings, Colors
 from app.resource.qt import Icons, Images
 
 
-class SongRow(StyleWidget):
+class SongRow(ExtendableStyleWidget):
     def __init__(self, song: Song):
         self.__song = song
 
