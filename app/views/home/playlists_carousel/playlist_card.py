@@ -2,12 +2,13 @@ from typing import Optional
 
 from PyQt5.QtCore import QEvent
 from PyQt5.QtGui import QResizeEvent
-from PyQt5.QtWidgets import QWidget, QVBoxLayout
+from PyQt5.QtWidgets import QWidget, QVBoxLayout, QHBoxLayout
 
 from app.common.models import Playlist
 from app.components.base import Cover, LabelWithDefaultText, Factory, CoverProps
 from app.components.widgets import ExtendableStyleWidget
-from app.resource.qt import Cursors, Images
+from app.helpers.stylesheets import Paddings, Colors
+from app.resource.qt import Cursors, Images, Icons
 
 
 class PlaylistCard(ExtendableStyleWidget):
@@ -63,3 +64,25 @@ class LibraryPlaylistCard(PlaylistCard):
         super()._initComponent()
         self._title.setText("Library")
         self._cover.setCover(self._toCoverProps(Images.DEFAULT_PLAYLIST_COVER))
+
+
+class FavouritePlaylistCard(PlaylistCard):
+
+    def __init__(self, parent: Optional[QWidget] = None):
+        super().__init__(parent)
+        super()._initComponent()
+        self._title.setText("Favourite")
+        self._cover.setCover(self._toCoverProps(Images.DEFAULT_PLAYLIST_COVER))
+
+    def _createUI(self) -> None:
+        super()._createUI()
+        self._editCoverBtn = Factory.createIconButton(size=Icons.MEDIUM, padding=Paddings.RELATIVE_50)
+        self._editCoverBtn.setLightModeIcon(Icons.IMAGE.withColor(Colors.WHITE))
+        self._editCoverBtn.setClassName("rounded-full bg-primary-25 hover:bg-primary-50")
+
+        self._topLayout = QHBoxLayout()
+        self._topLayout.addStretch(1)
+        self._topLayout.setContentsMargins(0, 0, 0, 0)
+        self._topLayout.addWidget(self._editCoverBtn)
+
+        self._mainLayout.insertLayout(0, self._topLayout)
