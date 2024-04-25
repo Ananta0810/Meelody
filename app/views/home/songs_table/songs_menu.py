@@ -30,7 +30,7 @@ class SongsMenu(SmoothVerticalScrollArea):
         self.setWidget(self._menu)
 
     def _connectSignalSlots(self) -> None:
-        appCenter.playlistChanged.connect(lambda playlist: self.__setSongs(playlist.getSongs().getSongs()))
+        appCenter.currentPlaylistChanged.connect(lambda playlist: self.__setSongs(playlist.getSongs().getSongs()))
 
     def __setSongs(self, songs: list[Song]) -> None:
         for song in songs:

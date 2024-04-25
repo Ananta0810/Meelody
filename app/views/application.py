@@ -15,14 +15,22 @@ class Application:
         self.window = MainWindow()
 
     def __configureDatabase(self):
-        playlist = Playlist(Playlist.Info("Library"), Playlist.Songs(database.Songs.load("library", withExtension="mp3")))
+        songs = Playlist.Songs(database.Songs.load("library", withExtension="mp3"))
+        library = Playlist(Playlist.Info("Library"), songs)
 
-        musicPlayer.loadPlaylist(playlist.getSongs())
+        musicPlayer.loadPlaylist(library.getSongs())
         musicPlayer.setCurrentSongIndex(0)
         musicPlayer.loadSongToPlay()
 
-        appCenter.setActivePlaylist(playlist)
         appCenter.setLightMode(True)
+        appCenter.setActivePlaylist(library)
+        appCenter.setPlaylists(
+            [
+                Playlist(Playlist.Info("Summer"), songs),
+                Playlist(Playlist.Info("Chill"), songs),
+                Playlist(Playlist.Info("Morning"), songs),
+            ]
+        )
 
     def run(self) -> 'Application':
         self.window.show()

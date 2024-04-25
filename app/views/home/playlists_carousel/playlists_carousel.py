@@ -3,11 +3,13 @@ from typing import Optional
 from PyQt5.QtCore import Qt
 from PyQt5.QtWidgets import QScrollArea, QWidget, QHBoxLayout
 
+from app.common.models import Playlist
+from app.common.others import appCenter
 from app.components.base import Component, Factory
 from app.components.widgets import StyleWidget
 from app.helpers.stylesheets import Paddings, Colors
 from app.resource.qt import Icons
-from .playlist_card import LibraryPlaylistCard, FavouritePlaylistCard
+from .playlist_card import LibraryPlaylistCard, FavouritePlaylistCard, UserPlaylistCard
 
 
 class PlaylistsCarousel(QScrollArea, Component):
@@ -29,12 +31,10 @@ class PlaylistsCarousel(QScrollArea, Component):
         self._playlistFavourites = FavouritePlaylistCard()
 
         self._defaultPlaylists = QHBoxLayout()
-        self._defaultPlaylists.setAlignment(Qt.AlignLeft)
         self._defaultPlaylists.addWidget(self._playlistLibrary)
         self._defaultPlaylists.addWidget(self._playlistFavourites)
 
         self._userPlaylists = QHBoxLayout()
-        self._userPlaylists.setAlignment(Qt.AlignLeft)
 
         # =================New playlist=================
         self._newPlaylistCard = StyleWidget()
@@ -56,6 +56,9 @@ class PlaylistsCarousel(QScrollArea, Component):
         self._main_layout.addWidget(self._newPlaylistCard)
         self._main_layout.addStretch()
 
+    def _connectSignalSlots(self) -> None:
+        appCenter.playlistsChanged.connect(lambda playlists: self.setPlaylists(playlists))
+
     def wheelEvent(self, event):
         delta = event.angleDelta().y()
 
@@ -64,3 +67,9 @@ class PlaylistsCarousel(QScrollArea, Component):
 
     def setContentsMargins(self, left: int, top: int, right: int, bottom: int) -> None:
         self._main_layout.setContentsMargins(left, top, right, bottom)
+
+    def setPlaylists(self, playlists: list[Playlist]) -> None:
+        pass
+        for playlist in playlists:
+            userPlaylist = UserPlaylistCard(playlist)
+            self._userPlaylists.addWidget(userPlaylist)

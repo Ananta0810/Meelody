@@ -34,9 +34,7 @@ class PlaylistCard(ExtendableStyleWidget):
         self._mainLayout.addStretch()
         self._mainLayout.addWidget(self._title)
 
-    def setPlaylist(self, playlist: Playlist) -> None:
-        info = playlist.getInfo()
-
+    def setInfo(self, info: Playlist.Info) -> None:
         self._title.setText(info.getName())
         self._cover.setCover(self._toCoverProps(info.getCover()))
 
@@ -78,11 +76,42 @@ class FavouritePlaylistCard(PlaylistCard):
         super()._createUI()
         self._editCoverBtn = Factory.createIconButton(size=Icons.MEDIUM, padding=Paddings.RELATIVE_50)
         self._editCoverBtn.setLightModeIcon(Icons.IMAGE.withColor(Colors.WHITE))
-        self._editCoverBtn.setClassName("rounded-full bg-primary-25 hover:bg-primary-50")
+        self._editCoverBtn.setClassName("rounded-full bg-primary-75 hover:bg-primary-100")
 
         self._topLayout = QHBoxLayout()
         self._topLayout.addStretch(1)
         self._topLayout.setContentsMargins(0, 0, 0, 0)
         self._topLayout.addWidget(self._editCoverBtn)
 
+        self._mainLayout.insertLayout(0, self._topLayout)
+
+
+class UserPlaylistCard(PlaylistCard):
+
+    def __init__(self, playlist: Playlist):
+        super().__init__()
+        super()._initComponent()
+
+        self._title.setDefaultText("New Playlist")
+        self.setInfo(playlist.getInfo())
+
+    def _createUI(self) -> None:
+        super()._createUI()
+        self._editBtn = Factory.createIconButton(size=Icons.MEDIUM, padding=Paddings.RELATIVE_50)
+        self._editBtn.setLightModeIcon(Icons.EDIT.withColor(Colors.WHITE))
+        self._editBtn.setClassName("rounded-full bg-primary-75 hover:bg-primary-100")
+
+        self._deleteBtn = Factory.createIconButton(size=Icons.MEDIUM, padding=Paddings.RELATIVE_50)
+        self._deleteBtn.setLightModeIcon(Icons.DELETE.withColor(Colors.WHITE))
+        self._deleteBtn.setClassName("rounded-full bg-danger-75 hover:bg-danger-100")
+
+        self._buttonsLayout = QVBoxLayout()
+        self._buttonsLayout.setContentsMargins(0, 0, 0, 0)
+        self._buttonsLayout.addWidget(self._editBtn)
+        self._buttonsLayout.addWidget(self._deleteBtn)
+
+        self._topLayout = QHBoxLayout()
+        self._topLayout.setContentsMargins(0, 0, 0, 0)
+        self._topLayout.addStretch(1)
+        self._topLayout.addLayout(self._buttonsLayout)
         self._mainLayout.insertLayout(0, self._topLayout)
