@@ -22,7 +22,6 @@ class Application:
         musicPlayer.setCurrentSongIndex(0)
         musicPlayer.loadSongToPlay()
 
-        appCenter.setLightMode(True)
         appCenter.setActivePlaylist(library)
         appCenter.setPlaylists(
             [
@@ -31,6 +30,8 @@ class Application:
                 Playlist(Playlist.Info("Morning"), songs),
             ]
         )
+
+        appCenter.setLightMode(True)
 
     def run(self) -> 'Application':
         self.window.show()

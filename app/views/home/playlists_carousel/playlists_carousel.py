@@ -30,11 +30,11 @@ class PlaylistsCarousel(QScrollArea, Component):
         self._playlistLibrary = LibraryPlaylistCard()
         self._playlistFavourites = FavouritePlaylistCard()
 
-        self._defaultPlaylists = QHBoxLayout()
-        self._defaultPlaylists.addWidget(self._playlistLibrary)
-        self._defaultPlaylists.addWidget(self._playlistFavourites)
-
-        self._userPlaylists = QHBoxLayout()
+        self._userPlaylists = QWidget()
+        self._userPlaylistsLayout = QHBoxLayout(self._userPlaylists)
+        self._userPlaylistsLayout.setAlignment(Qt.AlignLeft)
+        self._userPlaylistsLayout.setSpacing(32)
+        self._userPlaylistsLayout.setContentsMargins(0, 0, 0, 0)
 
         # =================New playlist=================
         self._newPlaylistCard = StyleWidget()
@@ -51,8 +51,9 @@ class PlaylistsCarousel(QScrollArea, Component):
         self._main_layout.setSpacing(32)
         self._main_layout.setContentsMargins(0, 0, 0, 0)
 
-        self._main_layout.addLayout(self._defaultPlaylists)
-        self._main_layout.addLayout(self._userPlaylists)
+        self._main_layout.addWidget(self._playlistLibrary)
+        self._main_layout.addWidget(self._playlistFavourites)
+        self._main_layout.addWidget(self._userPlaylists)
         self._main_layout.addWidget(self._newPlaylistCard)
         self._main_layout.addStretch()
 
@@ -72,4 +73,4 @@ class PlaylistsCarousel(QScrollArea, Component):
         pass
         for playlist in playlists:
             userPlaylist = UserPlaylistCard(playlist)
-            self._userPlaylists.addWidget(userPlaylist)
+            self._userPlaylistsLayout.addWidget(userPlaylist)
