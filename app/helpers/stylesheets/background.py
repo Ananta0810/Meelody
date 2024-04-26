@@ -1,7 +1,6 @@
 from abc import ABC
 from typing import final
 
-from app.helpers.base import override
 from .color import Color, Colors
 from .stylesheet_props import StylesheetProps
 
@@ -14,7 +13,6 @@ class Background(StylesheetProps, ABC):
     def __str__(self) -> str:
         return self.color.__str__()
 
-    @override
     def toStylesheet(self) -> str:
         return f"background-color:{'None' if self.color is None else self.color.toStylesheet()}"
 

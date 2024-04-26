@@ -1,4 +1,3 @@
-from app.helpers.base import override
 from .color import Color
 from .stylesheet_props import StylesheetProps
 
@@ -18,7 +17,6 @@ class Border(StylesheetProps):
     def withColor(self, color: Color) -> 'Border':
         return Border(self.size, color, self.style)
 
-    @override
     def toStylesheet(self) -> str:
         return f"{self.size}px {self.style} {self.color.toStylesheet()}"
 

@@ -4,7 +4,7 @@ from typing import final
 
 from PyQt5.QtGui import QColor
 
-from app.helpers.base import override, Numbers
+from app.helpers.base import Numbers
 from app.helpers.stylesheets.stylesheet_props import StylesheetProps
 
 
@@ -18,7 +18,6 @@ class Color(StylesheetProps, ABC):
     def __str__(self) -> str:
         return self.toStylesheet()
 
-    @override
     def toStylesheet(self) -> str:
         return f"rgba({self.red}, {self.green}, {self.blue}, {self.alpha / 255})"
 

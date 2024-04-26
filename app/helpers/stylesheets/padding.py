@@ -1,7 +1,6 @@
 from abc import ABC
 from typing import final
 
-from app.helpers.base import override
 from app.helpers.stylesheets.stylesheet_props import StylesheetProps
 
 
@@ -25,7 +24,6 @@ class Padding(StylesheetProps, ABC):
             return self.height * size
         return self.height
 
-    @override
     def toStylesheet(self, size: int = 0) -> str:
         return f"{self.getWidth(size)}px {self.getHeight(size)}px"
 

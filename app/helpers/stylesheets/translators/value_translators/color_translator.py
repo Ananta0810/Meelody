@@ -1,6 +1,5 @@
 from typing import List
 
-from app.helpers.base import override
 from app.helpers.stylesheets import Color, Colors
 from app.helpers.stylesheets.translators.value_translators.value_translator import ValueTranslator
 
@@ -21,7 +20,6 @@ variants: dict[str, Color] = {
 
 class ColorTranslator(ValueTranslator[Color]):
 
-    @override
     def translate(self, classNames: List[str]) -> Color:
         colorsFound = [self.transform(cn) for cn in classNames if self.isValid(cn)]
         return colorsFound[0]

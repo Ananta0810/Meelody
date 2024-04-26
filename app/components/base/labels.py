@@ -5,7 +5,7 @@ from PyQt5.QtGui import QFontMetrics, QResizeEvent
 from PyQt5.QtWidgets import QLabel, QLineEdit, QWidget
 
 from app.components.base import Component
-from app.helpers.base import override, Strings
+from app.helpers.base import Strings
 
 
 class EllipsisLabel(QLabel, Component):
@@ -91,14 +91,12 @@ class Input(QLineEdit):
     def __init__(self, parent: Optional["QWidget"] = None):
         super().__init__(parent)
 
-    @override
     def keyPressEvent(self, a0):
         super().keyPressEvent(a0)
         if a0.key() != Qt.Key_Return:
             return
         self.onChange.emit(self.text())
 
-    @override
     def setText(self, text: str) -> None:
         super().setText(text or self.__defaultText)
         metrics = self.fontMetrics()
