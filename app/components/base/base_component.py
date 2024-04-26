@@ -32,7 +32,13 @@ class Component:
         self._darkModeStyle = dark
 
     def applyLightMode(self) -> None:
-        self.setStyleSheet(self._lightModeStyle)
+        try:
+            self.setStyleSheet(self._lightModeStyle)
+        except AttributeError:
+            pass
 
     def applyDarkMode(self) -> None:
-        self.setStyleSheet(self._darkModeStyle)
+        try:
+            self.setStyleSheet(self._darkModeStyle)
+        except AttributeError:
+            pass
