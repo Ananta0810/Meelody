@@ -38,7 +38,7 @@ class CoverProps:
         return self.__pixmap
 
     @staticmethod
-    def fromBytes(imageByte: bytes, width: int = 0, height: int = 0, radius: int = 0, cropCenter: bool = True, ) -> Optional['CoverProps']:
+    def fromBytes(imageByte: bytes, width: int = 0, height: int = 0, radius: int = 0, cropCenter: bool = True) -> Optional['CoverProps']:
         if imageByte is None:
             return None
 

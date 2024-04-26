@@ -22,3 +22,19 @@ class memoizeStaticProperty(property):
         value = classmethod(self.fget).__get__(None, owner)()
         setattr(self, methodId, value)
         return value
+
+
+def memoizeResult(f):
+    def wrapped(*args, **kwargs):
+        if not hasattr(wrapped, '_cachedValue'):
+            wrapped._cachedValue = {}
+
+        key = f"{args} - {kwargs}"
+        if key in wrapped._cachedValue:
+            return wrapped._cachedValue[key]
+
+        result = f(*args, **kwargs)
+        wrapped._cachedValue[key] = result
+        return result
+
+    return wrapped
