@@ -9,6 +9,7 @@ from app.helpers.base import Strings
 from app.helpers.stylesheets import Padding
 from app.helpers.stylesheets.translators import ClassNameTranslator
 from app.helpers.stylesheets.translators.classname_translator import ClassNameTheme
+from app.resource.qt import Cursors
 
 
 class ActionButton(QPushButton, Component):
@@ -17,6 +18,9 @@ class ActionButton(QPushButton, Component):
         self.padding: Optional[Padding] = None
         super().__init__(parent)
         super()._initComponent()
+
+    def _createUI(self) -> None:
+        self.setCursor(Cursors.HAND)
 
     def setPadding(self, padding: Padding) -> None:
         self.padding = padding
@@ -33,12 +37,6 @@ class ActionButton(QPushButton, Component):
             textSize.width() + self.padding.getWidth(textSize.width()),
             textSize.height() + self.padding.getHeight(textSize.height()),
         )
-
-    def __setLightModeBackground(self, style: str) -> None:
-        self.__lightModeBackground = style
-
-    def __setDarkModeBackground(self, style: str) -> None:
-        self.__darkModeBackground = style
 
 
 class StateIcon:

@@ -6,6 +6,7 @@ from PyQt5.QtWidgets import QWidget, QHBoxLayout, QFileDialog
 from app.components.base import Factory, EllipsisLabel, Component
 from app.helpers.stylesheets import Paddings, Colors
 from app.resource.qt import Icons
+from app.views.home.songs_table.dialogs import DownloadSongsDialog
 from app.views.threads import ImportSongsToLibraryThread
 
 
@@ -89,8 +90,13 @@ class SongsTableHeader(QWidget, Component):
 
     def _connectSignalSlots(self) -> None:
         self._addSongsToLibraryBtn.clicked.connect(lambda: self._addSongToLibrary())
+        self._downloadSongsToLibraryBtn.clicked.connect(lambda: self._openDownloadSongDialogs())
 
     def _addSongToLibrary(self) -> None:
         paths = QFileDialog.getOpenFileNames(self, filter="MP3 (*.MP3 *.mp3)")[0]
         if paths is not None and len(paths) > 0:
             ImportSongsToLibraryThread(paths).start()
+
+    def _openDownloadSongDialogs(self) -> None:
+        downloadDialog = DownloadSongsDialog()
+        downloadDialog.show()

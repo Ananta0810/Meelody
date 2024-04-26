@@ -84,12 +84,13 @@ class LabelWithDefaultText(QLabel, Component):
             self.setText(text)
 
 
-class Input(QLineEdit):
+class Input(QLineEdit, Component):
     __defaultText: str = ""
     onChange: pyqtSignal = pyqtSignal(str)
 
-    def __init__(self, parent: Optional["QWidget"] = None):
+    def __init__(self, parent: Optional[QWidget] = None):
         super().__init__(parent)
+        super()._initComponent()
 
     def keyPressEvent(self, a0):
         super().keyPressEvent(a0)
