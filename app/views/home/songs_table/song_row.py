@@ -38,6 +38,7 @@ class SongRow(ExtendableStyleWidget):
         self._titleLabel.enableEllipsis()
         self._titleLabel.setFixedWidth(188)
         self._titleLabel.setFont(Factory.createFont(size=10))
+        self._titleLabel.setClassName("text-black dark:text-white")
 
         self._artistLabel = LabelWithDefaultText()
         self._artistLabel.enableEllipsis()
@@ -64,17 +65,20 @@ class SongRow(ExtendableStyleWidget):
         self._moreBtn = Factory.createIconButton(size=Icons.LARGE, padding=Paddings.RELATIVE_50)
         self._moreBtn.setLightModeIcon(Icons.MORE.withColor(Colors.PRIMARY))
         self._moreBtn.setDarkModeIcon(Icons.MORE.withColor(Colors.WHITE))
-        self._moreBtn.setClassName("hover:bg-primary-25 rounded-full", "dark:bg-primary dark:hover:bg-primary")
+        self._moreBtn.setClassName("hover:bg-primary-25 rounded-full", "dark:hover:bg-white-12")
 
         self._loveBtn = Factory.createToggleButton(Icons.LARGE, Paddings.RELATIVE_50)
         self._loveBtn.setActiveIcon(Icons.LOVE.withColor(Colors.DANGER))
         self._loveBtn.setInactiveIcon(Icons.LOVE.withColor(Colors.GRAY))
-        self._loveBtn.setClassName("rounded-full bg-none active/hover:bg-danger-12 inactive/hover:bg-gray-12")
+        self._loveBtn.setClassName(
+            "rounded-full bg-none active/hover:bg-danger-12 inactive/hover:bg-gray-12",
+            "dark:active/hover:bg-danger-12 dark:inactive/hover:bg-white-12"
+        )
 
         self._playBtn = Factory.createIconButton(size=Icons.LARGE, padding=Paddings.RELATIVE_50)
         self._playBtn.setLightModeIcon(Icons.PLAY.withColor(Colors.PRIMARY))
         self._playBtn.setDarkModeIcon(Icons.PLAY.withColor(Colors.WHITE))
-        self._playBtn.setClassName("hover:bg-primary-25 bg-primary-10 rounded-full", "dark:bg-primary dark:hover:bg-primary")
+        self._playBtn.setClassName("hover:bg-primary-25 bg-primary-10 rounded-full", "dark:bg-white-20 dark:hover:bg-primary")
 
         self._buttons = QWidget()
         self._buttonsLayout = QHBoxLayout(self._buttons)

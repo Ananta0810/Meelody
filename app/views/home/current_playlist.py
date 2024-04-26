@@ -13,6 +13,7 @@ class _Info(QVBoxLayout):
     def __init__(self, parent: Optional[QWidget] = None) -> None:
         super().__init__(parent)
         self.__initUI()
+
         self._titleLabel.setText("Library")
         self._totalSongsLabel.setText("0 TRACKS")
         self.setDefaultCover(Images.DEFAULT_PLAYLIST_COVER)
@@ -24,18 +25,19 @@ class _Info(QVBoxLayout):
         self._cover = Cover()
         self._cover.setFixedSize(320, 320)
 
-        self._labelsLayout = QVBoxLayout()
-        self._labelsLayout.setSpacing(0)
-
         self._titleLabel = LabelWithDefaultText()
         self._titleLabel.enableEllipsis()
         self._titleLabel.setFixedWidth(320)
         self._titleLabel.setFont(Factory.createFont(size=20, bold=True))
+        self._titleLabel.setClassName("text-black dark:text-white")
 
         self._totalSongsLabel = LabelWithDefaultText()
         self._totalSongsLabel.setFixedWidth(320)
         self._totalSongsLabel.setFont(Factory.createFont(size=10))
+        self._totalSongsLabel.setClassName("text-black dark:text-white")
 
+        self._labelsLayout = QVBoxLayout()
+        self._labelsLayout.setSpacing(0)
         self._labelsLayout.addWidget(self._titleLabel)
         self._labelsLayout.addWidget(self._totalSongsLabel)
 
