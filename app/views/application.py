@@ -1,6 +1,5 @@
 from app.common.models import Playlist
 from app.common.others import appCenter, database, musicPlayer
-from app.resource.qt import Icons, Cursors
 from app.views.windows import MainWindow
 
 
@@ -11,8 +10,6 @@ class Application:
         self.__configureDatabase()
 
     def __createUI(self):
-        Icons.init()
-        Cursors.init()
         self._mainWindow = MainWindow()
 
     def __configureApplication(self):
@@ -36,7 +33,7 @@ class Application:
             ]
         )
 
-        appCenter.setLightMode(False)
+        appCenter.setLightMode(True)
 
     def run(self) -> 'Application':
         self._mainWindow.show()
