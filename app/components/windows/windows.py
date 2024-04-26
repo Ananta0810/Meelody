@@ -161,7 +161,7 @@ class TitleBarWindow(FramelessWindow):
         self._minimizeBtn = Factory.createIconButton(size=Icons.MEDIUM, padding=Paddings.RELATIVE_50)
         self._minimizeBtn.setLightModeIcon(Icons.MINIMIZE.withColor(Colors.PRIMARY))
         self._minimizeBtn.setDarkModeIcon(Icons.MINIMIZE.withColor(Colors.WHITE))
-        self._minimizeBtn.setClassName("rounded-8 hover:bg-black-12 bg-none dark:hover:bg-white-12")
+        self._minimizeBtn.setClassName("rounded-8 hover:bg-black-12 bg-none dark:hover:bg-white-20")
 
         self._closeBtn = Factory.createIconButton(size=Icons.MEDIUM, padding=Paddings.RELATIVE_50)
         self._closeBtn.setLightModeIcon(Icons.CLOSE.withColor(Colors.DANGER))

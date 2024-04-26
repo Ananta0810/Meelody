@@ -65,14 +65,14 @@ class SongRow(ExtendableStyleWidget):
         self._moreBtn = Factory.createIconButton(size=Icons.LARGE, padding=Paddings.RELATIVE_50)
         self._moreBtn.setLightModeIcon(Icons.MORE.withColor(Colors.PRIMARY))
         self._moreBtn.setDarkModeIcon(Icons.MORE.withColor(Colors.WHITE))
-        self._moreBtn.setClassName("hover:bg-primary-25 rounded-full", "dark:hover:bg-white-12")
+        self._moreBtn.setClassName("hover:bg-primary-25 rounded-full", "dark:hover:bg-white-20")
 
         self._loveBtn = Factory.createToggleButton(Icons.LARGE, Paddings.RELATIVE_50)
         self._loveBtn.setActiveIcon(Icons.LOVE.withColor(Colors.DANGER))
         self._loveBtn.setInactiveIcon(Icons.LOVE.withColor(Colors.GRAY))
         self._loveBtn.setClassName(
             "rounded-full bg-none active/hover:bg-danger-12 inactive/hover:bg-gray-12",
-            "dark:active/hover:bg-danger-12 dark:inactive/hover:bg-white-12"
+            "dark:active/hover:bg-danger-20 dark:inactive/hover:bg-white-20"
         )
 
         self._playBtn = Factory.createIconButton(size=Icons.LARGE, padding=Paddings.RELATIVE_50)
