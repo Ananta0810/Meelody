@@ -19,7 +19,8 @@ class ClassName:
     def of(name: str) -> Optional['ClassName']:
         if name is None:
             return None
-        element, others = ClassName.__separateElementAndOthers(name)
+
+        element, others = ClassName.__separateElementAndOthers(name.replace("dark:", ""))
         state, props = ClassName.__separateStateAndProps(others)
         key, value = ClassName.__separateProps(props)
 
@@ -44,7 +45,7 @@ class ClassName:
         props = Lists.lastOf(parts)
 
         if totalParts == 2:
-            return (None, props) if parts[0] == "dark" else (parts[0], props)
+            return parts[0], props
         return parts[1], props
 
     @staticmethod

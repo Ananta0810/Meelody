@@ -89,8 +89,10 @@ class MultiStatesIconButton(QPushButton, Component):
 
         if appCenter.isLightMode:
             self.setIcon(button.lightModeIcon)
+            super().applyLightMode()
         else:
             self.setIcon(button.darkModeIcon or button.lightModeIcon)
+            super().applyDarkMode()
 
     def setClassName(self, *classNames: str) -> None:
         self._currentClassName = Strings.join(" ", classNames)
@@ -158,10 +160,11 @@ class ToggleIconButton(MultiStatesIconButton):
         normal = theme.getElement("none")
         active = theme.getElement("active" if self.isActive() else "inactive")
 
-        return f"""
+        style = f"""
              QPushButton {{{Strings.joinStyles([normal.state("none").toProps(), active.state("none").toProps()])}}}
              QPushButton::hover {{{Strings.joinStyles([normal.state("hover").toProps(), active.state("hover").toProps()])}}}
              """
+        return style
 
 
 class IconButton(QPushButton, Component):
