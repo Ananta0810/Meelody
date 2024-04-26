@@ -1,7 +1,7 @@
 import os
 
 from app.common.models import Song
-from app.helpers.others.files import Files
+from app.helpers.others import Files
 
 
 class Database:

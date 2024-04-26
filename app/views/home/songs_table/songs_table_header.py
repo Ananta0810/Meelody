@@ -1,25 +1,26 @@
 from typing import Optional
 
 from PyQt5.QtCore import Qt
-from PyQt5.QtWidgets import QWidget, QHBoxLayout
+from PyQt5.QtWidgets import QWidget, QHBoxLayout, QFileDialog
 
-from app.components.base import Factory, EllipsisLabel
+from app.components.base import Factory, EllipsisLabel, Component
 from app.helpers.stylesheets import Paddings, Colors
 from app.resource.qt import Icons
+from app.views.threads import ImportSongsToLibraryThread
 
 
-class SongsTableHeader(QWidget):
+class SongsTableHeader(QWidget, Component):
 
     def __init__(self, parent: Optional[QWidget] = None):
         super().__init__(parent)
         self._scrollBarWidth = 4
-        self.__initUI()
+        self._initComponent()
 
         self._trackLabel.setText("TRACK")
         self._artistLabel.setText("ARTIST")
         self._lengthLabel.setText("LENGTH")
 
-    def __initUI(self) -> None:
+    def _createUI(self) -> None:
         self.setAttribute(Qt.WA_StyledBackground, True)
 
         self._mainLayout = QHBoxLayout(self)
@@ -85,3 +86,11 @@ class SongsTableHeader(QWidget):
         self._mainLayout.addWidget(self._lengthLabel)
         self._mainLayout.addStretch()
         self._mainLayout.addWidget(self._buttons)
+
+    def _connectSignalSlots(self) -> None:
+        self._addSongsToLibraryBtn.clicked.connect(lambda: self._addSongToLibrary())
+
+    def _addSongToLibrary(self) -> None:
+        paths = QFileDialog.getOpenFileNames(self, filter="MP3 (*.MP3 *.mp3)")[0]
+        if paths is not None and len(paths) > 0:
+            ImportSongsToLibraryThread(paths).start()

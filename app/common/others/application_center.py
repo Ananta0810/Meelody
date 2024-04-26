@@ -1,5 +1,3 @@
-from typing import Optional
-
 from PyQt5.QtCore import QObject, pyqtSignal
 
 from app.common.models import Playlist
@@ -14,12 +12,17 @@ class ApplicationCenter(QObject):
     def __init__(self) -> None:
         super().__init__()
         self.isLightMode: bool = True
-        self.currentPlaylist: Optional[Playlist] = None
         self.playlists: list[Playlist] = []
+
+        self.library: Playlist = None
+        self.currentPlaylist: Playlist = None
 
     def setLightMode(self, a0: bool) -> None:
         self.isLightMode = a0
         self.themeChanged.emit(a0)
+
+    def setLibrary(self, playlist: Playlist) -> None:
+        self.library = playlist
 
     def setActivePlaylist(self, playlist: Playlist) -> None:
         self.currentPlaylist = playlist

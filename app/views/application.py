@@ -20,9 +20,7 @@ class Application:
         songs = Playlist.Songs(database.Songs.load("library", withExtension="mp3"))
         library = Playlist(Playlist.Info("Library"), songs)
 
-        musicPlayer.loadPlaylist(library.getSongs())
-        musicPlayer.setCurrentSongIndex(0)
-        musicPlayer.loadSongToPlay()
+        appCenter.setLibrary(library)
 
         appCenter.setActivePlaylist(library)
         appCenter.setPlaylists(
@@ -32,6 +30,10 @@ class Application:
                 Playlist(Playlist.Info("Morning"), songs),
             ]
         )
+
+        musicPlayer.loadPlaylist(library.getSongs())
+        musicPlayer.setCurrentSongIndex(0)
+        musicPlayer.loadSongToPlay()
 
         appCenter.setLightMode(True)
 
