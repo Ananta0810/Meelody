@@ -1,9 +1,9 @@
 from PyQt5.QtCore import Qt
 from PyQt5.QtWidgets import QVBoxLayout, QWidget
 
-from app.common.others import appCenter
-from app.components.base import Cover, LabelWithDefaultText, Factory, Input, ActionButton, CoverProps, Component
+from app.components.base import Cover, LabelWithDefaultText, Factory, Input, ActionButton, CoverProps
 from app.components.dialogs import BaseDialog
+from app.components.widgets import StyleWidget
 from app.resource.qt import Images
 from app.views.home.songs_table.dialogs.download_songs_dialog.download_songs_menu import DownloadSongsMenu
 
@@ -34,7 +34,9 @@ class DownloadSongsDialog(BaseDialog):
         self._downloadBtn.setFont(Factory.createFont(family="Segoe UI Semibold", size=11))
         self._downloadBtn.setClassName("text-white rounded-4 bg-primary-75 bg-primary")
 
-        self._menuOuter = QWidget()
+        self._menuOuter = StyleWidget()
+        self._menuOuter.setClassName("bg-none border-none")
+
         self._menuOuter.setContentsMargins(24, 12, 24, 24)
         self._menuLayout = QVBoxLayout(self._menuOuter)
         self._menuLayout.setContentsMargins(0, 0, 0, 0)
@@ -72,13 +74,13 @@ class DownloadSongsDialog(BaseDialog):
         return self._mainView.sizeHint().height() + self._menuOuter.sizeHint().height()
 
     def show(self) -> None:
+        self.applyTheme()
         super().show()
-        children = self.findChildren(Component)
-        if appCenter.isLightMode:
-            self.applyLightMode()
-            for component in children:
-                component.applyLightMode()
-        else:
-            self.applyDarkMode()
-            for component in children:
-                component.applyDarkMode()
+
+    def applyLightMode(self) -> None:
+        super().applyLightMode()
+        super().applyThemeToChildren()
+
+    def applyDarkMode(self) -> None:
+        super().applyDarkMode()
+        super().applyThemeToChildren()

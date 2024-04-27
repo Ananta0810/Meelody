@@ -1,3 +1,6 @@
+from msilib.schema import Component
+from typing import final
+
 from app.common.others import appCenter
 from app.helpers.base import Strings
 from app.helpers.stylesheets.translators import ClassNameTranslator
@@ -42,3 +45,20 @@ class Component:
             self.setStyleSheet(self._darkModeStyle)
         except AttributeError:
             pass
+
+    @final
+    def applyTheme(self) -> None:
+        if appCenter.isLightMode:
+            self.applyLightMode()
+        else:
+            self.applyDarkMode()
+
+    def applyThemeToChildren(self) -> None:
+        children = self.findChildren(Component)
+
+        if appCenter.isLightMode:
+            for component in children:
+                component.applyLightMode()
+        else:
+            for component in children:
+                component.applyDarkMode()
