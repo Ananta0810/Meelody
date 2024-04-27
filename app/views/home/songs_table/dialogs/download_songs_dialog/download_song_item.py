@@ -1,17 +1,15 @@
-import os
-from typing import Optional, Callable
+from typing import Optional
 
-import pytube.request
-from PyQt5.QtCore import Qt, QThread, pyqtSignal, QSize
+from PyQt5.QtCore import Qt, QSize
 from PyQt5.QtGui import QMovie
 from PyQt5.QtWidgets import QVBoxLayout, QWidget, QHBoxLayout, QLabel
-from pytube import YouTube, Stream
+from pytube import YouTube
 
 from app.components.base import Cover, LabelWithDefaultText, Factory, CoverProps
 from app.components.sliders import ProgressBar
 from app.components.widgets import ExtendableStyleWidget
-from app.helpers.others import Times
 from app.resource.qt import Images
+from app.views.threads import UpdateGifThread, DownloadSongThread
 
 
 class DownloadSongItem(ExtendableStyleWidget):
@@ -104,15 +102,19 @@ class DownloadSongItem(ExtendableStyleWidget):
         self.setTitle(yt.title)
 
         downloadSongThread = DownloadSongThread(yt, onDownloading=self.onDownloading)
+        updateAnimationThread = UpdateGifThread(self._gif.movie(), interval=1000 / 24)
+
         downloadSongThread.downloadSucceed.connect(lambda path: self.markSucceed())
+        downloadSongThread.downloadSucceed.connect(lambda path: updateAnimationThread.quit())
+
+        updateAnimationThread.start()
         downloadSongThread.start()
 
     def onDownloading(self, bytesDownloaded: int, totalSize: int, estimateTime: int) -> None:
-        percentage = bytesDownloaded / totalSize * 100
-        description = f"{percentage}%   |   {bytesDownloaded}/{totalSize}MB   |  estimate: {Times.toString(estimateTime)}"
-
-        self.setDescription(description)
-        self._gif.movie().jumpToNextFrame()
+        percentage = bytesDownloaded * 100 / totalSize
+        # description = f"{int(percentage)}%  |  {self.convertBytes(bytesDownloaded)}/{self.convertBytes(totalSize)}  |  estimate: {Times.toString(estimateTime)}"
+        self.setProgress(percentage)
+        # self.setDescription(description)
 
     def markSucceed(self) -> None:
         # self._resultIcon.show()
@@ -122,29 +124,3 @@ class DownloadSongItem(ExtendableStyleWidget):
         self._gif.movie().stop()
         self._gif.hide()
         self._descriptionLabel.setText("Download Succeed.")
-
-
-pytube.request.default_range_size = 128000
-
-
-class DownloadSongThread(QThread):
-    downloadSucceed = pyqtSignal(str)
-
-    def __init__(self, ytb: YouTube, onDownloading: Callable[[int, int, int], None]) -> None:
-        super().__init__()
-        self.__ytb = ytb
-        self.__onDownloading = onDownloading
-
-    def run(self) -> None:
-        self.__ytb.register_on_progress_callback(self.__onProgress)
-
-        downloadedFile = self.__ytb.streams.filter(abr='160kbps', only_audio=True).last().download("library/download")
-        base, ext = os.path.splitext(downloadedFile)
-        newFile = base + '.mp3'
-        os.rename(downloadedFile, newFile)
-        self.downloadSucceed.emit(newFile)
-
-    def __onProgress(self, stream: Stream, chunk: bytes, bytesRemaining: int) -> None:
-        totalSize = stream.filesize
-        bytesDownloaded = totalSize - bytesRemaining
-        self.__onDownloading(totalSize, bytesDownloaded, 0)
