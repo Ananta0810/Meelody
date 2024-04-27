@@ -124,3 +124,12 @@ class Strings:
             return Strings.getFullPath(directory, new_base_name, extension)
 
         return file_path.replace(old_base_name, new_base_name)
+
+    @staticmethod
+    def convertBytes(size: int):
+        for x in ['bytes', 'KB', 'MB', 'GB', 'TB']:
+            if size < 1024.0:
+                return "%3.1f %s" % (size, x)
+            size /= 1024.0
+
+        return size

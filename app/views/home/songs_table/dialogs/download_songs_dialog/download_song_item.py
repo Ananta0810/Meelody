@@ -8,6 +8,8 @@ from pytube import YouTube
 from app.components.base import Cover, LabelWithDefaultText, Factory, CoverProps
 from app.components.sliders import ProgressBar
 from app.components.widgets import ExtendableStyleWidget
+from app.helpers.base import Strings
+from app.helpers.others import Times
 from app.resource.qt import Images
 from app.views.threads import UpdateGifThread, DownloadSongThread
 
@@ -112,9 +114,12 @@ class DownloadSongItem(ExtendableStyleWidget):
 
     def onDownloading(self, bytesDownloaded: int, totalSize: int, estimateTime: int) -> None:
         percentage = bytesDownloaded * 100 / totalSize
-        # description = f"{int(percentage)}%  |  {self.convertBytes(bytesDownloaded)}/{self.convertBytes(totalSize)}  |  estimate: {Times.toString(estimateTime)}"
+        downloadedStr = Strings.convertBytes(bytesDownloaded)
+        totalStr = Strings.convertBytes(totalSize)
+        
+        description = f"{int(percentage)}%  |  {downloadedStr}/{totalStr}  |  estimate: {Times.toString(estimateTime)}"
         self.setProgress(percentage)
-        # self.setDescription(description)
+        self.setDescription(description)
 
     def markSucceed(self) -> None:
         # self._resultIcon.show()

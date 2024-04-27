@@ -1,4 +1,5 @@
 import os
+from datetime import datetime
 from typing import Callable
 
 import pytube.request
@@ -17,15 +18,21 @@ class DownloadSongThread(QThread):
         self.__onDownloading = onDownloading
 
     def run(self) -> None:
-        self.__ytb.register_on_progress_callback(self.__onProgress)
+        downloadStartTime = datetime.now()
 
+        self.__ytb.register_on_progress_callback(lambda stream, chunk, bytesRemaining: self.__onProgress(stream, bytesRemaining, downloadStartTime))
         downloadedFile = self.__ytb.streams.filter(abr='160kbps', only_audio=True).last().download("library/download")
+
         base, ext = os.path.splitext(downloadedFile)
         newFile = base + '.mp3'
         os.rename(downloadedFile, newFile)
         self.downloadSucceed.emit(newFile)
 
-    def __onProgress(self, stream: Stream, chunk: bytes, bytesRemaining: int) -> None:
+    def __onProgress(self, stream: Stream, bytesRemaining: int, downloadStartTime: datetime) -> None:
         totalSize = stream.filesize
         bytesDownloaded = totalSize - bytesRemaining
-        self.__onDownloading(bytesDownloaded, totalSize, 0)
+
+        secondsSinceDownloadStart = (datetime.now() - downloadStartTime).total_seconds()
+        speed = round(((bytesDownloaded / 1024) / 1024) / secondsSinceDownloadStart, 2)
+        secondsLeft = int(round(((bytesRemaining / 1024) / 1024) / float(speed), 2))
+        self.__onDownloading(bytesDownloaded, totalSize, secondsLeft)
