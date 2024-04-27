@@ -11,7 +11,7 @@ from app.components.widgets import ExtendableStyleWidget
 from app.helpers.base import Strings
 from app.helpers.others import Times
 from app.resource.qt import Images
-from app.views.threads import UpdateGifThread, DownloadSongThread
+from app.views.threads import UpdateUIThread, DownloadSongThread
 
 
 class DownloadSongItem(ExtendableStyleWidget):
@@ -21,7 +21,6 @@ class DownloadSongItem(ExtendableStyleWidget):
         self._initComponent()
 
         self._dot: float = 0
-        self._frame: int = 0
         self.setProgress(0)
 
     def _createUI(self) -> None:
@@ -104,19 +103,26 @@ class DownloadSongItem(ExtendableStyleWidget):
         self.setTitle(yt.title)
 
         downloadSongThread = DownloadSongThread(yt, onDownloading=self.onDownloading)
-        updateAnimationThread = UpdateGifThread(self._gif.movie(), interval=1000 / 24)
+        loadingAnimationThread = UpdateUIThread(action=lambda: self.__onLoading(), interval=250)
+        downloadingAnimationThread = UpdateUIThread(action=lambda: self._gif.movie().jumpToNextFrame(), interval=1000 / 24)
 
+        downloadSongThread.loaded.connect(loadingAnimationThread.quit)
+        downloadSongThread.loaded.connect(downloadingAnimationThread.start)
         downloadSongThread.downloadSucceed.connect(lambda path: self.markSucceed())
-        downloadSongThread.downloadSucceed.connect(lambda path: updateAnimationThread.quit())
+        downloadSongThread.downloadSucceed.connect(lambda path: downloadingAnimationThread.quit())
 
-        updateAnimationThread.start()
+        loadingAnimationThread.start()
         downloadSongThread.start()
+
+    def __onLoading(self) -> None:
+        self._descriptionLabel.setText(f"Loading{int(self._dot) * '.'}")
+        self._dot = (self._dot + 1) % 4
 
     def onDownloading(self, bytesDownloaded: int, totalSize: int, estimateTime: int) -> None:
         percentage = bytesDownloaded * 100 / totalSize
         downloadedStr = Strings.convertBytes(bytesDownloaded)
         totalStr = Strings.convertBytes(totalSize)
-        
+
         description = f"{int(percentage)}%  |  {downloadedStr}/{totalStr}  |  estimate: {Times.toString(estimateTime)}"
         self.setProgress(percentage)
         self.setDescription(description)

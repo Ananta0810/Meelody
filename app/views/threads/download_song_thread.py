@@ -11,11 +11,13 @@ pytube.request.default_range_size = 128000
 
 class DownloadSongThread(QThread):
     downloadSucceed = pyqtSignal(str)
+    loaded = pyqtSignal()
 
     def __init__(self, ytb: YouTube, onDownloading: Callable[[int, int, int], None]) -> None:
         super().__init__()
         self.__ytb = ytb
         self.__onDownloading = onDownloading
+        self.__loaded = False
 
     def run(self) -> None:
         downloadStartTime = datetime.now()
@@ -29,6 +31,10 @@ class DownloadSongThread(QThread):
         self.downloadSucceed.emit(newFile)
 
     def __onProgress(self, stream: Stream, bytesRemaining: int, downloadStartTime: datetime) -> None:
+        if not self.__loaded:
+            self.__loaded = True
+            self.loaded.emit()
+            
         totalSize = stream.filesize
         bytesDownloaded = totalSize - bytesRemaining
 
