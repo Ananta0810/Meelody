@@ -13,13 +13,13 @@ class DownloadSongsDialog(BaseDialog):
     def __init__(self):
         super().__init__()
         super()._initComponent()
-        self._menu.addItem()
 
     def _createUI(self) -> None:
         super()._createUI()
 
         self._image = Cover()
         self._image.setAlignment(Qt.AlignHCenter)
+        self._image.setFixedHeight(156)
 
         self._header = LabelWithDefaultText()
         self._header.setFont(Factory.createFont(family="Segoe UI Semibold", size=16, bold=True))
@@ -46,14 +46,13 @@ class DownloadSongsDialog(BaseDialog):
         self._mainView = QWidget()
         self._mainView.setContentsMargins(24, 24, 24, 0)
 
-        cover_wrapper_layout = QVBoxLayout()
-        self._image.setFixedHeight(156)
-        cover_wrapper_layout.addWidget(self._image)
+        self._coverWrapperLayout = QVBoxLayout()
+        self._coverWrapperLayout.addWidget(self._image)
 
         self._viewLayout = QVBoxLayout(self._mainView)
         self._viewLayout.setContentsMargins(0, 0, 0, 0)
         self._viewLayout.setAlignment(Qt.AlignVCenter)
-        self._viewLayout.addLayout(cover_wrapper_layout)
+        self._viewLayout.addLayout(self._coverWrapperLayout)
         self._viewLayout.addWidget(self._header)
         self._viewLayout.addSpacing(4)
         self._viewLayout.addWidget(self._input)
@@ -68,7 +67,10 @@ class DownloadSongsDialog(BaseDialog):
         self._downloadBtn.setText("Download")
 
         self.setFixedWidth(640)
-        self.setFixedHeight(self.__height())
+
+    def _connectSignalSlots(self) -> None:
+        super()._connectSignalSlots()
+        self._downloadBtn.clicked.connect(lambda: self._menu.addItem())
 
     def __height(self):
         return self._mainView.sizeHint().height() + self._menuOuter.sizeHint().height()

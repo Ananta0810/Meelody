@@ -26,8 +26,6 @@ class DownloadSongsMenu(QScrollArea):
     def addItem(self) -> DownloadSongItem:
         row = DownloadSongItem()
         row.setFixedHeight(64)
-        row.setClassName("bg-none")
         row.applyTheme()
-
         self._menu.addWidget(row)
         return row

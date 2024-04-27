@@ -1,7 +1,7 @@
 from typing import Optional
 
 from PyQt5.QtCore import Qt
-from PyQt5.QtGui import QMovie, QResizeEvent
+from PyQt5.QtGui import QMovie
 from PyQt5.QtWidgets import QVBoxLayout, QWidget, QHBoxLayout, QLabel
 
 from app.components.base import Cover, LabelWithDefaultText, Factory, CoverProps, StateIcon
@@ -42,7 +42,7 @@ class DownloadSongItem(ExtendableStyleWidget):
 
         self._progressBar = ProgressBar()
         self._progressBar.setFixedHeight(2)
-        # self._progressBar.setProgress_style(Backgrounds.CIRCLE_PRIMARY.with_border_radius(1))
+        self._progressBar.setClassName("rounded-1 bg-primary")
 
         self._infoLayout = QVBoxLayout()
         self._infoLayout.setContentsMargins(0, 0, 0, 0)
@@ -79,10 +79,9 @@ class DownloadSongItem(ExtendableStyleWidget):
         self._mainLayout.addWidget(self._icons)
 
         self.setLayout(self._mainLayout)
-        self.setClassName("bg-transparent")
 
-    def resizeEvent(self, a0: QResizeEvent) -> None:
-        super().resizeEvent(a0)
+    def show(self) -> None:
+        super().show()
 
     def setLabel(self, label: str) -> None:
         self._labelTitle.setText(label)
@@ -91,4 +90,12 @@ class DownloadSongItem(ExtendableStyleWidget):
         self._labelDescription.setText(value)
 
     def setProgress(self, value: float) -> None:
-        self._progressBar.set_value(value)
+        self._progressBar.setValue(value)
+
+    def applyLightMode(self) -> None:
+        super().applyLightMode()
+        super().applyThemeToChildren()
+
+    def applyDarkMode(self) -> None:
+        super().applyDarkMode()
+        super().applyThemeToChildren()
