@@ -6,7 +6,7 @@ from PyQt5.QtWidgets import QWidget, QHBoxLayout, QFileDialog
 from app.components.base import Factory, EllipsisLabel, Component
 from app.helpers.stylesheets import Paddings, Colors
 from app.resource.qt import Icons
-from app.views.home.songs_table.dialogs import DownloadSongsDialog
+from app.views.home.songs_table.dialogs.download_songs_dialog import DownloadSongsDialog
 from app.views.threads import ImportSongsToLibraryThread
 
 

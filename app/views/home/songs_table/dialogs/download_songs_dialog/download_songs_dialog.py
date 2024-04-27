@@ -5,6 +5,7 @@ from app.common.others import appCenter
 from app.components.base import Cover, LabelWithDefaultText, Factory, Input, ActionButton, CoverProps, Component
 from app.components.dialogs import BaseDialog
 from app.resource.qt import Images
+from app.views.home.songs_table.dialogs.download_songs_dialog.download_songs_menu import DownloadSongsMenu
 
 
 class DownloadSongsDialog(BaseDialog):
@@ -12,6 +13,7 @@ class DownloadSongsDialog(BaseDialog):
     def __init__(self):
         super().__init__()
         super()._initComponent()
+        self._menu.addItem()
 
     def _createUI(self) -> None:
         super()._createUI()
@@ -30,14 +32,14 @@ class DownloadSongsDialog(BaseDialog):
 
         self._downloadBtn = ActionButton()
         self._downloadBtn.setFont(Factory.createFont(family="Segoe UI Semibold", size=11))
-        self._downloadBtn.setClassName("text-white rounded-4 bg-danger-75 bg-danger")
+        self._downloadBtn.setClassName("text-white rounded-4 bg-primary-75 bg-primary")
 
         self._menuOuter = QWidget()
         self._menuOuter.setContentsMargins(24, 12, 24, 24)
-        # layout = QVBoxLayout(self._menuOuter)
-        # layout.setContentsMargins(0, 0, 0, 0)
-        # self._menu = DownloadMenu()
-        # layout.addWidget(self._menu)
+        self._menuLayout = QVBoxLayout(self._menuOuter)
+        self._menuLayout.setContentsMargins(0, 0, 0, 0)
+        self._menu = DownloadSongsMenu()
+        self._menuLayout.addWidget(self._menu)
 
         self._mainView = QWidget()
         self._mainView.setContentsMargins(24, 24, 24, 0)
