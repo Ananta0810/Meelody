@@ -70,7 +70,7 @@ class DownloadSongsDialog(BaseDialog):
 
     def _connectSignalSlots(self) -> None:
         super()._connectSignalSlots()
-        self._downloadBtn.clicked.connect(lambda: self._menu.addItem())
+        self._downloadBtn.clicked.connect(lambda: self.__downloadSong())
 
     def __height(self):
         return self._mainView.sizeHint().height() + self._menuOuter.sizeHint().height()
@@ -86,3 +86,7 @@ class DownloadSongsDialog(BaseDialog):
     def applyDarkMode(self) -> None:
         super().applyDarkMode()
         super().applyThemeToChildren()
+
+    def __downloadSong(self) -> None:
+        item = self._menu.addItem()
+        item.download(self._input.text().strip())
