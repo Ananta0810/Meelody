@@ -10,8 +10,9 @@ pytube.request.default_range_size = 128000
 
 
 class DownloadSongThread(QThread):
-    downloadSucceed = pyqtSignal(str)
     loaded = pyqtSignal()
+    downloadFailed = pyqtSignal(Exception)
+    downloadSucceed = pyqtSignal(str)
 
     def __init__(self, ytb: YouTube, onDownloading: Callable[[int, int, int], None]) -> None:
         super().__init__()
@@ -20,21 +21,25 @@ class DownloadSongThread(QThread):
         self.__loaded = False
 
     def run(self) -> None:
-        downloadStartTime = datetime.now()
+        try:
+            downloadStartTime = datetime.now()
 
-        self.__ytb.register_on_progress_callback(lambda stream, chunk, bytesRemaining: self.__onProgress(stream, bytesRemaining, downloadStartTime))
-        downloadedFile = self.__ytb.streams.filter(abr='160kbps', only_audio=True).last().download("library/download")
+            self.__ytb.register_on_progress_callback(
+                lambda stream, chunk, bytesRemaining: self.__onProgress(stream, bytesRemaining, downloadStartTime))
+            downloadedFile = self.__ytb.streams.filter(abr='160kbps', only_audio=True).last().download("library/download")
 
-        base, ext = os.path.splitext(downloadedFile)
-        newFile = base + '.mp3'
-        os.rename(downloadedFile, newFile)
-        self.downloadSucceed.emit(newFile)
+            base, ext = os.path.splitext(downloadedFile)
+            newFile = base + '.mp3'
+            os.rename(downloadedFile, newFile)
+            self.downloadSucceed.emit(newFile)
+        except Exception as e:
+            self.downloadFailed.emit(e)
 
     def __onProgress(self, stream: Stream, bytesRemaining: int, downloadStartTime: datetime) -> None:
         if not self.__loaded:
             self.__loaded = True
             self.loaded.emit()
-            
+
         totalSize = stream.filesize
         bytesDownloaded = totalSize - bytesRemaining
 

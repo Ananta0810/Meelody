@@ -10,7 +10,8 @@ from app.components.sliders import ProgressBar
 from app.components.widgets import ExtendableStyleWidget
 from app.helpers.base import Strings
 from app.helpers.others import Times
-from app.resource.qt import Images
+from app.helpers.stylesheets import Paddings, Colors
+from app.resource.qt import Images, Icons
 from app.views.threads import UpdateUIThread, DownloadSongThread
 
 
@@ -49,10 +50,15 @@ class DownloadSongItem(ExtendableStyleWidget):
         self._infoLayout.addWidget(self._progressBar)
         self._infoLayout.addStretch(0)
 
-        # self._resultIcon = Factory.createMultiStatesButton(size=Icons.SMALL, padding=Paddings.RELATIVE_25)
-        # self._resultIcon.setIcons([StateIcon(Icons.APPLY.withColor(Colors.WHITE)), StateIcon(Icons.CLOSE.withColor(Colors.WHITE))])
-        # self._resultIcon.keepSpaceWhenHiding()
-        # self._resultIcon.hide()
+        self._successIcon = Factory.createIconButton(size=Icons.SMALL, padding=Paddings.RELATIVE_25)
+        self._successIcon.setLightModeIcon(Icons.APPLY.withColor(Colors.WHITE))
+        self._successIcon.setClassName("rounded-full bg-success")
+        self._successIcon.hide()
+
+        self._failedIcon = Factory.createIconButton(size=Icons.SMALL, padding=Paddings.RELATIVE_25)
+        self._failedIcon.setLightModeIcon(Icons.CLOSE.withColor(Colors.WHITE))
+        self._failedIcon.setClassName("rounded-full bg-danger")
+        self._failedIcon.hide()
 
         self._gif = QLabel()
         self._gif.setFixedSize(48, 48)
@@ -60,10 +66,12 @@ class DownloadSongItem(ExtendableStyleWidget):
         movie.setScaledSize(QSize(48, 48))
         self._gif.setMovie(movie)
         self._icons = QWidget()
+        self._icons.setFixedWidth(64)
 
         self._iconsLayout = QVBoxLayout(self._icons)
         self._iconsLayout.addWidget(self._gif)
-        # self._iconsLayout.addWidget(self._resultIcon)
+        self._iconsLayout.addWidget(self._successIcon)
+        self._iconsLayout.addWidget(self._failedIcon)
 
         self._mainLayout = QHBoxLayout()
         self._mainLayout.setSpacing(0)
@@ -102,23 +110,30 @@ class DownloadSongItem(ExtendableStyleWidget):
 
         self.setTitle(yt.title)
 
-        downloadSongThread = DownloadSongThread(yt, onDownloading=self.onDownloading)
+        downloadSongThread = DownloadSongThread(yt, onDownloading=self.__onDownloading)
         loadingAnimationThread = UpdateUIThread(action=lambda: self.__onLoading(), interval=250)
-        downloadingAnimationThread = UpdateUIThread(action=lambda: self._gif.movie().jumpToNextFrame(), interval=1000 / 24)
+        downloadingAnimationThread = UpdateUIThread(action=lambda: self.__updateDownloadingAnimation(), interval=1000 / 24)
 
         downloadSongThread.loaded.connect(loadingAnimationThread.quit)
         downloadSongThread.loaded.connect(downloadingAnimationThread.start)
-        downloadSongThread.downloadSucceed.connect(lambda path: self.markSucceed())
+        downloadSongThread.downloadSucceed.connect(lambda path: self.__markSucceed())
         downloadSongThread.downloadSucceed.connect(lambda path: downloadingAnimationThread.quit())
+        downloadSongThread.downloadFailed.connect(lambda exception: self.__markFailed(exception))
+        downloadSongThread.downloadFailed.connect(lambda exception: loadingAnimationThread.quit())
+        downloadSongThread.downloadFailed.connect(lambda exception: downloadingAnimationThread.quit())
 
         loadingAnimationThread.start()
         downloadSongThread.start()
+
+    def __updateDownloadingAnimation(self):
+        if self._gif.isVisible():
+            self._gif.movie().jumpToNextFrame()
 
     def __onLoading(self) -> None:
         self._descriptionLabel.setText(f"Loading{int(self._dot) * '.'}")
         self._dot = (self._dot + 1) % 4
 
-    def onDownloading(self, bytesDownloaded: int, totalSize: int, estimateTime: int) -> None:
+    def __onDownloading(self, bytesDownloaded: int, totalSize: int, estimateTime: int) -> None:
         percentage = bytesDownloaded * 100 / totalSize
         downloadedStr = Strings.convertBytes(bytesDownloaded)
         totalStr = Strings.convertBytes(totalSize)
@@ -127,11 +142,15 @@ class DownloadSongItem(ExtendableStyleWidget):
         self.setProgress(percentage)
         self.setDescription(description)
 
-    def markSucceed(self) -> None:
-        # self._resultIcon.show()
-        # self._resultIcon.setActiveState(0)
-        self._gif.setFixedSize(0, 0)
-        self._iconsLayout.addSpacing(24)
-        self._gif.movie().stop()
+    def __markSucceed(self) -> None:
+        self._successIcon.show()
         self._gif.hide()
         self._descriptionLabel.setText("Download Succeed.")
+
+    def __markFailed(self, exception: Exception) -> None:
+        self._failedIcon.show()
+        self._gif.hide()
+        if isinstance(exception, FileExistsError):
+            self._descriptionLabel.setText("Download Failed. Song is already existed.")
+        else:
+            self._descriptionLabel.setText("Download Failed.")
