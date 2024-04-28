@@ -2,12 +2,12 @@ from typing import Optional
 
 from PyQt5.QtCore import Qt, QSize
 from PyQt5.QtGui import QMovie
-from PyQt5.QtWidgets import QVBoxLayout, QWidget, QHBoxLayout, QLabel
+from PyQt5.QtWidgets import QWidget, QLabel
 from pytube import YouTube
 
 from app.components.base import Cover, LabelWithDefaultText, Factory, CoverProps
 from app.components.sliders import ProgressBar
-from app.components.widgets import ExtendableStyleWidget
+from app.components.widgets import ExtendableStyleWidget, Box, FlexBox
 from app.helpers.base import Strings
 from app.helpers.others import Times
 from app.helpers.stylesheets import Paddings, Colors
@@ -25,6 +25,8 @@ class DownloadSongItem(ExtendableStyleWidget):
         self.setProgress(0)
 
     def _createUI(self) -> None:
+        self.setContentsMargins(0, 0, 0, 0)
+
         self._cover = Cover()
         self._cover.setFixedSize(48, 48)
         self._cover.setCover(CoverProps.fromBytes(Images.DEFAULT_SONG_COVER, width=48, height=48, radius=8))
@@ -41,8 +43,7 @@ class DownloadSongItem(ExtendableStyleWidget):
         self._progressBar.setFixedHeight(2)
         self._progressBar.setClassName("rounded-1 bg-primary")
 
-        self._infoLayout = QVBoxLayout()
-        self._infoLayout.setContentsMargins(0, 0, 0, 0)
+        self._infoLayout = Box()
         self._infoLayout.setSpacing(4)
         self._infoLayout.addStretch(0)
         self._infoLayout.addWidget(self._titleLabel)
@@ -65,16 +66,17 @@ class DownloadSongItem(ExtendableStyleWidget):
         movie = QMovie("app/resource/images/defaults/loading.gif")
         movie.setScaledSize(QSize(48, 48))
         self._gif.setMovie(movie)
-        self._icons = QWidget()
-        self._icons.setFixedWidth(64)
 
-        self._iconsLayout = QVBoxLayout(self._icons)
+        self._icons = QWidget()
+        self._icons.setFixedWidth(48)
+
+        self._iconsLayout = Box(self._icons)
+        self._iconsLayout.setAlignment(Qt.AlignRight)
         self._iconsLayout.addWidget(self._gif)
         self._iconsLayout.addWidget(self._successIcon)
         self._iconsLayout.addWidget(self._failedIcon)
 
-        self._mainLayout = QHBoxLayout()
-        self._mainLayout.setSpacing(0)
+        self._mainLayout = FlexBox()
         self._mainLayout.setSpacing(0)
         self._mainLayout.setAlignment(Qt.AlignLeft)
 
@@ -143,13 +145,13 @@ class DownloadSongItem(ExtendableStyleWidget):
         self.setDescription(description)
 
     def __markSucceed(self) -> None:
-        self._successIcon.show()
         self._gif.hide()
+        self._successIcon.show()
         self._descriptionLabel.setText("Download Succeed.")
 
     def __markFailed(self, exception: Exception) -> None:
-        self._failedIcon.show()
         self._gif.hide()
+        self._failedIcon.show()
         if isinstance(exception, FileExistsError):
             self._descriptionLabel.setText("Download Failed. Song is already existed.")
         else:
