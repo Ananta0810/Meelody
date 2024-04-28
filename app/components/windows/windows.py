@@ -2,7 +2,7 @@ from typing import overload, Union
 
 from PyQt5.QtCore import Qt, QSize, QMargins
 from PyQt5.QtGui import QShowEvent, QResizeEvent, QMouseEvent
-from PyQt5.QtWidgets import QMainWindow, QWidget, QDesktopWidget, QLayout, QGraphicsDropShadowEffect, QHBoxLayout
+from PyQt5.QtWidgets import QMainWindow, QWidget, QDesktopWidget, QLayout, QHBoxLayout
 
 from app.components.base import Factory
 from app.components.widgets import Box
@@ -20,24 +20,15 @@ class FramelessWindow(QMainWindow):
         self.setWindowFlags(Qt.Window | Qt.FramelessWindowHint | Qt.WindowMinMaxButtonsHint)
         self.setAttribute(Qt.WA_TranslucentBackground)
 
-        self._outer = QWidget()
-        self.setCentralWidget(self._outer)
+        self._inner = QWidget()
+        self.setCentralWidget(self._inner)
 
-        self._background = QWidget(self._outer)
-        self._inner = QWidget(self._outer)
         self._mainLayout = Box(self._inner)
-
-        self._outer.setGraphicsEffect(QGraphicsDropShadowEffect(blurRadius=32, color=Colors.PRIMARY.withAlpha(33).toQColor(), xOffset=0, yOffset=3))
-
-        self._inner.move(32, 32)
-        self._background.move(32, 32)
-        self._background.setAutoFillBackground(True)
-
         self._mainLayout.setContentsMargins(0, 0, 0, 0)
         self._mainLayout.setSpacing(0)
 
     def moveToCenter(self):
-        qtRectangle = self._outer.frameGeometry()
+        qtRectangle = self._inner.frameGeometry()
         centerPoint = QDesktopWidget().availableGeometry().center()
         qtRectangle.moveCenter(centerPoint)
         self.move(qtRectangle.topLeft())
@@ -49,31 +40,21 @@ class FramelessWindow(QMainWindow):
         self._mainLayout.addWidget(layout, stretch=stretch, alignment=alignment)
 
     def setFixedHeight(self, h: int) -> None:
-        self._background.setFixedHeight(h)
         self._inner.setFixedHeight(h)
-        self._outer.setFixedSize(self._inner.width() + 64, self._inner.height() + 64)
 
     def setFixedWidth(self, w: int) -> None:
-        self._background.setFixedWidth(w)
         self._inner.setFixedWidth(w)
-        self._outer.setFixedSize(self._inner.width() + 64, self._inner.height() + 64)
 
     @overload
     def setFixedSize(self, a0: QSize) -> None:
-        self._background.setFixedWidth(a0)
         self._inner.setFixedWidth(a0)
-        self._outer.setFixedSize(self._inner.width() + 64, self._inner.height() + 64)
 
     @overload
     def setFixedSize(self, w: int, h: int) -> None:
-        self._background.setFixedWidth(w, h)
         self._inner.setFixedWidth(w, h)
-        self._outer.setFixedSize(self._inner.width() + 64, self._inner.height() + 64)
 
     def setFixedSize(self, a0: QSize) -> None:
-        self._background.setFixedSize(a0)
         self._inner.setFixedSize(a0)
-        self._outer.setFixedSize(self._inner.width() + 64, self._inner.height() + 64)
 
     def width(self) -> int:
         return self._inner.sizeHint().width()
@@ -83,30 +64,24 @@ class FramelessWindow(QMainWindow):
 
     @overload
     def setContentsMargins(self, left: int, top: int, right: int, bottom: int) -> None:
-        self._background.setContentsMargins(left, top, right, bottom)
         self._inner.setContentsMargins(left, top, right, bottom)
 
     @overload
     def setContentsMargins(self, margins: QMargins) -> None:
-        self._background.setContentsMargins(margins)
         self._inner.setContentsMargins(margins)
 
     def setContentsMargins(self, left: int, top: int, right: int, bottom: int) -> None:
-        self._background.setContentsMargins(left, top, right, bottom)
         self._inner.setContentsMargins(left, top, right, bottom)
 
     def showEvent(self, a0: QShowEvent) -> None:
         super().showEvent(a0)
-        self._outer.setFixedSize(self._inner.width() + 64, self._inner.height() + 64)
 
     def resizeEvent(self, event: QResizeEvent) -> None:
         super().resizeEvent(event)
-        self._background.resize(self.size())
-        height_ = self._inner.height() + 64
-        self._outer.setFixedSize(self._inner.width() + 64, height_)
+        self._inner.resize(self.size())
 
     def setStyleSheet(self, style: str) -> None:
-        self._background.setStyleSheet(style)
+        self._inner.setStyleSheet(style)
 
 
 class TitleBar(QWidget):
