@@ -2,9 +2,10 @@ from typing import overload, Union
 
 from PyQt5.QtCore import Qt, QSize, QMargins
 from PyQt5.QtGui import QShowEvent, QResizeEvent, QMouseEvent
-from PyQt5.QtWidgets import QMainWindow, QWidget, QVBoxLayout, QDesktopWidget, QLayout, QGraphicsDropShadowEffect, QHBoxLayout
+from PyQt5.QtWidgets import QMainWindow, QWidget, QDesktopWidget, QLayout, QGraphicsDropShadowEffect, QHBoxLayout
 
 from app.components.base import Factory
+from app.components.widgets import Box
 from app.helpers.stylesheets import Colors, Paddings
 from app.resource.qt import Icons
 
@@ -24,7 +25,7 @@ class FramelessWindow(QMainWindow):
 
         self._background = QWidget(self._outer)
         self._inner = QWidget(self._outer)
-        self._mainLayout = QVBoxLayout(self._inner)
+        self._mainLayout = Box(self._inner)
 
         self._outer.setGraphicsEffect(QGraphicsDropShadowEffect(blurRadius=32, color=Colors.PRIMARY.withAlpha(33).toQColor(), xOffset=0, yOffset=3))
 
@@ -44,15 +45,7 @@ class FramelessWindow(QMainWindow):
     def addLayout(self, widget: QLayout) -> None:
         self._mainLayout.addLayout(widget)
 
-    def addWidget(
-        self,
-        layout: QWidget,
-        stretch: int = 0,
-        alignment: Union[Qt.Alignment, Qt.AlignmentFlag] = None
-    ) -> None:
-        if alignment is None:
-            self._mainLayout.addWidget(layout, stretch=stretch)
-            return
+    def addWidget(self, layout: QWidget, stretch: int = None, alignment: Union[Qt.Alignment, Qt.AlignmentFlag] = None) -> None:
         self._mainLayout.addWidget(layout, stretch=stretch, alignment=alignment)
 
     def setFixedHeight(self, h: int) -> None:
