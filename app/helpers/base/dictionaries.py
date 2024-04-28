@@ -10,9 +10,9 @@ K = TypeVar('K')
 class Dicts:
 
     @staticmethod
-    def getFrom(dictionary: dict[str, any], key: str, otherwise: T = None):
-        return dictionary[key] if key in dictionary else otherwise
-
-    @staticmethod
     def group(collection: list[T], by: Callable[[T], K]) -> dict[K, list[T]]:
         return reduce(lambda grp, val: grp[by(val)].append(val) or grp, collection, defaultdict(list))
+
+    @staticmethod
+    def mergeListOfDicts(collection: list[dict]) -> dict:
+        return {k: v for dct in collection for k, v in dct.items()}

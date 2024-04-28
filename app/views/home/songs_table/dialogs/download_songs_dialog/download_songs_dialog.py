@@ -32,7 +32,7 @@ class DownloadSongsDialog(BaseDialog):
 
         self._downloadBtn = ActionButton()
         self._downloadBtn.setFont(Factory.createFont(family="Segoe UI Semibold", size=11))
-        self._downloadBtn.setClassName("text-white rounded-4 bg-primary-75 bg-primary")
+        self._downloadBtn.setClassName("text-white rounded-4 bg-primary-75 bg-primary p-y-8")
 
         self._menuOuter = StyleWidget()
         self._menuOuter.setClassName("bg-none border-none")

@@ -3,9 +3,8 @@ from typing import Optional
 from PyQt5.QtWidgets import QWidget
 
 from app.helpers.base import Dicts, Strings, Lists, Classes
-from app.helpers.stylesheets.translators.props_translators.class_name import ClassName
-from app.helpers.stylesheets.translators.props_translators.props_translator import PropsTranslator
-from app.helpers.stylesheets.translators.props_translators.props_translators import PropsTranslators
+from app.helpers.stylesheets.translators.props_translators import PaddingTranslator, TextTranslator, RoundedTranslator, BackgroundTranslator, \
+    BorderTranslator, ClassName, PropsTranslator
 
 
 class ElementStateStyles:
@@ -26,7 +25,7 @@ class ElementStateStyles:
         return self.id
 
 
-NULL_STATE = ElementStateStyles(None, None, None)
+_NULL_STATE = ElementStateStyles(None, None, None)
 
 
 class ClassNameElement:
@@ -42,10 +41,10 @@ class ClassNameElement:
         if name in self.__states:
             return self.__states[name]
 
-        return NULL_STATE
+        return _NULL_STATE
 
 
-NULL_ELEMENT = ClassNameElement()
+_NULL_ELEMENT = ClassNameElement()
 
 
 class ClassNameTheme:
@@ -61,17 +60,19 @@ class ClassNameTheme:
         if name in self.__elements:
             return self.__elements[name]
 
-        return NULL_ELEMENT
+        return _NULL_ELEMENT
 
 
-NULL_THEME = ClassNameTheme()
+_NULL_THEME = ClassNameTheme()
+
+_TRANSLATORS = [BorderTranslator(), BackgroundTranslator(), RoundedTranslator(), TextTranslator(), PaddingTranslator()]
 
 
 class ClassNameTranslator:
     @staticmethod
     def translateElements(classNames: str, element: QWidget) -> (ClassNameTheme, ClassNameTheme):
         if classNames is None:
-            return NULL_THEME, NULL_THEME
+            return _NULL_THEME, _NULL_THEME
 
         darkClassNames = classNames.split(" ")
         darkClassNames.sort(key=lambda cn: 1 if "dark" in cn else 0)
@@ -84,7 +85,6 @@ class ClassNameTranslator:
     @staticmethod
     def __toElementStyles(classNameList, target) -> ClassNameTheme:
         eName = target.__class__.__name__
-        translators = PropsTranslators.Translators
 
         elements = Dicts.group([ClassName.of(cn) for cn in classNameList], by=lambda c: c.element)
 
@@ -95,7 +95,7 @@ class ClassNameTranslator:
 
             elementResult = ClassNameElement()
             for state, classes in states.items():
-                props = [ClassNameTranslator.__toProp(classes, translator, target) for translator in translators]
+                props = [ClassNameTranslator.__toProp(classes, translator, target) for translator in _TRANSLATORS]
                 props = Lists.nonNull(props)
                 if len(props) > 0:
                     elementResult.addState(state, ElementStateStyles(eName, state, props))
@@ -124,7 +124,7 @@ class ClassNameTranslator:
         styles = []
 
         for state, classes in states.items():
-            props = [ClassNameTranslator.__toProp(classes, translator, element) for translator in PropsTranslators.Translators]
+            props = [ClassNameTranslator.__toProp(classes, translator, element) for translator in _TRANSLATORS]
             styles.append([f"{eName}{'' if state is None else f':{state}'}", Strings.joinStyles(props)])
 
         if len(styles) == 1:
