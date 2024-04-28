@@ -1,9 +1,7 @@
 from PyQt5.QtCore import Qt
-from PyQt5.QtWidgets import QVBoxLayout, QWidget
 
 from app.components.base import Cover, LabelWithDefaultText, Factory, Input, ActionButton, CoverProps
 from app.components.dialogs import BaseDialog
-from app.components.widgets import StyleWidget
 from app.resource.qt import Images
 from app.views.home.songs_table.dialogs.download_songs_dialog.download_songs_menu import DownloadSongsMenu
 
@@ -16,58 +14,41 @@ class DownloadSongsDialog(BaseDialog):
 
     def _createUI(self) -> None:
         super()._createUI()
+        self.setFixedWidth(640)
+        self.setContentsMargins(24, 24, 24, 24)
 
         self._image = Cover()
         self._image.setAlignment(Qt.AlignHCenter)
         self._image.setFixedHeight(156)
+        self._image.setCover(CoverProps.fromBytes(Images.DOWNLOAD, width=128))
 
         self._header = LabelWithDefaultText()
         self._header.setFont(Factory.createFont(family="Segoe UI Semibold", size=16, bold=True))
-        self._header.setClassName("text-black dark:text-white")
         self._header.setAlignment(Qt.AlignCenter)
+        self._header.setText("Download Youtube Song")
+        self._header.setClassName("text-black dark:text-white")
 
         self._input = Input()
         self._input.setFont(Factory.createFont(size=12))
         self._input.setFixedHeight(48)
-        self._input.setClassName("px-4 rounded-4 border border-solid border-gray bg-primary-10")
+        self._input.setClassName("px-12 rounded-4 border-1 border-primary-12 bg-primary-4")
 
         self._downloadBtn = ActionButton()
         self._downloadBtn.setFont(Factory.createFont(family="Segoe UI Semibold", size=11))
         self._downloadBtn.setClassName("text-white rounded-4 bg-primary-75 bg-primary py-8")
-
-        self._menuOuter = StyleWidget()
-        self._menuOuter.setClassName("bg-none border-none")
-
-        self._menuOuter.setContentsMargins(24, 12, 24, 24)
-        self._menuLayout = QVBoxLayout(self._menuOuter)
-        self._menuLayout.setContentsMargins(0, 0, 0, 0)
-        self._menu = DownloadSongsMenu()
-        self._menuLayout.addWidget(self._menu)
-
-        self._mainView = QWidget()
-        self._mainView.setContentsMargins(24, 24, 24, 0)
-
-        self._coverWrapperLayout = QVBoxLayout()
-        self._coverWrapperLayout.addWidget(self._image)
-
-        self._viewLayout = QVBoxLayout(self._mainView)
-        self._viewLayout.setContentsMargins(0, 0, 0, 0)
-        self._viewLayout.setAlignment(Qt.AlignVCenter)
-        self._viewLayout.addLayout(self._coverWrapperLayout)
-        self._viewLayout.addWidget(self._header)
-        self._viewLayout.addSpacing(4)
-        self._viewLayout.addWidget(self._input)
-        self._viewLayout.addSpacing(8)
-        self._viewLayout.addWidget(self._downloadBtn)
-
-        self.addWidget(self._mainView)
-        self.addWidget(self._menuOuter)
-
-        self._image.setCover(CoverProps.fromBytes(Images.DOWNLOAD, width=128))
-        self._header.setText("Download Youtube Song")
         self._downloadBtn.setText("Download")
 
-        self.setFixedWidth(640)
+        self._menu = DownloadSongsMenu()
+        self._menu.setClassName("scroll/bg-primary-50 scroll/hover:bg-primary scroll/rounded-2")
+
+        self.addWidget(self._image)
+        self.addWidget(self._header)
+        self.addSpacing(4)
+        self.addWidget(self._input)
+        self.addSpacing(8)
+        self.addWidget(self._downloadBtn)
+        self.addSpacing(12)
+        self.addWidget(self._menu)
 
     def _connectSignalSlots(self) -> None:
         super()._connectSignalSlots()
@@ -83,10 +64,12 @@ class DownloadSongsDialog(BaseDialog):
     def applyLightMode(self) -> None:
         super().applyLightMode()
         super().applyThemeToChildren()
+        self._menu.applyLightMode()
 
     def applyDarkMode(self) -> None:
         super().applyDarkMode()
         super().applyThemeToChildren()
+        self._menu.applyDarkMode()
 
     def __downloadSong(self) -> None:
         item = self._menu.addItem()

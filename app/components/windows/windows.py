@@ -1,5 +1,6 @@
 from typing import overload, Union
 
+from PyQt5 import QtCore
 from PyQt5.QtCore import Qt, QSize, QMargins
 from PyQt5.QtGui import QShowEvent, QResizeEvent, QMouseEvent
 from PyQt5.QtWidgets import QMainWindow, QWidget, QDesktopWidget, QLayout, QHBoxLayout
@@ -55,6 +56,9 @@ class FramelessWindow(QMainWindow):
 
     def setFixedSize(self, a0: QSize) -> None:
         self._inner.setFixedSize(a0)
+
+    def sizeHint(self) -> QtCore.QSize:
+        return self._inner.sizeHint()
 
     def width(self) -> int:
         return self._inner.sizeHint().width()
