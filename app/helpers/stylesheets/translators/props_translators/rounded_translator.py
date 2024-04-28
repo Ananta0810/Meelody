@@ -33,8 +33,8 @@ def _toProps(cn: ClassName, target: QWidget) -> int | float:
 
 class RoundedTranslator(PropsTranslator):
 
-    def id(self) -> str:
-        return "rounded"
+    def ids(self) -> set[str]:
+        return {"rounded"}
 
     def translate(self, names: list[ClassName], target: QWidget) -> str:
         cn = Lists.lastOf(names)

@@ -26,8 +26,8 @@ class BorderTranslator(PropsTranslator):
     __defaultColor = Color(128, 128, 128)
     __defaultStyle = "solid"
 
-    def id(self) -> str:
-        return "border"
+    def ids(self) -> set[str]:
+        return {"border"}
 
     def translate(self, names: list[ClassName], target: QWidget) -> str:
         dictionary = dict([_toProps(name) for name in names])

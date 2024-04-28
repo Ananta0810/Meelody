@@ -7,7 +7,7 @@ from .class_name import ClassName
 
 class PropsTranslator(ABC):
     @abstractmethod
-    def id(self) -> str:
+    def ids(self) -> set[str]:
         pass
 
     @abstractmethod

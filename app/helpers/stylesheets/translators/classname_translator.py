@@ -139,8 +139,8 @@ class ClassNameTranslator:
 
     @staticmethod
     def __toProp(classNames: list[ClassName], translator: PropsTranslator, element: QWidget):
-        id_ = translator.id()
-        validNames = [cn for cn in classNames if id_ == cn.key]
+        ids = translator.ids()
+        validNames = [cn for cn in classNames if cn.key in ids]
         if len(validNames) == 0:
             return None
         return translator.translate(validNames, element)

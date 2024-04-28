@@ -10,22 +10,22 @@ def _paddingOf(cn):
 
 
 def _toProps(cn: ClassName):
-    if "x-" in cn.value:
+    if cn.key == "px":
         padding = _paddingOf(cn)
         return {"left": padding, "right": padding}
-    if "y-" in cn.value:
+    if cn.key == "py":
         padding = _paddingOf(cn)
         return {"top": padding, "bottom": padding}
-    if "l-" in cn.value:
+    if cn.key == "pl":
         padding = _paddingOf(cn)
         return {"left": padding}
-    if "r-" in cn.value:
+    if cn.key == "pr":
         padding = _paddingOf(cn)
         return {"right": padding}
-    if "t-" in cn.value:
+    if cn.key == "pt":
         padding = _paddingOf(cn)
         return {"top": padding}
-    if "b-" in cn.value:
+    if cn.key == "pb":
         padding = _paddingOf(cn)
         return {"bottom": padding}
     padding = cn.value
@@ -34,8 +34,8 @@ def _toProps(cn: ClassName):
 
 class PaddingTranslator(PropsTranslator):
 
-    def id(self) -> str:
-        return "p"
+    def ids(self) -> set[str]:
+        return {"p", "px", "py", "pl", "pr", "pt", "pb"}
 
     def translate(self, names: list[ClassName], target: QWidget) -> str:
         dictionary = Dicts.mergeListOfDicts([_toProps(name) for name in names])

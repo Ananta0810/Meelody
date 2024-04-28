@@ -29,10 +29,11 @@ class DownloadSongsDialog(BaseDialog):
         self._input = Input()
         self._input.setFont(Factory.createFont(size=12))
         self._input.setFixedHeight(48)
+        self._input.setClassName("px-4 rounded-4 border border-solid border-gray bg-primary-10")
 
         self._downloadBtn = ActionButton()
         self._downloadBtn.setFont(Factory.createFont(family="Segoe UI Semibold", size=11))
-        self._downloadBtn.setClassName("text-white rounded-4 bg-primary-75 bg-primary p-y-8")
+        self._downloadBtn.setClassName("text-white rounded-4 bg-primary-75 bg-primary py-8")
 
         self._menuOuter = StyleWidget()
         self._menuOuter.setClassName("bg-none border-none")

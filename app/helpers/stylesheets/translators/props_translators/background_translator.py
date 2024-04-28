@@ -23,8 +23,8 @@ def _toProps(cn: ClassName) -> Color | None:
 
 class BackgroundTranslator(PropsTranslator):
 
-    def id(self) -> str:
-        return "bg"
+    def ids(self) -> set[str]:
+        return {"bg"}
 
     def translate(self, names: list[ClassName], target: QWidget) -> str:
         color = _toProps(names[-1])
