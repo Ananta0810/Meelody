@@ -4,8 +4,10 @@ from PyQt5.QtWidgets import QWidget, QHBoxLayout
 from app.common.models import Song
 from app.common.others import musicPlayer
 from app.components.base import Cover, Factory, LabelWithDefaultText, CoverProps
+from app.components.events import VisibleObserver
 from app.components.widgets import ExtendableStyleWidget
 from app.helpers.others import Times
+from app.helpers.qt import Widgets
 from app.helpers.stylesheets import Paddings, Colors
 from app.resource.qt import Icons, Images
 
@@ -94,12 +96,16 @@ class SongRow(ExtendableStyleWidget):
         self._loveBtn.clicked.connect(lambda: self.__song.changeLoveState(self._loveBtn.isActive()))
 
         self.__song.loved.connect(lambda loved: self._loveBtn.setActive(loved))
+        self.__song.coverChanged.connect(lambda cover: self._cover.setCover(CoverProps.fromBytes(cover, width=64, height=64, radius=12)))
+
+        VisibleObserver(self).visible.connect(lambda: self.__song.loadCover())
 
     def __playCurrentSong(self) -> None:
         musicPlayer.playSong(self.__song)
 
     def __displaySongInfo(self, song: Song) -> None:
-        self._cover.setCover(CoverProps.fromBytes(song.getCover(), width=64, height=64, radius=12))
+        if song.isCoverLoaded() and Widgets.isInView(self):
+            self._cover.setCover(CoverProps.fromBytes(song.getCover(), width=64, height=64, radius=12))
 
         self._titleLabel.setDefaultText(song.getTitle())
         self._artistLabel.setDefaultText(song.getArtist())

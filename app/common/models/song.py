@@ -1,9 +1,9 @@
 import os
 import uuid
 from enum import Enum
-from typing import Optional
+from typing import Optional, Callable
 
-from PyQt5.QtCore import QObject, pyqtSignal
+from PyQt5.QtCore import QObject, pyqtSignal, QThread
 from eyed3 import load, mp3
 
 from app.helpers.base import Strings
@@ -25,6 +25,7 @@ class Song(QObject):
     __sampleRate: float
 
     loved = pyqtSignal(bool)
+    coverChanged = pyqtSignal(bytes)
 
     def __init__(self, location: str = None, title: str = None, artist: str = None, cover: bytes = None, length: float = 0, sampleRate: float = 48000,
                  loved: bool = False):
@@ -33,26 +34,26 @@ class Song(QObject):
         self.__location = location
         self.__title = title
         self.__artist = artist
-        self.__cover = cover
         self.__length = length
         self.__sampleRate = sampleRate
         self.__isLoved = loved
+        if cover is not None:
+            self.__cover = cover
 
     @staticmethod
     def fromFile(location: str) -> 'Song':
-        song = SongReader(location)
+        data = SongReader(location)
 
         return Song(
             location,
             title=Strings.getFileBasename(location),
-            artist=song.getArtist(),
-            cover=song.getCover(),
-            length=song.getLength(),
-            sampleRate=song.getSampleRate()
+            artist=data.getArtist(),
+            length=data.getLength(),
+            sampleRate=data.getSampleRate()
         )
 
     def clone(self) -> 'Song':
-        song = Song(location=self.__location, title=self.__title, artist=self.__artist, cover=self.__cover,
+        song = Song(location=self.__location, title=self.__title, artist=self.__artist, cover=self.getCover(),
                     length=self.__length, loved=self.__isLoved, )
         song.__id = self.__id
         return song
@@ -70,7 +71,7 @@ class Song(QObject):
             self.__location == other.__location
             and self.__title == other.__title
             and self.__artist == other.__artist
-            and self.__cover == other.__cover
+            and self.getCover() == other.getCover()
             and self.__length == other.__length
             and self.__isLoved == other.__isLoved
             and self.__sampleRate == other.__sampleRate
@@ -133,7 +134,10 @@ class Song(QObject):
         return self.__artist
 
     def getCover(self) -> bytes | None:
-        return self.__cover
+        try:
+            return self.__cover
+        except AttributeError:
+            return None
 
     def getLength(self) -> int:
         return int(self.__length)
@@ -143,6 +147,22 @@ class Song(QObject):
 
     def isLoved(self) -> bool:
         return self.__isLoved
+
+    def isCoverLoaded(self) -> bool:
+        try:
+            assert hasattr(self, '__cover'), 'Cover is not loaded.'
+            return True
+        except AssertionError:
+            return False
+
+    def loadCover(self) -> None:
+        if not self.isCoverLoaded():
+            CoverLoaderThread(self.__location, onLoaded=self.__setCover).run()
+
+    def __setCover(self, cover: bytes) -> None:
+        self.__cover = cover
+        if self.__cover is not None:
+            self.coverChanged.emit(self.__cover)
 
     def delete(self) -> bool:
         """
@@ -198,3 +218,17 @@ class SongReader:
             return self.__data.info.sample_freq
         except AttributeError:
             return 0
+
+
+class CoverLoaderThread(QThread):
+    def __init__(self, location: str, onLoaded: Callable[[bytes], None]) -> None:
+        super().__init__()
+        self.__location = location
+        self.__onLoaded = onLoaded
+
+    def run(self) -> None:
+        try:
+            cover = SongReader(self.__location).getCover()
+            self.__onLoaded(cover)
+        except:
+            pass
