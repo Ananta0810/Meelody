@@ -317,23 +317,30 @@ class MusicPlayerBar(QWidget, Component):
     def __selectSong(self, song: Song) -> None:
         if self.__currentSong is not None:
             self.__currentSong.loved.disconnect(self.__updateLoveState)
+            self.__currentSong.coverChanged.disconnect(self.__updateCover)
             with contextlib.suppress(RuntimeError):
                 self._loveBtn.clicked.disconnect()
 
         self.__currentSong = song
 
+        # Connect signals
+        song.loved.connect(self.__updateLoveState)
+        song.coverChanged.connect(self.__updateCover)
+        self._loveBtn.clicked.connect(lambda: self.__currentSong.changeLoveState(self._loveBtn.isActive()))
+
+        # Display song information
         self.setTotalTime(song.getLength())
         self._titleLabel.setText(song.getTitle())
         self._artistLabel.setText(song.getArtist())
-        self._songCover.setCover(self.__createCover(song.getCover()))
         self.__updateLoveState(song.isLoved())
+        if song.isCoverLoaded():
+            self.__updateCover(song.getCover())
+        else:
+            self.__updateCover(None)
+            song.loadCover()
 
-        # Connect signals
-        song.loved.connect(self.__updateLoveState)
-        self._loveBtn.clicked.connect(lambda: self.__currentSong.changeLoveState(self._loveBtn.isActive()))
-
-    def __aa(self):
-        return self.__currentSong.changeLoveState(self._loveBtn.isActive())
+    def __updateCover(self, cover: Optional[bytes]) -> None:
+        self._songCover.setCover(self.__createCover(cover))
 
     def __updateLoveState(self, state: bool) -> None:
         self._loveBtn.setActive(state)
