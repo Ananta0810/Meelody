@@ -6,7 +6,7 @@ from PyQt5.QtWidgets import QScrollArea, QWidget, QHBoxLayout
 from app.common.models import Playlist
 from app.common.others import appCenter
 from app.components.base import Component, Factory
-from app.components.widgets import StyleWidget
+from app.components.widgets import StyleWidget, FlexBox
 from app.helpers.stylesheets import Paddings, Colors
 from app.resource.qt import Icons
 from .playlist_card import LibraryPlaylistCard, FavouritePlaylistCard, UserPlaylistCard
@@ -31,10 +31,10 @@ class PlaylistsCarousel(QScrollArea, Component):
         self._playlistFavourites = FavouritePlaylistCard()
 
         self._userPlaylists = QWidget()
-        self._userPlaylistsLayout = QHBoxLayout(self._userPlaylists)
+        self._userPlaylistsLayout = FlexBox(self._userPlaylists)
         self._userPlaylistsLayout.setAlignment(Qt.AlignLeft)
         self._userPlaylistsLayout.setSpacing(32)
-        self._userPlaylistsLayout.setContentsMargins(0, 0, 0, 0)
+        self._userPlaylists.hide()
 
         # =================New playlist=================
         self._newPlaylistCard = StyleWidget()
@@ -59,7 +59,8 @@ class PlaylistsCarousel(QScrollArea, Component):
         self._main_layout.addStretch()
 
     def _connectSignalSlots(self) -> None:
-        appCenter.playlistsChanged.connect(lambda playlists: self.setPlaylists(playlists))
+        appCenter.playlists.changed.connect(self.setPlaylists)
+        self._addPlaylistBtn.clicked.connect(self.__createEmptyPlaylist)
 
     def wheelEvent(self, event):
         delta = event.angleDelta().y()
@@ -71,7 +72,14 @@ class PlaylistsCarousel(QScrollArea, Component):
         self._main_layout.setContentsMargins(left, top, right, bottom)
 
     def setPlaylists(self, playlists: list[Playlist]) -> None:
-        pass
+        if len(playlists) != 0:
+            self._userPlaylists.show()
+
+        self._userPlaylistsLayout.clear()
         for playlist in playlists:
             userPlaylist = UserPlaylistCard(playlist)
             self._userPlaylistsLayout.addWidget(userPlaylist)
+
+    def __createEmptyPlaylist(self) -> None:
+        playlist = Playlist(Playlist.Info(), Playlist.Songs())
+        appCenter.playlists.append(playlist)

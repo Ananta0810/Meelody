@@ -36,6 +36,14 @@ class Box(QVBoxLayout):
         else:
             super().addStretch(stretch)
 
+    def clear(self) -> None:
+        for i in reversed(range(self.count())):
+            widgetToRemove = self.itemAt(i).widget()
+            # remove it from the layout list
+            self.removeWidget(widgetToRemove)
+            # remove it from the gui
+            widgetToRemove.setParent(None)
+
 
 class FlexBox(QHBoxLayout):
 
@@ -67,3 +75,11 @@ class FlexBox(QHBoxLayout):
             super().addStretch()
         else:
             super().addStretch(stretch)
+
+    def clear(self) -> None:
+        for i in reversed(range(self.count())):
+            widgetToRemove = self.itemAt(i).widget()
+            # remove it from the layout list
+            self.removeWidget(widgetToRemove)
+            # remove it from the gui
+            widgetToRemove.setParent(None)

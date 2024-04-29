@@ -1,18 +1,18 @@
 from PyQt5.QtCore import QObject, pyqtSignal
 
 from app.common.models import Playlist
+from app.common.others.playlists import Playlists
 
 
 class ApplicationCenter(QObject):
     themeChanged = pyqtSignal(bool)
-    playlistsChanged = pyqtSignal(list)
     currentPlaylistChanged = pyqtSignal(Playlist)
     exited = pyqtSignal()
 
     def __init__(self) -> None:
         super().__init__()
         self.isLightMode: bool = True
-        self.playlists: list[Playlist] = []
+        self.playlists: Playlists = Playlists()
 
         self.library: Playlist = None
         self.currentPlaylist: Playlist = None
@@ -29,8 +29,7 @@ class ApplicationCenter(QObject):
         self.currentPlaylistChanged.emit(playlist)
 
     def setPlaylists(self, playlists: list[Playlist]) -> None:
-        self.playlists = playlists
-        self.playlistsChanged.emit(playlists)
+        self.playlists.appendAll(playlists)
 
 
 appCenter = ApplicationCenter()
