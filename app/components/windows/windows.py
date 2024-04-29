@@ -37,8 +37,8 @@ class FramelessWindow(QMainWindow):
     def addLayout(self, widget: QLayout) -> None:
         self._mainLayout.addLayout(widget)
 
-    def addWidget(self, layout: QWidget, stretch: int = None, alignment: Union[Qt.Alignment, Qt.AlignmentFlag] = None) -> None:
-        self._mainLayout.addWidget(layout, stretch=stretch, alignment=alignment)
+    def addWidget(self, widget: QWidget, stretch: int = None, alignment: Union[Qt.Alignment, Qt.AlignmentFlag] = None) -> None:
+        self._mainLayout.addWidget(widget, stretch=stretch, alignment=alignment)
 
     def setFixedHeight(self, h: int) -> None:
         self._inner.setFixedHeight(h)

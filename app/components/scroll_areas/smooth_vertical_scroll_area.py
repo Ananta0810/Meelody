@@ -1,10 +1,11 @@
-from typing import Optional
+from typing import Optional, Union
 
-from PyQt5.QtCore import pyqtSignal, QVariantAnimation, QEasingCurve
+from PyQt5.QtCore import pyqtSignal, QVariantAnimation, QEasingCurve, Qt
 from PyQt5.QtGui import QWheelEvent
 from PyQt5.QtWidgets import QWidget
 
 from app.components.scroll_areas.style_scroll_area import StyleScrollArea
+from app.components.widgets import Box
 from app.helpers.base import Numbers
 
 
@@ -13,17 +14,33 @@ class SmoothVerticalScrollArea(StyleScrollArea):
 
     def __init__(self, parent: Optional[QWidget] = None) -> None:
         super().__init__(parent=parent)
-        # TODO: Try to remove item height.
-        self.__itemHeight = 0
+
+        self.__widgets: list[QWidget] = []
         self.__animation = QVariantAnimation(self, valueChanged=self.__smoothScroll, duration=1000)
         self.__animation.setEasingCurve(QEasingCurve.OutCubic)
+
+    def _createUI(self) -> None:
+        self.setHorizontalScrollBarPolicy(Qt.ScrollBarAlwaysOff)
+        self.setWidgetResizable(True)
+
+        self._menu = QWidget()
+        self._menu.setContentsMargins(8, 0, 8, 8)
+
+        self._mainLayout = Box(self._menu)
+        self._mainLayout.setAlignment(Qt.AlignTop)
+
+        self.setWidget(self._menu)
+
+    def setContentsMargins(self, left: int, top: int, right: int, bottom: int) -> None:
+        self._menu.setContentsMargins(left, top, right, bottom)
+
+    def addWidget(self, widget: QWidget, stretch: int = None, alignment: Union[Qt.Alignment, Qt.AlignmentFlag] = None) -> None:
+        self._mainLayout.addWidget(widget, stretch, alignment)
+        self.__widgets.append(widget)
 
     def wheelEvent(self, event: QWheelEvent) -> None:
         self.__animation.stop()
         return super().wheelEvent(event)
-
-    def setItemHeight(self, height: int) -> None:
-        self.__itemHeight = height
 
     def setAnimationDuration(self, duration: int) -> None:
         self.__animation.setDuration(duration)
@@ -32,15 +49,20 @@ class SmoothVerticalScrollArea(StyleScrollArea):
         self.__animation.setEasingCurve(easing_curve)
 
     def getCurrentItemIndex(self):
-        return self.verticalScrollBar().value() // self.__itemHeight
+        return self.verticalScrollBar().value() // 88
 
     def scrollToItemAt(self, index: int) -> None:
-        maxValue: int = self.verticalScrollBar().maximum()
-        endValue: int = Numbers.clamp(index * self.__itemHeight, 0, maxValue)
-        self.__animation.stop()
-        self.__animation.setStartValue(self.verticalScrollBar().value())
-        self.__animation.setEndValue(endValue)
-        self.__animation.start()
+        try:
+            item = self.__widgets[index]
+            itemPosition = item.mapToParent(self.pos()) - self.__widgets[0].mapToParent(self.pos())
+            targetPosition: int = Numbers.clamp(itemPosition.y(), 0, self.verticalScrollBar().maximum())
+
+            self.__animation.stop()
+            self.__animation.setStartValue(self.verticalScrollBar().value())
+            self.__animation.setEndValue(targetPosition)
+            self.__animation.start()
+        except IndexError:
+            pass
 
     def __smoothScroll(self, value: int) -> None:
         self.verticalScrollBar().setValue(value)

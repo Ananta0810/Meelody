@@ -14,9 +14,9 @@ class StyleScrollArea(QScrollArea, Component):
     def __init__(self, parent: Optional[QWidget] = None) -> None:
         super().__init__(parent=parent)
         self._scrollBarWidth = 4
-        
-        self.setContentsMargins(0, 0, 0, 0)
-        self.setWidgetResizable(True)
+
+        super().setContentsMargins(0, 0, 0, 0)
+        super().setWidgetResizable(True)
 
     def resizeEvent(self, a0: QResizeEvent) -> None:
         super().resizeEvent(a0)

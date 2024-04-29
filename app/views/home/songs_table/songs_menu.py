@@ -7,7 +7,6 @@ from PyQt5.QtWidgets import QWidget
 from app.common.models import Song
 from app.common.others import appCenter, musicPlayer
 from app.components.scroll_areas import SmoothVerticalScrollArea
-from app.components.widgets import Box
 from app.helpers.base import Lists
 from app.views.home.songs_table.song_row import SongRow
 
@@ -22,20 +21,11 @@ class SongsMenu(SmoothVerticalScrollArea):
         self.__titleKeys: dict[str, list[int]] = {}
 
         self._initComponent()
-        self.setItemHeight(88)
 
     def _createUI(self) -> None:
-        self.setHorizontalScrollBarPolicy(Qt.ScrollBarAlwaysOff)
-        self.setWidgetResizable(True)
+        super()._createUI()
         self.setClassName("scroll/bg-primary-50 scroll/hover:bg-primary scroll/rounded-2")
-
-        self._menu = QWidget()
-        self._menu.setContentsMargins(8, 0, 8, 8)
-
-        self._mainLayout = Box(self._menu)
-        self._mainLayout.setAlignment(Qt.AlignTop)
-
-        self.setWidget(self._menu)
+        self.setContentsMargins(8, 0, 8, 8)
 
     def _connectSignalSlots(self) -> None:
         appCenter.currentPlaylistChanged.connect(lambda playlist: self.__setSongs(playlist.getSongs().getSongs()))
@@ -68,6 +58,7 @@ class SongsMenu(SmoothVerticalScrollArea):
 
         currentIndex = self.getCurrentItemIndex()
         nextIndex = Lists.nearestLinearSearch(indexes, currentIndex) + 1
+        print(nextIndex)
         try:
             return indexes[nextIndex]
         except IndexError:
@@ -84,7 +75,7 @@ class SongsMenu(SmoothVerticalScrollArea):
                 songRow.applyLightMode()
             else:
                 songRow.applyDarkMode()
-            self._mainLayout.addWidget(songRow)
+            self.addWidget(songRow)
 
         self.__titles = {song.getTitle(): index for index, song in enumerate(songs)}
         self.__titleKeys = self.__createTitleMap(songs)
