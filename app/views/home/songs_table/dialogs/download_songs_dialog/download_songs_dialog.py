@@ -15,7 +15,7 @@ class DownloadSongsDialog(BaseDialog):
     def _createUI(self) -> None:
         super()._createUI()
         self.setFixedWidth(640)
-        self.setContentsMargins(24, 24, 24, 24)
+        self.setContentsMargins(24, 24, 24, 12)
 
         self._image = Cover()
         self._image.setAlignment(Qt.AlignHCenter)
@@ -40,6 +40,7 @@ class DownloadSongsDialog(BaseDialog):
 
         self._menu = DownloadSongsMenu()
         self._menu.setClassName("scroll/bg-primary-50 scroll/hover:bg-primary scroll/rounded-2")
+        self._menu.applyTheme()
 
         self.addWidget(self._image)
         self.addWidget(self._header)
@@ -64,12 +65,10 @@ class DownloadSongsDialog(BaseDialog):
     def applyLightMode(self) -> None:
         super().applyLightMode()
         super().applyThemeToChildren()
-        self._menu.applyLightMode()
 
     def applyDarkMode(self) -> None:
         super().applyDarkMode()
         super().applyThemeToChildren()
-        self._menu.applyDarkMode()
 
     def __downloadSong(self) -> None:
         item = self._menu.addItem()

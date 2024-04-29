@@ -91,6 +91,9 @@ class SongRow(ExtendableStyleWidget):
 
     def _connectSignalSlots(self) -> None:
         self._playBtn.clicked.connect(lambda: self.__playCurrentSong())
+        self._loveBtn.clicked.connect(lambda: self.__song.changeLoveState(self._loveBtn.isActive()))
+
+        self.__song.loved.connect(lambda loved: self._loveBtn.setActive(loved))
 
     def __playCurrentSong(self) -> None:
         musicPlayer.playSong(self.__song)

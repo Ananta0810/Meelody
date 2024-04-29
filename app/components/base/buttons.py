@@ -123,9 +123,10 @@ class ToggleIconButton(MultiStatesIconButton):
         self.setSizePolicy(policy)
 
     def setActive(self, active: bool) -> None:
-        self.__isActive = active
-        self.setActiveState(0 if active else 1)
-        super()._changeButtonBasedOnState()
+        if active != self.isActive():
+            self.__isActive = active
+            self.setActiveState(0 if active else 1)
+            super()._changeButtonBasedOnState()
 
     def setActiveIcon(self, lightModeIcon: AppIcon, darkModeIcon: AppIcon = None) -> None:
         icon = StateIcon(lightModeIcon, darkModeIcon)

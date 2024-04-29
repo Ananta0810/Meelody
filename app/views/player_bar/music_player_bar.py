@@ -1,3 +1,4 @@
+import contextlib
 from time import sleep
 from typing import Optional, Union
 
@@ -16,10 +17,11 @@ from app.resource.qt import Images, Icons
 
 class MusicPlayerBar(QWidget, Component):
 
-    def __init__(self, parent: Optional["QWidget"] = None):
+    def __init__(self, parent: Optional[QWidget] = None):
         super().__init__(parent)
         self.__songLength: float = 0
         self.__canRunTimeSlider = True
+        self.__currentSong: Optional[Song] = None
 
         super()._initComponent()
 
@@ -313,10 +315,28 @@ class MusicPlayerBar(QWidget, Component):
         self.__canRunTimeSlider = enable
 
     def __selectSong(self, song: Song) -> None:
+        if self.__currentSong is not None:
+            self.__currentSong.loved.disconnect(self.__updateLoveState)
+            with contextlib.suppress(RuntimeError):
+                self._loveBtn.clicked.disconnect()
+
+        self.__currentSong = song
+
         self.setTotalTime(song.getLength())
         self._titleLabel.setText(song.getTitle())
         self._artistLabel.setText(song.getArtist())
         self._songCover.setCover(self.__createCover(song.getCover()))
+        self.__updateLoveState(song.isLoved())
+
+        # Connect signals
+        song.loved.connect(self.__updateLoveState)
+        self._loveBtn.clicked.connect(lambda: self.__currentSong.changeLoveState(self._loveBtn.isActive()))
+
+    def __aa(self):
+        return self.__currentSong.changeLoveState(self._loveBtn.isActive())
+
+    def __updateLoveState(self, state: bool) -> None:
+        self._loveBtn.setActive(state)
 
     def __changeVolumeIcon(self, volume: int) -> None:
         VOLUME_UP_STATE: int = 0

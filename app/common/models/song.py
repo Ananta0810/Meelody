@@ -3,12 +3,13 @@ import uuid
 from enum import Enum
 from typing import Optional
 
+from PyQt5.QtCore import QObject, pyqtSignal
 from eyed3 import load, mp3
 
 from app.helpers.base import Strings
 
 
-class Song:
+class Song(QObject):
     class Order(Enum):
         TITLE = 'title',
         ARTIST = 'artist',
@@ -23,16 +24,11 @@ class Song:
     __isLoved: bool
     __sampleRate: float
 
-    def __init__(
-        self,
-        location: str = None,
-        title: str = None,
-        artist: str = None,
-        cover: bytes = None,
-        length: float = 0,
-        sampleRate: float = 48000,
-        loved: bool = False,
-    ):
+    loved = pyqtSignal(bool)
+
+    def __init__(self, location: str = None, title: str = None, artist: str = None, cover: bytes = None, length: float = 0, sampleRate: float = 48000,
+                 loved: bool = False):
+        super().__init__()
         self.__id = str(uuid.uuid4())
         self.__location = location
         self.__title = title
@@ -166,6 +162,7 @@ class Song:
             self.__isLoved = not self.__isLoved
         else:
             self.__isLoved = state
+        self.loved.emit(self.__isLoved)
 
 
 class SongReader:
