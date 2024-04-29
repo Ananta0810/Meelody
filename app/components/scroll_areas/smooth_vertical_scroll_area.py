@@ -34,7 +34,7 @@ class SmoothVerticalScrollArea(StyleScrollArea):
     def getCurrentItemIndex(self):
         return self.verticalScrollBar().value() // self.__itemHeight
 
-    def _scrollToItemAt(self, index: int) -> None:
+    def scrollToItemAt(self, index: int) -> None:
         maxValue: int = self.verticalScrollBar().maximum()
         endValue: int = Numbers.clamp(index * self.__itemHeight, 0, maxValue)
         self.__animation.stop()

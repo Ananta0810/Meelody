@@ -5,7 +5,7 @@ from PyQt5.QtGui import QKeyEvent
 from PyQt5.QtWidgets import QWidget
 
 from app.common.models import Song
-from app.common.others import appCenter
+from app.common.others import appCenter, musicPlayer
 from app.components.scroll_areas import SmoothVerticalScrollArea
 from app.components.widgets import Box
 from app.helpers.base import Lists
@@ -18,7 +18,9 @@ class SongsMenu(SmoothVerticalScrollArea):
     def __init__(self, parent: Optional[QWidget] = None) -> None:
         super().__init__(parent)
 
+        self.__titles: dict[str, int] = {}
         self.__titleKeys: dict[str, list[int]] = {}
+
         self._initComponent()
         self.setItemHeight(88)
 
@@ -37,6 +39,7 @@ class SongsMenu(SmoothVerticalScrollArea):
 
     def _connectSignalSlots(self) -> None:
         appCenter.currentPlaylistChanged.connect(lambda playlist: self.__setSongs(playlist.getSongs().getSongs()))
+        musicPlayer.songChanged.connect(self.__scrollToSong)
         self.keyPressed.connect(self.__onKeyPressed)
 
     def keyPressEvent(self, event: QKeyEvent) -> None:
@@ -49,14 +52,14 @@ class SongsMenu(SmoothVerticalScrollArea):
             return
         try:
             key = chr(event.key())
-            index = self._findSongPositionToScroll(key)
+            index = self.__findSongPositionToScroll(key)
             if index == -1:
                 return
-            self._scrollToItemAt(index)
+            self.scrollToItemAt(index)
         except ValueError:
             pass
 
-    def _findSongPositionToScroll(self, key: str) -> int:
+    def __findSongPositionToScroll(self, key: str) -> int:
         if key not in self.__titleKeys:
             return -1
         indexes = self.__titleKeys[key]
@@ -70,6 +73,10 @@ class SongsMenu(SmoothVerticalScrollArea):
         except IndexError:
             return indexes[0]
 
+    def __scrollToSong(self, song: Song) -> None:
+        if song.getTitle() in self.__titles:
+            self.scrollToItemAt(self.__titles[song.getTitle()])
+
     def __setSongs(self, songs: list[Song]) -> None:
         for song in songs:
             songRow = SongRow(song)
@@ -79,6 +86,7 @@ class SongsMenu(SmoothVerticalScrollArea):
                 songRow.applyDarkMode()
             self._mainLayout.addWidget(songRow)
 
+        self.__titles = {song.getTitle(): index for index, song in enumerate(songs)}
         self.__titleKeys = self.__createTitleMap(songs)
 
     @staticmethod
