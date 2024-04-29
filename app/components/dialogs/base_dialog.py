@@ -59,8 +59,8 @@ class BaseDialog(FramelessWindow, Component):
     def addLayout(self, widget: QLayout) -> None:
         self._body.addLayout(widget)
 
-    def addWidget(self, layout: QWidget, stretch: int = None, alignment: Union[Qt.Alignment, Qt.AlignmentFlag] = None) -> None:
-        self._body.addWidget(layout, stretch, alignment)
+    def addWidget(self, widget: QWidget, stretch: int = None, alignment: Union[Qt.Alignment, Qt.AlignmentFlag] = None) -> None:
+        self._body.addWidget(widget, stretch, alignment)
 
     def addSpacing(self, space: int) -> None:
         self._body.addSpacing(space)

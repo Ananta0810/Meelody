@@ -7,6 +7,7 @@ from PyQt5.QtWidgets import QWidget
 from app.components.scroll_areas.style_scroll_area import StyleScrollArea
 from app.components.widgets import Box
 from app.helpers.base import Numbers
+from app.helpers.qt import Widgets
 
 
 class SmoothVerticalScrollArea(StyleScrollArea):
@@ -16,6 +17,8 @@ class SmoothVerticalScrollArea(StyleScrollArea):
         super().__init__(parent=parent)
 
         self.__widgets: list[QWidget] = []
+        self.__visibleWidgetIndexes: set[int] = set()
+
         self.__animation = QVariantAnimation(self, valueChanged=self.__smoothScroll, duration=1000)
         self.__animation.setEasingCurve(QEasingCurve.OutCubic)
 
@@ -31,12 +34,18 @@ class SmoothVerticalScrollArea(StyleScrollArea):
 
         self.setWidget(self._menu)
 
+    def _connectSignalSlots(self) -> None:
+        self.verticalScrollBar().valueChanged.connect(self.__updateVisibleItems)
+
     def setContentsMargins(self, left: int, top: int, right: int, bottom: int) -> None:
         self._menu.setContentsMargins(left, top, right, bottom)
 
     def addWidget(self, widget: QWidget, stretch: int = None, alignment: Union[Qt.Alignment, Qt.AlignmentFlag] = None) -> None:
         self._mainLayout.addWidget(widget, stretch, alignment)
         self.__widgets.append(widget)
+
+    def __updateVisibleItems(self):
+        self.__visibleWidgetIndexes = {index for index, item in enumerate(self.__widgets) if Widgets.isInView(item)}
 
     def wheelEvent(self, event: QWheelEvent) -> None:
         self.__animation.stop()
@@ -49,7 +58,7 @@ class SmoothVerticalScrollArea(StyleScrollArea):
         self.__animation.setEasingCurve(easing_curve)
 
     def getCurrentItemIndex(self):
-        return self.verticalScrollBar().value() // 88
+        return min(self.__visibleWidgetIndexes)
 
     def scrollToItemAt(self, index: int) -> None:
         try:

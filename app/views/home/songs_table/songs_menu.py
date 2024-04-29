@@ -28,6 +28,7 @@ class SongsMenu(SmoothVerticalScrollArea):
         self.setContentsMargins(8, 0, 8, 8)
 
     def _connectSignalSlots(self) -> None:
+        super()._connectSignalSlots()
         appCenter.currentPlaylistChanged.connect(lambda playlist: self.__setSongs(playlist.getSongs().getSongs()))
         musicPlayer.songChanged.connect(self.__scrollToSong)
         self.keyPressed.connect(self.__onKeyPressed)
@@ -58,7 +59,6 @@ class SongsMenu(SmoothVerticalScrollArea):
 
         currentIndex = self.getCurrentItemIndex()
         nextIndex = Lists.nearestLinearSearch(indexes, currentIndex) + 1
-        print(nextIndex)
         try:
             return indexes[nextIndex]
         except IndexError:
