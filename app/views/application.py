@@ -18,17 +18,12 @@ class Application:
 
     @staticmethod
     def __configureDatabase():
-        library = Playlist(Playlist.Info("Library"), Playlist.Songs(database.Songs.load("library", withExtension="mp3")))
+        library = Playlist(Playlist.Info("Library"), Playlist.Songs(database.songs.load("library", withExtension="mp3")))
+        playlists = database.playlists.load(library.getSongs().getSongs())
 
+        appCenter.setPlaylists(playlists)
         appCenter.setLibrary(library)
         appCenter.setActivePlaylist(library)
-        appCenter.setPlaylists(
-            [
-                Playlist(Playlist.Info("Summer"), library.getSongs()),
-                Playlist(Playlist.Info("Chill"), library.getSongs()),
-                Playlist(Playlist.Info("Morning"), library.getSongs()),
-            ]
-        )
 
         musicPlayer.loadPlaylist(library.getSongs())
         musicPlayer.setCurrentSongIndex(0)

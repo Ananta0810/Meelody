@@ -36,6 +36,9 @@ class Playlist:
         def __eq__(self, other: 'Playlist.Info') -> bool:
             return Strings.equals(self.__name, other.__name) and self.__cover == other.__cover
 
+        def getId(self) -> str:
+            return self.__id
+
         def getName(self) -> str:
             return self.__name
 
