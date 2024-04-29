@@ -10,6 +10,7 @@ class Box(QVBoxLayout):
     def __init__(self, parent: typing.Optional[QWidget] = None) -> None:
         super().__init__(parent)
         self.setContentsMargins(0, 0, 0, 0)
+        self.setSpacing(0)
 
     def addLayout(self, layout: Optional[QLayout], stretch: int = None) -> None:
         if stretch is None:
@@ -41,6 +42,7 @@ class FlexBox(QHBoxLayout):
     def __init__(self, parent: typing.Optional[QWidget] = None) -> None:
         super().__init__(parent)
         self.setContentsMargins(0, 0, 0, 0)
+        self.setSpacing(0)
 
     def addLayout(self, layout: Optional[QLayout], stretch: int = None) -> None:
         if stretch is None:
