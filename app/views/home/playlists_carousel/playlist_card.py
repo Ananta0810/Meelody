@@ -5,7 +5,7 @@ from PyQt5.QtGui import QResizeEvent
 from PyQt5.QtWidgets import QWidget, QVBoxLayout, QHBoxLayout
 
 from app.common.models import Playlist
-from app.components.base import Cover, LabelWithDefaultText, Factory, CoverProps
+from app.components.base import Cover, LabelWithDefaultText, Factory, CoverProps, Component
 from app.components.widgets import ExtendableStyleWidget
 from app.helpers.stylesheets import Paddings, Colors
 from app.resource.qt import Cursors, Images, Icons
@@ -94,6 +94,7 @@ class UserPlaylistCard(PlaylistCard):
 
         self._title.setDefaultText("New Playlist")
         self.setInfo(playlist.getInfo())
+        self.applyLightMode()
 
     def _createUI(self) -> None:
         super()._createUI()
@@ -115,3 +116,13 @@ class UserPlaylistCard(PlaylistCard):
         self._topLayout.addStretch(1)
         self._topLayout.addLayout(self._buttonsLayout)
         self._mainLayout.insertLayout(0, self._topLayout)
+
+    def applyLightMode(self) -> None:
+        children = self.findChildren(Component)
+        for child in children:
+            child.applyLightMode()
+
+    def applyDarkMode(self) -> None:
+        children = self.findChildren(Component)
+        for child in children:
+            child.applyDarkMode()

@@ -9,6 +9,7 @@ from app.components.base import Component, Factory
 from app.components.widgets import StyleWidget, FlexBox
 from app.helpers.stylesheets import Paddings, Colors
 from app.resource.qt import Icons
+from .new_playlist_dialog import NewPlaylistDialog
 from .playlist_card import LibraryPlaylistCard, FavouritePlaylistCard, UserPlaylistCard
 
 
@@ -60,7 +61,7 @@ class PlaylistsCarousel(QScrollArea, Component):
 
     def _connectSignalSlots(self) -> None:
         appCenter.playlists.changed.connect(self.setPlaylists)
-        self._addPlaylistBtn.clicked.connect(self.__createEmptyPlaylist)
+        self._addPlaylistBtn.clicked.connect(self.__openNewPlaylistDialog)
 
     def wheelEvent(self, event):
         delta = event.angleDelta().y()
@@ -80,6 +81,5 @@ class PlaylistsCarousel(QScrollArea, Component):
             userPlaylist = UserPlaylistCard(playlist)
             self._userPlaylistsLayout.addWidget(userPlaylist)
 
-    def __createEmptyPlaylist(self) -> None:
-        playlist = Playlist(Playlist.Info(), Playlist.Songs())
-        appCenter.playlists.append(playlist)
+    def __openNewPlaylistDialog(self) -> None:
+        NewPlaylistDialog().show()
