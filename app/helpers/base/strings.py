@@ -100,7 +100,7 @@ class Strings:
         return f"{directory}/{file_path}"
 
     @staticmethod
-    def getDirFrom(file_path: str) -> str:
+    def getDirectoryOf(file_path: str) -> str:
         return file_path.replace(os.path.basename(file_path), "")
 
     @staticmethod
@@ -119,7 +119,7 @@ class Strings:
     def renameFile(file_path: str, new_base_name: str) -> str:
         old_base_name = Strings.getFileBasename(file_path)
         if old_base_name.strip() == "":
-            directory = Strings.getDirFrom(file_path)
+            directory = Strings.getDirectoryOf(file_path)
             extension = "." + Strings.extensionOf(file_path)
             return Strings.getFullPath(directory, new_base_name, extension)
 

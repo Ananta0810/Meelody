@@ -16,18 +16,17 @@ class Application:
         appCenter.exited.connect(lambda: musicPlayer.stop())
         appCenter.exited.connect(lambda: self._mainWindow.close())
 
-    def __configureDatabase(self):
-        songs = Playlist.Songs(database.Songs.load("library", withExtension="mp3"))
-        library = Playlist(Playlist.Info("Library"), songs)
+    @staticmethod
+    def __configureDatabase():
+        library = Playlist(Playlist.Info("Library"), Playlist.Songs(database.Songs.load("library", withExtension="mp3")))
 
         appCenter.setLibrary(library)
-
         appCenter.setActivePlaylist(library)
         appCenter.setPlaylists(
             [
-                Playlist(Playlist.Info("Summer"), songs),
-                Playlist(Playlist.Info("Chill"), songs),
-                Playlist(Playlist.Info("Morning"), songs),
+                Playlist(Playlist.Info("Summer"), library.getSongs()),
+                Playlist(Playlist.Info("Chill"), library.getSongs()),
+                Playlist(Playlist.Info("Morning"), library.getSongs()),
             ]
         )
 

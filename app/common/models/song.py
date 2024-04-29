@@ -52,6 +52,30 @@ class Song(QObject):
             sampleRate=data.getSampleRate()
         )
 
+    @staticmethod
+    def fromDict(json: dict) -> 'Song':
+        song = Song(
+            location=json['location'],
+            title=json['title'],
+            artist=json['artist'],
+            length=json['length'],
+            sampleRate=json['sample_rate'],
+            loved=json['is_loved'],
+        )
+        song.__id = json['id']
+        return song
+
+    def toDict(self) -> dict:
+        return {
+            'id': self.__id,
+            'location': self.__location,
+            'title': self.__title,
+            'artist': self.__artist,
+            'length': self.__length,
+            'sample_rate': self.__sampleRate,
+            'is_loved': self.__isLoved,
+        }
+
     def clone(self) -> 'Song':
         song = Song(location=self.__location, title=self.__title, artist=self.__artist, cover=self.getCover(),
                     length=self.__length, loved=self.__isLoved, )
