@@ -1,6 +1,7 @@
 import os
 
 from app.common.models import Song, Playlist
+from app.helpers.base import Bytes
 from app.helpers.others import Files, Jsons
 
 
@@ -60,23 +61,32 @@ class PlaylistJson:
 
     @staticmethod
     def fromPlaylist(playlist: Playlist) -> 'PlaylistJson':
-        info = {"name": playlist.getInfo().getName(), "id": playlist.getInfo().getId()}
+        playlistInfo = playlist.getInfo()
+
+        info = {"name": playlistInfo.getName(), "id": playlistInfo.getId(), "cover": playlistInfo.getCoverPath()}
         ids: list[str] = [song.getId() for song in playlist.getSongs().getSongs()]
 
-        return PlaylistJson(info=info, ids=ids)
+        return PlaylistJson(info, ids)
 
     @staticmethod
     def fromDict(json: dict) -> 'PlaylistJson':
-        return PlaylistJson(json['__info'], json['__ids'])
+        return PlaylistJson(json['info'], json['ids'])
 
     def toPlaylist(self, songs: list[Song]) -> Playlist:
-        ids = set(self.__ids)
-        return Playlist(Playlist.Info(), Playlist.Songs(songs=[song for song in songs if song.getId() in ids]))
+        songIds = set(self.__ids)
+
+        path = self.__info.get("cover", None)
+        cover = None if path is None else Bytes.fromFile(path)
+
+        info = Playlist.Info(id=self.__info["id"], name=self.__info["name"], coverPath=path, cover=cover)
+        songs = Playlist.Songs(songs=[song for song in songs if song.getId() in songIds])
+
+        return Playlist(info, songs)
 
     def toDict(self) -> dict:
         return {
-            '__info': self.__info,
-            '__ids': self.__ids
+            'info': self.__info,
+            'ids': self.__ids
         }
 
 

@@ -1,5 +1,8 @@
+import io
+import uuid
 from typing import Optional
 
+from PIL import Image
 from PyQt5.QtCore import Qt
 from PyQt5.QtGui import QKeySequence, QResizeEvent
 from PyQt5.QtWidgets import QWidget, QShortcut, QFileDialog
@@ -10,6 +13,7 @@ from app.components.base import Cover, CoverProps, Factory, Input, ActionButton
 from app.components.dialogs import BaseDialog
 from app.components.widgets import Box
 from app.helpers.base import Bytes
+from app.helpers.others import Files
 from app.helpers.qt import Pixmaps
 from app.resource.others import FileType
 from app.resource.qt import Images
@@ -95,7 +99,16 @@ class NewPlaylistDialog(BaseDialog):
             self._cover.setDefaultCover(coverProps)
 
     def _addPlaylist(self) -> None:
-        playlist = Playlist(Playlist.Info(name=self._titleInput.text().strip(), cover=self.__coverData), Playlist.Songs())
-        playlist.getInfo().saveCover()
+        id = str(uuid.uuid4())
+        name = self._titleInput.text().strip()
+        path = f"configuration/playlists/{id}.png"
+        cover = self.__coverData
+
+        if cover is not None:
+            Files.createDirectoryIfNotExisted("configuration/playlists")
+            image = Image.open(io.BytesIO(cover))
+            image.save(f"configuration/playlists/{id}.png")
+
+        playlist = Playlist(Playlist.Info(name=name, cover=cover, id=id, coverPath=path), Playlist.Songs())
         appCenter.playlists.append(playlist)
         self.close()
