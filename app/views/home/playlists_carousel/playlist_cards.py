@@ -5,8 +5,11 @@ from PyQt5.QtGui import QResizeEvent
 from PyQt5.QtWidgets import QWidget, QVBoxLayout, QHBoxLayout
 
 from app.common.models import Playlist
+from app.common.others import appCenter
 from app.components.base import Cover, LabelWithDefaultText, Factory, CoverProps
+from app.components.dialogs import Dialogs
 from app.components.widgets import ExtendableStyleWidget
+from app.helpers.others import Files
 from app.helpers.qt import Pixmaps
 from app.helpers.stylesheets import Paddings, Colors
 from app.resource.qt import Cursors, Images, Icons
@@ -138,9 +141,22 @@ class UserPlaylistCard(PlaylistCard):
 
     def _connectSignalSlots(self) -> None:
         self._editBtn.clicked.connect(lambda: UpdatePlaylistDialog(self.__playlist).show())
+        self._deleteBtn.clicked.connect(self.__openDeletePlaylistConfirm)
 
     def applyLightMode(self) -> None:
         pass
 
     def applyDarkMode(self) -> None:
         pass
+
+    def __openDeletePlaylistConfirm(self) -> None:
+        Dialogs.confirm(
+            message="Are you sure want to delete this playlist. This action can not be reverted.",
+            onAccept=self.__deletePlaylist
+        )
+
+    def __deletePlaylist(self) -> None:
+        appCenter.playlists.remove(self.__playlist)
+        path = self.__playlist.getInfo().getCoverPath()
+        if path is not None:
+            Files.removeFile(path)

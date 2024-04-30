@@ -39,6 +39,7 @@ class Playlists(QObject):
 
     def remove(self, item: Playlist) -> None:
         self.__items.remove(item)
+        database.playlists.save(self.__validItemsOf(self.__items))
         self.changed.emit(self.__items)
 
     def removeAt(self, index: int) -> None:

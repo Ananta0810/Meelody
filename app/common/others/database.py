@@ -77,6 +77,7 @@ class PlaylistJson:
 
         path = self.__info.get("cover", None)
         cover = None if path is None else Bytes.fromFile(path)
+        path = None if cover is None else path
 
         info = Playlist.Info(id=self.__info["id"], name=self.__info["name"], coverPath=path, cover=cover)
         songs = Playlist.Songs(songs=[song for song in songs if song.getId() in songIds])

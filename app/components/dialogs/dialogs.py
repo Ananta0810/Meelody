@@ -228,15 +228,21 @@ class Dialogs:
         dialog.open()
 
     @staticmethod
-    def confirm(message: str,
-                header: str = "Warning",
-                acceptText: str = "OK",
-                cancelText: str = "Cancel",
-                onAccept: Optional[callable] = None):
+    def confirm(
+        message: str,
+        header: str = "Warning",
+        acceptText: str = "OK",
+        cancelText: str = "Cancel",
+        onAccept: Optional[callable] = None,
+        onCancel: Optional[callable] = None,
+    ):
         dialog = _ConfirmDialog()
         dialog.setInfo(header, message, acceptText, cancelText)
 
         if onAccept is not None:
             dialog.accepted.connect(lambda: onAccept())
+
+        if onCancel is not None:
+            dialog.canceled.connect(lambda: onCancel())
 
         dialog.open()
