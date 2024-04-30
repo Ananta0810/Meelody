@@ -43,6 +43,14 @@ class EllipsisLabel(QLabel, Component):
         return self.__text
 
 
+class Label(QLabel, Component):
+
+    def __init__(self, parent: Optional[QWidget] = None, autoChangeTheme: bool = True):
+        super().__init__(parent)
+        super()._initComponent(autoChangeTheme)
+        self.setWordWrap(True)
+
+
 class LabelWithDefaultText(QLabel, Component):
 
     def __init__(self, parent: Optional[QWidget] = None, autoChangeTheme: bool = True):
