@@ -9,9 +9,9 @@ from PyQt5.QtWidgets import QWidget, QShortcut, QFileDialog
 
 from app.common.exceptions import StorageException
 from app.common.models import Playlist
-from app.common.others import appCenter, database
+from app.common.others import appCenter
 from app.components.base import Cover, CoverProps, Factory, Input, ActionButton
-from app.components.dialogs import BaseDialog
+from app.components.dialogs import BaseDialog, Dialogs
 from app.components.widgets import Box
 from app.helpers.base import Bytes
 from app.helpers.others import Files
@@ -111,11 +111,22 @@ class NewPlaylistDialog(BaseDialog):
                 image = Image.open(io.BytesIO(cover))
                 image.save(f"configuration/playlists/{id}.png")
 
-            playlist = Playlist(Playlist.Info(name=name, cover=cover, id=id, coverPath=path), Playlist.Songs())
-            appCenter.playlists.append(playlist)
-            database.playlists.save(appCenter.playlists.validItems())
-            self.close()
-        except StorageException as e:
+            appCenter.playlists.append(Playlist(Playlist.Info(name=name, cover=cover, id=id, coverPath=path), Playlist.Songs()))
+
+            Dialogs.info(
+                header="Succeed",
+                message='Your playlist has been created successfully.',
+                acceptText="Ok",
+                onAccept=lambda: self.close()
+            )
+
+        except StorageException:
             if cover is not None:
                 Files.removeFile(path)
-            self.close()
+
+            Dialogs.alert(
+                header="Save playlist failed",
+                message='Something wrong while creating your playlist. Please try to create playlist again.',
+                acceptText="Ok",
+                onAccept=lambda: self.close()
+            )

@@ -3,6 +3,7 @@ from typing import Optional
 from PyQt5.QtCore import QObject, pyqtSignal
 
 from app.common.models import Playlist
+from .database import database
 
 
 class Playlists(QObject):
@@ -14,8 +15,14 @@ class Playlists(QObject):
         self.changed.emit(self.__items)
 
     def append(self, item: Playlist) -> None:
-        self.__items.append(item)
+        self.__items = self.saveTempPlaylist(item)
         self.changed.emit(self.__items)
+
+    def saveTempPlaylist(self, item) -> list[Playlist]:
+        tempPlaylist = [playlist for playlist in self.__items]
+        tempPlaylist.append(item)
+        database.playlists.save(self.__validItemsOf(tempPlaylist))
+        return tempPlaylist
 
     def appendAll(self, items: list[Playlist]) -> None:
         for item in items:
@@ -33,5 +40,6 @@ class Playlists(QObject):
     def items(self) -> list:
         return self.__items
 
-    def validItems(self) -> list:
-        return [item for item in self.__items if not item.getInfo().isNew()]
+    @staticmethod
+    def __validItemsOf(tempPlaylist):
+        return [item for item in tempPlaylist if not item.getInfo().isNew()]

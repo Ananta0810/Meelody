@@ -63,7 +63,7 @@ class PlaylistJson:
     def fromPlaylist(playlist: Playlist) -> 'PlaylistJson':
         playlistInfo = playlist.getInfo()
 
-        info = {"name": playlistInfo.getName(), "id": playlistInfo.getId(), "cover": playlistInfo.getCoverPath()}
+        info = {"name": playlistInfo.getName(), "id": playlistInfo.getId(), "cover": playlistInfo.getCover()}
         ids: list[str] = [song.getId() for song in playlist.getSongs().getSongs()]
 
         return PlaylistJson(info, ids)
