@@ -61,6 +61,8 @@ class PlaylistsCarousel(QScrollArea, Component):
 
     def _connectSignalSlots(self) -> None:
         appCenter.playlists.changed.connect(self.setPlaylists)
+        self._playlistLibrary.clicked.connect(self.__selectLibrary)
+        self._playlistFavourites.clicked.connect(self.__selectFavourites)
         self._addPlaylistBtn.clicked.connect(self.__openNewPlaylistDialog)
 
     def wheelEvent(self, event):
@@ -84,3 +86,18 @@ class PlaylistsCarousel(QScrollArea, Component):
     @staticmethod
     def __openNewPlaylistDialog() -> None:
         NewPlaylistDialog().show()
+
+    @staticmethod
+    def __selectLibrary() -> None:
+        if appCenter.currentPlaylist.getInfo().getId() != "library":
+            appCenter.setActivePlaylist(appCenter.library)
+
+    def __selectFavourites(self) -> None:
+        if appCenter.currentPlaylist.getInfo().getId() == "favourite":
+            return
+
+        info = Playlist.Info(id="favourite", name="Favourite", cover=self._playlistFavourites.getCoverAsByte())
+        songs = Playlist.Songs([song for song in appCenter.library.getSongs().getSongs() if song.isLoved()])
+        favouritePlaylist = Playlist(info, songs)
+
+        appCenter.setActivePlaylist(favouritePlaylist)

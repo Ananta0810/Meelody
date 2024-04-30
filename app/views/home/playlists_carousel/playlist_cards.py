@@ -4,7 +4,7 @@ from typing import Optional
 
 from PIL import Image
 from PyQt5 import QtGui
-from PyQt5.QtCore import QEvent, QRect
+from PyQt5.QtCore import QEvent, QRect, pyqtSignal, Qt
 from PyQt5.QtGui import QResizeEvent
 from PyQt5.QtWidgets import QWidget, QVBoxLayout, QHBoxLayout, QFileDialog
 
@@ -23,8 +23,10 @@ from app.views.home.playlists_carousel.update_playlist_dialog import UpdatePlayl
 
 
 class PlaylistCard(ExtendableStyleWidget):
+    clicked = pyqtSignal()
 
     def __init__(self, parent: Optional[QWidget] = None):
+        self.__coverAsByte: Optional[bytes] = None
         super().__init__(parent)
 
     def _createUI(self) -> None:
@@ -51,6 +53,8 @@ class PlaylistCard(ExtendableStyleWidget):
         self.setCover(info.getCover())
 
     def setCover(self, data: bytes) -> None:
+        self.__coverAsByte = data
+
         cover = self._toCoverProps(data)
         self._cover.setCover(self._toCoverProps(data))
 
@@ -69,6 +73,9 @@ class PlaylistCard(ExtendableStyleWidget):
         else:
             self._title.applyLightMode()
 
+    def getCoverAsByte(self) -> Optional[bytes]:
+        return self.__coverAsByte
+
     def resizeEvent(self, event: QResizeEvent) -> None:
         self._cover.setFixedSize(self.size())
         return super().resizeEvent(event)
@@ -84,6 +91,11 @@ class PlaylistCard(ExtendableStyleWidget):
     def showEvent(self, a0: typing.Optional[QtGui.QShowEvent]) -> None:
         super().showEvent(a0)
         self._adaptTitleColorToCover()
+
+    def mousePressEvent(self, event: Optional[QtGui.QMouseEvent]) -> None:
+        super().mousePressEvent(event)
+        if event is not None and event.button() == Qt.LeftButton:
+            self.clicked.emit()
 
     @staticmethod
     def _toCoverProps(cover: bytes) -> CoverProps:
