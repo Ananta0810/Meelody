@@ -1,17 +1,21 @@
+import io
 from typing import Optional
 
+from PIL import Image
 from PyQt5.QtCore import QEvent, QRect
 from PyQt5.QtGui import QResizeEvent
-from PyQt5.QtWidgets import QWidget, QVBoxLayout, QHBoxLayout
+from PyQt5.QtWidgets import QWidget, QVBoxLayout, QHBoxLayout, QFileDialog
 
 from app.common.models import Playlist
 from app.common.others import appCenter
 from app.components.base import Cover, LabelWithDefaultText, Factory, CoverProps
 from app.components.dialogs import Dialogs
 from app.components.widgets import ExtendableStyleWidget
-from app.helpers.others import Files
+from app.helpers.base import Bytes
+from app.helpers.others import Files, Logger
 from app.helpers.qt import Pixmaps
 from app.helpers.stylesheets import Paddings, Colors
+from app.resource.others import FileType
 from app.resource.qt import Cursors, Images, Icons
 from app.views.home.playlists_carousel.update_playlist_dialog import UpdatePlaylistDialog
 
@@ -42,15 +46,20 @@ class PlaylistCard(ExtendableStyleWidget):
 
     def setInfo(self, info: Playlist.Info) -> None:
         self._title.setText(info.getName())
+        self.setCover(info.getCover())
 
-        cover = self._toCoverProps(info.getCover())
-        self._cover.setCover(cover)
+    def setCover(self, data: bytes) -> None:
+        cover = self._toCoverProps(data)
+        self._cover.setCover(self._toCoverProps(data))
 
         if cover is None:
             return
 
+        self._adaptTitleColorToCover()
+
+    def _adaptTitleColorToCover(self):
         coverRect = QRect(self._cover.pos().x(), self._cover.pos().y(), self._cover.rect().width() // 2, self._cover.rect().height())
-        mainColor = Pixmaps.getDominantColorAt(coverRect, of=cover.content())
+        mainColor = Pixmaps.getDominantColorAt(coverRect, of=self._cover.currentCover().content())
         if mainColor.isDarkColor():
             self._title.applyDarkMode()
         else:
@@ -79,7 +88,7 @@ class LibraryPlaylistCard(PlaylistCard):
         super().__init__(parent)
         super()._initComponent()
         self._title.setText("Library")
-        self._cover.setCover(self._toCoverProps(Images.DEFAULT_PLAYLIST_COVER))
+        super().setCover(Images.DEFAULT_PLAYLIST_COVER)
 
 
 class FavouritePlaylistCard(PlaylistCard):
@@ -87,11 +96,15 @@ class FavouritePlaylistCard(PlaylistCard):
     def __init__(self, parent: Optional[QWidget] = None):
         super().__init__(parent)
         super()._initComponent()
-        self._title.setText("Favourite")
-        self._cover.setCover(self._toCoverProps(Images.DEFAULT_PLAYLIST_COVER))
+
+        self.__coverPath = "configuration/playlists/favourite-cover.png"
+        super().setCover(Bytes.fromFile(self.__coverPath))
 
     def _createUI(self) -> None:
         super()._createUI()
+
+        self._title.setText("Favourite")
+
         self._editCoverBtn = Factory.createIconButton(size=Icons.MEDIUM, padding=Paddings.RELATIVE_50)
         self._editCoverBtn.setLightModeIcon(Icons.IMAGE.withColor(Colors.WHITE))
         self._editCoverBtn.setClassName("rounded-full bg-primary-75 hover:bg-primary-100")
@@ -102,6 +115,31 @@ class FavouritePlaylistCard(PlaylistCard):
         self._topLayout.addWidget(self._editCoverBtn)
 
         self._mainLayout.insertLayout(0, self._topLayout)
+
+    def _connectSignalSlots(self) -> None:
+        super()._connectSignalSlots()
+        self._editCoverBtn.clicked.connect(self.__chooseCover)
+
+    def __chooseCover(self) -> None:
+        path = QFileDialog.getOpenFileName(self, filter=FileType.IMAGE)[0]
+        if path is None or path == '':
+            return
+
+        try:
+            coverData = Bytes.fromFile(path)
+
+            Files.createDirectoryIfNotExisted("configuration/playlists")
+            image = Image.open(io.BytesIO(coverData))
+            image.save(self.__coverPath)
+
+            super().setCover(coverData)
+        except Exception as e:
+            Logger.error(e)
+            Dialogs.alert(
+                header="Change cover failed",
+                message='Something wrong while changing cover. Please try again.',
+                acceptText="Ok",
+            )
 
 
 class UserPlaylistCard(PlaylistCard):

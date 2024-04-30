@@ -111,7 +111,7 @@ class UpdatePlaylistDialog(BaseDialog):
             coverData = Bytes.fromFile(path)
             coverProps = CoverProps.fromBytes(coverData, 320, 320, radius=16)
             self.__coverData = Pixmaps.toBytes(coverProps.content())
-            self._cover.setDefaultCover(coverProps)
+            self._cover.setCover(coverProps)
             self.__checkValid()
 
     def _setInfo(self, info: Playlist.Info) -> None:
