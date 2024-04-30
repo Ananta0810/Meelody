@@ -1,7 +1,9 @@
 import io
+import typing
 from typing import Optional
 
 from PIL import Image
+from PyQt5 import QtGui
 from PyQt5.QtCore import QEvent, QRect
 from PyQt5.QtGui import QResizeEvent
 from PyQt5.QtWidgets import QWidget, QVBoxLayout, QHBoxLayout, QFileDialog
@@ -13,7 +15,7 @@ from app.components.dialogs import Dialogs
 from app.components.widgets import ExtendableStyleWidget
 from app.helpers.base import Bytes
 from app.helpers.others import Files, Logger
-from app.helpers.qt import Pixmaps
+from app.helpers.qt import Pixmaps, Widgets
 from app.helpers.stylesheets import Paddings, Colors
 from app.resource.others import FileType
 from app.resource.qt import Cursors, Images, Icons
@@ -58,6 +60,8 @@ class PlaylistCard(ExtendableStyleWidget):
         self._adaptTitleColorToCover()
 
     def _adaptTitleColorToCover(self):
+        if not Widgets.isInView(self):
+            return
         coverRect = QRect(self._cover.pos().x(), self._cover.pos().y(), self._cover.rect().width() // 2, self._cover.rect().height())
         mainColor = Pixmaps.getDominantColorAt(coverRect, of=self._cover.currentCover().content())
         if mainColor.isDarkColor():
@@ -76,6 +80,10 @@ class PlaylistCard(ExtendableStyleWidget):
     def leaveEvent(self, event: QEvent) -> None:
         super().leaveEvent(event)
         self._cover.animationOnLeftHover()
+
+    def showEvent(self, a0: typing.Optional[QtGui.QShowEvent]) -> None:
+        super().showEvent(a0)
+        self._adaptTitleColorToCover()
 
     @staticmethod
     def _toCoverProps(cover: bytes) -> CoverProps:
