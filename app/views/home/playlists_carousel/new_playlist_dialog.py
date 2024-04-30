@@ -44,8 +44,9 @@ class NewPlaylistDialog(BaseDialog):
 
         self._acceptBtn = ActionButton()
         self._acceptBtn.setFont(Factory.createFont(family="Segoe UI Semibold", size=11))
-        self._acceptBtn.setClassName("text-white rounded-4 bg-primary-75 bg-primary py-8")
+        self._acceptBtn.setClassName("text-white rounded-4 bg-primary-75 bg-primary py-8 disabled:bg-gray-10 disabled:text-gray")
         self._acceptBtn.setText("Add Playlist")
+        self._acceptBtn.setDisabled(True)
 
         self._mainView = QWidget()
         self._mainView.setContentsMargins(12, 4, 12, 12)
@@ -85,11 +86,15 @@ class NewPlaylistDialog(BaseDialog):
         super()._connectSignalSlots()
         self._acceptBtn.clicked.connect(self._addPlaylist)
         self._editCoverBtn.clicked.connect(self.__onclickSelectCover)
+        self._titleInput.changed.connect(self.__checkTitle)
 
     def _assignShortcuts(self) -> None:
         super()._assignShortcuts()
         acceptShortcut = QShortcut(QKeySequence(Qt.Key_Return), self._acceptBtn)
         acceptShortcut.activated.connect(self._acceptBtn.click)
+
+    def __checkTitle(self, title: str) -> None:
+        self._acceptBtn.setDisabled(len(title.strip()) < 3)
 
     def __onclickSelectCover(self) -> None:
         path = QFileDialog.getOpenFileName(self, filter=FileType.IMAGE)[0]
@@ -112,14 +117,7 @@ class NewPlaylistDialog(BaseDialog):
                 image.save(f"configuration/playlists/{id}.png")
 
             appCenter.playlists.append(Playlist(Playlist.Info(name=name, cover=cover, id=id, coverPath=path), Playlist.Songs()))
-
-            Dialogs.info(
-                header="Succeed",
-                message='Your playlist has been created successfully.',
-                acceptText="Ok",
-                onAccept=lambda: self.close()
-            )
-
+            self.close()
         except StorageException:
             if cover is not None:
                 Files.removeFile(path)

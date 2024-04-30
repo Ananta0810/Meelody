@@ -1,6 +1,6 @@
 import io
 from io import BytesIO
-from typing import final
+from typing import final, Optional
 
 from PIL import Image
 
@@ -8,9 +8,12 @@ from PIL import Image
 @final
 class Bytes:
     @staticmethod
-    def fromFile(pathName: str) -> bytes:
-        with open(pathName, "rb") as file:
-            return bytearray(file.read())
+    def fromFile(pathName: str) -> Optional[bytes]:
+        try:
+            with open(pathName, "rb") as file:
+                return bytearray(file.read())
+        except FileNotFoundError:
+            return None
 
     @staticmethod
     def decode(value: bytes | None) -> str | None:

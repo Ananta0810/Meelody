@@ -15,7 +15,8 @@ from app.resource.qt import Cursors
 class ActionButton(QPushButton, Component):
 
     def __init__(self, parent: Optional[QWidget] = None):
-        self.padding: Optional[Padding] = None
+        self.__padding: Optional[Padding] = None
+
         super().__init__(parent)
         super()._initComponent()
 
@@ -23,19 +24,19 @@ class ActionButton(QPushButton, Component):
         self.setCursor(Cursors.HAND)
 
     def setPadding(self, padding: Padding) -> None:
-        self.padding = padding
+        self.__padding = padding
 
     def setText(self, text: str) -> None:
         super().setText(text)
         self.__paddingText()
 
     def __paddingText(self) -> None:
-        if self.padding is None:
+        if self.__padding is None:
             return
         textSize = self.sizeHint()
         self.setFixedSize(
-            textSize.width() + self.padding.getWidth(textSize.width()),
-            textSize.height() + self.padding.getHeight(textSize.height()),
+            textSize.width() + self.__padding.getWidth(textSize.width()),
+            textSize.height() + self.__padding.getHeight(textSize.height()),
         )
 
 
