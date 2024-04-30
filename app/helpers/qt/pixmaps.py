@@ -20,7 +20,7 @@ class Pixmaps:
         return pixmap
 
     @staticmethod
-    def bytesOf(pixmap: QPixmap) -> bytes:
+    def toBytes(pixmap: QPixmap) -> Optional[bytes]:
         byteArray = QByteArray()
         buff = QBuffer(byteArray)
         buff.open(QIODevice.WriteOnly)
@@ -85,7 +85,7 @@ class Pixmaps:
 
     @staticmethod
     def getDominantColor(pixmap: QPixmap) -> Color:
-        pixmapBytes: bytes = Pixmaps.bytesOf(pixmap)
+        pixmapBytes: bytes = Pixmaps.toBytes(pixmap)
         image: Image = Image.open(BytesIO(pixmapBytes))
         BLURRED_IMAGE_SIZE: int = 200
 
@@ -101,13 +101,3 @@ class Pixmaps:
     @staticmethod
     def getDominantColorAt(rect: QRect, of: QPixmap) -> Color:
         return Pixmaps.getDominantColor(of.copy(rect))
-
-    @staticmethod
-    def toBytes(pixmap: QPixmap) -> Optional[bytes]:
-        if pixmap is None:
-            return None
-        ba = QByteArray()
-        buff = QBuffer(ba)
-        buff.open(QIODevice.WriteOnly)
-        pixmap.save(buff, "PNG")
-        return ba.data()

@@ -62,8 +62,8 @@ class PlaylistCard(ExtendableStyleWidget):
     def _adaptTitleColorToCover(self):
         if not Widgets.isInView(self):
             return
-        coverRect = QRect(self._cover.pos().x(), self._cover.pos().y(), self._cover.rect().width() // 2, self._cover.rect().height())
-        mainColor = Pixmaps.getDominantColorAt(coverRect, of=self._cover.currentCover().content())
+        labelRect = QRect(self._title.pos().x(), self._title.pos().y(), self._title.rect().width() // 2, self._title.rect().height())
+        mainColor = Pixmaps.getDominantColorAt(labelRect, of=self._cover.currentCover().content())
         if mainColor.isDarkColor():
             self._title.applyDarkMode()
         else:
