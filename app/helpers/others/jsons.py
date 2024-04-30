@@ -3,7 +3,8 @@ from json import JSONDecodeError
 from typing import final
 
 from app.helpers.base import Strings
-from app.helpers.others import Files
+from .files import Files
+from .logger import Logger
 
 
 @final
@@ -32,9 +33,17 @@ class Jsons:
         directory = Strings.getDirectoryOf(file)
         Files.createDirectoryIfNotExisted(directory)
 
-        with open(file, 'w+') as outfile:
-            fileContent: str = json.dumps(obj, indent=4)
-            outfile.write(fileContent)
+        oldContent = Jsons.readFromFile(file)
+        try:
+            with open(file, 'w+') as outfile:
+                fileContent: str = json.dumps(obj, indent=4)
+                outfile.write(fileContent)
+        except TypeError as e:
+            Logger.error("New content is invalid. Revert old content now.")
+            if oldContent is not None:
+                with open(file, 'w+') as outfile:
+                    fileContent: str = json.dumps(oldContent, indent=4)
+                    outfile.write(fileContent)
 
     @staticmethod
     def readFromFile(file: str) -> any:
