@@ -8,11 +8,11 @@ T = TypeVar('T')
 class Times:
 
     @staticmethod
-    def measure(target: Callable[[], T], result_fn: Callable[[float], None]) -> T:
+    def measure(target: Callable[[], T], resultFn: Callable[[float], None]) -> T:
         start = perf_counter()
         result = target()
         end = perf_counter()
-        result_fn(end - start)
+        resultFn(end - start)
         return result
 
     @staticmethod
