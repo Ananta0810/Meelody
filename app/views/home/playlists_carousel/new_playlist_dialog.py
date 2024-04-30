@@ -7,8 +7,9 @@ from PyQt5.QtCore import Qt
 from PyQt5.QtGui import QKeySequence, QResizeEvent
 from PyQt5.QtWidgets import QWidget, QShortcut, QFileDialog
 
+from app.common.exceptions import StorageException
 from app.common.models import Playlist
-from app.common.others import appCenter
+from app.common.others import appCenter, database
 from app.components.base import Cover, CoverProps, Factory, Input, ActionButton
 from app.components.dialogs import BaseDialog
 from app.components.widgets import Box
@@ -104,11 +105,17 @@ class NewPlaylistDialog(BaseDialog):
         path = f"configuration/playlists/{id}.png"
         cover = self.__coverData
 
-        if cover is not None:
-            Files.createDirectoryIfNotExisted("configuration/playlists")
-            image = Image.open(io.BytesIO(cover))
-            image.save(f"configuration/playlists/{id}.png")
+        try:
+            if cover is not None:
+                Files.createDirectoryIfNotExisted("configuration/playlists")
+                image = Image.open(io.BytesIO(cover))
+                image.save(f"configuration/playlists/{id}.png")
 
-        playlist = Playlist(Playlist.Info(name=name, cover=cover, id=id, coverPath=path), Playlist.Songs())
-        appCenter.playlists.append(playlist)
-        self.close()
+            playlist = Playlist(Playlist.Info(name=name, cover=cover, id=id, coverPath=path), Playlist.Songs())
+            appCenter.playlists.append(playlist)
+            database.playlists.save(appCenter.playlists.validItems())
+            self.close()
+        except StorageException as e:
+            if cover is not None:
+                Files.removeFile(path)
+            self.close()

@@ -2,6 +2,7 @@ import json
 from json import JSONDecodeError
 from typing import final
 
+from app.common.exceptions import StorageException
 from app.helpers.base import Strings
 from .files import Files
 from .logger import Logger
@@ -44,6 +45,7 @@ class Jsons:
                 with open(file, 'w+') as outfile:
                     fileContent: str = json.dumps(oldContent, indent=4)
                     outfile.write(fileContent)
+            raise StorageException("Save data failed.")
 
     @staticmethod
     def readFromFile(file: str) -> any:

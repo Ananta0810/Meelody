@@ -30,8 +30,6 @@ class Application:
         musicPlayer.setCurrentSongIndex(0)
         musicPlayer.loadSongToPlay()
 
-        appCenter.playlists.changed.connect(lambda _: database.playlists.save(appCenter.playlists.validItems()))
-
     def run(self) -> 'Application':
         self._mainWindow.show()
         return self
