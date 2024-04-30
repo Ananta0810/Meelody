@@ -43,6 +43,12 @@ class Playlist:
         def getName(self) -> str:
             return self.__name
 
+        def setName(self, name: str) -> None:
+            self.__name = name
+
+        def setCover(self, cover: bytes) -> None:
+            self.__cover = cover
+
         def getCover(self) -> bytes:
             return self.__cover
 
@@ -52,19 +58,15 @@ class Playlist:
         def isNew(self) -> bool:
             return self.__name is None
 
-        def withCover(self, cover: bytes) -> 'Playlist.Info':
-            return Playlist.Info(self.__name, cover, self.__id)
+        def clone(self) -> 'Playlist.Info':
+            return Playlist.Info(self.__name, self.__cover, self.__coverPath, self.__id)
 
     class Songs:
-        __songs: list[Song]
-        __orderBy: Song.Order
-        __isSorted: bool
 
         def __init__(self, songs: list[Song] = None, isSorted: bool = True, orderBy: Song.Order = Song.Order.TITLE):
-            self.__songs = []
-            self.__backupSongs = []
-            self.__orderBy = orderBy
-            self.__isSorted = isSorted
+            self.__songs: list[Song] = []
+            self.__orderBy: Song.Order = orderBy
+            self.__isSorted: bool = isSorted
             if songs is not None:
                 self.insertAll(songs)
 
@@ -74,11 +76,11 @@ class Playlist:
                 string += f"{index}. {str(song)}\n"
             return string
 
+        def clone(self) -> 'Playlist.Songs':
+            return Playlist.Songs(self.__songs, self.__isSorted, self.__orderBy)
+
         def getSongs(self) -> list[Song]:
             return [song for song in self.__songs]
-
-        def getOriginalSongs(self) -> list[Song]:
-            return self.__backupSongs if len(self.__backupSongs) > 0 else self.__songs
 
         def isSorted(self):
             return self.__isSorted
@@ -184,3 +186,6 @@ class Playlist:
         Check if two playlists are the same one
         """
         return self.__info == other.__info
+
+    def clone(self) -> 'Playlist':
+        return Playlist(self.__info.clone(), self.__songs.clone())

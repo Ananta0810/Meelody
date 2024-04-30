@@ -10,6 +10,7 @@ from app.components.widgets import ExtendableStyleWidget
 from app.helpers.qt import Pixmaps
 from app.helpers.stylesheets import Paddings, Colors
 from app.resource.qt import Cursors, Images, Icons
+from app.views.home.playlists_carousel.update_playlist_dialog import UpdatePlaylistDialog
 
 
 class PlaylistCard(ExtendableStyleWidget):
@@ -106,12 +107,14 @@ class UserPlaylistCard(PlaylistCard):
         super().__init__()
         super()._initComponent()
 
-        self._title.setDefaultText("New Playlist")
+        self.__playlist = playlist
         self.setInfo(playlist.getInfo())
         self.applyLightMode()
 
     def _createUI(self) -> None:
         super()._createUI()
+        self._title.setDefaultText("New Playlist")
+
         self._editBtn = Factory.createIconButton(size=Icons.MEDIUM, padding=Paddings.RELATIVE_50)
         self._editBtn.setLightModeIcon(Icons.EDIT.withColor(Colors.WHITE))
         self._editBtn.setClassName("rounded-full bg-primary-75 hover:bg-primary-100")
@@ -132,6 +135,9 @@ class UserPlaylistCard(PlaylistCard):
         self._topLayout.addStretch(1)
         self._topLayout.addLayout(self._buttonsLayout)
         self._mainLayout.insertLayout(0, self._topLayout)
+
+    def _connectSignalSlots(self) -> None:
+        self._editBtn.clicked.connect(lambda: UpdatePlaylistDialog(self.__playlist).show())
 
     def applyLightMode(self) -> None:
         pass

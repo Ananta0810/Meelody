@@ -18,6 +18,14 @@ class Playlists(QObject):
         self.__items = self.saveTempPlaylist(item)
         self.changed.emit(self.__items)
 
+    def replace(self, item: Playlist) -> None:
+        for index, playlist in enumerate(self.__items):
+            if playlist.getInfo().getId() == item.getInfo().getId():
+                self.__items[index] = item
+                database.playlists.save(self.__validItemsOf(self.__items))
+                self.changed.emit(self.__items)
+                break
+
     def saveTempPlaylist(self, item) -> list[Playlist]:
         tempPlaylist = [playlist for playlist in self.__items]
         tempPlaylist.append(item)

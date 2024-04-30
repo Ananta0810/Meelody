@@ -1,5 +1,4 @@
 import io
-import uuid
 from typing import Optional
 
 from PIL import Image
@@ -20,13 +19,16 @@ from app.resource.others import FileType
 from app.resource.qt import Images
 
 
-class NewPlaylistDialog(BaseDialog):
+class UpdatePlaylistDialog(BaseDialog):
 
-    def __init__(self):
+    def __init__(self, playlist: Playlist):
+        self.__playlist = playlist
         self.__coverData: Optional[bytes] = None
 
         super().__init__()
         super()._initComponent()
+
+        self._setInfo(playlist.getInfo())
         self.applyTheme()
 
     def _createUI(self) -> None:
@@ -45,7 +47,7 @@ class NewPlaylistDialog(BaseDialog):
         self._acceptBtn = ActionButton()
         self._acceptBtn.setFont(Factory.createFont(family="Segoe UI Semibold", size=11))
         self._acceptBtn.setClassName("text-white rounded-4 bg-primary-75 bg-primary py-8 disabled:bg-gray-10 disabled:text-gray")
-        self._acceptBtn.setText("Add Playlist")
+        self._acceptBtn.setText("Update Playlist")
         self._acceptBtn.setDisabled(True)
 
         self._mainView = QWidget()
@@ -84,17 +86,24 @@ class NewPlaylistDialog(BaseDialog):
 
     def _connectSignalSlots(self) -> None:
         super()._connectSignalSlots()
-        self._acceptBtn.clicked.connect(self._addPlaylist)
+        self._acceptBtn.clicked.connect(self._savePlaylist)
         self._editCoverBtn.clicked.connect(self.__onclickSelectCover)
-        self._titleInput.changed.connect(self.__checkTitle)
+        self._titleInput.changed.connect(lambda title: self.__checkValid())
 
     def _assignShortcuts(self) -> None:
         super()._assignShortcuts()
         acceptShortcut = QShortcut(QKeySequence(Qt.Key_Return), self._acceptBtn)
         acceptShortcut.activated.connect(self._acceptBtn.click)
 
-    def __checkTitle(self, title: str) -> None:
-        self._acceptBtn.setDisabled(len(title.strip()) < 3)
+    def __checkValid(self) -> None:
+        self._acceptBtn.setDisabled(not self.__canUpdate())
+
+    def __canUpdate(self):
+        title = self._titleInput.text().strip()
+        if self.__coverData is None:
+            return len(title) >= 3 and title != self.__playlist.getInfo().getName()
+        else:
+            return len(title) >= 3
 
     def __onclickSelectCover(self) -> None:
         path = QFileDialog.getOpenFileName(self, filter=FileType.IMAGE)[0]
@@ -102,29 +111,35 @@ class NewPlaylistDialog(BaseDialog):
             coverData = Bytes.fromFile(path)
             coverProps = CoverProps.fromBytes(coverData, 320, 320, radius=16)
             self.__coverData = Pixmaps.toBytes(coverProps.content())
-            self._cover.setCover(coverProps)
+            self._cover.setDefaultCover(coverProps)
+            self.__checkValid()
 
-    def _addPlaylist(self) -> None:
-        id = str(uuid.uuid4())
+    def _setInfo(self, info: Playlist.Info) -> None:
+        self._titleInput.setText(info.getName())
+        self._cover.setCover(CoverProps.fromBytes(info.getCover(), 320, 320, radius=16))
+
+    def _savePlaylist(self) -> None:
         name = self._titleInput.text().strip()
-        path = f"configuration/playlists/{id}.png"
         cover = self.__coverData
+
+        tempPlaylist = self.__playlist.clone()
 
         try:
             if cover is not None:
                 Files.createDirectoryIfNotExisted("configuration/playlists")
                 image = Image.open(io.BytesIO(cover))
-                image.save(f"configuration/playlists/{id}.png")
+                image.save(tempPlaylist.getInfo().getCoverPath())
+                tempPlaylist.getInfo().setCover(cover)
 
-            appCenter.playlists.append(Playlist(Playlist.Info(name=name, cover=cover, id=id, coverPath=path), Playlist.Songs()))
+            if name != self.__playlist.getInfo().getName():
+                tempPlaylist.getInfo().setName(name)
+
+            appCenter.playlists.replace(tempPlaylist)
             self.close()
         except StorageException:
-            if cover is not None:
-                Files.removeFile(path)
-
             Dialogs.alert(
                 header="Save playlist failed",
-                message='Something wrong while creating your playlist. Please try to create playlist again.',
+                message='Something wrong while updating your playlist. Please try to update playlist again.',
                 acceptText="Ok",
                 onAccept=lambda: self.close()
             )
