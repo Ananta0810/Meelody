@@ -7,6 +7,10 @@ from PyQt5.QtGui import QColor
 from app.helpers.base import Numbers
 from app.helpers.stylesheets.stylesheet_props import StylesheetProps
 
+_LUMINANCE_RED = 0.2126
+_LUMINANCE_GREEN = 0.7152
+_LUMINANCE_BLUE = 0.0722
+
 
 @dataclass(frozen=True)
 class Color(StylesheetProps, ABC):
@@ -31,6 +35,28 @@ class Color(StylesheetProps, ABC):
 
     def toQColor(self) -> QColor:
         return QColor(self.red, self.green, self.blue, int(self.alpha))
+
+    def isDarkColor(self) -> bool:
+        luminance = self.__luminance()
+        return luminance < 0.5
+
+    def __luminance(self) -> float:
+        """
+            View https://stackoverflow.com/a/9733420 for more information
+        """
+        return (
+            self._luminanceOfHeight(self.red) * _LUMINANCE_RED +
+            self._luminanceOfHeight(self.green) * _LUMINANCE_GREEN +
+            self._luminanceOfHeight(self.blue) * _LUMINANCE_BLUE
+        )
+
+    @staticmethod
+    def _luminanceOfHeight(color_part: int) -> float:
+        v = color_part / 255
+        return (
+            v / 12.92 if v <= 0.03928
+            else pow((v + 0.055) / 1.055, 2.4)
+        )
 
 
 @final

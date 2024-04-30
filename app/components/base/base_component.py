@@ -1,5 +1,5 @@
 from msilib.schema import Component
-from typing import final
+from typing import final, Optional
 
 from app.common.others import appCenter
 from app.helpers.base import Strings
@@ -7,15 +7,18 @@ from app.helpers.stylesheets.translators import ClassNameTranslator
 
 
 class Component:
-    _lightModeStyle: str = None
-    _darkModeStyle: str = None
 
-    def _initComponent(self):
+    def __init__(self):
+        self._darkModeStyle: Optional[str] = None
+        self._lightModeStyle: Optional[str] = None
+
+    def _initComponent(self, autoChangeTheme: bool = True):
         self._createUI()
         self._createThreads()
         self._connectSignalSlots()
         self._assignShortcuts()
-        appCenter.themeChanged.connect(lambda light: self.applyLightMode() if light else self.applyDarkMode())
+        if autoChangeTheme:
+            appCenter.themeChanged.connect(lambda light: self.applyLightMode() if light else self.applyDarkMode())
 
     def _createUI(self) -> None:
         pass

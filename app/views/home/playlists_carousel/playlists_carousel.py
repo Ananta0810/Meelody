@@ -10,7 +10,7 @@ from app.components.widgets import StyleWidget, FlexBox
 from app.helpers.stylesheets import Paddings, Colors
 from app.resource.qt import Icons
 from .new_playlist_dialog import NewPlaylistDialog
-from .playlist_card import LibraryPlaylistCard, FavouritePlaylistCard, UserPlaylistCard
+from .playlist_cards import LibraryPlaylistCard, FavouritePlaylistCard, UserPlaylistCard
 
 
 class PlaylistsCarousel(QScrollArea, Component):
@@ -81,5 +81,6 @@ class PlaylistsCarousel(QScrollArea, Component):
             userPlaylist = UserPlaylistCard(playlist)
             self._userPlaylistsLayout.addWidget(userPlaylist)
 
-    def __openNewPlaylistDialog(self) -> None:
+    @staticmethod
+    def __openNewPlaylistDialog() -> None:
         NewPlaylistDialog().show()

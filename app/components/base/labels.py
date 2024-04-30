@@ -45,14 +45,14 @@ class EllipsisLabel(QLabel, Component):
 
 class LabelWithDefaultText(QLabel, Component):
 
-    def __init__(self, parent: Optional[QWidget] = None):
+    def __init__(self, parent: Optional[QWidget] = None, autoChangeTheme: bool = True):
         super().__init__(parent)
 
         self.__defaultText: str = ""
         self.__displayingText: str = ""
         self.__ellipsis: bool = True
 
-        super()._initComponent()
+        super()._initComponent(autoChangeTheme)
 
     def enableEllipsis(self, a0: bool = True) -> None:
         self.__ellipsis = a0
