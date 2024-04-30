@@ -6,8 +6,8 @@ from app.views.windows import MainWindow
 class Application:
     def __init__(self):
         self.__createUI()
-        self.__configureApplication()
         self.__configureDatabase()
+        self.__configureApplication()
 
     def __createUI(self):
         self._mainWindow = MainWindow()
@@ -15,6 +15,7 @@ class Application:
     def __configureApplication(self):
         appCenter.exited.connect(lambda: musicPlayer.stop())
         appCenter.exited.connect(lambda: self._mainWindow.close())
+        appCenter.setLightMode(True)
 
     @staticmethod
     def __configureDatabase():
@@ -29,7 +30,7 @@ class Application:
         musicPlayer.setCurrentSongIndex(0)
         musicPlayer.loadSongToPlay()
 
-        appCenter.setLightMode(True)
+        appCenter.playlists.changed.connect(lambda _: database.playlists.save(appCenter.playlists.validItems()))
 
     def run(self) -> 'Application':
         self._mainWindow.show()

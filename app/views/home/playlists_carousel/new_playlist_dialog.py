@@ -1,16 +1,25 @@
+from typing import Optional
+
 from PyQt5.QtCore import Qt
 from PyQt5.QtGui import QKeySequence, QResizeEvent
-from PyQt5.QtWidgets import QWidget, QShortcut
+from PyQt5.QtWidgets import QWidget, QShortcut, QFileDialog
 
+from app.common.models import Playlist
+from app.common.others import appCenter
 from app.components.base import Cover, CoverProps, Factory, Input, ActionButton
 from app.components.dialogs import BaseDialog
 from app.components.widgets import Box
+from app.helpers.base import Bytes
+from app.helpers.qt import Pixmaps
+from app.resource.others import FileType
 from app.resource.qt import Images
 
 
 class NewPlaylistDialog(BaseDialog):
 
     def __init__(self):
+        self.__coverData: Optional[bytes] = None
+
         super().__init__()
         super()._initComponent()
         self.applyTheme()
@@ -69,8 +78,24 @@ class NewPlaylistDialog(BaseDialog):
 
     def _connectSignalSlots(self) -> None:
         super()._connectSignalSlots()
+        self._acceptBtn.clicked.connect(self._addPlaylist)
+        self._editCoverBtn.clicked.connect(self.__onclickSelectCover)
 
     def _assignShortcuts(self) -> None:
         super()._assignShortcuts()
         acceptShortcut = QShortcut(QKeySequence(Qt.Key_Return), self._acceptBtn)
         acceptShortcut.activated.connect(self._acceptBtn.click)
+
+    def __onclickSelectCover(self) -> None:
+        path = QFileDialog.getOpenFileName(self, filter=FileType.IMAGE)[0]
+        if path is not None and path != '':
+            coverData = Bytes.fromFile(path)
+            coverProps = CoverProps.fromBytes(coverData, 320, 320, radius=16)
+            self.__coverData = Pixmaps.toBytes(coverProps.content())
+            self._cover.setDefaultCover(coverProps)
+
+    def _addPlaylist(self) -> None:
+        playlist = Playlist(Playlist.Info(name=self._titleInput.text().strip(), cover=self.__coverData), Playlist.Songs())
+        playlist.getInfo().saveCover()
+        appCenter.playlists.append(playlist)
+        self.close()

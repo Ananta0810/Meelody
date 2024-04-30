@@ -33,3 +33,8 @@ class Files:
             os.remove(file)
         except FileNotFoundError:
             pass
+
+    @staticmethod
+    def createDirectoryIfNotExisted(directory):
+        if not os.path.exists(directory):
+            os.makedirs(directory, exist_ok=True)

@@ -8,8 +8,8 @@ from PIL import Image
 @final
 class Bytes:
     @staticmethod
-    def fromFile(path_name: str) -> bytes:
-        with open(path_name, "rb") as file:
+    def fromFile(pathName: str) -> bytes:
+        with open(pathName, "rb") as file:
             return bytearray(file.read())
 
     @staticmethod

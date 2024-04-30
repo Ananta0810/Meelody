@@ -37,10 +37,10 @@ class Database:
                 data: list[dict] = Jsons.readFromFile(self.path) or []
                 return [PlaylistJson.fromDict(item).toPlaylist(songs) for item in data]
             else:
-                self.__saveToFile([])
+                self.save([])
                 return []
 
-        def __saveToFile(self, data: list[Playlist]) -> None:
+        def save(self, data: list[Playlist]) -> None:
             playlistJsons: list[PlaylistJson] = [PlaylistJson.fromPlaylist(playlist) for playlist in data]
             data = [playlist.toDict() for playlist in playlistJsons]
             Jsons.writeToFile(self.path, data)

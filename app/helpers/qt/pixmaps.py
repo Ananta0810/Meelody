@@ -1,5 +1,5 @@
 from io import BytesIO
-from typing import Union, final
+from typing import Union, final, Optional
 
 from PIL import Image
 from PyQt5.QtCore import QByteArray, QBuffer, QIODevice, QRect, Qt
@@ -101,3 +101,13 @@ class Pixmaps:
     @staticmethod
     def getDominantColorAt(rect: QRect, of: QPixmap) -> Color:
         return Pixmaps.getDominantColor(of.copy(rect))
+
+    @staticmethod
+    def toBytes(pixmap: QPixmap) -> Optional[bytes]:
+        if pixmap is None:
+            return None
+        ba = QByteArray()
+        buff = QBuffer(ba)
+        buff.open(QIODevice.WriteOnly)
+        pixmap.save(buff, "PNG")
+        return ba.data()
