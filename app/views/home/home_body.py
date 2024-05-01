@@ -28,11 +28,14 @@ class HomeBody(QScrollArea, Component):
         self._mainLayout.addWidget(self._playlistsCarousel)
         self._mainLayout.addWidget(self._currentPlaylist)
 
-    def wheelEvent(self, a0: QWheelEvent) -> None:
-        carouselY = self._playlistsCarousel.rect().y()
-        if carouselY <= a0.y() <= carouselY + self._playlistsCarousel.height():
+    def wheelEvent(self, event: QWheelEvent) -> None:
+        carouselTop = self._playlistsCarousel.mapToParent(self._inner.pos()).y()
+        carouselBottom = carouselTop + self._playlistsCarousel.height()
+
+        if carouselTop <= event.y() <= carouselBottom:
             return
-        return super().wheelEvent(a0)
+
+        return super().wheelEvent(event)
 
     def setContentsMargins(self, left: int, top: int, right: int, bottom: int) -> None:
         self._inner.setContentsMargins(0, top, 0, bottom)

@@ -1,7 +1,7 @@
 from typing import Optional
 
 from PyQt5.QtCore import Qt
-from PyQt5.QtWidgets import QScrollArea, QWidget, QHBoxLayout
+from PyQt5.QtWidgets import QScrollArea, QWidget
 
 from app.common.models import Playlist
 from app.common.others import appCenter
@@ -48,16 +48,14 @@ class PlaylistsCarousel(QScrollArea, Component):
         self._addPlaylistBtn.setDarkModeIcon(Icons.ADD.withColor(Colors.WHITE))
         self._addPlaylistBtn.setClassName("rounded-full bg-primary-12 hover:bg-primary-25 dark:bg-white-12 dark:hover:bg-white-20")
 
-        self._main_layout = QHBoxLayout(self._inner)
-        self._main_layout.setAlignment(Qt.AlignLeft)
-        self._main_layout.setSpacing(32)
-        self._main_layout.setContentsMargins(0, 0, 0, 0)
+        self._mainLayout = FlexBox(self._inner)
+        self._mainLayout.setSpacing(32)
 
-        self._main_layout.addWidget(self._playlistLibrary)
-        self._main_layout.addWidget(self._playlistFavourites)
-        self._main_layout.addWidget(self._userPlaylists)
-        self._main_layout.addWidget(self._newPlaylistCard)
-        self._main_layout.addStretch()
+        self._mainLayout.addWidget(self._playlistLibrary)
+        self._mainLayout.addWidget(self._playlistFavourites)
+        self._mainLayout.addWidget(self._userPlaylists)
+        self._mainLayout.addWidget(self._newPlaylistCard)
+        self._mainLayout.addStretch()
 
     def _connectSignalSlots(self) -> None:
         appCenter.playlists.changed.connect(self.setPlaylists)
@@ -72,7 +70,7 @@ class PlaylistsCarousel(QScrollArea, Component):
         self.horizontalScrollBar().setValue(xPosition - delta)
 
     def setContentsMargins(self, left: int, top: int, right: int, bottom: int) -> None:
-        self._main_layout.setContentsMargins(left, top, right, bottom)
+        self._mainLayout.setContentsMargins(left, top, right, bottom)
 
     def setPlaylists(self, playlists: list[Playlist]) -> None:
         if len(playlists) != 0:

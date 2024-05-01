@@ -19,7 +19,7 @@ class SongsMenu(SmoothVerticalScrollArea):
     def __init__(self, parent: Optional[QWidget] = None) -> None:
         super().__init__(parent)
 
-        self.__currentDisplayingChunk = 0
+        self.__currentDisplayingChunk: int = 0
         self.__songRowDict: dict[str, SongRow] = {}
         self.__titles: dict[str, int] = {}
         self.__titleKeys: dict[str, list[int]] = {}
