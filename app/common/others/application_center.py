@@ -1,6 +1,7 @@
 from PyQt5.QtCore import QObject, pyqtSignal
 
 from app.common.models import Playlist
+from app.common.others.application_settings import AppSettings
 from app.common.others.playlists import Playlists
 
 
@@ -11,6 +12,8 @@ class ApplicationCenter(QObject):
 
     def __init__(self) -> None:
         super().__init__()
+        self.settings: AppSettings = AppSettings()
+        
         self.isLightMode: bool = True
         self.playlists: Playlists = Playlists()
 

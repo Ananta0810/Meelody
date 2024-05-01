@@ -9,14 +9,14 @@ class Database:
     class _Songs:
 
         def __init__(self, path: str) -> None:
-            self.path = path
+            self.__path = path
 
         def load(self, directory: str, withExtension: str) -> list[Song]:
             if not os.path.exists(directory):
                 os.mkdir(directory)
 
-            if os.path.exists(self.path):
-                data: list[dict] = Jsons.readFromFile(self.path) or []
+            if os.path.exists(self.__path):
+                data: list[dict] = Jsons.readFromFile(self.__path) or []
                 return [Song.fromDict(item) for item in data]
 
             return self.__loadSongsFromFolder(directory, withExtension)
@@ -24,18 +24,21 @@ class Database:
         def __loadSongsFromFolder(self, directory, withExtension):
             files: set = Files.getFrom(directory, withExtension)
             songs = [Song.fromFile(file) for file in files]
-            Jsons.writeToFile(self.path, [song.toDict() for song in songs])
+            self.save(songs)
             return songs
+
+        def save(self, songs: list[Song]) -> None:
+            Jsons.writeToFile(self.__path, [song.toDict() for song in songs])
 
     class _Playlists:
         PATH = "configuration/playlists.json"
 
         def __init__(self, path: str) -> None:
-            self.path = path
+            self.__path = path
 
         def load(self, songs: list[Song]) -> list[Playlist]:
-            if os.path.exists(self.path):
-                data: list[dict] = Jsons.readFromFile(self.path) or []
+            if os.path.exists(self.__path):
+                data: list[dict] = Jsons.readFromFile(self.__path) or []
                 return [PlaylistJson.fromDict(item).toPlaylist(songs) for item in data]
             else:
                 self.save([])
@@ -44,7 +47,7 @@ class Database:
         def save(self, data: list[Playlist]) -> None:
             playlistJsons: list[PlaylistJson] = [PlaylistJson.fromPlaylist(playlist) for playlist in data]
             data = [playlist.toDict() for playlist in playlistJsons]
-            Jsons.writeToFile(self.path, data)
+            Jsons.writeToFile(self.__path, data)
 
     def __init__(self) -> None:
         self.songs = Database._Songs("configuration/songs.json")
