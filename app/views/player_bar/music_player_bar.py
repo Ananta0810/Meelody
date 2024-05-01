@@ -7,7 +7,7 @@ from PyQt5.QtGui import QKeySequence
 from PyQt5.QtWidgets import QHBoxLayout, QVBoxLayout, QWidget, QShortcut
 
 from app.common.models import Song
-from app.common.others import musicPlayer
+from app.common.others import musicPlayer, appCenter
 from app.components.base import Component, Cover, LabelWithDefaultText, Factory, StateIcon, CoverProps
 from app.components.sliders import HorizontalSlider
 from app.helpers.others import Times
@@ -30,6 +30,8 @@ class MusicPlayerBar(QWidget, Component):
         self.setDefaultCover(Images.DEFAULT_SONG_COVER)
         self.setPlayingTime(0)
         self.setTotalTime(0)
+        self._loopBtn.setActive(appCenter.settings.isLooping)
+        self._shuffleBtn.setActive(appCenter.settings.isShuffle)
 
     def _createUI(self) -> None:
         self.setAttribute(Qt.WA_StyledBackground, True)

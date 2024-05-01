@@ -111,6 +111,18 @@ class Playlist:
                 raise ValueError("Playlist has no song.")
             return self.__songs[index]
 
+        def getSongIndexWithId(self, songId: str) -> int:
+            """
+            Get the song at the given index
+            """
+            if self.size() == 0:
+                raise ValueError("Playlist has no song.")
+
+            for index, song in enumerate(self.__songs):
+                if song.getId() == songId:
+                    return index
+            return -1
+
         def insert(self, song: Song) -> int:
             """
             Add song to the list of songs. If added successfully, it will return the position of the song in the playlist
@@ -122,7 +134,6 @@ class Playlist:
                 return position
 
             self.__songs.append(song)
-            self.__backupSongs.insert(position, song)
             return len(self.__songs) - 1
 
         def __findInsertPosition(self, song) -> int:
@@ -139,9 +150,6 @@ class Playlist:
 
                 self.__songs.remove(self.__songs[indexToRemoveOnBackupSongs])
                 return
-
-            indexToRemoveOnBackupSongs = Lists.binarySearch(self.__backupSongs, song, self.__comparator())
-            self.__backupSongs.remove(self.__backupSongs[indexToRemoveOnBackupSongs])
 
             indexToRemoveOnDisplaySongs = Lists.linearSearch(self.__songs, song, self.__comparator())
 

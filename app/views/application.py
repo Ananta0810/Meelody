@@ -17,8 +17,7 @@ class Application:
         appCenter.exited.connect(lambda: self._mainWindow.close())
         appCenter.setLightMode(True)
 
-    @staticmethod
-    def __configureDatabase():
+    def __configureDatabase(self):
         library = Playlist(Playlist.Info(id="library", name="Library"), Playlist.Songs(database.songs.load("library", withExtension="mp3")))
         playlists = database.playlists.load(library.getSongs().getSongs())
 
@@ -27,6 +26,21 @@ class Application:
         appCenter.setActivePlaylist(library)
 
         musicPlayer.loadPlaylist(library.getSongs())
+        musicPlayer.songChanged.connect(lambda song: appCenter.settings.setPlayingSongId(song.getId()))
+        musicPlayer.loopChanged.connect(lambda loop: appCenter.settings.setIsLooping(loop))
+        musicPlayer.shuffleChanged.connect(lambda shuffle: appCenter.settings.setIsShuffle(shuffle))
+
+        self.__setPlayingSong(library)
+
+    @staticmethod
+    def __setPlayingSong(library: Playlist) -> None:
+        if appCenter.settings.playingSongId is not None:
+            lastPlayingSongIndex = library.getSongs().getSongIndexWithId(appCenter.settings.playingSongId)
+            if lastPlayingSongIndex >= 0:
+                musicPlayer.setCurrentSongIndex(lastPlayingSongIndex)
+                musicPlayer.loadSongToPlay()
+                return
+
         musicPlayer.setCurrentSongIndex(0)
         musicPlayer.loadSongToPlay()
 
