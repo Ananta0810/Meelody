@@ -143,6 +143,9 @@ class MusicPlayer(QObject):
         self.__isLooping = a0
         self.loopChanged.emit(a0)
 
+    def isLooping(self) -> bool:
+        return self.__isLooping
+
     def setShuffle(self, a0: bool) -> None:
         self.__isShuffle = a0
 
@@ -150,13 +153,17 @@ class MusicPlayer(QObject):
             songs = self.__songs.getSongs()
             random.shuffle(songs)
             self.__shuffledSongs = Playlist.Songs(songs, isSorted=False)
-            if self.__currentSong is not None:
-                currentSongNewIndex = self.__shuffledSongs.indexOf(self.__currentSong)
-                self.__currentSongIndex = currentSongNewIndex
         else:
             self.__shuffledSongs = None
 
+        if self.__currentSong is not None:
+            currentSongNewIndex = self.__getSongs().indexOf(self.__currentSong)
+            self.__currentSongIndex = currentSongNewIndex
+
         self.shuffleChanged.emit(a0)
+
+    def isShuffle(self) -> bool:
+        return self.__isShuffle
 
     def resetTime(self) -> None:
         self.__timeStartInSec = 0

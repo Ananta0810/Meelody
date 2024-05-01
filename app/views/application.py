@@ -7,6 +7,7 @@ class Application:
     def __init__(self):
         self.__createUI()
         self.__configureDatabase()
+        self.__configureMusicPlayer()
         self.__configureApplication()
 
     def __createUI(self):
@@ -17,7 +18,8 @@ class Application:
         appCenter.exited.connect(lambda: self._mainWindow.close())
         appCenter.setLightMode(True)
 
-    def __configureDatabase(self):
+    @staticmethod
+    def __configureDatabase():
         library = Playlist(Playlist.Info(id="library", name="Library"), Playlist.Songs(database.songs.load("library", withExtension="mp3")))
         playlists = database.playlists.load(library.getSongs().getSongs())
 
@@ -25,24 +27,25 @@ class Application:
         appCenter.setLibrary(library)
         appCenter.setActivePlaylist(library)
 
-        musicPlayer.loadPlaylist(library.getSongs())
-        musicPlayer.songChanged.connect(lambda song: appCenter.settings.setPlayingSongId(song.getId()))
-        musicPlayer.loopChanged.connect(lambda loop: appCenter.settings.setIsLooping(loop))
-        musicPlayer.shuffleChanged.connect(lambda shuffle: appCenter.settings.setIsShuffle(shuffle))
-
-        self.__setPlayingSong(library)
-
     @staticmethod
-    def __setPlayingSong(library: Playlist) -> None:
-        if appCenter.settings.playingSongId is not None:
-            lastPlayingSongIndex = library.getSongs().getSongIndexWithId(appCenter.settings.playingSongId)
-            if lastPlayingSongIndex >= 0:
-                musicPlayer.setCurrentSongIndex(lastPlayingSongIndex)
-                musicPlayer.loadSongToPlay()
-                return
+    def __configureMusicPlayer():
+        settings = appCenter.settings
 
-        musicPlayer.setCurrentSongIndex(0)
+        musicPlayer.songChanged.connect(lambda song: settings.setPlayingSongId(song.getId()))
+        musicPlayer.loopChanged.connect(lambda loop: settings.setIsLooping(loop))
+        musicPlayer.shuffleChanged.connect(lambda shuffle: settings.setIsShuffle(shuffle))
+
+        library = appCenter.library.getSongs()
+        lastPlayingSongIndex = 0 if settings.playingSongId is None else max(0, library.getSongIndexWithId(settings.playingSongId))
+
+        musicPlayer.loadPlaylist(library)
+        musicPlayer.setLooping(settings.isLooping)
+        musicPlayer.setShuffle(settings.isShuffle)
+        musicPlayer.setCurrentSongIndex(lastPlayingSongIndex)
         musicPlayer.loadSongToPlay()
+
+    def __getLastPlayingSongIndex(self, library: Playlist.Songs) -> int:
+        return 0 if appCenter.settings.playingSongId is None else max(0, library.getSongIndexWithId(appCenter.settings.playingSongId))
 
     def run(self) -> 'Application':
         self._mainWindow.show()
