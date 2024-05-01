@@ -5,13 +5,14 @@ from PyQt5.QtCore import Qt, QSize, QMargins
 from PyQt5.QtGui import QShowEvent, QResizeEvent, QMouseEvent
 from PyQt5.QtWidgets import QMainWindow, QWidget, QDesktopWidget, QLayout, QHBoxLayout
 
-from app.components.base import Factory
-from app.components.widgets import Box
+from app.components.base import Factory, Component
+from app.components.widgets import Box, StyleWidget
+from app.helpers.base import Strings
 from app.helpers.stylesheets import Colors, Paddings
 from app.resource.qt import Icons
 
 
-class FramelessWindow(QMainWindow):
+class FramelessWindow(QMainWindow, Component):
 
     def __init__(self) -> None:
         super().__init__()
@@ -21,7 +22,8 @@ class FramelessWindow(QMainWindow):
         self.setWindowFlags(Qt.Window | Qt.FramelessWindowHint | Qt.WindowMinMaxButtonsHint)
         self.setAttribute(Qt.WA_TranslucentBackground)
 
-        self._inner = QWidget()
+        self._inner = StyleWidget()
+        self._inner.setObjectName(f"window-{Strings.randomId()}")
         self.setCentralWidget(self._inner)
 
         self._mainLayout = Box(self._inner)
@@ -84,8 +86,8 @@ class FramelessWindow(QMainWindow):
         super().resizeEvent(event)
         self._inner.resize(self.size())
 
-    def setStyleSheet(self, style: str) -> None:
-        self._inner.setStyleSheet(style)
+    def setClassName(self, *classNames: str) -> None:
+        self._inner.setClassName(Strings.join(" ", classNames))
 
 
 class TitleBar(QWidget):

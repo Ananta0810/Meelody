@@ -4,6 +4,7 @@ from PyQt5.QtGui import QShowEvent, QWheelEvent
 from PyQt5.QtWidgets import QWidget, QVBoxLayout, QScrollArea
 
 from app.components.base import Component
+from app.components.widgets import StyleWidget
 from app.views.home.current_playlist import CurrentPlaylist
 from app.views.home.playlists_carousel import PlaylistsCarousel
 
@@ -15,7 +16,8 @@ class HomeBody(QScrollArea, Component):
         self.setClassName("bg-none border-none")
 
     def _createUI(self) -> None:
-        self._inner = QWidget()
+        self._inner = StyleWidget()
+        self._inner.setClassName("bg-none")
         self.setWidget(self._inner)
 
         self._mainLayout = QVBoxLayout(self._inner)

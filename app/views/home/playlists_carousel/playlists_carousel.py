@@ -20,11 +20,13 @@ class PlaylistsCarousel(QScrollArea, Component):
         self._initComponent()
 
     def _createUI(self):
+        self.setWidgetResizable(True)
+        self.setClassName("bg-none border-none")
         self.setVerticalScrollBarPolicy(Qt.ScrollBarAlwaysOff)
         self.setHorizontalScrollBarPolicy(Qt.ScrollBarAlwaysOff)
-        self.setWidgetResizable(True)
 
-        self._inner = QWidget()
+        self._inner = StyleWidget()
+        self._inner.setClassName("bg-none")
         self.setWidget(self._inner)
 
         # =================Library=================

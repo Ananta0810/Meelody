@@ -17,6 +17,9 @@ def _toProps(cn: ClassName, target: QWidget) -> int | float:
     if cn.value is None:
         raise ValueError("Please add value to rounded")
 
+    if cn.value == "none":
+        return 0
+
     if cn.value == "full":
         smallerEdge = min(target.width(), target.height())
         return smallerEdge / 2

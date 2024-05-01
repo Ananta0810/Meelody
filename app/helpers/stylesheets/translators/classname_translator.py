@@ -127,9 +127,6 @@ class ClassNameTranslator:
             props = [ClassNameTranslator.__toProp(classes, translator, element) for translator in _TRANSLATORS]
             styles.append([f"{eName}{'' if state is None else f':{state}'}", Strings.joinStyles(props)])
 
-        if len(styles) == 1:
-            return styles[0][1]
-
         return Strings.join("\n", [f"{id} {{{props}}}" for id, props in styles])
 
     @staticmethod

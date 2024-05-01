@@ -66,13 +66,13 @@ class MusicPlayerBar(QWidget, Component):
         self._titleLabel.enableEllipsis()
         self._titleLabel.setFixedWidth(128)
         self._titleLabel.setFont(Factory.createFont(size=10, bold=True))
-        self._titleLabel.setClassName("text-black dark:text-white")
+        self._titleLabel.setClassName("text-black dark:text-white bg-none")
 
         self._artistLabel = LabelWithDefaultText()
         self._artistLabel.enableEllipsis()
         self._artistLabel.setFixedWidth(128)
         self._artistLabel.setFont(Factory.createFont(size=9))
-        self._artistLabel.setClassName("text-black dark:text-gray")
+        self._artistLabel.setClassName("text-black dark:text-gray bg-none")
 
         self._infoLayout = QVBoxLayout()
         self._infoLayout.setContentsMargins(0, 0, 0, 0)
@@ -121,7 +121,7 @@ class MusicPlayerBar(QWidget, Component):
         self._playingTimeLabel = LabelWithDefaultText()
         self._playingTimeLabel.setFixedWidth(60)
         self._playingTimeLabel.setFont(Factory.createFont(size=9))
-        self._playingTimeLabel.setClassName("text-black dark:text-white")
+        self._playingTimeLabel.setClassName("text-black dark:text-white bg-none")
         self._playingTimeLabel.setAlignment(Qt.AlignRight | Qt.AlignVCenter)
 
         self._timeSlider = HorizontalSlider()
@@ -136,7 +136,7 @@ class MusicPlayerBar(QWidget, Component):
         self._totalTimeLabel = LabelWithDefaultText()
         self._totalTimeLabel.setFixedWidth(60)
         self._totalTimeLabel.setFont(Factory.createFont(size=9))
-        self._totalTimeLabel.setClassName("text-black dark:text-white")
+        self._totalTimeLabel.setClassName("text-black dark:text-white bg-none")
         self._totalTimeLabel.setAlignment(Qt.AlignLeft | Qt.AlignVCenter)
 
         self._middle.addWidget(self._playingTimeLabel)

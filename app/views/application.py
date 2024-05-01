@@ -44,7 +44,8 @@ class Application:
         musicPlayer.setCurrentSongIndex(lastPlayingSongIndex)
         musicPlayer.loadSongToPlay()
 
-    def __getLastPlayingSongIndex(self, library: Playlist.Songs) -> int:
+    @staticmethod
+    def __getLastPlayingSongIndex(library: Playlist.Songs) -> int:
         return 0 if appCenter.settings.playingSongId is None else max(0, library.getSongIndexWithId(appCenter.settings.playingSongId))
 
     def run(self) -> 'Application':
