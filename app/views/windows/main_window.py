@@ -30,6 +30,7 @@ class MainWindow(TitleBarWindow, Component):
         self._musicPlayerBar.setFixedHeight(96)
         self._musicPlayerBar.setObjectName("musicPlayer")
         self._musicPlayerBar.setContentsMargins(16, 0, 16, 0)
+        self._musicPlayerBar.setClassName("bg-none border-none border-t-gray-20 rounded-none")
 
         self.addWidget(self._body)
         self.addWidget(self._musicPlayerBar, alignment=Qt.AlignBottom)
@@ -39,8 +40,6 @@ class MainWindow(TitleBarWindow, Component):
 
     def applyLightMode(self) -> None:
         super().applyLightMode()
-        self._musicPlayerBar.setStyleSheet("QWidget#musicPlayer{border-top: 1px solid #eaeaea};border-radius:0px")
 
     def applyDarkMode(self) -> None:
         super().applyDarkMode()
-        self._musicPlayerBar.setStyleSheet("QWidget#musicPlayer{border-top: 1px solid #404040};border-radius:0px")

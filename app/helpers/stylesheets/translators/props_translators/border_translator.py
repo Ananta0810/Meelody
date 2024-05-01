@@ -1,24 +1,40 @@
+from typing import Optional
+
 from PyQt5.QtWidgets import QWidget
 
+from app.helpers.base import Dicts, Strings
 from app.helpers.stylesheets import Color
 from app.helpers.stylesheets.translators.props_translators.class_name import ClassName
 from app.helpers.stylesheets.translators.props_translators.props_translator import PropsTranslator
 from app.helpers.stylesheets.translators.value_translators import ValueTranslators
 
-__STYLES = {"solid", "dotted", "dashed", "double", "hidden"}
+_STYLES = {"solid", "dotted", "dashed", "double", "hidden"}
+_DIRECTIONS = {"l": "left", "t": "top", "r": "right", "b": "bottom"}
+_NULL_DIRECTION_PROPS = []
+_ALL_DIRECTIONS = "all"
 
 
-def _toProps(cn: ClassName):
-    if cn.value is None or cn.value.lower() == "none":
+def _toProps(cn: ClassName) -> (Optional[str], str, int | str | Color):
+    if "-" in cn.value:
+        direction, props = cn.value.split("-", maxsplit=1)
+        key, value = _toProps0(props)
+        return direction, key, value
+
+    key, value = _toProps0(cn.value)
+    return _ALL_DIRECTIONS, key, value
+
+
+def _toProps0(value: str) -> (str, int | str | Color):
+    if value is None or value.lower() == "none":
         return "size", 0
 
-    if cn.value.isdigit():
-        return "size", int(cn.value)
+    if value.isdigit():
+        return "size", int(value)
 
-    if cn.value in __STYLES:
-        return "style", cn.value
+    if value in _STYLES:
+        return "style", value
 
-    return "color", ValueTranslators.Color.translate([cn.value])
+    return "color", ValueTranslators.Color.translate([value])
 
 
 class BorderTranslator(PropsTranslator):
@@ -30,10 +46,26 @@ class BorderTranslator(PropsTranslator):
         return {"border"}
 
     def translate(self, names: list[ClassName], target: QWidget) -> str:
-        dictionary = dict([_toProps(name) for name in names])
+        directions = Dicts.group([_toProps(name) for name in names], lambda prop: prop[0])
 
-        size = dictionary.get('size', BorderTranslator.__defaultSize)
-        color = dictionary.get('color', BorderTranslator.__defaultColor)
-        style = dictionary.get('style', BorderTranslator.__defaultStyle)
+        generalProps = {key: value for direction, key, value in directions.get(_ALL_DIRECTIONS, _NULL_DIRECTION_PROPS)}
 
-        return f"border: {size}px {style} {color.toStylesheet()}"
+        size = generalProps.get('size', BorderTranslator.__defaultSize)
+        color = generalProps.get('color', BorderTranslator.__defaultColor)
+        style = generalProps.get('style', BorderTranslator.__defaultStyle)
+
+        props = [f"border: {size}px {style} {color.toStylesheet()}"]
+
+        for direction, details in directions.items():
+            if direction == _ALL_DIRECTIONS or direction not in _DIRECTIONS:
+                continue
+
+            directionProps = {key: value for direction, key, value in details}
+
+            directionSize = directionProps.get('size', BorderTranslator.__defaultSize)
+            directionColor = directionProps.get('color', BorderTranslator.__defaultColor)
+            directionStyle = directionProps.get('style', BorderTranslator.__defaultStyle)
+
+            props.append(f"border-{_DIRECTIONS[direction]}: {directionSize}px {directionStyle} {directionColor.toStylesheet()}")
+
+        return Strings.joinStyles(props)
