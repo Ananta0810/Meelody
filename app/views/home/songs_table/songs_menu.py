@@ -22,6 +22,7 @@ class SongsMenu(SmoothVerticalScrollArea):
     def __init__(self, parent: Optional[QWidget] = None) -> None:
         super().__init__(parent)
 
+        self.__coverLoadedSongIds: set[str] = set()
         self.__songRowDict: dict[str, SongRow] = {}
         self.__titles: dict[str, int] = {}
         self.__titleKeys: dict[str, list[int]] = {}
@@ -41,9 +42,9 @@ class SongsMenu(SmoothVerticalScrollArea):
         appCenter.currentPlaylistChanged.connect(lambda playlist: self.__setSongs(playlist.getSongs().getSongs()))
         musicPlayer.songChanged.connect(self.__scrollToSong)
 
-    def __showLibrary(self):
+    def __showLibrary(self) -> None:
         rows = [row for row in self.__songRowDict.values()]
-        return self.__displaySongs(rows)
+        self.__showSongs(rows)
 
     def keyPressEvent(self, event: QKeyEvent) -> None:
         self.__keyPressed.emit(event)
@@ -96,16 +97,31 @@ class SongsMenu(SmoothVerticalScrollArea):
             return
 
         rows = [self.__songRowDict.get(song.getId()) for song in songs]
-        self.__displaySongs(rows)
+        self.__showSongs(rows)
 
-    def __displaySongs(self, rows: list[SongRow]) -> None:
+    def __showSongs(self, rows: list[SongRow]) -> None:
         for songRow in self.__songRowDict.values():
             songRow.hide()
 
         displayer = ChunksConsumer(items=rows, size=MAX_ITEMS_VISIBLE_ON_MENU)
-        displayer.forEach(lambda row: row.show())
+        displayer.forEach(lambda row: row.show(), delay=10)
         self.__menuReset.connect(displayer.stop)
         displayer.stopped.connect(self.__menuReset.disconnect)
+        displayer.stopped.connect(self.__loadCovers)
+
+    def __loadCovers(self) -> None:
+        allCoversAreLoaded = len(self.__coverLoadedSongIds) == len(self.__songRowDict)
+        if allCoversAreLoaded:
+            return
+
+        rows = [song for songId, song in self.__songRowDict.items() if songId not in self.__coverLoadedSongIds]
+
+        displayer = ChunksConsumer(items=rows, size=1)
+        displayer.forEach(lambda row: self.__loadCoverFor(row))
+
+    def __loadCoverFor(self, row: SongRow) -> None:
+        row.loadCover()
+        self.__coverLoadedSongIds.add(row.content().getId())
 
     @staticmethod
     def __createTitleMap(songs: list[Song]) -> dict[str, list[int]]:

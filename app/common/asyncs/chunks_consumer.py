@@ -13,6 +13,7 @@ class QABCMeta(QObjectType, ABCMeta):
 
 class ChunksConsumer(QObject, Generic[T], metaclass=QABCMeta):
     stopped = pyqtSignal()
+    finished = pyqtSignal()
 
     def __init__(self, items: list[T], size: int) -> None:
         super().__init__()
@@ -20,7 +21,7 @@ class ChunksConsumer(QObject, Generic[T], metaclass=QABCMeta):
         self.__timer: QTimer = QTimer()
         self.__currentChunkIndex: int = 0
 
-    def forEach(self, fn: Callable[[T], None], delay: int = 10) -> None:
+    def forEach(self, fn: Callable[[T], None], delay: int = 0) -> None:
         self.stop()
         self.__timer.start(delay)
         self.__timer.timeout.connect(lambda: self.__displayChunk(delay, fn))
@@ -28,6 +29,7 @@ class ChunksConsumer(QObject, Generic[T], metaclass=QABCMeta):
     def __displayChunk(self, delay: int, fn: Callable[[T], None]) -> None:
         if self.__currentChunkIndex >= len(self.__chunks):
             self.stop()
+            self.finished.emit()
             return
 
         chunk = self.__chunks[self.__currentChunkIndex]

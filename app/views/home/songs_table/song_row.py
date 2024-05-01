@@ -4,7 +4,6 @@ from PyQt5.QtWidgets import QWidget, QHBoxLayout
 from app.common.models import Song
 from app.common.others import musicPlayer
 from app.components.base import Cover, Factory, LabelWithDefaultText, CoverProps
-from app.components.events import VisibleObserver
 from app.components.widgets import ExtendableStyleWidget
 from app.helpers.others import Times
 from app.helpers.qt import Widgets
@@ -98,7 +97,8 @@ class SongRow(ExtendableStyleWidget):
         self.__song.loved.connect(lambda loved: self._loveBtn.setActive(loved))
         self.__song.coverChanged.connect(lambda cover: self._cover.setCover(CoverProps.fromBytes(cover, width=64, height=64, radius=12)))
 
-        VisibleObserver(self).visible.connect(lambda: self.__song.loadCover())
+    def content(self) -> Song:
+        return self.__song
 
     def __playCurrentSong(self) -> None:
         musicPlayer.playSong(self.__song)
@@ -111,3 +111,6 @@ class SongRow(ExtendableStyleWidget):
         self._artistLabel.setDefaultText(song.getArtist())
         self._lengthLabel.setDefaultText(Times.toString(song.getLength()))
         self._loveBtn.setActive(song.isLoved())
+
+    def loadCover(self) -> None:
+        self.__song.loadCover()
