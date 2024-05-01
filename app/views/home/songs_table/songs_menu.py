@@ -1,9 +1,10 @@
 from typing import Optional
 
-from PyQt5.QtCore import Qt, pyqtSignal, QTimer
+from PyQt5.QtCore import Qt, pyqtSignal
 from PyQt5.QtGui import QKeyEvent
 from PyQt5.QtWidgets import QWidget
 
+from app.common.asyncs import ChunksConsumer
 from app.common.models import Song
 from app.common.others import appCenter, musicPlayer
 from app.components.scroll_areas import SmoothVerticalScrollArea
@@ -15,11 +16,11 @@ MAX_ITEMS_VISIBLE_ON_MENU = 6
 
 class SongsMenu(SmoothVerticalScrollArea):
     keyPressed = pyqtSignal(QKeyEvent)
+    __menuReset = pyqtSignal()
 
     def __init__(self, parent: Optional[QWidget] = None) -> None:
         super().__init__(parent)
 
-        self.__currentDisplayingChunk: int = 0
         self.__songRowDict: dict[str, SongRow] = {}
         self.__titles: dict[str, int] = {}
         self.__titleKeys: dict[str, list[int]] = {}
@@ -73,6 +74,8 @@ class SongsMenu(SmoothVerticalScrollArea):
             self.scrollToItemAt(self.__titles[song.getTitle()])
 
     def __setSongs(self, songs: list[Song]) -> None:
+        self.__menuReset.emit()
+
         self.__titles = {song.getTitle(): index for index, song in enumerate(songs)}
         self.__titleKeys = self.__createTitleMap(songs)
 
@@ -86,31 +89,15 @@ class SongsMenu(SmoothVerticalScrollArea):
 
         self.__displaySongs(songs)
 
-    def __displaySongs(self, songs):
+    def __displaySongs(self, songs: list[Song]) -> None:
         for song in self.__songRowDict.values():
             song.hide()
 
-        idsToShow = [song.getId() for song in songs]
-        chunks = [idsToShow[x:x + MAX_ITEMS_VISIBLE_ON_MENU] for x in range(0, len(idsToShow), MAX_ITEMS_VISIBLE_ON_MENU)]
-
-        self.__currentDisplayingChunk = 0
-
-        timer = QTimer()
-        timer.start(10)
-        timer.timeout.connect(lambda: self.__displaySongsInChunks(timer, chunks))
-
-    def __displaySongsInChunks(self, timer: QTimer, chunks: list[list[str]]) -> None:
-        if self.__currentDisplayingChunk >= len(chunks):
-            timer.stop()
-            return
-
-        idsToShow = chunks[self.__currentDisplayingChunk]
-
-        for songId in idsToShow:
-            self.__songRowDict[songId].show()
-
-        self.__currentDisplayingChunk += 1
-        timer.start(10)
+        rows = [self.__songRowDict.get(song.getId()) for song in songs]
+        displayer = ChunksConsumer(items=rows, size=MAX_ITEMS_VISIBLE_ON_MENU)
+        displayer.forEach(lambda row: row.show())
+        self.__menuReset.connect(displayer.stop)
+        displayer.stopped.connect(self.__menuReset.disconnect)
 
     @staticmethod
     def __createTitleMap(songs: list[Song]) -> dict[str, list[int]]:
