@@ -44,6 +44,7 @@ class MusicPlayer(QObject):
 
     def loadPlaylist(self, songs: Playlist.Songs) -> None:
         self.__songs = songs
+        self.setShuffle(self.__isShuffle)
 
     def setStartTime(self, timeStart: float):
         self.__timeStartInSec = timeStart
@@ -81,7 +82,7 @@ class MusicPlayer(QObject):
         if not self.hasAnySong():
             return
 
-        newIndex = self.__songs.indexOf(song)
+        newIndex = self.__getSongs().indexOf(song)
         self.stop()
         self.setCurrentSongIndex(newIndex)
         self.loadSongToPlay()
@@ -92,7 +93,7 @@ class MusicPlayer(QObject):
         if not self.hasAnySong():
             return
         self.stop()
-        self.setCurrentSongIndex((self.__currentSongIndex - 1) % self.__songs.size())
+        self.setCurrentSongIndex((self.__currentSongIndex - 1) % self.__getSongs().size())
         self.loadSongToPlay()
         self.setStartTime(0)
         self.play()
@@ -101,7 +102,7 @@ class MusicPlayer(QObject):
         if not self.hasAnySong():
             return
         self.stop()
-        self.setCurrentSongIndex((self.__currentSongIndex + 1) % self.__songs.size())
+        self.setCurrentSongIndex((self.__currentSongIndex + 1) % self.__getSongs().size())
         self.loadSongToPlay()
         self.setStartTime(0)
         self.play()

@@ -2,7 +2,7 @@ from PyQt5.QtCore import Qt
 from PyQt5.QtWidgets import QWidget, QHBoxLayout
 
 from app.common.models import Song
-from app.common.others import musicPlayer
+from app.common.others import musicPlayer, appCenter
 from app.components.base import Cover, Factory, LabelWithDefaultText, CoverProps
 from app.components.widgets import ExtendableStyleWidget
 from app.helpers.others import Times
@@ -101,6 +101,7 @@ class SongRow(ExtendableStyleWidget):
         return self.__song
 
     def __playCurrentSong(self) -> None:
+        musicPlayer.loadPlaylist(appCenter.currentPlaylist.getSongs())
         musicPlayer.playSong(self.__song)
 
     def __displaySongInfo(self, song: Song) -> None:
