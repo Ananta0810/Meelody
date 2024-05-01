@@ -7,6 +7,7 @@ from PyQt5.QtWidgets import QWidget
 from app.common.asyncs import ChunksConsumer
 from app.common.models import Song
 from app.common.others import appCenter, musicPlayer
+from app.components.events import VisibleObserver
 from app.components.scroll_areas import SmoothVerticalScrollArea
 from app.helpers.base import Lists
 from app.views.home.songs_table.song_row import SongRow
@@ -15,7 +16,7 @@ MAX_ITEMS_VISIBLE_ON_MENU = 6
 
 
 class SongsMenu(SmoothVerticalScrollArea):
-    keyPressed = pyqtSignal(QKeyEvent)
+    __keyPressed = pyqtSignal(QKeyEvent)
     __menuReset = pyqtSignal()
 
     def __init__(self, parent: Optional[QWidget] = None) -> None:
@@ -34,12 +35,18 @@ class SongsMenu(SmoothVerticalScrollArea):
 
     def _connectSignalSlots(self) -> None:
         super()._connectSignalSlots()
+        self.__keyPressed.connect(self.__onKeyPressed)
+        VisibleObserver(self).visible.connect(lambda visible: self.__showLibrary())
+
         appCenter.currentPlaylistChanged.connect(lambda playlist: self.__setSongs(playlist.getSongs().getSongs()))
         musicPlayer.songChanged.connect(self.__scrollToSong)
-        self.keyPressed.connect(self.__onKeyPressed)
+
+    def __showLibrary(self):
+        rows = [row for row in self.__songRowDict.values()]
+        return self.__displaySongs(rows)
 
     def keyPressEvent(self, event: QKeyEvent) -> None:
-        self.keyPressed.emit(event)
+        self.__keyPressed.emit(event)
         return super().keyPressEvent(event)
 
     def __onKeyPressed(self, event: QKeyEvent) -> None:
@@ -82,18 +89,19 @@ class SongsMenu(SmoothVerticalScrollArea):
         if len(self.__songRowDict) == 0:
             for song in songs:
                 songRow = SongRow(song)
+                songRow.hide()
                 songRow.applyTheme()
                 self.addWidget(songRow)
                 self.__songRowDict[song.getId()] = songRow
             return
 
-        self.__displaySongs(songs)
-
-    def __displaySongs(self, songs: list[Song]) -> None:
-        for song in self.__songRowDict.values():
-            song.hide()
-
         rows = [self.__songRowDict.get(song.getId()) for song in songs]
+        self.__displaySongs(rows)
+
+    def __displaySongs(self, rows: list[SongRow]) -> None:
+        for songRow in self.__songRowDict.values():
+            songRow.hide()
+
         displayer = ChunksConsumer(items=rows, size=MAX_ITEMS_VISIBLE_ON_MENU)
         displayer.forEach(lambda row: row.show())
         self.__menuReset.connect(displayer.stop)
