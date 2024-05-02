@@ -99,52 +99,6 @@ class Song(QObject):
     def __str__(self):
         return f"Song({self.__title}, {self.__artist}, {self.__length}, {self.__isLoved})"
 
-    def changeTitle(self, title: str) -> bool:
-        """
-        Rename title of the song. In addition, rename the audio file name.
-        """
-        try:
-            # newLocation = Strings.rename_file(self.__location, title)
-            # if os.path.exists(newLocation):
-            #     return False
-            # os.rename(self.__location, newLocation)
-            # self.__location = newLocation
-            # self.__title = title
-            return True
-        except PermissionError:
-            return False
-
-    def changeArtist(self, artist: str) -> bool:
-        """
-        Rename artist of the song. Save the new artist into the audio file.
-        """
-        # change_successfully: bool = AudioExtractor.load_from(self.__location).set_artist(artist)
-        # if change_successfully:
-        #     self.__artist = artist
-        # return change_successfully
-
-    def changeCover(self, cover: bytes) -> bool:
-        """
-        Change cover of the song. Save the new cover into the audio file.
-        """
-        SongWriter(self.__location).writeCover(cover)
-        self.__cover = cover
-        self.coverChanged.emit(cover)
-
-    def changeLoveState(self, state: bool = None) -> None:
-        """
-        Reverse the current love state to the opposite.
-        """
-        if state is None:
-            self.__isLoved = not self.__isLoved
-        else:
-            if self.__isLoved == state:
-                return
-            self.__isLoved = state
-
-        self.loved.emit(self.__isLoved)
-        self.updated.emit()
-
     def getId(self) -> str:
         return self.__id
 
@@ -187,6 +141,57 @@ class Song(QObject):
         self.__cover = cover
         if self.__cover is not None:
             self.coverChanged.emit(self.__cover)
+
+    def updateInfo(self, title: str, artist: str) -> None:
+        """
+       Rename title and artist of the song. In addition, rename the audio file name if title changed.
+        """
+        updated = False
+
+        if not Strings.equals(self.__title, title):
+            self.__updateTitle(title)
+            updated = True
+
+        if not Strings.equals(self.__artist, artist):
+            self.__updateArtist(artist)
+            updated = True
+
+        if updated:
+            self.updated.emit()
+
+    def __updateTitle(self, title: str) -> None:
+        newLocation = Strings.getRenameFile(self.__location, title)
+        if os.path.exists(newLocation):
+            raise FileExistsError()
+        os.rename(self.__location, newLocation)
+        self.__location = newLocation
+        self.__title = title
+
+    def __updateArtist(self, artist: str) -> None:
+        SongWriter(self.__location).writeArtist(artist)
+        self.__artist = artist
+
+    def updateCover(self, cover: bytes) -> None:
+        """
+        Change cover of the song. Save the new cover into the audio file.
+        """
+        SongWriter(self.__location).writeCover(cover)
+        self.__cover = cover
+        self.coverChanged.emit(cover)
+
+    def updateLoveState(self, state: bool = None) -> None:
+        """
+        Reverse the current love state to the opposite.
+        """
+        if state is None:
+            self.__isLoved = not self.__isLoved
+        else:
+            if self.__isLoved == state:
+                return
+            self.__isLoved = state
+
+        self.loved.emit(self.__isLoved)
+        self.updated.emit()
 
     def delete(self) -> bool:
         """
@@ -240,13 +245,9 @@ class SongWriter:
     def __init__(self, file: str):
         self.__data = load(file)
 
-    def writeArtist(self, artist: str) -> bool:
-        try:
-            self.__data.tag.artist = artist
-            self.__data.tag.save(version=id3.ID3_V2_3)
-            return True
-        except (FileNotFoundError, PermissionError):
-            return False
+    def writeArtist(self, artist: str) -> None:
+        self.__data.tag.artist = artist
+        self.__data.tag.save(version=id3.ID3_V2_3)
 
     def writeCover(self, cover: bytes) -> None:
         if self.__data.tag is None:

@@ -328,7 +328,7 @@ class MusicPlayerBar(QWidget, Component):
         # Connect signals
         song.loved.connect(self.__updateLoveState)
         song.coverChanged.connect(self.__updateCover)
-        self._loveBtn.clicked.connect(lambda: self.__currentSong.changeLoveState(self._loveBtn.isActive()))
+        self._loveBtn.clicked.connect(lambda: self.__currentSong.updateLoveState(self._loveBtn.isActive()))
 
         # Display song information
         self.setTotalTime(song.getLength())

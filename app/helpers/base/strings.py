@@ -116,14 +116,14 @@ class Strings:
         return os.path.basename(file_path).split(".")[1]
 
     @staticmethod
-    def renameFile(file_path: str, new_base_name: str) -> str:
-        old_base_name = Strings.getFileBasename(file_path)
+    def getRenameFile(filePath: str, newBaseName: str) -> str:
+        old_base_name = Strings.getFileBasename(filePath)
         if old_base_name.strip() == "":
-            directory = Strings.getDirectoryOf(file_path)
-            extension = "." + Strings.extensionOf(file_path)
-            return Strings.getFullPath(directory, new_base_name, extension)
+            directory = Strings.getDirectoryOf(filePath)
+            extension = "." + Strings.extensionOf(filePath)
+            return Strings.getFullPath(directory, newBaseName, extension)
 
-        return file_path.replace(old_base_name, new_base_name)
+        return filePath.replace(old_base_name, newBaseName)
 
     @staticmethod
     def convertBytes(size: int):

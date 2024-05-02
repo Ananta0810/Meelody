@@ -4,17 +4,24 @@ from PyQt5.QtWidgets import QWidget, QShortcut
 
 from app.common.models import Song
 from app.components.base import Cover, CoverProps, Factory, ActionButton, Label, Input
-from app.components.dialogs import BaseDialog
+from app.components.dialogs import BaseDialog, Dialogs
 from app.components.widgets import Box
+from app.helpers.base import Strings
+from app.helpers.others import Logger
 from app.resource.qt import Images
 
 
 class UpdateSongDialog(BaseDialog):
 
     def __init__(self, song: Song) -> None:
+        self.__canUpdate = False
         self.__song = song
+
         super().__init__()
         super()._initComponent()
+
+        self._titleInput.setText(song.getTitle())
+        self._artistInput.setText(song.getArtist())
 
     def _createUI(self) -> None:
         super()._createUI()
@@ -80,6 +87,9 @@ class UpdateSongDialog(BaseDialog):
 
     def _connectSignalSlots(self) -> None:
         super()._connectSignalSlots()
+
+        self._titleInput.changed.connect(lambda text: self.__checkValid())
+        self._artistInput.changed.connect(lambda text: self.__checkValid())
         self._acceptBtn.clicked.connect(self._updateSong)
 
     def _assignShortcuts(self) -> None:
@@ -87,11 +97,39 @@ class UpdateSongDialog(BaseDialog):
         acceptShortcut = QShortcut(QKeySequence(Qt.Key_Return), self._acceptBtn)
         acceptShortcut.activated.connect(self._acceptBtn.click)
 
-    def __checkValid(self, title: str) -> None:
-        pass
+    def __checkValid(self) -> None:
+        title = self._titleInput.text().strip()
+        artist = self._artistInput.text().strip()
+
+        if Strings.isBlank(title):
+            self.__canUpdate = False
+            self._acceptBtn.setDisabled(True)
+            return
+
+        if Strings.equals(self.__song.getTitle(), title) and Strings.equals(self.__song.getArtist(), artist):
+            self.__canUpdate = False
+            self._acceptBtn.setDisabled(True)
+            return
+
+        self.__canUpdate = True
+        self._acceptBtn.setDisabled(False)
 
     def _updateSong(self) -> None:
-        pass
+        self.__checkValid()
+        if not self.__canUpdate:
+            return
+
+        title = self._titleInput.text().strip()
+        artist = self._artistInput.text().strip()
+
+        try:
+            self.__song.updateInfo(title, artist)
+            Dialogs.success(message="Update song information successfully.")
+            self.close()
+        except Exception as e:
+            Logger.error(e)
+            Dialogs.alert(message="Something is wrong when saving the song. Please try again.")
+            self.close()
 
     def show(self) -> None:
         self.moveToCenter()

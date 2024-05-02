@@ -22,7 +22,7 @@ class SongRow(ExtendableStyleWidget):
         super().__init__()
         super()._initComponent()
 
-        self.__displaySongInfo(song)
+        self.__displaySongInfo()
 
     def _createUI(self) -> None:
         self.setClassName("bg-none hover:bg-gray-12 rounded-12")
@@ -136,12 +136,13 @@ class SongRow(ExtendableStyleWidget):
         self._closeMenuBtn.clicked.connect(lambda: self.__showMoreButtons(False))
 
         self._playBtn.clicked.connect(lambda: self.__playCurrentSong())
-        self._loveBtn.clicked.connect(lambda: self.__song.changeLoveState(self._loveBtn.isActive()))
+        self._loveBtn.clicked.connect(lambda: self.__song.updateLoveState(self._loveBtn.isActive()))
         self._editCoverBtn.clicked.connect(lambda: self.__changeCover())
         self._editSongBtn.clicked.connect(lambda: self.__changeSongInfo())
 
         self.__song.loved.connect(lambda loved: self._loveBtn.setActive(loved))
         self.__song.coverChanged.connect(lambda cover: self._cover.setCover(CoverProps.fromBytes(cover, width=64, height=64, radius=12)))
+        self.__song.updated.connect(lambda: self.__displaySongInfo())
 
         musicPlayer.songChanged.connect(lambda song: self.__setEditable(song != self.__song))
 
@@ -170,14 +171,14 @@ class SongRow(ExtendableStyleWidget):
         musicPlayer.loadPlaylist(appCenter.currentPlaylist.getSongs())
         musicPlayer.playSong(self.__song)
 
-    def __displaySongInfo(self, song: Song) -> None:
-        if song.isCoverLoaded() and Widgets.isInView(self):
-            self._cover.setCover(CoverProps.fromBytes(song.getCover(), width=64, height=64, radius=12))
+    def __displaySongInfo(self) -> None:
+        if self.__song.isCoverLoaded() and Widgets.isInView(self):
+            self._cover.setCover(CoverProps.fromBytes(self.__song.getCover(), width=64, height=64, radius=12))
 
-        self._titleLabel.setDefaultText(song.getTitle())
-        self._artistLabel.setDefaultText(song.getArtist())
-        self._lengthLabel.setDefaultText(Times.toString(song.getLength()))
-        self._loveBtn.setActive(song.isLoved())
+        self._titleLabel.setDefaultText(self.__song.getTitle())
+        self._artistLabel.setDefaultText(self.__song.getArtist())
+        self._lengthLabel.setDefaultText(Times.toString(self.__song.getLength()))
+        self._loveBtn.setActive(self.__song.isLoved())
 
     def __changeCover(self) -> None:
         path = QFileDialog.getOpenFileName(self, filter=FileType.IMAGE)[0]
@@ -186,13 +187,13 @@ class SongRow(ExtendableStyleWidget):
         try:
             coverData = Bytes.fromFile(path)
             coverProps = CoverProps.fromBytes(coverData, 320, 320, radius=16)
-            self.__song.changeCover(Pixmaps.toBytes(coverProps.content()))
+            self.__song.updateCover(Pixmaps.toBytes(coverProps.content()))
         except* PermissionError:
             Dialogs.alert(message="You can not change cover of the playing song. Please try again after you played other song.")
         except* OSError:
             Dialogs.alert(message="Song is not found in library, you might be deleted it while open our application.")
         except* Exception:
-            Dialogs.alert(message="Something is wrong when saving your cover. Please try again.")
+            Dialogs.alert(message="Something is wrong when saving song cover. Please try again.")
 
     def __changeSongInfo(self) -> None:
         dialog = UpdateSongDialog(self.__song)
