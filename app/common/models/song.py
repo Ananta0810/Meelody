@@ -3,9 +3,10 @@ import uuid
 from typing import Optional, Callable
 
 from PyQt5.QtCore import QObject, pyqtSignal, QThread
-from eyed3 import load, mp3
+from eyed3 import load, mp3, id3
 
 from app.helpers.base import Strings
+from app.helpers.others import Logger
 
 
 class Song(QObject):
@@ -127,18 +128,27 @@ class Song(QObject):
         """
         Change cover of the song. Save the new cover into the audio file.
         """
-        # change_successfully: bool = AudioExtractor.load_from(self.__location).set_cover(cover)
-        # if change_successfully:
-        #     self.__cover = cover
-        # else:
-        #     Printers.error("Save cover failed.")
-        # return change_successfully
+        changeSuccessfully: bool = SongWriter(self.__location).writeCover(cover)
+        if changeSuccessfully:
+            self.__cover = cover
+            self.coverChanged.emit(cover)
+        else:
+            Logger.error("Save cover failed.")
+        return changeSuccessfully
 
-    def setCover(self, cover: bytes) -> None:
+    def changeLoveState(self, state: bool = None) -> None:
         """
-        Change cover of the song. Save the new cover into the audio file.
+        Reverse the current love state to the opposite.
         """
-        self.__cover = cover
+        if state is None:
+            self.__isLoved = not self.__isLoved
+        else:
+            if self.__isLoved == state:
+                return
+            self.__isLoved = state
+
+        self.loved.emit(self.__isLoved)
+        self.updated.emit()
 
     def getId(self) -> str:
         return self.__id
@@ -193,20 +203,6 @@ class Song(QObject):
         except FileNotFoundError:
             return False
 
-    def changeLoveState(self, state: bool = None) -> None:
-        """
-        Reverse the current love state to the opposite.
-        """
-        if state is None:
-            self.__isLoved = not self.__isLoved
-        else:
-            if self.__isLoved == state:
-                return
-            self.__isLoved = state
-
-        self.loved.emit(self.__isLoved)
-        self.updated.emit()
-
 
 class SongReader:
     __data: mp3.Mp3AudioFile
@@ -241,6 +237,40 @@ class SongReader:
             return self.__data.info.sample_freq
         except AttributeError:
             return 0
+
+
+class SongWriter:
+    __data: mp3.Mp3AudioFile
+
+    def __init__(self, file: str):
+        self.__data = load(file)
+
+    def writeArtist(self, artist: str) -> bool:
+        try:
+            self.__data.tag.artist = artist
+            self.__data.tag.save(version=id3.ID3_V2_3)
+            return True
+        except (FileNotFoundError, PermissionError):
+            return False
+
+    def writeCover(self, cover: bytes) -> bool:
+        if self.__data.tag is None:
+            self.__data.initTag()
+        try:
+            self.__removeExistingCovers()
+            self.__addNewCover(cover)
+            return True
+        except (FileNotFoundError, PermissionError) as e:
+            Logger.error(e)
+            return False
+
+    def __removeExistingCovers(self) -> None:
+        images = self.__data.tag.images
+        [images.remove(image.description) for image in images]
+
+    def __addNewCover(self, cover: bytes, description: str = "Added by Meelody") -> None:
+        self.__data.tag.images.set(3, cover, description)
+        self.__data.tag.save(version=id3.ID3_V2_3)
 
 
 class CoverLoaderThread(QThread):

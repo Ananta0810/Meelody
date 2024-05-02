@@ -1,13 +1,16 @@
 from PyQt5.QtCore import Qt
-from PyQt5.QtWidgets import QWidget, QHBoxLayout
+from PyQt5.QtWidgets import QWidget, QHBoxLayout, QFileDialog
 
 from app.common.models import Song
 from app.common.others import musicPlayer, appCenter
 from app.components.base import Cover, Factory, LabelWithDefaultText, CoverProps
+from app.components.dialogs import Dialogs
 from app.components.widgets import ExtendableStyleWidget, StyleWidget, FlexBox
-from app.helpers.others import Times
-from app.helpers.qt import Widgets
+from app.helpers.base import Bytes
+from app.helpers.others import Times, Logger
+from app.helpers.qt import Widgets, Pixmaps
 from app.helpers.stylesheets import Paddings, Colors
+from app.resource.others import FileType
 from app.resource.qt import Icons, Images
 
 
@@ -133,6 +136,7 @@ class SongRow(ExtendableStyleWidget):
 
         self._playBtn.clicked.connect(lambda: self.__playCurrentSong())
         self._loveBtn.clicked.connect(lambda: self.__song.changeLoveState(self._loveBtn.isActive()))
+        self._editCoverBtn.clicked.connect(lambda: self.__changeCover())
 
         self.__song.loved.connect(lambda loved: self._loveBtn.setActive(loved))
         self.__song.coverChanged.connect(lambda cover: self._cover.setCover(CoverProps.fromBytes(cover, width=64, height=64, radius=12)))
@@ -161,6 +165,18 @@ class SongRow(ExtendableStyleWidget):
         self._artistLabel.setDefaultText(song.getArtist())
         self._lengthLabel.setDefaultText(Times.toString(song.getLength()))
         self._loveBtn.setActive(song.isLoved())
+
+    def __changeCover(self) -> None:
+        path = QFileDialog.getOpenFileName(self, filter=FileType.IMAGE)[0]
+        if path is None or path == '':
+            return
+        try:
+            coverData = Bytes.fromFile(path)
+            coverProps = CoverProps.fromBytes(coverData, 320, 320, radius=16)
+            self.__song.changeCover(Pixmaps.toBytes(coverProps.content()))
+        except Exception as e:
+            Logger.error(e)
+            Dialogs.alert(message="Something is wrong when saving your cover. Please try again.")
 
     def loadCover(self) -> None:
         self.__song.loadCover()
