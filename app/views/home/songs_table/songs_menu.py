@@ -82,20 +82,10 @@ class SongsMenu(SmoothVerticalScrollArea):
             self.scrollToItemAt(self.__titles[song.getTitle()])
 
     def __setPlaylist(self, playlist: Playlist.Songs) -> None:
-        self.__setSongs(playlist.getSongs())
-        playlist.deleted.connect(lambda song: self.__removeSong(song, playlist))
+        self.__setPlaylistSongs(playlist.getSongs())
+        playlist.updated.connect(lambda: self.__refreshSongs(playlist))
 
-    def __removeSong(self, song: Song, playlist: Playlist.Songs) -> None:
-        if song.getId() not in self.__songRowDict:
-            return
-        row = self.__songRowDict.get(song.getId())
-        self.removeWidget(row)
-        row.deleteLater()
-
-        self.__songRowDict.pop(song.getId())
-        self.__updateTitleMaps(playlist.getSongs())
-
-    def __setSongs(self, songs: list[Song]) -> None:
+    def __setPlaylistSongs(self, songs: list[Song]) -> None:
         self.__menuReset.emit()
         self.__updateTitleMaps(songs)
 
@@ -110,6 +100,28 @@ class SongsMenu(SmoothVerticalScrollArea):
 
         rows = [self.__songRowDict.get(song.getId()) for song in songs]
         self.__showSongs(rows)
+
+    def __refreshSongs(self, playlist: Playlist.Songs) -> None:
+        currentTotalSongs = [row for row in self.__songRowDict.values() if row.isVisible()]
+        isDeletedSongs = playlist.size() < len(currentTotalSongs)
+        if isDeletedSongs:
+            newSongIds = {song.getId() for song in playlist.getSongs()}
+            rowsToDelete = [row for row in currentTotalSongs if row.content().getId() not in newSongIds]
+            for row in rowsToDelete:
+                self.__removeRow(row)
+
+            self.__updateTitleMaps(playlist.getSongs())
+
+        isAddedSongs = playlist.size() > len(currentTotalSongs)
+        if isAddedSongs:
+            self.__setPlaylistSongs(playlist.getSongs())
+            self.__updateTitleMaps(playlist.getSongs())
+
+    def __removeRow(self, row: SongRow) -> None:
+        self.removeWidget(row)
+        row.deleteLater()
+
+        self.__songRowDict.pop(row.content().getId())
 
     def __updateTitleMaps(self, songs: list[Song]) -> None:
         self.__titles = {song.getTitle(): index for index, song in enumerate(songs)}

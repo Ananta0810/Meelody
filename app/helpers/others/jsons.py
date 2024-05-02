@@ -51,8 +51,12 @@ class Jsons:
     def readFromFile(file: str) -> any:
         if not file.endswith(".json"):
             raise IOError("File should ends with json.")
-        with open(file) as jsonFile:
-            try:
-                return json.load(jsonFile)
-            except JSONDecodeError:
-                return None
+
+        try:
+            with open(file) as jsonFile:
+                try:
+                    return json.load(jsonFile)
+                except JSONDecodeError:
+                    return None
+        except FileNotFoundError:
+            return None

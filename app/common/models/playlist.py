@@ -59,7 +59,6 @@ class Playlist:
     class Songs(QObject):
 
         updated = pyqtSignal()
-        deleted = pyqtSignal(Song)
 
         def __init__(self, songs: list[Song] = None):
             super().__init__()
@@ -87,6 +86,7 @@ class Playlist:
 
         def moveSong(self, fromIndex: int, toIndex: int) -> None:
             Lists.moveElement(self.__songs, fromIndex, toIndex)
+            self.updated.emit()
 
         def size(self) -> int:
             """
@@ -133,7 +133,7 @@ class Playlist:
 
         def removeSong(self, song: Song) -> None:
             self.__songs.remove(song)
-            self.deleted.emit(song)
+            self.updated.emit()
 
         def indexOf(self, song: Song) -> int:
             """
