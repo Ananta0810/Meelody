@@ -4,7 +4,7 @@ from PyQt5.QtWidgets import QWidget, QHBoxLayout
 from app.common.models import Song
 from app.common.others import musicPlayer, appCenter
 from app.components.base import Cover, Factory, LabelWithDefaultText, CoverProps
-from app.components.widgets import ExtendableStyleWidget
+from app.components.widgets import ExtendableStyleWidget, StyleWidget, FlexBox
 from app.helpers.others import Times
 from app.helpers.qt import Widgets
 from app.helpers.stylesheets import Paddings, Colors
@@ -24,7 +24,7 @@ class SongRow(ExtendableStyleWidget):
         self.setClassName("bg-none hover:bg-gray-12 rounded-12")
 
         self._mainLayout = QHBoxLayout()
-        self._mainLayout.setContentsMargins(20, 4, 20, 4)
+        self._mainLayout.setContentsMargins(20, 4, 4, 4)
         self._mainLayout.setSpacing(0)
         self._mainLayout.setAlignment(Qt.AlignLeft)
         self.setLayout(self._mainLayout)
@@ -64,9 +64,9 @@ class SongRow(ExtendableStyleWidget):
 
         # ============================================ REACT BUTTONS # ============================================
         self._moreBtn = Factory.createIconButton(size=Icons.LARGE, padding=Paddings.RELATIVE_50)
-        self._moreBtn.setLightModeIcon(Icons.MORE.withColor(Colors.PRIMARY))
+        self._moreBtn.setLightModeIcon(Icons.MORE.withColor(Colors.GRAY))
         self._moreBtn.setDarkModeIcon(Icons.MORE.withColor(Colors.WHITE))
-        self._moreBtn.setClassName("hover:bg-primary-25 rounded-full", "dark:hover:bg-white-20")
+        self._moreBtn.setClassName("hover:bg-black-10 rounded-full", "dark:hover:bg-white-20")
 
         self._loveBtn = Factory.createToggleButton(Icons.LARGE, Paddings.RELATIVE_50)
         self._loveBtn.setActiveIcon(Icons.LOVE.withColor(Colors.DANGER))
@@ -81,16 +81,56 @@ class SongRow(ExtendableStyleWidget):
         self._playBtn.setDarkModeIcon(Icons.PLAY.withColor(Colors.WHITE))
         self._playBtn.setClassName("hover:bg-primary-25 bg-primary-10 rounded-full", "dark:bg-white-20 dark:hover:bg-primary")
 
-        self._buttons = QWidget()
-        self._buttonsLayout = QHBoxLayout(self._buttons)
-        self._buttonsLayout.setContentsMargins(8, 8, 8, 8)
-        self._buttonsLayout.setSpacing(8)
-        self._buttonsLayout.addWidget(self._moreBtn)
-        self._buttonsLayout.addWidget(self._loveBtn)
-        self._buttonsLayout.addWidget(self._playBtn)
-        self._mainLayout.addWidget(self._buttons)
+        self._mainButtons = QWidget()
+        self._mainButtonsLayout = FlexBox(self._mainButtons)
+        self._mainButtonsLayout.setContentsMargins(8, 8, 8, 8)
+        self._mainButtonsLayout.setSpacing(8)
+        self._mainButtonsLayout.addWidget(self._moreBtn)
+        self._mainButtonsLayout.addWidget(self._loveBtn)
+        self._mainButtonsLayout.addWidget(self._playBtn)
+
+        # ============================================ MORE BUTTONS # ============================================
+        self._editSongBtn = Factory.createIconButton(size=Icons.LARGE, padding=Paddings.RELATIVE_50)
+        self._editSongBtn.setLightModeIcon(Icons.EDIT.withColor(Colors.PRIMARY))
+        self._editSongBtn.setDarkModeIcon(Icons.EDIT.withColor(Colors.WHITE))
+        self._editSongBtn.setClassName("hover:bg-primary-12 rounded-full", "dark:hover:bg-white-20")
+        self._editSongBtn.keepSpaceWhenHiding()
+
+        self._editCoverBtn = Factory.createIconButton(size=Icons.LARGE, padding=Paddings.RELATIVE_50)
+        self._editCoverBtn.setLightModeIcon(Icons.IMAGE.withColor(Colors.PRIMARY))
+        self._editCoverBtn.setDarkModeIcon(Icons.IMAGE.withColor(Colors.WHITE))
+        self._editCoverBtn.setClassName("hover:bg-primary-12 rounded-full", "dark:hover:bg-white-20")
+        self._editCoverBtn.keepSpaceWhenHiding()
+
+        self._deleteBtn = Factory.createIconButton(size=Icons.LARGE, padding=Paddings.RELATIVE_50)
+        self._deleteBtn.setLightModeIcon(Icons.DELETE.withColor(Colors.PRIMARY))
+        self._deleteBtn.setDarkModeIcon(Icons.DELETE.withColor(Colors.WHITE))
+        self._deleteBtn.setClassName("hover:bg-primary-12 rounded-full", "dark:hover:bg-white-20")
+        self._deleteBtn.keepSpaceWhenHiding()
+
+        self._closeMenuBtn = Factory.createIconButton(size=Icons.MEDIUM, padding=Paddings.RELATIVE_50, parent=self)
+        self._closeMenuBtn.setLightModeIcon(Icons.CLOSE.withColor(Colors.WHITE))
+        self._closeMenuBtn.setClassName("rounded-full bg-danger-75 hover:bg-danger")
+        self._closeMenuBtn.hide()
+
+        self._moreButtons = StyleWidget()
+        self._moreButtons.setClassName("bg-black-4 rounded-12")
+        self._moreButtonsLayout = FlexBox(self._moreButtons)
+        self._moreButtonsLayout.setContentsMargins(8, 4, 8, 4)
+        self._moreButtonsLayout.setSpacing(8)
+        self._moreButtons.hide()
+
+        self._moreButtonsLayout.addWidget(self._editSongBtn)
+        self._moreButtonsLayout.addWidget(self._editCoverBtn)
+        self._moreButtonsLayout.addWidget(self._deleteBtn)
+
+        self._mainLayout.addWidget(self._mainButtons)
+        self._mainLayout.addWidget(self._moreButtons)
 
     def _connectSignalSlots(self) -> None:
+        self._moreBtn.clicked.connect(lambda: self.__showMoreButtons(True))
+        self._closeMenuBtn.clicked.connect(lambda: self.__showMoreButtons(False))
+
         self._playBtn.clicked.connect(lambda: self.__playCurrentSong())
         self._loveBtn.clicked.connect(lambda: self.__song.changeLoveState(self._loveBtn.isActive()))
 
@@ -99,6 +139,15 @@ class SongRow(ExtendableStyleWidget):
 
     def content(self) -> Song:
         return self.__song
+
+    def __showMoreButtons(self, a0: bool) -> None:
+        self._mainButtons.setVisible(not a0)
+        self._moreButtons.setVisible(a0)
+        self._closeMenuBtn.setVisible(a0)
+        if a0:
+            menuCorner = self._moreButtons.geometry().topRight()
+            self._closeMenuBtn.move(menuCorner.x() - self._closeMenuBtn.width() - 4, menuCorner.y() + 4)
+            self._closeMenuBtn.raise_()
 
     def __playCurrentSong(self) -> None:
         musicPlayer.loadPlaylist(appCenter.currentPlaylist.getSongs())
