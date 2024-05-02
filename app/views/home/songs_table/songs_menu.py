@@ -83,21 +83,21 @@ class SongsMenu(SmoothVerticalScrollArea):
 
     def __setPlaylist(self, playlist: Playlist.Songs) -> None:
         self.__setSongs(playlist.getSongs())
-        playlist.deleted.connect(lambda song: self.__removeSong(song))
+        playlist.deleted.connect(lambda song: self.__removeSong(song, playlist))
 
-    def __removeSong(self, song: Song) -> None:
+    def __removeSong(self, song: Song, playlist: Playlist.Songs) -> None:
         if song.getId() not in self.__songRowDict:
             return
         row = self.__songRowDict.get(song.getId())
         self.removeWidget(row)
-        self.__songRowDict.pop(song.getId())
         row.deleteLater()
+
+        self.__songRowDict.pop(song.getId())
+        self.__updateTitleMaps(playlist.getSongs())
 
     def __setSongs(self, songs: list[Song]) -> None:
         self.__menuReset.emit()
-
-        self.__titles = {song.getTitle(): index for index, song in enumerate(songs)}
-        self.__titleKeys = self.__createTitleMap(songs)
+        self.__updateTitleMaps(songs)
 
         if len(self.__songRowDict) == 0:
             for song in songs:
@@ -110,6 +110,10 @@ class SongsMenu(SmoothVerticalScrollArea):
 
         rows = [self.__songRowDict.get(song.getId()) for song in songs]
         self.__showSongs(rows)
+
+    def __updateTitleMaps(self, songs: list[Song]) -> None:
+        self.__titles = {song.getTitle(): index for index, song in enumerate(songs)}
+        self.__titleKeys = self.__createTitleMap(songs)
 
     def __showSongs(self, rows: list[SongRow]) -> None:
         for songRow in self.__songRowDict.values():
