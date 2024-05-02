@@ -141,8 +141,14 @@ class SongRow(ExtendableStyleWidget):
         self.__song.loved.connect(lambda loved: self._loveBtn.setActive(loved))
         self.__song.coverChanged.connect(lambda cover: self._cover.setCover(CoverProps.fromBytes(cover, width=64, height=64, radius=12)))
 
+        musicPlayer.songChanged.connect(lambda song: self.__setEditable(song != self.__song))
+
     def content(self) -> Song:
         return self.__song
+
+    def show(self) -> None:
+        super().show()
+        self.__showMoreButtons(False)
 
     def __showMoreButtons(self, a0: bool) -> None:
         self._mainButtons.setVisible(not a0)
@@ -152,6 +158,11 @@ class SongRow(ExtendableStyleWidget):
             menuCorner = self._moreButtons.geometry().topRight()
             self._closeMenuBtn.move(menuCorner.x() - self._closeMenuBtn.width() - 4, menuCorner.y() + 4)
             self._closeMenuBtn.raise_()
+
+    def __setEditable(self, editable: bool) -> None:
+        self._editSongBtn.setVisible(editable)
+        self._editCoverBtn.setVisible(editable)
+        self._deleteBtn.setVisible(editable)
 
     def __playCurrentSong(self) -> None:
         musicPlayer.loadPlaylist(appCenter.currentPlaylist.getSongs())
