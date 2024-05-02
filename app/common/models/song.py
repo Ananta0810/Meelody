@@ -20,6 +20,7 @@ class Song(QObject):
 
     loved = pyqtSignal(bool)
     coverChanged = pyqtSignal(bytes)
+    updated = pyqtSignal()
 
     def __init__(self, location: str = None, title: str = None, artist: str = None, cover: bytes = None, length: float = 0, sampleRate: float = 48000,
                  loved: bool = False):
@@ -199,8 +200,12 @@ class Song(QObject):
         if state is None:
             self.__isLoved = not self.__isLoved
         else:
+            if self.__isLoved == state:
+                return
             self.__isLoved = state
+
         self.loved.emit(self.__isLoved)
+        self.updated.emit()
 
 
 class SongReader:

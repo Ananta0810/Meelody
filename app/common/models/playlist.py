@@ -1,6 +1,8 @@
 import uuid
 from typing import Callable, TypeVar
 
+from PyQt5.QtCore import QObject, pyqtSignal
+
 from app.common.models.song import Song
 from app.helpers.base import Lists, Strings
 
@@ -54,9 +56,12 @@ class Playlist:
         def clone(self) -> 'Playlist.Info':
             return Playlist.Info(self.__name, self.__cover, self.__coverPath, self.__id)
 
-    class Songs:
+    class Songs(QObject):
+
+        updated = pyqtSignal()
 
         def __init__(self, songs: list[Song] = None):
+            super().__init__()
             self.__songs: list[Song] = []
             if songs is not None:
                 self.insertAll(songs)
@@ -113,6 +118,7 @@ class Playlist:
             Add song to the list of songs. If added successfully, it will return the position of the song in the playlist
             """
             position = self.__findInsertPosition(song)
+            song.updated.connect(self.updated.emit)
             self.__songs.insert(position, song)
             return position
 
@@ -126,6 +132,7 @@ class Playlist:
 
         def removeSong(self, song: Song) -> None:
             self.__songs.remove(song)
+            song.updated.disconnect(self.updated.emit)
 
         def indexOf(self, song: Song) -> int:
             """

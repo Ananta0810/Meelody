@@ -27,6 +27,8 @@ class Application:
         appCenter.setLibrary(library)
         appCenter.setActivePlaylist(library)
 
+        library.getSongs().updated.connect(lambda: database.songs.save(library.getSongs().getSongs()))
+
     @staticmethod
     def __configureMusicPlayer():
         settings = appCenter.settings
