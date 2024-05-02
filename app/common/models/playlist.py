@@ -19,13 +19,6 @@ class _SongComparator:
         return lambda s1, s2: self.__comparator(self.__key_provider(s1), self.__key_provider(s2))
 
 
-_comparatorMap: dict[Song.Order, _SongComparator] = {
-    Song.Order.TITLE: _SongComparator(Song.getTitle, Strings.compare),
-    Song.Order.ARTIST: _SongComparator(Song.getArtist, Strings.compare),
-    Song.Order.LENGTH: _SongComparator(Song.getLength, lambda x, y: x - y),
-}
-
-
 class Playlist:
     class Info:
         def __init__(self, name: str = None, cover: bytes = None, coverPath: str = None, id: str | None = None):
@@ -63,10 +56,8 @@ class Playlist:
 
     class Songs:
 
-        def __init__(self, songs: list[Song] = None, isSorted: bool = True, orderBy: Song.Order = Song.Order.TITLE):
+        def __init__(self, songs: list[Song] = None):
             self.__songs: list[Song] = []
-            self.__orderBy: Song.Order = orderBy
-            self.__isSorted: bool = isSorted
             if songs is not None:
                 self.insertAll(songs)
 
@@ -77,13 +68,10 @@ class Playlist:
             return string
 
         def clone(self) -> 'Playlist.Songs':
-            return Playlist.Songs(self.__songs, self.__isSorted, self.__orderBy)
+            return Playlist.Songs(self.__songs)
 
         def getSongs(self) -> list[Song]:
             return [song for song in self.__songs]
-
-        def isSorted(self):
-            return self.__isSorted
 
         def hasAnySong(self) -> bool:
             return len(self.__songs) > 0
@@ -99,9 +87,6 @@ class Playlist:
             return the number of songs in the list
             """
             return len(self.__songs)
-
-        def setOrderBy(self, prop: Song.Order.TITLE) -> None:
-            self.__orderBy = prop
 
         def getSongAt(self, index: int) -> Song:
             """
@@ -128,13 +113,8 @@ class Playlist:
             Add song to the list of songs. If added successfully, it will return the position of the song in the playlist
             """
             position = self.__findInsertPosition(song)
-
-            if self.isSorted():
-                self.__songs.insert(position, song)
-                return position
-
-            self.__songs.append(song)
-            return len(self.__songs) - 1
+            self.__songs.insert(position, song)
+            return position
 
         def __findInsertPosition(self, song) -> int:
             return Lists.binarySearch(self.__songs, song, comparator=self.__comparator(), nearest=True)
@@ -145,28 +125,17 @@ class Playlist:
                     self.insert(song)
 
         def removeSong(self, song: Song) -> None:
-            if self.isSorted():
-                indexToRemoveOnBackupSongs = Lists.binarySearch(self.__songs, song, self.__comparator())
-
-                self.__songs.remove(self.__songs[indexToRemoveOnBackupSongs])
-                return
-
-            indexToRemoveOnDisplaySongs = Lists.linearSearch(self.__songs, song, self.__comparator())
-
-            self.__songs.remove(self.__songs[indexToRemoveOnDisplaySongs])
+            self.__songs.remove(song)
 
         def indexOf(self, song: Song) -> int:
             """
             Find the index Of song in the list
             """
-            return (
-                Lists.binarySearch(self.__songs, song, self.__comparator())
-                if self.__isSorted
-                else Lists.linearSearch(self.__songs, song, self.__comparator())
-            )
+            return Lists.binarySearch(self.__songs, song, self.__comparator())
 
-        def __comparator(self):
-            return _comparatorMap[self.__orderBy].comparator()
+        @staticmethod
+        def __comparator() -> Callable[[Song, Song], int]:
+            return lambda s1, s2: Strings.compare(s1.getTitle(), s2.getTitle())
 
     def __init__(self, info: 'Playlist.Info', songs: 'Playlist.Songs'):
         self.__info = info

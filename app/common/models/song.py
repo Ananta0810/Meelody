@@ -1,6 +1,5 @@
 import os
 import uuid
-from enum import Enum
 from typing import Optional, Callable
 
 from PyQt5.QtCore import QObject, pyqtSignal, QThread
@@ -10,11 +9,6 @@ from app.helpers.base import Strings
 
 
 class Song(QObject):
-    class Order(Enum):
-        TITLE = 'title',
-        ARTIST = 'artist',
-        LENGTH = 'length'
-
     __id: str
     __location: str
     __title: str
