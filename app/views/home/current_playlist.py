@@ -47,7 +47,7 @@ class _Info(QVBoxLayout, Component):
     def _connectSignalSlots(self) -> None:
         appCenter.currentPlaylistChanged.connect(lambda playlist: self.__setPlaylist(playlist))
 
-    def __setPlaylist(self, playlist: Playlist) -> None:
+    def __setPlaylist(self, playlist: Playlist.Songs) -> None:
         self._cover.setCover(self.__createCover(playlist.getInfo().__cover))
         self._titleLabel.setText(playlist.getInfo().__name)
         self._totalSongsLabel.setText(f"{playlist.getSongs().size()} TRACKS")

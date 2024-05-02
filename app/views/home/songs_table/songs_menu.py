@@ -5,7 +5,7 @@ from PyQt5.QtGui import QKeyEvent
 from PyQt5.QtWidgets import QWidget
 
 from app.common.asyncs import ChunksConsumer
-from app.common.models import Song
+from app.common.models import Song, Playlist
 from app.common.others import appCenter, musicPlayer
 from app.components.events import VisibleObserver
 from app.components.scroll_areas import SmoothVerticalScrollArea
@@ -39,7 +39,7 @@ class SongsMenu(SmoothVerticalScrollArea):
         self.__keyPressed.connect(self.__onKeyPressed)
         VisibleObserver(self).visible.connect(lambda visible: self.__showLibrary())
 
-        appCenter.currentPlaylistChanged.connect(lambda playlist: self.__setSongs(playlist.getSongs().getSongs()))
+        appCenter.currentPlaylistChanged.connect(lambda playlist: self.__setPlaylist(playlist.getSongs()))
         musicPlayer.songChanged.connect(self.__scrollToSong)
 
     def __showLibrary(self) -> None:
@@ -80,6 +80,18 @@ class SongsMenu(SmoothVerticalScrollArea):
     def __scrollToSong(self, song: Song) -> None:
         if song.getTitle() in self.__titles:
             self.scrollToItemAt(self.__titles[song.getTitle()])
+
+    def __setPlaylist(self, playlist: Playlist.Songs) -> None:
+        self.__setSongs(playlist.getSongs())
+        playlist.deleted.connect(lambda song: self.__removeSong(song))
+
+    def __removeSong(self, song: Song) -> None:
+        if song.getId() not in self.__songRowDict:
+            return
+        row = self.__songRowDict.get(song.getId())
+        self.removeWidget(row)
+        self.__songRowDict.pop(song.getId())
+        row.deleteLater()
 
     def __setSongs(self, songs: list[Song]) -> None:
         self.__menuReset.emit()

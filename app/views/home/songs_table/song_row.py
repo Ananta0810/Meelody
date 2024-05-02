@@ -139,12 +139,20 @@ class SongRow(ExtendableStyleWidget):
         self._loveBtn.clicked.connect(lambda: self.__song.updateLoveState(self._loveBtn.isActive()))
         self._editCoverBtn.clicked.connect(lambda: self.__changeCover())
         self._editSongBtn.clicked.connect(lambda: self.__changeSongInfo())
+        self._deleteBtn.clicked.connect(lambda: self.__confirmToDeleteSong())
 
         self.__song.loved.connect(lambda loved: self._loveBtn.setActive(loved))
         self.__song.coverChanged.connect(lambda cover: self._cover.setCover(CoverProps.fromBytes(cover, width=64, height=64, radius=12)))
         self.__song.updated.connect(lambda: self.__displaySongInfo())
 
-        musicPlayer.songChanged.connect(lambda song: self.__setEditable(song != self.__song))
+        musicPlayer.songChanged.connect(self.__checkEditable)
+
+    def __checkEditable(self, song: Song) -> None:
+        self.__setEditable(song != self.__song)
+
+    def deleteLater(self) -> None:
+        musicPlayer.songChanged.disconnect(self.__checkEditable)
+        super().deleteLater()
 
     def content(self) -> Song:
         return self.__song
@@ -152,6 +160,9 @@ class SongRow(ExtendableStyleWidget):
     def show(self) -> None:
         super().show()
         self.__showMoreButtons(False)
+
+    def loadCover(self) -> None:
+        self.__song.loadCover()
 
     def __showMoreButtons(self, a0: bool) -> None:
         self._mainButtons.setVisible(not a0)
@@ -199,5 +210,12 @@ class SongRow(ExtendableStyleWidget):
         dialog = UpdateSongDialog(self.__song)
         dialog.show()
 
-    def loadCover(self) -> None:
-        self.__song.loadCover()
+    def __confirmToDeleteSong(self) -> None:
+        Dialogs.confirm(
+            message="Are you sure want to delete this song? This action can not be reverted.",
+            onAccept=lambda: self.__deleteCurrentSong()
+        )
+
+    def __deleteCurrentSong(self) -> None:
+        self.__song.delete()
+        appCenter.currentPlaylist.getSongs().removeSong(self.__song)

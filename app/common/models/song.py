@@ -6,6 +6,7 @@ from PyQt5.QtCore import QObject, pyqtSignal, QThread
 from eyed3 import load, mp3, id3
 
 from app.helpers.base import Strings
+from app.helpers.others import Logger
 
 
 class Song(QObject):
@@ -193,15 +194,12 @@ class Song(QObject):
         self.loved.emit(self.__isLoved)
         self.updated.emit()
 
-    def delete(self) -> bool:
+    def delete(self) -> None:
         """
         Delete audio file.
         """
-        try:
-            os.remove(self.__location)
-            return True
-        except FileNotFoundError:
-            return False
+        os.remove(self.__location)
+        Logger.info(f"Remove song at location {self.__location} successfully.")
 
 
 class SongReader:
