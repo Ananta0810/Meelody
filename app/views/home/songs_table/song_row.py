@@ -12,6 +12,7 @@ from app.helpers.qt import Widgets, Pixmaps
 from app.helpers.stylesheets import Paddings, Colors
 from app.resource.others import FileType
 from app.resource.qt import Icons, Images
+from app.views.home.songs_table.dialogs.update_song_dialog import UpdateSongDialog
 
 
 class SongRow(ExtendableStyleWidget):
@@ -137,6 +138,7 @@ class SongRow(ExtendableStyleWidget):
         self._playBtn.clicked.connect(lambda: self.__playCurrentSong())
         self._loveBtn.clicked.connect(lambda: self.__song.changeLoveState(self._loveBtn.isActive()))
         self._editCoverBtn.clicked.connect(lambda: self.__changeCover())
+        self._editSongBtn.clicked.connect(lambda: self.__changeSongInfo())
 
         self.__song.loved.connect(lambda loved: self._loveBtn.setActive(loved))
         self.__song.coverChanged.connect(lambda cover: self._cover.setCover(CoverProps.fromBytes(cover, width=64, height=64, radius=12)))
@@ -191,6 +193,10 @@ class SongRow(ExtendableStyleWidget):
             Dialogs.alert(message="Song is not found in library, you might be deleted it while open our application.")
         except* Exception:
             Dialogs.alert(message="Something is wrong when saving your cover. Please try again.")
+
+    def __changeSongInfo(self) -> None:
+        dialog = UpdateSongDialog(self.__song)
+        dialog.show()
 
     def loadCover(self) -> None:
         self.__song.loadCover()

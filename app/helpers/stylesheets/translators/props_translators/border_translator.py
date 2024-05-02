@@ -17,8 +17,9 @@ _ALL_DIRECTIONS = "all"
 def _toProps(cn: ClassName) -> (Optional[str], str, int | str | Color):
     if "-" in cn.value:
         direction, props = cn.value.split("-", maxsplit=1)
-        key, value = _toProps0(props)
-        return direction, key, value
+        if direction in _DIRECTIONS:
+            key, value = _toProps0(props)
+            return direction, key, value
 
     key, value = _toProps0(cn.value)
     return _ALL_DIRECTIONS, key, value
@@ -57,7 +58,7 @@ class BorderTranslator(PropsTranslator):
         props = [f"border: {size}px {style} {color.toStylesheet()}"]
 
         for direction, details in directions.items():
-            if direction == _ALL_DIRECTIONS or direction not in _DIRECTIONS:
+            if direction == _ALL_DIRECTIONS:
                 continue
 
             directionProps = {key: value for direction, key, value in details}
