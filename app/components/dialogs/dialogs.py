@@ -11,6 +11,7 @@ from app.resource.qt import Images
 
 
 class _ConfirmDialog(QDialog, Component):
+    confirmed: pyqtSignal() = pyqtSignal()
     canceled: pyqtSignal() = pyqtSignal()
 
     def __init__(self):
@@ -62,14 +63,14 @@ class _ConfirmDialog(QDialog, Component):
         self._mainLayout.addLayout(self._buttonBox)
 
     def _connectSignalSlots(self) -> None:
-        self._acceptBtn.clicked.connect(self.accepted.emit)
+        self._acceptBtn.clicked.connect(self.confirmed.emit)
         self._cancelBtn.clicked.connect(self.canceled.emit)
-        self.accepted.connect(self.close)
+        self.confirmed.connect(self.close)
         self.canceled.connect(self.close)
 
     def _assignShortcuts(self) -> None:
         acceptShortcut = QShortcut(QKeySequence(Qt.Key_Return), self._acceptBtn)
-        acceptShortcut.activated.connect(self.accepted.emit)
+        acceptShortcut.activated.connect(self.confirmed.emit)
 
         cancelShortcut = QShortcut(QKeySequence(Qt.Key_Escape), self._cancelBtn)
         cancelShortcut.activated.connect(self.canceled.emit)
@@ -109,6 +110,7 @@ class _ConfirmDialog(QDialog, Component):
 
 
 class _AlertDialog(QDialog, Component):
+    confirmed: pyqtSignal() = pyqtSignal()
     canceled: pyqtSignal() = pyqtSignal()
 
     def __init__(self):
@@ -152,12 +154,12 @@ class _AlertDialog(QDialog, Component):
         self._mainLayout.addWidget(self._acceptBtn)
 
     def _connectSignalSlots(self) -> None:
-        self._acceptBtn.clicked.connect(self.accepted.emit)
-        self.accepted.connect(self.close)
+        self._acceptBtn.clicked.connect(self.confirmed.emit)
+        self.confirmed.connect(self.close)
 
     def _assignShortcuts(self) -> None:
-        QShortcut(QKeySequence(Qt.Key_Return), self._acceptBtn).activated.connect(self.accepted.emit)
-        QShortcut(QKeySequence(Qt.Key_Escape), self._acceptBtn).activated.connect(self.accepted.emit)
+        QShortcut(QKeySequence(Qt.Key_Return), self._acceptBtn).activated.connect(self.confirmed.emit)
+        QShortcut(QKeySequence(Qt.Key_Escape), self._acceptBtn).activated.connect(self.confirmed.emit)
 
     def setFixedSize(self, w: int, h: int) -> None:
         margins = self._inner.contentsMargins()
@@ -171,7 +173,7 @@ class _AlertDialog(QDialog, Component):
         self._acceptBtn.setText(acceptText)
 
         if onClose is not None:
-            self.accepted.connect(lambda: onClose())
+            self.confirmed.connect(lambda: onClose())
 
         self.setFixedSize(360, self._inner.sizeHint().height())
 
@@ -240,7 +242,7 @@ class Dialogs:
         dialog.setInfo(header, message, acceptText, cancelText)
 
         if onAccept is not None:
-            dialog.accepted.connect(lambda: onAccept())
+            dialog.confirmed.connect(lambda: onAccept())
 
         if onCancel is not None:
             dialog.canceled.connect(lambda: onCancel())
