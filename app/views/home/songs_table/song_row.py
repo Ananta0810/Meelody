@@ -7,7 +7,7 @@ from app.components.base import Cover, Factory, LabelWithDefaultText, CoverProps
 from app.components.dialogs import Dialogs
 from app.components.widgets import ExtendableStyleWidget, StyleWidget, FlexBox
 from app.helpers.base import Bytes
-from app.helpers.others import Times, Logger
+from app.helpers.others import Times
 from app.helpers.qt import Widgets, Pixmaps
 from app.helpers.stylesheets import Paddings, Colors
 from app.resource.others import FileType
@@ -174,8 +174,11 @@ class SongRow(ExtendableStyleWidget):
             coverData = Bytes.fromFile(path)
             coverProps = CoverProps.fromBytes(coverData, 320, 320, radius=16)
             self.__song.changeCover(Pixmaps.toBytes(coverProps.content()))
-        except Exception as e:
-            Logger.error(e)
+        except* PermissionError:
+            Dialogs.alert(message="You can not change cover of the playing song. Please try again after you played other song.")
+        except* OSError:
+            Dialogs.alert(message="Song is not found in library, you might be deleted it while open our application.")
+        except* Exception:
             Dialogs.alert(message="Something is wrong when saving your cover. Please try again.")
 
     def loadCover(self) -> None:

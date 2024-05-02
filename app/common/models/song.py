@@ -6,7 +6,6 @@ from PyQt5.QtCore import QObject, pyqtSignal, QThread
 from eyed3 import load, mp3, id3
 
 from app.helpers.base import Strings
-from app.helpers.others import Logger
 
 
 class Song(QObject):
@@ -128,13 +127,9 @@ class Song(QObject):
         """
         Change cover of the song. Save the new cover into the audio file.
         """
-        changeSuccessfully: bool = SongWriter(self.__location).writeCover(cover)
-        if changeSuccessfully:
-            self.__cover = cover
-            self.coverChanged.emit(cover)
-        else:
-            Logger.error("Save cover failed.")
-        return changeSuccessfully
+        SongWriter(self.__location).writeCover(cover)
+        self.__cover = cover
+        self.coverChanged.emit(cover)
 
     def changeLoveState(self, state: bool = None) -> None:
         """
@@ -253,16 +248,12 @@ class SongWriter:
         except (FileNotFoundError, PermissionError):
             return False
 
-    def writeCover(self, cover: bytes) -> bool:
+    def writeCover(self, cover: bytes) -> None:
         if self.__data.tag is None:
             self.__data.initTag()
-        try:
-            self.__removeExistingCovers()
-            self.__addNewCover(cover)
-            return True
-        except (FileNotFoundError, PermissionError) as e:
-            Logger.error(e)
-            return False
+
+        self.__removeExistingCovers()
+        self.__addNewCover(cover)
 
     def __removeExistingCovers(self) -> None:
         images = self.__data.tag.images
