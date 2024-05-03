@@ -40,6 +40,9 @@ class SmoothVerticalScrollArea(StyleScrollArea):
     def setContentsMargins(self, left: int, top: int, right: int, bottom: int) -> None:
         self._menu.setContentsMargins(left, top, right, bottom)
 
+    def widgets(self) -> list[QWidget]:
+        return self.__widgets
+
     def addWidget(self, widget: QWidget, stretch: int = None, alignment: Union[Qt.Alignment, Qt.AlignmentFlag] = None) -> None:
         self._mainLayout.addWidget(widget, stretch, alignment)
         self.__widgets.append(widget)
@@ -47,6 +50,13 @@ class SmoothVerticalScrollArea(StyleScrollArea):
     def removeWidget(self, widget: QWidget) -> None:
         self._mainLayout.removeWidget(widget)
         self.__widgets.remove(widget)
+
+    def moveWidget(self, widget: QWidget, newIndex: int) -> None:
+        self.__widgets.remove(widget)
+        self.__widgets.insert(newIndex, widget)
+
+        self._mainLayout.removeWidget(widget)
+        self._mainLayout.insertWidget(newIndex, widget)
 
     def __updateVisibleItems(self):
         self.__visibleWidgetIndexes = {index for index, item in enumerate(self.__widgets) if Widgets.isInView(item)}

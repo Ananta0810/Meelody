@@ -132,8 +132,8 @@ class SongRow(ExtendableStyleWidget):
         self._mainLayout.addWidget(self._moreButtons)
 
     def _connectSignalSlots(self) -> None:
-        self._moreBtn.clicked.connect(lambda: self.__showMoreButtons(True))
-        self._closeMenuBtn.clicked.connect(lambda: self.__showMoreButtons(False))
+        self._moreBtn.clicked.connect(lambda: self.showMoreButtons(True))
+        self._closeMenuBtn.clicked.connect(lambda: self.showMoreButtons(False))
 
         self._playBtn.clicked.connect(lambda: self.__playCurrentSong())
         self._loveBtn.clicked.connect(lambda: self.__song.updateLoveState(self._loveBtn.isActive()))
@@ -143,12 +143,12 @@ class SongRow(ExtendableStyleWidget):
 
         self.__song.loved.connect(lambda loved: self._loveBtn.setActive(loved))
         self.__song.coverChanged.connect(lambda cover: self._cover.setCover(CoverProps.fromBytes(cover, width=64, height=64, radius=12)))
-        self.__song.updated.connect(lambda: self.__displaySongInfo())
+        self.__song.updated.connect(lambda key: self.__displaySongInfo())
 
         musicPlayer.songChanged.connect(self.__checkEditable)
 
     def __checkEditable(self, song: Song) -> None:
-        self.__setEditable(song != self.__song)
+        self.setEditable(song != self.__song)
 
     def deleteLater(self) -> None:
         musicPlayer.songChanged.disconnect(self.__checkEditable)
@@ -159,12 +159,12 @@ class SongRow(ExtendableStyleWidget):
 
     def show(self) -> None:
         super().show()
-        self.__showMoreButtons(False)
+        self.showMoreButtons(False)
 
     def loadCover(self) -> None:
         self.__song.loadCover()
 
-    def __showMoreButtons(self, a0: bool) -> None:
+    def showMoreButtons(self, a0: bool) -> None:
         self._mainButtons.setVisible(not a0)
         self._moreButtons.setVisible(a0)
         self._closeMenuBtn.setVisible(a0)
@@ -173,7 +173,7 @@ class SongRow(ExtendableStyleWidget):
             self._closeMenuBtn.move(menuCorner.x() - self._closeMenuBtn.width() - 4, menuCorner.y() + 4)
             self._closeMenuBtn.raise_()
 
-    def __setEditable(self, editable: bool) -> None:
+    def setEditable(self, editable: bool) -> None:
         self._editSongBtn.setVisible(editable)
         self._editCoverBtn.setVisible(editable)
         self._deleteBtn.setVisible(editable)
@@ -186,9 +186,9 @@ class SongRow(ExtendableStyleWidget):
         if self.__song.isCoverLoaded() and Widgets.isInView(self):
             self._cover.setCover(CoverProps.fromBytes(self.__song.getCover(), width=64, height=64, radius=12))
 
-        self._titleLabel.setDefaultText(self.__song.getTitle())
-        self._artistLabel.setDefaultText(self.__song.getArtist())
-        self._lengthLabel.setDefaultText(Times.toString(self.__song.getLength()))
+        self._titleLabel.setText(self.__song.getTitle())
+        self._artistLabel.setText(self.__song.getArtist())
+        self._lengthLabel.setText(Times.toString(self.__song.getLength()))
         self._loveBtn.setActive(self.__song.isLoved())
 
     def __changeCover(self) -> None:

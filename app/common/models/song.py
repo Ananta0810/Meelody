@@ -21,7 +21,7 @@ class Song(QObject):
 
     loved = pyqtSignal(bool)
     coverChanged = pyqtSignal(bytes)
-    updated = pyqtSignal()
+    updated = pyqtSignal(str)
 
     def __init__(self, location: str = None, title: str = None, artist: str = None, cover: bytes = None, length: float = 0, sampleRate: float = 48000,
                  loved: bool = False):
@@ -147,18 +147,13 @@ class Song(QObject):
         """
        Rename title and artist of the song. In addition, rename the audio file name if title changed.
         """
-        updated = False
 
         if not Strings.equals(self.__title, title):
             self.__updateTitle(title)
-            updated = True
+            self.updated.emit("title")
 
         if not Strings.equals(self.__artist, artist):
             self.__updateArtist(artist)
-            updated = True
-
-        if updated:
-            self.updated.emit()
 
     def __updateTitle(self, title: str) -> None:
         newLocation = Strings.getRenameFile(self.__location, title)
@@ -192,7 +187,7 @@ class Song(QObject):
             self.__isLoved = state
 
         self.loved.emit(self.__isLoved)
-        self.updated.emit()
+        self.updated.emit("love")
 
     def delete(self) -> None:
         """

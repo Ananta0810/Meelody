@@ -89,8 +89,10 @@ class SongsMenu(SmoothVerticalScrollArea):
         self.__menuReset.emit()
         self.__updateTitleMaps(songs)
 
-        if len(self.__songRowDict) == 0:
+        if len(songs) > len(self.__songRowDict):
             for song in songs:
+                if song.getId() in self.__songRowDict:
+                    continue
                 songRow = SongRow(song)
                 songRow.hide()
                 songRow.applyTheme()
@@ -101,31 +103,56 @@ class SongsMenu(SmoothVerticalScrollArea):
         rows = [self.__songRowDict.get(song.getId()) for song in songs]
         self.__showSongs(rows)
 
-    def __refreshSongs(self, playlist: Playlist.Songs) -> None:
-        currentTotalSongs = [row for row in self.__songRowDict.values() if row.isVisible()]
-        isDeletedSongs = playlist.size() < len(currentTotalSongs)
+    def __refreshSongs(self, newPlaylist: Playlist.Songs) -> None:
+        newSongs = newPlaylist.getSongs()
+        displayingRows: list[SongRow] = [row for row in self.widgets() if row.isVisible()]
+
+        isDeletedSongs = len(newSongs) < len(displayingRows)
         if isDeletedSongs:
-            newSongIds = {song.getId() for song in playlist.getSongs()}
-            rowsToDelete = [row for row in currentTotalSongs if row.content().getId() not in newSongIds]
-            for row in rowsToDelete:
-                self.__removeRow(row)
+            self.__deleteRows(displayingRows, newSongs)
+            self.__updateTitleMaps(newSongs)
 
-            self.__updateTitleMaps(playlist.getSongs())
-
-        isAddedSongs = playlist.size() > len(currentTotalSongs)
+        isAddedSongs = len(newSongs) > len(displayingRows)
         if isAddedSongs:
-            self.__setPlaylistSongs(playlist.getSongs())
-            self.__updateTitleMaps(playlist.getSongs())
+            self.__setPlaylistSongs(newSongs)
+            self.__updateTitleMaps(newSongs)
 
-    def __removeRow(self, row: SongRow) -> None:
-        self.removeWidget(row)
-        row.deleteLater()
+        oldSongs = [row.content() for row in displayingRows]
+        movedIndex, newIndex = Lists.findMoved(oldSongs, newSongs)
 
-        self.__songRowDict.pop(row.content().getId())
+        if movedIndex == -1:
+            return
+
+        rowToMove = displayingRows[movedIndex]
+        self.moveWidget(rowToMove, newIndex)
+        rowToMove.showMoreButtons(False)
+
+    def __findRowToMove(self, displayingRows: list[SongRow], newSongs: list[Song]) -> Optional[SongRow]:
+        for index in range(len(displayingRows)):
+            oldSong = displayingRows[index].content()
+            newSong = newSongs[index]
+
+            if oldSong == newSong:
+                continue
+
+            return self.__songRowDict[newSong.getId()]
+        return None
+
+    def __deleteRows(self, displayingRows: list[SongRow], newSongs: list[Song]) -> None:
+        newSongIds = {song.getId() for song in newSongs}
+        rowsToDelete = [row for row in displayingRows if row.content().getId() not in newSongIds]
+        for row in rowsToDelete:
+            self.__removeRow(row)
 
     def __updateTitleMaps(self, songs: list[Song]) -> None:
         self.__titles = {song.getTitle(): index for index, song in enumerate(songs)}
-        self.__titleKeys = self.__createTitleMap(songs)
+
+        self.__titleKeys = {}
+        for index, song in enumerate(songs):
+            firstChar = song.getTitle()[0]
+            if firstChar not in self.__titleKeys:
+                self.__titleKeys[firstChar] = []
+            self.__titleKeys[firstChar].append(index)
 
     def __showSongs(self, rows: list[SongRow]) -> None:
         for songRow in self.__songRowDict.values():
@@ -151,12 +178,8 @@ class SongsMenu(SmoothVerticalScrollArea):
         row.loadCover()
         self.__coverLoadedSongIds.add(row.content().getId())
 
-    @staticmethod
-    def __createTitleMap(songs: list[Song]) -> dict[str, list[int]]:
-        titles = {}
-        for index, song in enumerate(songs):
-            firstChar = song.getTitle()[0]
-            if firstChar not in titles:
-                titles[firstChar] = []
-            titles[firstChar].append(index)
-        return titles
+    def __removeRow(self, row: SongRow) -> None:
+        self.removeWidget(row)
+        row.deleteLater()
+
+        self.__songRowDict.pop(row.content().getId())

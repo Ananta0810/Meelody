@@ -8,6 +8,23 @@ R = TypeVar('R')
 class Lists:
 
     @staticmethod
+    def findMoved(originalList: list[T], newList: list[T]) -> (int, int):
+        if len(originalList) != len(newList):
+            return  # different length
+
+        diff = [x for x, (c, d) in enumerate(zip(originalList, newList)) if c != d]
+        if not diff:
+            return  # equal strings
+        oldIndex, newIndex = diff[0], diff[-1]
+
+        if originalList[oldIndex + 1:newIndex + 1] == newList[oldIndex:newIndex] and originalList[oldIndex] == newList[newIndex]:
+            return oldIndex, newIndex
+        if originalList[oldIndex:newIndex] == newList[oldIndex + 1:newIndex + 1] and originalList[newIndex] == newList[oldIndex]:
+            return newIndex, oldIndex
+
+        return -1, -1
+
+    @staticmethod
     def nonNull(collection: list[T]) -> list[T]:
         if collection is None:
             return []

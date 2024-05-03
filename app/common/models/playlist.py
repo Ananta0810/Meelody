@@ -119,12 +119,18 @@ class Playlist:
             Add song to the list of songs. If added successfully, it will return the position of the song in the playlist
             """
             position = self.__findInsertPosition(song)
-            song.updated.connect(self.updated.emit)
+            song.updated.connect(lambda prop: self.__moveSongAfterUpdate(song) if prop == "title" else None)
             self.__songs.insert(position, song)
             return position
 
         def __findInsertPosition(self, song) -> int:
             return Lists.binarySearch(self.__songs, song, comparator=self.__comparator(), nearest=True)
+
+        def __moveSongAfterUpdate(self, song: Song) -> None:
+            self.__songs.remove(song)
+            newPosition = self.__findInsertPosition(song)
+            self.__songs.insert(newPosition, song)
+            self.updated.emit()
 
         def insertAll(self, songs: list[Song]):
             if songs is not None:
