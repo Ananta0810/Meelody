@@ -150,10 +150,10 @@ class FavouritePlaylistCard(PlaylistCard):
         self._editCoverBtn.clicked.connect(self.__chooseCover)
 
     def __selectFavouritesPlaylist(self) -> None:
-        if appCenter.currentPlaylist.getInfo().getId() == "favourite":
+        if appCenter.currentPlaylist.getInfo().getId() == "favourites":
             return
 
-        info = Playlist.Info(id="favourite", name="Favourite", cover=self.getCoverAsByte())
+        info = Playlist.Info(id="favourites", name="Favourite", cover=self.getCoverAsByte())
         songs = Playlist.Songs([song for song in appCenter.library.getSongs().getSongs() if song.isLoved()])
         favouritePlaylist = Playlist(info, songs)
 
