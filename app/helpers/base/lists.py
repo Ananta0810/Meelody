@@ -10,11 +10,11 @@ class Lists:
     @staticmethod
     def findMoved(originalList: list[T], newList: list[T]) -> (int, int):
         if len(originalList) != len(newList):
-            return  # different length
+            return -1, -1  # different length
 
         diff = [x for x, (c, d) in enumerate(zip(originalList, newList)) if c != d]
         if not diff:
-            return  # equal strings
+            return -1, -1  # equal strings
         oldIndex, newIndex = diff[0], diff[-1]
 
         if originalList[oldIndex + 1:newIndex + 1] == newList[oldIndex:newIndex] and originalList[oldIndex] == newList[newIndex]:

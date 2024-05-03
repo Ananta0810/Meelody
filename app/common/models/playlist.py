@@ -119,9 +119,18 @@ class Playlist:
             Add song to the list of songs. If added successfully, it will return the position of the song in the playlist
             """
             position = self.__findInsertPosition(song)
-            song.updated.connect(lambda prop: self.__moveSongAfterUpdate(song) if prop == "title" else None)
+            song.updated.connect(lambda updatedField: self.__onSongUpdated(song, updatedField))
             self.__songs.insert(position, song)
             return position
+
+        def __onSongUpdated(self, song: Song, updatedField: str) -> None:
+            if updatedField == "title":
+                self.__songs.remove(song)
+                newPosition = self.__findInsertPosition(song)
+                self.__songs.insert(newPosition, song)
+                self.updated.emit()
+            if updatedField == "love":
+                self.updated.emit()
 
         def __findInsertPosition(self, song) -> int:
             return Lists.binarySearch(self.__songs, song, comparator=self.__comparator(), nearest=True)
@@ -130,7 +139,6 @@ class Playlist:
             self.__songs.remove(song)
             newPosition = self.__findInsertPosition(song)
             self.__songs.insert(newPosition, song)
-            self.updated.emit()
 
         def insertAll(self, songs: list[Song]):
             if songs is not None:
