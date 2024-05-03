@@ -15,6 +15,11 @@ _ALL_DIRECTIONS: str = "all"
 
 
 def _toProps(cn: ClassName) -> (Optional[str], str, int | str | Color):
+    if cn.value in _DIRECTIONS:
+        key, value = _toProps0(None)
+        direction = cn.value
+        return direction, key, value
+
     if "-" in cn.value:
         direction, props = cn.value.split("-", maxsplit=1)
         if direction in _DIRECTIONS:
@@ -25,8 +30,8 @@ def _toProps(cn: ClassName) -> (Optional[str], str, int | str | Color):
     return _ALL_DIRECTIONS, key, value
 
 
-def _toProps0(value: str) -> (str, int | str | Color):
-    if value is None or value.lower() == "none":
+def _toProps0(value: Optional[str]) -> (str, int | str | Color):
+    if Strings.isBlank(value) or value.lower() == "none":
         return "size", 0
 
     if value.isdigit():
