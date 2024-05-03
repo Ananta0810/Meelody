@@ -12,7 +12,7 @@ from app.views import Application
 #     - pip install pygame
 #     - pip install eyed3
 #     - pip install yt-dlp==2023.2.17
-#     - pip install Pillow==9.0.0
+#     - pip install Pillow==9.5.0
 #     - pip install pillow
 # """
 

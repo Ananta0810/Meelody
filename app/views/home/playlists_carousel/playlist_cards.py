@@ -109,6 +109,15 @@ class LibraryPlaylistCard(PlaylistCard):
         self._title.setText("Library")
         super().setCover(Images.DEFAULT_PLAYLIST_COVER)
 
+    def _connectSignalSlots(self) -> None:
+        super()._connectSignalSlots()
+        self.clicked.connect(self.__selectLibraryPlaylist)
+
+    @staticmethod
+    def __selectLibraryPlaylist():
+        if appCenter.currentPlaylist.getInfo().getId() != "library":
+            appCenter.setActivePlaylist(appCenter.library)
+
 
 class FavouritePlaylistCard(PlaylistCard):
 
@@ -137,7 +146,18 @@ class FavouritePlaylistCard(PlaylistCard):
 
     def _connectSignalSlots(self) -> None:
         super()._connectSignalSlots()
+        self.clicked.connect(self.__selectFavouritesPlaylist)
         self._editCoverBtn.clicked.connect(self.__chooseCover)
+
+    def __selectFavouritesPlaylist(self) -> None:
+        if appCenter.currentPlaylist.getInfo().getId() == "favourite":
+            return
+
+        info = Playlist.Info(id="favourite", name="Favourite", cover=self.getCoverAsByte())
+        songs = Playlist.Songs([song for song in appCenter.library.getSongs().getSongs() if song.isLoved()])
+        favouritePlaylist = Playlist(info, songs)
+
+        appCenter.setActivePlaylist(favouritePlaylist)
 
     def __chooseCover(self) -> None:
         path = QFileDialog.getOpenFileName(self, filter=FileType.IMAGE)[0]
@@ -195,6 +215,7 @@ class UserPlaylistCard(PlaylistCard):
         self._mainLayout.insertLayout(0, self._topLayout)
 
     def _connectSignalSlots(self) -> None:
+        self.clicked.connect(self.__selectCurrentPlaylist)
         self._editBtn.clicked.connect(lambda: UpdatePlaylistDialog(self.__playlist).show())
         self._deleteBtn.clicked.connect(self.__openDeletePlaylistConfirm)
 
@@ -203,6 +224,12 @@ class UserPlaylistCard(PlaylistCard):
 
     def applyDarkMode(self) -> None:
         pass
+
+    def __selectCurrentPlaylist(self) -> None:
+        if appCenter.currentPlaylist.getInfo().getId() == self.__playlist.getInfo().getId():
+            return
+
+        appCenter.setActivePlaylist(self.__playlist)
 
     def __openDeletePlaylistConfirm(self) -> None:
         Dialogs.confirm(
