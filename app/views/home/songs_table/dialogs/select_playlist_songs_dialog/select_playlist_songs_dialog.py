@@ -32,7 +32,7 @@ class SelectPlaylistSongsDialog(BaseDialog):
 
         self._footer = StyleWidget()
         self._footer.setFixedWidth(640)
-        self._footer.setClassName("rounded-b-8 border-1 border-gray-12")
+        self._footer.setClassName("rounded-b-8 border border-gray-12")
 
         self._footerLayout = FlexBox()
         self._footerLayout.setContentsMargins(8, 8, 8, 8)

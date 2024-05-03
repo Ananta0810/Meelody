@@ -31,7 +31,7 @@ class DownloadSongsDialog(BaseDialog):
         self._input = Input()
         self._input.setFont(Factory.createFont(size=12))
         self._input.setFixedHeight(48)
-        self._input.setClassName("px-12 rounded-4 border-1 border-primary-12 bg-primary-4")
+        self._input.setClassName("px-12 rounded-4 border border-primary-12 bg-primary-4")
 
         self._downloadBtn = ActionButton()
         self._downloadBtn.setFont(Factory.createFont(family="Segoe UI Semibold", size=11))

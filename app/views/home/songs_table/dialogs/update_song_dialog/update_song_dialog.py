@@ -44,7 +44,7 @@ class UpdateSongDialog(BaseDialog):
 
         self._titleInput = Input()
         self._titleInput.setFont(Factory.createFont(size=12))
-        self._titleInput.setClassName("px-12 py-8 rounded-4 border-1 border-primary-12 bg-primary-4")
+        self._titleInput.setClassName("px-12 py-8 rounded-4 border border-primary-12 bg-primary-4")
 
         self._artistLabel = Label()
         self._artistLabel.setFont(Factory.createFont(size=11))
@@ -53,7 +53,7 @@ class UpdateSongDialog(BaseDialog):
 
         self._artistInput = Input()
         self._artistInput.setFont(Factory.createFont(size=12))
-        self._artistInput.setClassName("px-12 py-8 rounded-4 border-1 border-primary-12 bg-primary-4")
+        self._artistInput.setClassName("px-12 py-8 rounded-4 border border-primary-12 bg-primary-4")
 
         self._acceptBtn = ActionButton()
         self._acceptBtn.setFont(Factory.createFont(family="Segoe UI Semibold", size=11))

@@ -16,11 +16,11 @@ _ALL_DIRECTIONS: str = "all"
 
 def _toProps(cn: ClassName) -> (Optional[str], str, int | str | Color):
     if cn.value in _DIRECTIONS:
-        key, value = _toProps0(None)
+        key, value = _toProps0("1")
         direction = cn.value
         return direction, key, value
 
-    if "-" in cn.value:
+    if cn.value is not None and "-" in cn.value:
         direction, props = cn.value.split("-", maxsplit=1)
         if direction in _DIRECTIONS:
             key, value = _toProps0(props)
@@ -31,7 +31,10 @@ def _toProps(cn: ClassName) -> (Optional[str], str, int | str | Color):
 
 
 def _toProps0(value: Optional[str]) -> (str, int | str | Color):
-    if Strings.isBlank(value) or value.lower() == "none":
+    if Strings.isBlank(value):
+        return "size", 1
+
+    if value.lower() == "none":
         return "size", 0
 
     if value.isdigit():
@@ -68,9 +71,9 @@ class BorderTranslator(PropsTranslator):
 
             directionProps = {key: value for direction, key, value in details}
 
-            directionSize = directionProps.get('size', BorderTranslator.__defaultSize)
-            directionColor = directionProps.get('color', BorderTranslator.__defaultColor)
-            directionStyle = directionProps.get('style', BorderTranslator.__defaultStyle)
+            directionSize = directionProps.get('size', size)
+            directionColor = directionProps.get('color', color)
+            directionStyle = directionProps.get('style', style)
 
             props.append(f"border-{_DIRECTIONS[direction]}: {directionSize}px {directionStyle} {directionColor.toStylesheet()}")
 

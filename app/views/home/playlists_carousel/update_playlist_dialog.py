@@ -41,7 +41,7 @@ class UpdatePlaylistDialog(BaseDialog):
         self._titleInput = Input()
         self._titleInput.setFont(Factory.createFont(size=12))
         self._titleInput.setFixedSize(320, 48)
-        self._titleInput.setClassName("px-12 rounded-4 border-1 border-primary-12 bg-primary-4")
+        self._titleInput.setClassName("px-12 rounded-4 border border-primary-12 bg-primary-4")
         self._titleInput.setPlaceholderText("Name...")
 
         self._acceptBtn = ActionButton()
