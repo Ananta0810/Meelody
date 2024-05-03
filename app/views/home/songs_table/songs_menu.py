@@ -123,9 +123,14 @@ class SongsMenu(SmoothVerticalScrollArea):
         if movedIndex == -1:
             return
 
+        currentPosition = self.verticalScrollBar().value()
+
         rowToMove = displayingRows[movedIndex]
         self.moveWidget(rowToMove, newIndex)
         rowToMove.showMoreButtons(False)
+        
+        self.__updateTitleMaps(newSongs)
+        self.verticalScrollBar().setValue(currentPosition)
 
     def __findRowToMove(self, displayingRows: list[SongRow], newSongs: list[Song]) -> Optional[SongRow]:
         for index in range(len(displayingRows)):
