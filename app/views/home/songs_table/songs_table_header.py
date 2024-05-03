@@ -1,20 +1,20 @@
 from typing import Optional
 
-from PyQt5.QtCore import Qt, pyqtSignal
+from PyQt5.QtCore import Qt
 from PyQt5.QtWidgets import QWidget, QHBoxLayout, QFileDialog
 
 from app.common.models import Playlist
 from app.common.others import appCenter
 from app.components.base import Factory, EllipsisLabel, Component
 from app.helpers.stylesheets import Paddings, Colors
+from app.resource.others import FileType
 from app.resource.qt import Icons
 from app.views.home.songs_table.dialogs.download_songs_dialog import DownloadSongsDialog
+from app.views.home.songs_table.dialogs.select_playlist_songs_dialog import SelectPlaylistSongsDialog
 from app.views.threads import ImportSongsToLibraryThread
 
 
 class SongsTableHeader(QWidget, Component):
-    startUpdate = pyqtSignal()
-    finishUpdate = pyqtSignal()
 
     def __init__(self, parent: Optional[QWidget] = None):
         super().__init__(parent)
@@ -72,17 +72,9 @@ class SongsTableHeader(QWidget, Component):
         self._selectSongsToPlaylistBtn.setClassName("rounded-full bg-primary-12 hover:bg-primary-25 dark:bg-white-20 dark:hover:bg-white-33")
         self._selectSongsToPlaylistBtn.hide()
 
-        self._applySelectSongsToPlaylistBtn = Factory.createIconButton(Icons.LARGE, Paddings.RELATIVE_50)
-        self._applySelectSongsToPlaylistBtn.setLightModeIcon(Icons.APPLY.withColor(Colors.PRIMARY))
-        self._applySelectSongsToPlaylistBtn.setDarkModeIcon(Icons.APPLY.withColor(Colors.WHITE))
-        self._applySelectSongsToPlaylistBtn.setToolTip("Apply selecting playlist songs.")
-        self._applySelectSongsToPlaylistBtn.setClassName("rounded-full bg-primary-12 hover:bg-primary-25 dark:bg-white-20 dark:hover:bg-white-33")
-        self._applySelectSongsToPlaylistBtn.hide()
-
         self._buttonsLayout.addWidget(self._downloadSongsToLibraryBtn)
         self._buttonsLayout.addWidget(self._importSongsToLibraryBtn)
         self._buttonsLayout.addWidget(self._selectSongsToPlaylistBtn)
-        self._buttonsLayout.addWidget(self._applySelectSongsToPlaylistBtn)
 
         self._mainLayout.addWidget(self._trackLabel)
         self._mainLayout.addSpacing(237)
@@ -97,18 +89,16 @@ class SongsTableHeader(QWidget, Component):
 
         self._importSongsToLibraryBtn.clicked.connect(self._importSongsFromExplorer)
         self._downloadSongsToLibraryBtn.clicked.connect(self._openDownloadSongDialogs)
-        self._selectSongsToPlaylistBtn.clicked.connect(self._startUpdatePlaylist)
-        self._applySelectSongsToPlaylistBtn.clicked.connect(self._finishUpdatePlaylist)
+        self._selectSongsToPlaylistBtn.clicked.connect(self._openSelectPlaylistSongsDialog)
 
     def __showActionsToPlaylist(self, playlist: Playlist) -> None:
         playlistId = playlist.getInfo().getId()
         self._downloadSongsToLibraryBtn.setVisible(playlistId == "library")
         self._importSongsToLibraryBtn.setVisible(playlistId == "library")
         self._selectSongsToPlaylistBtn.setVisible(playlistId not in {"library", "favourites"})
-        self._applySelectSongsToPlaylistBtn.setVisible(False)
 
     def _importSongsFromExplorer(self) -> None:
-        paths = QFileDialog.getOpenFileNames(self, filter="MP3 (*.MP3 *.mp3)")[0]
+        paths = QFileDialog.getOpenFileNames(self, filter=FileType.AUDIO)[0]
         if paths is not None and len(paths) > 0:
             ImportSongsToLibraryThread(paths).start()
 
@@ -117,12 +107,7 @@ class SongsTableHeader(QWidget, Component):
         downloadDialog = DownloadSongsDialog()
         downloadDialog.show()
 
-    def _startUpdatePlaylist(self) -> None:
-        self._selectSongsToPlaylistBtn.hide()
-        self._applySelectSongsToPlaylistBtn.show()
-        self.startUpdate.emit()
-
-    def _finishUpdatePlaylist(self) -> None:
-        self._selectSongsToPlaylistBtn.show()
-        self._applySelectSongsToPlaylistBtn.hide()
-        self.startUpdate.emit()
+    @staticmethod
+    def _openSelectPlaylistSongsDialog(self) -> None:
+        dialog = SelectPlaylistSongsDialog(appCenter.currentPlaylist)
+        dialog.show()
