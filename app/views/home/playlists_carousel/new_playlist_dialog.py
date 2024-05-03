@@ -13,9 +13,9 @@ from app.common.others import appCenter
 from app.components.base import Cover, CoverProps, Factory, Input, ActionButton
 from app.components.dialogs import BaseDialog, Dialogs
 from app.components.widgets import Box
-from app.helpers.base import Bytes
+from app.helpers.base import Strings
+from app.helpers.builders import ImageEditor
 from app.helpers.others import Files
-from app.helpers.qt import Pixmaps
 from app.resource.others import FileType
 from app.resource.qt import Images
 
@@ -98,11 +98,15 @@ class NewPlaylistDialog(BaseDialog):
 
     def __onclickSelectCover(self) -> None:
         path = QFileDialog.getOpenFileName(self, filter=FileType.IMAGE)[0]
-        if path is not None and path != '':
-            coverData = Bytes.fromFile(path)
-            coverProps = CoverProps.fromBytes(coverData, 320, 320, radius=16)
-            self.__coverData = Pixmaps.toBytes(coverProps.content())
-            self._cover.setCover(coverProps)
+
+        if Strings.isBlank(path):
+            return
+
+        imageEditor = ImageEditor.ofFile(path)
+        cover = imageEditor.square().resize(320, 320).toBytes()
+
+        self.__coverData = cover
+        self._cover.setCover(CoverProps.fromBytes(cover, 320, 320, radius=16))
 
     def _addPlaylist(self) -> None:
         id = str(uuid.uuid4())

@@ -46,10 +46,12 @@ class CoverProps:
 
         pixmap = Pixmaps.toQPixmap(imageByte)
         if pixmap.isNull():
-            return None
+            return props
+        
         if width > 0 or height > 0:
             pixmap = Pixmaps.scaleKeepingRatio(pixmap, max(width, height))
             pixmap = Pixmaps.crop(pixmap, width, height, cropCenter)
+
         if radius > 0:
             pixmap = Pixmaps.round(pixmap, radius)
 

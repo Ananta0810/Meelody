@@ -1,7 +1,10 @@
+import io
 import os
 from os import scandir
 from shutil import copyfile
 from typing import final
+
+from PIL import Image
 
 from app.helpers.base import Strings
 
@@ -38,3 +41,10 @@ class Files:
     def createDirectoryIfNotExisted(directory):
         if not os.path.exists(directory):
             os.makedirs(directory, exist_ok=True)
+
+    @staticmethod
+    def saveImageFile(data: bytes, path: str) -> None:
+        Files.createDirectoryIfNotExisted(Strings.getDirectoryOf(path))
+        
+        image = Image.open(io.BytesIO(data))
+        image.save(path)

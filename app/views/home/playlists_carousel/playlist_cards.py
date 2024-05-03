@@ -1,8 +1,6 @@
-import io
 import typing
 from typing import Optional
 
-from PIL import Image
 from PyQt5 import QtGui
 from PyQt5.QtCore import QEvent, QRect, pyqtSignal, Qt
 from PyQt5.QtGui import QResizeEvent
@@ -14,6 +12,7 @@ from app.components.base import Cover, LabelWithDefaultText, Factory, CoverProps
 from app.components.dialogs import Dialogs
 from app.components.widgets import ExtendableStyleWidget
 from app.helpers.base import Bytes
+from app.helpers.builders import ImageEditor
 from app.helpers.others import Files, Logger
 from app.helpers.qt import Pixmaps, Widgets
 from app.helpers.stylesheets import Paddings, Colors
@@ -146,13 +145,11 @@ class FavouritePlaylistCard(PlaylistCard):
             return
 
         try:
-            coverData = Bytes.fromFile(path)
+            imageEditor = ImageEditor.ofFile(path)
+            cover = imageEditor.square().resize(320, 320).toBytes()
+            Files.saveImageFile(cover, self.__coverPath)
 
-            Files.createDirectoryIfNotExisted("configuration/playlists")
-            image = Image.open(io.BytesIO(coverData))
-            image.save(self.__coverPath)
-
-            super().setCover(coverData)
+            super().setCover(cover)
         except Exception as e:
             Logger.error(e)
             Dialogs.alert(

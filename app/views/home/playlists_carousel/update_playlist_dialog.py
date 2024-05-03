@@ -12,9 +12,9 @@ from app.common.others import appCenter
 from app.components.base import Cover, CoverProps, Factory, Input, ActionButton
 from app.components.dialogs import BaseDialog, Dialogs
 from app.components.widgets import Box
-from app.helpers.base import Bytes
+from app.helpers.base import Strings
+from app.helpers.builders import ImageEditor
 from app.helpers.others import Files
-from app.helpers.qt import Pixmaps
 from app.resource.others import FileType
 from app.resource.qt import Images
 
@@ -87,7 +87,7 @@ class UpdatePlaylistDialog(BaseDialog):
     def _connectSignalSlots(self) -> None:
         super()._connectSignalSlots()
         self._acceptBtn.clicked.connect(self._savePlaylist)
-        self._editCoverBtn.clicked.connect(self.__onclickSelectCover)
+        self._editCoverBtn.clicked.connect(self.__selectCover)
         self._titleInput.changed.connect(lambda title: self.__checkValid())
 
     def _assignShortcuts(self) -> None:
@@ -105,14 +105,17 @@ class UpdatePlaylistDialog(BaseDialog):
         else:
             return len(title) >= 3
 
-    def __onclickSelectCover(self) -> None:
+    def __selectCover(self) -> None:
         path = QFileDialog.getOpenFileName(self, filter=FileType.IMAGE)[0]
-        if path is not None and path != '':
-            coverData = Bytes.fromFile(path)
-            coverProps = CoverProps.fromBytes(coverData, 320, 320, radius=16)
-            self.__coverData = Pixmaps.toBytes(coverProps.content())
-            self._cover.setCover(coverProps)
-            self.__checkValid()
+        if Strings.isBlank(path):
+            return
+
+        imageEditor = ImageEditor.ofFile(path)
+        cover = imageEditor.square().resize(320, 320).toBytes()
+
+        self.__coverData = cover
+        self._cover.setCover(CoverProps.fromBytes(cover, 320, 320, radius=16))
+        self.__checkValid()
 
     def _setInfo(self, info: Playlist.Info) -> None:
         self._titleInput.setText(info.getName())

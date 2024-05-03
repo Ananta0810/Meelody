@@ -7,9 +7,9 @@ from app.common.others import musicPlayer, appCenter
 from app.components.base import Cover, Factory, LabelWithDefaultText, CoverProps
 from app.components.dialogs import Dialogs
 from app.components.widgets import ExtendableStyleWidget, StyleWidget, FlexBox
-from app.helpers.base import Bytes
+from app.helpers.builders import ImageEditor
 from app.helpers.others import Times, Logger
-from app.helpers.qt import Widgets, Pixmaps
+from app.helpers.qt import Widgets
 from app.helpers.stylesheets import Paddings, Colors
 from app.resource.others import FileType
 from app.resource.qt import Icons, Images
@@ -207,10 +207,10 @@ class SongRow(ExtendableStyleWidget):
         if path is None or path == '':
             return
         try:
-            coverData = Bytes.fromFile(path, suppress=False)
-            coverProps = CoverProps.fromBytes(coverData, 320, 320, radius=16)
-            self.__song.updateCover(Pixmaps.toBytes(coverProps.content()))
-            Logger.error("Update song cover succeed.")
+            imageEditor = ImageEditor.ofFile(path)
+            cover = imageEditor.square().resize(320, 320).toBytes()
+            self.__song.updateCover(cover)
+            Logger.info("Update song cover succeed.")
         except ResourceException as e:
             if e.isNotFound():
                 Dialogs.alert(message="Song is not found in library, you might have deleted it while open our application.")
@@ -235,7 +235,7 @@ class SongRow(ExtendableStyleWidget):
         try:
             self.__song.delete()
             appCenter.currentPlaylist.getSongs().removeSong(self.__song)
-            Logger.error("Delete song succeed.")
+            Logger.info("Delete song succeed.")
         except ResourceException as e:
             if e.isNotFound():
                 appCenter.currentPlaylist.getSongs().removeSong(self.__song)

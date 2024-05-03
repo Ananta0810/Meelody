@@ -92,28 +92,28 @@ class Strings:
         return "".join([directory, "/", name, extension])
 
     @staticmethod
-    def getFilename(file_path: str) -> str:
-        return file_path.split("/")[-1]
+    def getFilename(filePath: str) -> str:
+        return filePath.split("/")[-1]
 
     @staticmethod
-    def joinPath(directory: str, file_path: str) -> str:
-        return f"{directory}/{file_path}"
+    def joinPath(directory: str, filePath: str) -> str:
+        return f"{directory}/{filePath}"
 
     @staticmethod
-    def getDirectoryOf(file_path: str) -> str:
-        return file_path.replace(os.path.basename(file_path), "")
+    def getDirectoryOf(filePath: str) -> str:
+        return filePath.replace(os.path.basename(filePath), "")
 
     @staticmethod
-    def getFileBasename(file_path: str) -> str:
-        parts = os.path.basename(file_path).split(".")
+    def getFileBasename(filePath: str) -> str:
+        parts = os.path.basename(filePath).split(".")
         size = len(parts)
         if size == 0:
             return ""
         return ".".join(parts[:size - 1])
 
     @staticmethod
-    def extensionOf(file_path: str) -> str:
-        return os.path.basename(file_path).split(".")[1]
+    def extensionOf(filePath: str) -> str:
+        return os.path.basename(filePath).split(".")[1]
 
     @staticmethod
     def getRenameFile(filePath: str, newBaseName: str) -> str:

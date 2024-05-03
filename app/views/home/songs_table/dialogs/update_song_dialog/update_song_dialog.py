@@ -126,7 +126,7 @@ class UpdateSongDialog(BaseDialog):
         try:
             self.__song.updateInfo(title, artist)
             Dialogs.success(message="Update song information successfully.")
-            Logger.error("Update song info succeed.")
+            Logger.info("Update song info succeed.")
             self.close()
         except ResourceException as e:
             if e.isNotFound():
