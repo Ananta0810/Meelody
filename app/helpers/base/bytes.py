@@ -4,16 +4,20 @@ from typing import final, Optional
 
 from PIL import Image
 
+from app.common.exceptions import ResourceException
+
 
 @final
 class Bytes:
     @staticmethod
-    def fromFile(pathName: str) -> Optional[bytes]:
+    def fromFile(pathName: str, suppress: bool = True) -> Optional[bytes]:
         try:
             with open(pathName, "rb") as file:
                 return bytearray(file.read())
         except FileNotFoundError:
-            return None
+            if suppress:
+                return None
+            raise ResourceException.notFound()
 
     @staticmethod
     def decode(value: bytes | None) -> str | None:

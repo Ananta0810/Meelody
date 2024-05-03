@@ -5,6 +5,7 @@ from typing import Optional, Callable
 from PyQt5.QtCore import QObject, pyqtSignal, QThread
 from eyed3 import load, mp3, id3
 
+from app.common.exceptions import ResourceException
 from app.helpers.base import Strings
 from app.helpers.others import Logger
 
@@ -154,14 +155,20 @@ class Song(QObject):
 
         if not Strings.equals(self.__artist, artist):
             self.__updateArtist(artist)
+            self.updated.emit("artist")
 
     def __updateTitle(self, title: str) -> None:
         newLocation = Strings.getRenameFile(self.__location, title)
+
         if os.path.exists(newLocation):
-            raise FileExistsError()
-        os.rename(self.__location, newLocation)
-        self.__location = newLocation
-        self.__title = title
+            raise ResourceException.fileExisted()
+
+        try:
+            os.rename(self.__location, newLocation)
+            self.__location = newLocation
+            self.__title = title
+        except PermissionError:
+            raise ResourceException.unChangeable()
 
     def __updateArtist(self, artist: str) -> None:
         SongWriter(self.__location).writeArtist(artist)
@@ -193,8 +200,13 @@ class Song(QObject):
         """
         Delete audio file.
         """
-        os.remove(self.__location)
-        Logger.info(f"Remove song at location {self.__location} successfully.")
+        try:
+            os.remove(self.__location)
+            Logger.info(f"Remove song at location {self.__location} successfully.")
+        except PermissionError:
+            raise ResourceException.unChangeable()
+        except FileNotFoundError:
+            raise ResourceException.notFound()
 
 
 class SongReader:
@@ -236,18 +248,31 @@ class SongWriter:
     __data: mp3.Mp3AudioFile
 
     def __init__(self, file: str):
-        self.__data = load(file)
+        try:
+            self.__data = load(file)
+        except (FileNotFoundError, IOError):
+            raise ResourceException.notFound()
 
     def writeArtist(self, artist: str) -> None:
-        self.__data.tag.artist = artist
-        self.__data.tag.save(version=id3.ID3_V2_3)
+        try:
+            self.__data.tag.artist = artist
+            self.__data.tag.save(version=id3.ID3_V2_3)
+        except (FileNotFoundError, IOError):
+            raise ResourceException.notFound()
+        except PermissionError:
+            raise ResourceException.unChangeable()
 
     def writeCover(self, cover: bytes) -> None:
-        if self.__data.tag is None:
-            self.__data.initTag()
+        try:
+            if self.__data.tag is None:
+                self.__data.initTag()
 
-        self.__removeExistingCovers()
-        self.__addNewCover(cover)
+            self.__removeExistingCovers()
+            self.__addNewCover(cover)
+        except FileNotFoundError:
+            raise ResourceException.notFound()
+        except (PermissionError, IOError):
+            raise ResourceException.unChangeable()
 
     def __removeExistingCovers(self) -> None:
         images = self.__data.tag.images

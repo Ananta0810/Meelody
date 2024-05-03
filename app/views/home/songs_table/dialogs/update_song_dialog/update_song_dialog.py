@@ -2,6 +2,7 @@ from PyQt5.QtCore import Qt
 from PyQt5.QtGui import QKeySequence
 from PyQt5.QtWidgets import QWidget, QShortcut
 
+from app.common.exceptions import ResourceException
 from app.common.models import Song
 from app.components.base import Cover, CoverProps, Factory, ActionButton, Label, Input
 from app.components.dialogs import BaseDialog, Dialogs
@@ -125,9 +126,20 @@ class UpdateSongDialog(BaseDialog):
         try:
             self.__song.updateInfo(title, artist)
             Dialogs.success(message="Update song information successfully.")
+            Logger.error("Update song info succeed.")
             self.close()
+        except ResourceException as e:
+            if e.isNotFound():
+                Dialogs.alert(message="Song is not found in library, you might have deleted it while open our application.")
+                self.close()
+            if e.isBeingUsed():
+                Dialogs.alert(message="You can not change info of the playing song. Please try again after you played other song.")
+                self.close()
+            if e.isExisted():
+                Dialogs.alert(message="Song file have already existed. Please try with other title.")
         except Exception as e:
             Logger.error(e)
+            Logger.error("Update song infor failed.")
             Dialogs.alert(message="Something is wrong when saving the song. Please try again.")
             self.close()
 

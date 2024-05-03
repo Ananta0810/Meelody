@@ -1,13 +1,14 @@
 from PyQt5.QtCore import Qt
 from PyQt5.QtWidgets import QWidget, QHBoxLayout, QFileDialog
 
+from app.common.exceptions import ResourceException
 from app.common.models import Song
 from app.common.others import musicPlayer, appCenter
 from app.components.base import Cover, Factory, LabelWithDefaultText, CoverProps
 from app.components.dialogs import Dialogs
 from app.components.widgets import ExtendableStyleWidget, StyleWidget, FlexBox
 from app.helpers.base import Bytes
-from app.helpers.others import Times
+from app.helpers.others import Times, Logger
 from app.helpers.qt import Widgets, Pixmaps
 from app.helpers.stylesheets import Paddings, Colors
 from app.resource.others import FileType
@@ -143,7 +144,7 @@ class SongRow(ExtendableStyleWidget):
 
         self.__song.loved.connect(lambda loved: self._loveBtn.setActive(loved))
         self.__song.coverChanged.connect(lambda cover: self._cover.setCover(CoverProps.fromBytes(cover, width=64, height=64, radius=12)))
-        self.__song.updated.connect(lambda key: self.__displaySongInfo())
+        self.__song.updated.connect(lambda updatedField: self.__updateSongField(updatedField))
 
         musicPlayer.songChanged.connect(self.__checkEditable)
 
@@ -191,19 +192,33 @@ class SongRow(ExtendableStyleWidget):
         self._lengthLabel.setText(Times.toString(self.__song.getLength()))
         self._loveBtn.setActive(self.__song.isLoved())
 
+    def __updateSongField(self, field: str) -> None:
+        if field == "title":
+            self._titleLabel.setText(self.__song.getTitle())
+
+        if field == "artist":
+            self._artistLabel.setText(self.__song.getArtist())
+
+        if field == "love":
+            self._loveBtn.setActive(self.__song.isLoved())
+
     def __changeCover(self) -> None:
         path = QFileDialog.getOpenFileName(self, filter=FileType.IMAGE)[0]
         if path is None or path == '':
             return
         try:
-            coverData = Bytes.fromFile(path)
+            coverData = Bytes.fromFile(path, suppress=False)
             coverProps = CoverProps.fromBytes(coverData, 320, 320, radius=16)
             self.__song.updateCover(Pixmaps.toBytes(coverProps.content()))
-        except* PermissionError:
-            Dialogs.alert(message="You can not change cover of the playing song. Please try again after you played other song.")
-        except* OSError:
-            Dialogs.alert(message="Song is not found in library, you might be deleted it while open our application.")
-        except* Exception:
+            Logger.error("Update song cover succeed.")
+        except ResourceException as e:
+            if e.isNotFound():
+                Dialogs.alert(message="Song is not found in library, you might have deleted it while open our application.")
+            if e.isBeingUsed():
+                Dialogs.alert(message="You can not change cover of the playing song. Please try again after you played other song.")
+        except Exception as e:
+            Logger.error(e)
+            Logger.error("Update song cover failed.")
             Dialogs.alert(message="Something is wrong when saving song cover. Please try again.")
 
     def __changeSongInfo(self) -> None:
@@ -217,5 +232,16 @@ class SongRow(ExtendableStyleWidget):
         )
 
     def __deleteCurrentSong(self) -> None:
-        self.__song.delete()
-        appCenter.currentPlaylist.getSongs().removeSong(self.__song)
+        try:
+            self.__song.delete()
+            appCenter.currentPlaylist.getSongs().removeSong(self.__song)
+            Logger.error("Delete song succeed.")
+        except ResourceException as e:
+            if e.isNotFound():
+                appCenter.currentPlaylist.getSongs().removeSong(self.__song)
+            if e.isBeingUsed():
+                Dialogs.alert(message="You can not delete the playing song. Please try again after you played other song.")
+        except Exception as e:
+            Logger.error(e)
+            Logger.error("Delete song failed.")
+            Dialogs.alert(message="Something is wrong when delete the song. Please try again.")
