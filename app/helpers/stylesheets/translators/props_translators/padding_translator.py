@@ -5,11 +5,11 @@ from app.helpers.stylesheets.translators.props_translators.class_name import Cla
 from app.helpers.stylesheets.translators.props_translators.props_translator import PropsTranslator
 
 
-def _paddingOf(cn):
+def _paddingOf(cn) -> str:
     return cn.value.split("-")[-1] + "px"
 
 
-def _toProps(cn: ClassName):
+def _toProps(cn: ClassName) -> dict[str, str]:
     if cn.key == "px":
         padding = _paddingOf(cn)
         return {"left": padding, "right": padding}

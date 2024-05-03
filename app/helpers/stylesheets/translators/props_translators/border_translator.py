@@ -8,10 +8,10 @@ from app.helpers.stylesheets.translators.props_translators.class_name import Cla
 from app.helpers.stylesheets.translators.props_translators.props_translator import PropsTranslator
 from app.helpers.stylesheets.translators.value_translators import ValueTranslators
 
-_STYLES = {"solid", "dotted", "dashed", "double", "hidden"}
-_DIRECTIONS = {"l": "left", "t": "top", "r": "right", "b": "bottom"}
-_NULL_DIRECTION_PROPS = []
-_ALL_DIRECTIONS = "all"
+_STYLES: set[str] = {"solid", "dotted", "dashed", "double", "hidden"}
+_DIRECTIONS: dict[str, str] = {"l": "left", "t": "top", "r": "right", "b": "bottom"}
+_NULL_DIRECTION_PROPS: list[str] = []
+_ALL_DIRECTIONS: str = "all"
 
 
 def _toProps(cn: ClassName) -> (Optional[str], str, int | str | Color):

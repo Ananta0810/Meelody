@@ -1,3 +1,4 @@
+import itertools
 from typing import TypeVar, Callable, final
 
 T = TypeVar('T')
@@ -6,6 +7,10 @@ R = TypeVar('R')
 
 @final
 class Lists:
+
+    @staticmethod
+    def flat(collection: list[list[T]]) -> list[T]:
+        return list(itertools.chain.from_iterable(collection))
 
     @staticmethod
     def findMoved(originalList: list[T], newList: list[T]) -> (int, int):
