@@ -1,11 +1,12 @@
 from typing import Optional
 
-from PyQt5.QtCore import Qt, QThread
+from PyQt5.QtCore import Qt, QThread, pyqtSignal
 from PyQt5.QtWidgets import QWidget, QHBoxLayout, QFileDialog
 
 from app.common.models import Playlist, Song
 from app.common.others import appCenter
 from app.components.base import Factory, EllipsisLabel, Component
+from app.components.dialogs import Dialogs
 from app.helpers.others import Files, Logger
 from app.helpers.stylesheets import Paddings, Colors
 from app.resource.others import FileType
@@ -100,7 +101,19 @@ class SongsTableHeader(QWidget, Component):
     def _importSongsFromExplorer(self) -> None:
         paths = QFileDialog.getOpenFileNames(self, filter=FileType.AUDIO)[0]
         if paths is not None and len(paths) > 0:
-            ImportSongsToLibraryThread(paths).start()
+            thread = ImportSongsToLibraryThread(paths)
+            thread.finished.connect(lambda result: self.__displayImportSongsResult(result[0], result[1]))
+            thread.start()
+
+    @staticmethod
+    def __displayImportSongsResult(succeed: bool, totalSongs: int) -> None:
+        if succeed:
+            if totalSongs > 0:
+                Dialogs.info(header="Import successfully", message=f"You have imported {totalSongs} songs\n from explorer successfully.")
+            else:
+                Dialogs.alert(header="Import failed", message=f"The songs that you are trying to import\n have already been existed.")
+        else:
+            Dialogs.alert(header="Import failed", message=f"You have imported songs from explorer failed.")
 
     @staticmethod
     def _openDownloadSongDialogs() -> None:
@@ -114,15 +127,22 @@ class SongsTableHeader(QWidget, Component):
 
 
 class ImportSongsToLibraryThread(QThread):
+    finished = pyqtSignal(list)
 
     def __init__(self, songPaths: list[str]) -> None:
         super().__init__()
         self.__songPaths = songPaths
 
     def run(self) -> None:
-        paths = self.__copySongsToLibrary()
-        songs = [Song.fromFile(path) for path in paths]
-        appCenter.library.getSongs().insertAll(songs)
+        try:
+            paths = self.__copySongsToLibrary()
+            songs = [Song.fromFile(path) for path in paths]
+            appCenter.library.getSongs().insertAll(songs)
+
+            self.finished.emit([True, len(songs)])
+        except Exception as e:
+            Logger.error(e)
+            self.finished.emit([False, 0])
 
     def __copySongsToLibrary(self) -> list[str]:
         newPaths: list[str] = []
