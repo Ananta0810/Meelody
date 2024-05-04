@@ -1,9 +1,14 @@
+import os
+from datetime import datetime
+from typing import Callable
 from typing import Optional
 
+import pytube.request
 from PyQt5.QtCore import Qt, QSize
+from PyQt5.QtCore import pyqtSignal, QThread
 from PyQt5.QtGui import QMovie
 from PyQt5.QtWidgets import QWidget, QLabel
-from pytube import YouTube
+from pytube import YouTube, Stream
 
 from app.components.base import Cover, LabelWithDefaultText, Factory, CoverProps
 from app.components.sliders import ProgressBar
@@ -12,7 +17,7 @@ from app.helpers.base import Strings
 from app.helpers.others import Times
 from app.helpers.stylesheets import Paddings, Colors
 from app.resource.qt import Images, Icons
-from app.views.threads import UpdateUIThread, DownloadSongThread
+from app.views.threads import UpdateUIThread
 
 
 class DownloadSongItem(ExtendableStyleWidget):
@@ -156,3 +161,46 @@ class DownloadSongItem(ExtendableStyleWidget):
             self._descriptionLabel.setText("Download Failed. Song is already existed.")
         else:
             self._descriptionLabel.setText("Download Failed.")
+
+
+pytube.request.default_range_size = 128000
+
+
+class DownloadSongThread(QThread):
+    loaded = pyqtSignal()
+    downloadFailed = pyqtSignal(Exception)
+    downloadSucceed = pyqtSignal(str)
+
+    def __init__(self, ytb: YouTube, onDownloading: Callable[[int, int, int], None]) -> None:
+        super().__init__()
+        self.__ytb = ytb
+        self.__onDownloading = onDownloading
+        self.__loaded = False
+
+    def run(self) -> None:
+        try:
+            downloadStartTime = datetime.now()
+
+            self.__ytb.register_on_progress_callback(
+                lambda stream, chunk, bytesRemaining: self.__onProgress(stream, bytesRemaining, downloadStartTime))
+            downloadedFile = self.__ytb.streams.filter(abr='160kbps', only_audio=True).last().download("library/download")
+
+            base, ext = os.path.splitext(downloadedFile)
+            newFile = base + '.mp3'
+            os.rename(downloadedFile, newFile)
+            self.downloadSucceed.emit(newFile)
+        except Exception as e:
+            self.downloadFailed.emit(e)
+
+    def __onProgress(self, stream: Stream, bytesRemaining: int, downloadStartTime: datetime) -> None:
+        if not self.__loaded:
+            self.__loaded = True
+            self.loaded.emit()
+
+        totalSize = stream.filesize
+        bytesDownloaded = totalSize - bytesRemaining
+
+        secondsSinceDownloadStart = (datetime.now() - downloadStartTime).total_seconds()
+        speed = round(((bytesDownloaded / 1024) / 1024) / secondsSinceDownloadStart, 2)
+        secondsLeft = int(round(((bytesRemaining / 1024) / 1024) / float(speed), 2))
+        self.__onDownloading(bytesDownloaded, totalSize, secondsLeft)

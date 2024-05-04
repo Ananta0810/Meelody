@@ -1,17 +1,17 @@
 from typing import Optional
 
-from PyQt5.QtCore import Qt
+from PyQt5.QtCore import Qt, QThread
 from PyQt5.QtWidgets import QWidget, QHBoxLayout, QFileDialog
 
-from app.common.models import Playlist
+from app.common.models import Playlist, Song
 from app.common.others import appCenter
 from app.components.base import Factory, EllipsisLabel, Component
+from app.helpers.others import Files, Logger
 from app.helpers.stylesheets import Paddings, Colors
 from app.resource.others import FileType
 from app.resource.qt import Icons
 from app.views.home.songs_table.dialogs.download_songs_dialog import DownloadSongsDialog
 from app.views.home.songs_table.dialogs.select_playlist_songs_dialog import SelectPlaylistSongsDialog
-from app.views.threads import ImportSongsToLibraryThread
 
 
 class SongsTableHeader(QWidget, Component):
@@ -111,3 +111,28 @@ class SongsTableHeader(QWidget, Component):
     def _openSelectPlaylistSongsDialog() -> None:
         dialog = SelectPlaylistSongsDialog(appCenter.currentPlaylist)
         dialog.show()
+
+
+class ImportSongsToLibraryThread(QThread):
+
+    def __init__(self, songPaths: list[str]) -> None:
+        super().__init__()
+        self.__songPaths = songPaths
+
+    def run(self) -> None:
+        paths = self.__copySongsToLibrary()
+        songs = [Song.fromFile(path) for path in paths]
+        appCenter.library.getSongs().insertAll(songs)
+
+    def __copySongsToLibrary(self) -> list[str]:
+        newPaths: list[str] = []
+        for path in self.__songPaths:
+            try:
+                songPath = Files.copyFile(path, "library/")
+                print(f"Import song from '{path}' to library")
+                newPaths.append(songPath)
+            except FileExistsError:
+                Logger.error(f"Copy failed for {path}")
+                pass
+
+        return newPaths
