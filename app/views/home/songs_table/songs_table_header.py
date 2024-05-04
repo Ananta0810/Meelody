@@ -87,9 +87,9 @@ class SongsTableHeader(QWidget, Component):
     def _connectSignalSlots(self) -> None:
         appCenter.currentPlaylistChanged.connect(self.__showActionsToPlaylist)
 
-        self._importSongsToLibraryBtn.clicked.connect(self._importSongsFromExplorer)
-        self._downloadSongsToLibraryBtn.clicked.connect(self._openDownloadSongDialogs)
-        self._selectSongsToPlaylistBtn.clicked.connect(self._openSelectPlaylistSongsDialog)
+        self._importSongsToLibraryBtn.clicked.connect(lambda: self._importSongsFromExplorer())
+        self._downloadSongsToLibraryBtn.clicked.connect(lambda: self._openDownloadSongDialogs())
+        self._selectSongsToPlaylistBtn.clicked.connect(lambda: self._openSelectPlaylistSongsDialog())
 
     def __showActionsToPlaylist(self, playlist: Playlist) -> None:
         playlistId = playlist.getInfo().getId()
@@ -108,6 +108,6 @@ class SongsTableHeader(QWidget, Component):
         downloadDialog.show()
 
     @staticmethod
-    def _openSelectPlaylistSongsDialog(self) -> None:
+    def _openSelectPlaylistSongsDialog() -> None:
         dialog = SelectPlaylistSongsDialog(appCenter.currentPlaylist)
         dialog.show()

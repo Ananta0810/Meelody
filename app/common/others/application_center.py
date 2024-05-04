@@ -13,7 +13,7 @@ class ApplicationCenter(QObject):
     def __init__(self) -> None:
         super().__init__()
         self.settings: AppSettings = AppSettings()
-        
+
         self.isLightMode: bool = True
         self.playlists: Playlists = Playlists()
 

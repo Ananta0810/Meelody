@@ -92,7 +92,6 @@ class SelectPlaylistSongsDialog(BaseDialog):
 
     def _savePlaylist(self) -> None:
         songs = self.__selectedSongs.getSongs()
-        print(self.__selectedSongs)
         self.__playlist.getSongs().setSongs(songs)
         self.close()
 
