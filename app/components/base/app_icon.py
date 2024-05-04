@@ -15,18 +15,18 @@ class AppIcon(QIcon):
             if color in colorDict:
                 return colorDict[color]
 
-        icon_pixmap: QPixmap = self.pixmap(self.availableSizes()[0])
-        painter = QPainter(icon_pixmap)
+        iconPixmap: QPixmap = self.pixmap(self.availableSizes()[0])
+        painter = QPainter(iconPixmap)
         painter.setCompositionMode(QPainter.CompositionMode_SourceIn)
-        painter.fillRect(icon_pixmap.rect(), color.toQColor())
+        painter.fillRect(iconPixmap.rect(), color.toQColor())
         painter.end()
-        new_icon: QIcon = QIcon()
-        new_icon.addPixmap(icon_pixmap)
+        newIcon: QIcon = QIcon()
+        newIcon.addPixmap(iconPixmap)
 
         if self not in AppIcon.__paintedIcons:
             AppIcon.__paintedIcons[self] = {}
 
         colorDict = AppIcon.__paintedIcons[self]
-        colorDict[color] = new_icon
+        colorDict[color] = newIcon
 
-        return new_icon
+        return newIcon
