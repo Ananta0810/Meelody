@@ -39,11 +39,18 @@ class MenuBody(SmoothVerticalScrollArea):
 
     def __setSongs(self) -> None:
         songs = appCenter.library.getSongs().getSongs()
-        for song in songs:
+        for index, song in enumerate(songs):
             songRow = SongRow(song)
-            songRow.applyTheme()
             songRow.checked.connect(lambda _song: self.songSelected.emit(_song))
             songRow.unchecked.connect(lambda _song: self.songUnSelected.emit(_song))
+
+            if index != len(songs) - 1:
+                songRow.setClassName("bg-none hover:bg-gray-8 border-x border-b border-gray-12")
+            else:
+                songRow.setClassName("bg-none hover:bg-gray-8 border-x border-gray-12")
+
+            songRow.applyTheme()
+
             self.addWidget(songRow)
             self.__rowDict[song.getId()] = songRow
 

@@ -32,7 +32,7 @@ class SelectPlaylistSongsDialog(BaseDialog):
         self._menuBody = MenuBody()
         self._menuBody.setFixedSize(640, 480)
         self._menuBody.setContentsMargins(0, 0, 0, 0)
-        self._menuBody.setClassName("scroll/bg-primary-50 scroll/hover:bg-primary scroll/rounded-2 bg-gray-4")
+        self._menuBody.setClassName("scroll/bg-primary-50 scroll/hover:bg-primary scroll/rounded-2 bg-none border-gray-12")
 
         self._footer = StyleWidget()
         self._footer.setFixedWidth(640)

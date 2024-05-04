@@ -31,7 +31,7 @@ class MainWindow(TitleBarWindow, Component):
         self._musicPlayerBar = MusicPlayerBar()
         self._musicPlayerBar.setFixedHeight(96)
         self._musicPlayerBar.setContentsMargins(16, 0, 16, 0)
-        self._musicPlayerBar.setClassName("bg-none border-none border-t-gray-20 rounded-none")
+        self._musicPlayerBar.setClassName("bg-none border-t border-gray-20 rounded-none")
 
         self.addWidget(self._body)
         self.addWidget(self._musicPlayerBar, alignment=Qt.AlignBottom)

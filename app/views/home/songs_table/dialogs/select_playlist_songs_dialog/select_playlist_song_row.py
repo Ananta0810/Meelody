@@ -25,7 +25,6 @@ class SongRow(ExtendableStyleWidget):
     def _createUI(self) -> None:
         self.setCursor(Cursors.HAND)
         self.setContentsMargins(0, 0, 0, 0)
-        self.setClassName("bg-none hover:bg-gray-8 border-b border-gray-12")
 
         self._mainLayout = FlexBox()
         self._mainLayout.setContentsMargins(0, 8, 0, 8)

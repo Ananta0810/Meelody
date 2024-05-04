@@ -29,16 +29,15 @@ class StyleScrollArea(QScrollArea, Component):
         self._darkModeStyle = self.__buildStyle(dark)
 
     def __buildStyle(self, theme: ClassNameTheme) -> str:
-        direction: str = "vertical"
         return f"""
-                    QScrollArea {{ background: transparent; border: none; }}
-                    QScrollArea > QWidget > QWidget {{ background: transparent; border: none; }}
-                    QScrollArea > QWidget > QScrollBar {{ background: palette(base); border: none; }}
-                    QScrollBar::handle:{direction} {{{theme.getElement("scroll").state("none").toProps() or ""}}}
-                    QScrollBar::handle:{direction}:hover {{{theme.getElement("scroll").state("hover").toProps() or ""}}}
-                    QScrollBar:{direction}{{border:none;background-color:transparent;width:{self._scrollBarWidth}px}}
-                    QScrollBar::sub-line:{direction}{{border:none}}
-                    QScrollBar::add-line:{direction}{{border:none}}
-                    QScrollBar::add-page:{direction},QScrollBar::sub-page:{direction}{{background-color:none}}
-                    QScrollBar::up-arrow:{direction},QScrollBar::down-arrow:{direction}{{background-color:none}}
-                """
+            QScrollArea {{ background: transparent; border: none; }}
+            QScrollArea > QWidget > QWidget {{ background: transparent; border: none; }}
+            QScrollBar {{ background: palette(base); border: none; }}
+            QScrollBar:vertical {{border:none;background-color:transparent;width:{self._scrollBarWidth}px}}
+            QScrollBar::handle:vertical {{{theme.getElement("scroll").state("none").toProps() or ""}}}
+            QScrollBar::handle:vertical:hover {{{theme.getElement("scroll").state("hover").toProps() or ""}}}
+            QScrollBar::sub-line:vertical {{border:none}}
+            QScrollBar::add-line:vertical {{border:none}}
+            QScrollBar::add-page:vertical, QScrollBar::sub-page:vertical {{background-color:none}}
+            QScrollBar::up-arrow:vertical, QScrollBar::down-arrow:vertical {{background-color:none}}
+        """
