@@ -37,14 +37,14 @@ class Jsons:
         oldContent = Jsons.readFromFile(file)
         try:
             with open(file, 'w+') as outfile:
-                fileContent: str = json.dumps(obj, indent=4)
-                outfile.write(fileContent)
-        except TypeError as e:
+                newContent: str = json.dumps(obj)
+                outfile.write(newContent)
+        except TypeError:
             Logger.error("New content is invalid. Revert old content now.")
             if oldContent is not None:
                 with open(file, 'w+') as outfile:
-                    fileContent: str = json.dumps(oldContent, indent=4)
-                    outfile.write(fileContent)
+                    newContent: str = json.dumps(oldContent)
+                    outfile.write(newContent)
             raise StorageException("Save data failed.")
 
     @staticmethod

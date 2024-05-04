@@ -27,6 +27,7 @@ class SmoothVerticalScrollArea(StyleScrollArea):
         self.setWidgetResizable(True)
 
         self._menu = QWidget()
+        self._menu.setStyleSheet("background:transparent;border:none")
         self._menu.setContentsMargins(8, 0, 8, 8)
 
         self._mainLayout = Box(self._menu)
