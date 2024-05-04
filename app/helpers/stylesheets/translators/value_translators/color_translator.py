@@ -60,8 +60,10 @@ class ColorTranslator(ValueTranslator[str]):
             contrastBackgroundColor = _CONTRAST_BACKGROUNDS[contrastBg]
             opacity_ = int(opacity)
 
-            newColor = color.darken(opacity_ / 100) if opacity_ > 100 else color.withOpacity(opacity_)
-            return newColor.toSolidColor(contrastBackgroundColor).toStylesheet()
+            if opacity_ > 100:
+                return color.darken(opacity_ / 100)
+
+            return color.withOpacity(opacity_).toSolidColor(contrastBackgroundColor).toStylesheet()
 
         # This can be primary, danger, warning or custom color such as [rgb(128, 128, 128)]
         color = parts[0]

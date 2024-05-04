@@ -54,8 +54,9 @@ class Color(StylesheetProps, ABC):
         return self.red * _LUMINANCE_RED + self.green * _LUMINANCE_GREEN + self.blue * _LUMINANCE_BLUE
 
     def darken(self, by: float) -> 'Color':
+        factor = 1 / by
         h, l, s = rgb_to_hls(self.red / 255.0, self.green / 255.0, self.blue / 255.0)
-        l = max(min(l * by, 1.0), 0.0)
+        l = max(min(l * factor, 1.0), 0.0)
         r, g, b = hls_to_rgb(h, l, s)
         color = Color(red=int(r * 255), green=int(g * 255), blue=int(b * 255))
         return color
