@@ -1,4 +1,5 @@
 from abc import ABC
+from colorsys import rgb_to_hls, hls_to_rgb
 from dataclasses import dataclass
 from typing import final
 
@@ -33,6 +34,16 @@ class Color(StylesheetProps, ABC):
         value: int = Numbers.clamp(opacity, 0, 100)
         return self.withAlpha(255 * value // 100)
 
+    def toSolidColor(self, backgroundColor: 'Color') -> 'Color':
+        alpha = self.alpha / 255
+        oneminusalpha = 1 - alpha
+
+        red = (self.red * alpha) + (oneminusalpha * backgroundColor.red)
+        green = (self.green * alpha) + (oneminusalpha * backgroundColor.green)
+        blue = (self.blue * alpha) + (oneminusalpha * backgroundColor.blue)
+
+        return Color(int(red), int(green), int(blue))
+
     def toQColor(self) -> QColor:
         return QColor(self.red, self.green, self.blue, int(self.alpha))
 
@@ -41,6 +52,13 @@ class Color(StylesheetProps, ABC):
 
     def __luminance(self) -> float:
         return self.red * _LUMINANCE_RED + self.green * _LUMINANCE_GREEN + self.blue * _LUMINANCE_BLUE
+
+    def darken(self, by: float) -> 'Color':
+        h, l, s = rgb_to_hls(self.red / 255.0, self.green / 255.0, self.blue / 255.0)
+        l = max(min(l * by, 1.0), 0.0)
+        r, g, b = hls_to_rgb(h, l, s)
+        color = Color(red=int(r * 255), green=int(g * 255), blue=int(b * 255))
+        return color
 
 
 @final
