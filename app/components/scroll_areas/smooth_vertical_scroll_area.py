@@ -1,7 +1,7 @@
 from typing import Optional, Union
 
 from PyQt5.QtCore import pyqtSignal, QVariantAnimation, QEasingCurve, Qt
-from PyQt5.QtGui import QWheelEvent
+from PyQt5.QtGui import QWheelEvent, QPaintEvent
 from PyQt5.QtWidgets import QWidget
 
 from app.components.scroll_areas.style_scroll_area import StyleScrollArea
@@ -35,9 +35,6 @@ class SmoothVerticalScrollArea(StyleScrollArea):
 
         self.setWidget(self._menu)
 
-    def _connectSignalSlots(self) -> None:
-        self.verticalScrollBar().valueChanged.connect(lambda: self.__updateVisibleItems())
-
     def setContentsMargins(self, left: int, top: int, right: int, bottom: int) -> None:
         self._menu.setContentsMargins(left, top, right, bottom)
 
@@ -62,6 +59,10 @@ class SmoothVerticalScrollArea(StyleScrollArea):
 
         self._mainLayout.removeWidget(widget)
         self._mainLayout.insertWidget(newIndex, widget)
+
+    def paintEvent(self, a0: Optional[QPaintEvent]) -> None:
+        super().paintEvent(a0)
+        self.__updateVisibleItems()
 
     def __updateVisibleItems(self) -> None:
         self.__visibleWidgetIndexes = {index for index, item in enumerate(self.__widgets) if Widgets.isInView(item)}

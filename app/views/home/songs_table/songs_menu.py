@@ -1,8 +1,8 @@
 from typing import Optional
 
-from PyQt5.QtCore import Qt, pyqtSignal
+from PyQt5.QtCore import Qt, pyqtSignal, QObject, QEvent
 from PyQt5.QtGui import QKeyEvent
-from PyQt5.QtWidgets import QWidget
+from PyQt5.QtWidgets import QWidget, qApp
 
 from app.common.asyncs import ChunksConsumer
 from app.common.models import Song, Playlist
@@ -10,18 +10,17 @@ from app.common.others import appCenter, musicPlayer
 from app.components.events import VisibleObserver
 from app.components.scroll_areas import SmoothVerticalScrollArea
 from app.helpers.base import Lists, Strings
+from app.helpers.qt import Widgets
 from app.views.home.songs_table.song_row import SongRow
 
 MAX_ITEMS_VISIBLE_ON_MENU = 6
 
 
 class SongsMenu(SmoothVerticalScrollArea):
-    __keyPressed = pyqtSignal(QKeyEvent)
     __menuReset = pyqtSignal()
 
     def __init__(self, parent: Optional[QWidget] = None) -> None:
         super().__init__(parent)
-
         self.__coverLoadedSongIds: set[str] = set()
         self.__songRowDict: dict[str, SongRow] = {}
 
@@ -32,6 +31,7 @@ class SongsMenu(SmoothVerticalScrollArea):
         self.__titleKeys: dict[str, list[int]] = {}
 
         self._initComponent()
+        qApp.installEventFilter(self)
 
     def _createUI(self) -> None:
         super()._createUI()
@@ -40,34 +40,32 @@ class SongsMenu(SmoothVerticalScrollArea):
 
     def _connectSignalSlots(self) -> None:
         super()._connectSignalSlots()
-        self.__keyPressed.connect(lambda e: self.__onKeyPressed(e))
         VisibleObserver(self).visible.connect(lambda visible: self.__showLibrary())
 
         appCenter.currentPlaylistChanged.connect(lambda playlist: self.__setPlaylist(playlist.getSongs()))
         musicPlayer.songChanged.connect(lambda song: self.__scrollToSong(song))
 
+    def eventFilter(self, obj: QObject, event: QEvent) -> bool:
+        if event.type() == QEvent.KeyPress:
+            if Widgets.isDescendantOf(self.window(), obj):
+                self.__onKeyPressed(event)
+        return super().eventFilter(obj, event)
+
     def __showLibrary(self) -> None:
         rows = [row for row in self.__songRowDict.values()]
         self.__showSongs(rows)
-
-    def keyPressEvent(self, event: QKeyEvent) -> None:
-        self.__keyPressed.emit(event)
-        return super().keyPressEvent(event)
 
     def __onKeyPressed(self, event: QKeyEvent) -> None:
         isHoldingAlt = int(event.modifiers()) == Qt.AltModifier
         if not isHoldingAlt:
             return
         try:
-            key = event.key()
-            print(key)
-            key = chr(key)
+            key = chr(event.key())
             index = self.__findSongPositionToScroll(key)
             if index == -1:
                 return
             self.scrollToItemAt(index)
-        except ValueError as e:
-            print(e)
+        except ValueError:
             pass
 
     def __findSongPositionToScroll(self, key: str) -> int:
