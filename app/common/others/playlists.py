@@ -30,6 +30,13 @@ class Playlists(QObject):
             item.getSongs().updated.connect(lambda: self.__updateToDatabase())
         self.changed.emit(self.__items)
 
+    def replace(self, item: Playlist) -> None:
+        for index, playlist in enumerate(self.__items):
+            if playlist.getInfo().getId() == item.getInfo().getId():
+                self.__items[index] = item
+                self.changed.emit(self.__items)
+                break
+
     def remove(self, item: Playlist) -> None:
         self.__items.remove(item)
         self.changed.emit(self.__items)

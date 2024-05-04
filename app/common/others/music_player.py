@@ -65,6 +65,10 @@ class MusicPlayer(QObject):
             return
 
         songs = self.__getSongs()
+
+        if not songs.hasAnySong():
+            return
+
         song = songs.getSongAt(self.__currentSongIndex)
         if song is None:
             return

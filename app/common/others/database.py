@@ -16,8 +16,9 @@ class Database:
                 os.mkdir(directory)
 
             if os.path.exists(self.__path):
-                data: list[dict] = Jsons.readFromFile(self.__path) or []
-                return [Song.fromDict(item) for item in data]
+                data: list[dict] = Jsons.readFromFile(self.__path)
+                if data is not None:
+                    return [Song.fromDict(item) for item in data]
 
             return self.__loadSongsFromFolder(directory, withExtension)
 
@@ -38,11 +39,12 @@ class Database:
 
         def load(self, songs: list[Song]) -> list[Playlist]:
             if os.path.exists(self.__path):
-                data: list[dict] = Jsons.readFromFile(self.__path) or []
-                return [PlaylistJson.fromDict(item).toPlaylist(songs) for item in data]
-            else:
-                self.save([])
-                return []
+                data: list[dict] = Jsons.readFromFile(self.__path)
+                if data is not None:
+                    return [PlaylistJson.fromDict(item).toPlaylist(songs) for item in data]
+
+            self.save([])
+            return []
 
         def save(self, data: list[Playlist]) -> None:
             playlistJsons: list[PlaylistJson] = [PlaylistJson.fromPlaylist(playlist) for playlist in data]

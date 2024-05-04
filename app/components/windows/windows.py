@@ -50,11 +50,11 @@ class FramelessWindow(QMainWindow, Component):
 
     @overload
     def setFixedSize(self, a0: QSize) -> None:
-        self._inner.setFixedWidth(a0)
+        self._inner.setFixedSize(a0)
 
     @overload
     def setFixedSize(self, w: int, h: int) -> None:
-        self._inner.setFixedWidth(w, h)
+        self._inner.setFixedSize(w, h)
 
     def setFixedSize(self, a0: QSize) -> None:
         self._inner.setFixedSize(a0)

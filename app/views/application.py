@@ -29,8 +29,7 @@ class Application:
 
         library.getSongs().updated.connect(lambda: database.songs.save(library.getSongs().getSongs()))
 
-    @staticmethod
-    def __configureMusicPlayer():
+    def __configureMusicPlayer(self):
         settings = appCenter.settings
 
         musicPlayer.songChanged.connect(lambda song: settings.setPlayingSongId(song.getId()))
@@ -38,17 +37,19 @@ class Application:
         musicPlayer.shuffleChanged.connect(lambda shuffle: settings.setIsShuffle(shuffle))
 
         library = appCenter.library.getSongs()
-        lastPlayingSongIndex = 0 if settings.playingSongId is None else max(0, library.getSongIndexWithId(settings.playingSongId))
 
         musicPlayer.loadPlaylist(library)
         musicPlayer.setLooping(settings.isLooping)
         musicPlayer.setShuffle(settings.isShuffle)
-        musicPlayer.setCurrentSongIndex(lastPlayingSongIndex)
+        musicPlayer.setCurrentSongIndex(self.__getLastPlayingSongIndex(library))
         musicPlayer.loadSongToPlay()
 
     @staticmethod
     def __getLastPlayingSongIndex(library: Playlist.Songs) -> int:
-        return 0 if appCenter.settings.playingSongId is None else max(0, library.getSongIndexWithId(appCenter.settings.playingSongId))
+        try:
+            return 0 if appCenter.settings.playingSongId is None else max(0, library.getSongIndexWithId(appCenter.settings.playingSongId))
+        except:
+            return 0
 
     def run(self) -> 'Application':
         self._mainWindow.show()
