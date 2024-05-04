@@ -102,7 +102,7 @@ class UpdateSongDialog(BaseDialog):
         title = self._titleInput.text().strip()
         artist = self._artistInput.text().strip()
 
-        if Strings.isBlank(title):
+        if Strings.isBlank(title) or len(title) > 128 or len(artist) > 64:
             self.__canUpdate = False
             self._acceptBtn.setDisabled(True)
             return

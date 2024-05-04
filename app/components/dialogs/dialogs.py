@@ -119,6 +119,7 @@ class _AlertDialog(BaseDialog):
     def _createUI(self) -> None:
         super()._createUI()
         self.setFixedWidth(360)
+        self._body.setContentsMargins(16, 16, 16, 0)
 
         self._image = Cover()
         self._image.setAlignment(Qt.AlignCenter)
