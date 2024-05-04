@@ -1,8 +1,9 @@
-from typing import Optional, Union
+from typing import Optional
 
-from PyQt5.QtCore import Qt
+from PyQt5.QtCore import Qt, pyqtSignal
 from PyQt5.QtWidgets import QWidget
 
+from app.common.models import Song
 from app.common.others import appCenter
 from app.components.scroll_areas import StyleScrollArea
 from app.components.widgets import Box, StyleWidget
@@ -10,10 +11,13 @@ from app.views.home.songs_table.dialogs.select_playlist_songs_dialog.select_play
 
 
 class MenuBody(StyleScrollArea):
+    songSelected = pyqtSignal(Song)
+    songUnSelected = pyqtSignal(Song)
 
     def __init__(self, parent: Optional[QWidget] = None) -> None:
-        super().__init__(parent)
+        self.__rowDict: dict[str, SongRow] = {}
 
+        super().__init__(parent)
         self._initComponent()
         self.__setSongs()
 
@@ -31,14 +35,15 @@ class MenuBody(StyleScrollArea):
 
         self.setWidget(self._menu)
 
-    def addWidget(self, widget: QWidget, stretch: int = None, alignment: Union[Qt.Alignment, Qt.AlignmentFlag] = None) -> None:
-        self._mainLayout.addWidget(widget, stretch, alignment)
-
-    def removeWidget(self, widget: QWidget) -> None:
-        self._mainLayout.removeWidget(widget)
-
     def __setSongs(self) -> None:
         for song in appCenter.library.getSongs().getSongs():
             songRow = SongRow(song)
             songRow.applyTheme()
-            self.addWidget(songRow)
+            songRow.checked.connect(lambda: self.songSelected.emit(song))
+            songRow.unchecked.connect(lambda: self.songUnSelected.emit(song))
+            self._mainLayout.addWidget(songRow)
+            self.__rowDict[song.getId()] = songRow
+
+    def setSelectedSongs(self, songs: list[Song]) -> None:
+        for song in songs:
+            self.__rowDict[song.getId()].select()

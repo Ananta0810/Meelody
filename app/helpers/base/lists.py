@@ -13,6 +13,10 @@ class Lists:
         return list(itertools.chain.from_iterable(collection))
 
     @staticmethod
+    def clone(collection: list[T]) -> list[T]:
+        return [item for item in collection]
+
+    @staticmethod
     def findMoved(originalList: list[T], newList: list[T]) -> (int, int):
         if len(originalList) != len(newList):
             return -1, -1  # different length

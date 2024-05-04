@@ -1,6 +1,6 @@
 from PyQt5.QtCore import Qt
 
-from app.common.models import Playlist
+from app.common.models import Playlist, Song
 from app.components.base import ActionButton, Factory
 from app.components.dialogs import BaseDialog
 from app.components.widgets import StyleWidget, FlexBox
@@ -11,10 +11,13 @@ from app.views.home.songs_table.dialogs.select_playlist_songs_dialog.select_play
 class SelectPlaylistSongsDialog(BaseDialog):
 
     def __init__(self, playlist: Playlist) -> None:
-        self.__playlist = playlist
+        self.__playlist: Playlist = playlist
+        self.__selectedSongs: Playlist.Songs = playlist.getSongs().clone()
 
         super().__init__()
         super()._initComponent()
+
+        self._menuBody.setSelectedSongs(self.__selectedSongs.getSongs())
 
     def _createUI(self) -> None:
         super()._createUI()
@@ -52,6 +55,11 @@ class SelectPlaylistSongsDialog(BaseDialog):
         self.addWidget(self._menuBody)
         self.addWidget(self._footer)
 
+    def _connectSignalSlots(self) -> None:
+        super()._connectSignalSlots()
+        self._menuBody.songSelected.connect(self._selectSong)
+        self._menuBody.songUnSelected.connect(self._unSelectSong)
+
     def applyLightMode(self) -> None:
         super().applyLightMode()
         self.applyThemeToChildren()
@@ -64,3 +72,9 @@ class SelectPlaylistSongsDialog(BaseDialog):
         self.moveToCenter()
         self.applyTheme()
         super().show()
+
+    def _selectSong(self, song: Song) -> None:
+        self.__selectedSongs.insert(song)
+
+    def _unSelectSong(self, song: Song) -> None:
+        self.__selectedSongs.removeSong(song)
