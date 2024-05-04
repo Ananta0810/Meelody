@@ -4,7 +4,8 @@ from PyQt5.QtCore import Qt, pyqtSignal
 from PyQt5.QtGui import QKeySequence
 from PyQt5.QtWidgets import QShortcut, QDialog, QDesktopWidget, QSizePolicy
 
-from app.components.base import CoverProps, Component, Cover, Factory, LabelWithDefaultText, ActionButton, Label
+from app.components.base import CoverProps, Component, Cover, Factory, ActionButton, Label
+from app.components.dialogs import BaseDialog
 from app.components.widgets import Box, StyleWidget, FlexBox
 from app.helpers.base import Numbers
 from app.resource.qt import Images
@@ -46,7 +47,7 @@ class _ConfirmDialog(QDialog, Component):
         self._cancelBtn = ActionButton()
         self._cancelBtn.setFont(Factory.createFont(family="Segoe UI Semibold", size=11))
         self._cancelBtn.setClassName("rounded-4 text-black border-gray-40 hover:bg-black-8 py-8 px-24")
-        self._acceptBtn.setMinimumWidth(64)
+        self._cancelBtn.setMinimumWidth(64)
 
         self._buttonBox = FlexBox()
         self._buttonBox.setSpacing(12)
@@ -109,62 +110,45 @@ class _ConfirmDialog(QDialog, Component):
         self.exec_()
 
 
-class _AlertDialog(QDialog, Component):
-    confirmed: pyqtSignal() = pyqtSignal()
-    canceled: pyqtSignal() = pyqtSignal()
+class _AlertDialog(BaseDialog):
 
     def __init__(self):
         super().__init__()
         self._initComponent()
 
     def _createUI(self) -> None:
-        self.setWindowFlags(Qt.Window | Qt.FramelessWindowHint | Qt.WindowMinMaxButtonsHint)
-        self.setAttribute(Qt.WA_TranslucentBackground)
-        self.setWindowModality(Qt.ApplicationModal)
-
-        self._inner = StyleWidget(self)
-        self._inner.setContentsMargins(24, 24, 24, 24)
-        self._inner.setClassName("rounded-12 bg-white dark:bg-dark")
-
-        self._mainLayout = Box(self._inner)
-        self._mainLayout.setAlignment(Qt.AlignCenter)
+        super()._createUI()
+        self.setFixedWidth(360)
 
         self._image = Cover()
         self._image.setAlignment(Qt.AlignCenter)
 
-        self._header = LabelWithDefaultText()
+        self._header = Label()
         self._header.setFont(Factory.createFont(family="Segoe UI Semibold", size=16, bold=True))
         self._header.setClassName("text-black dark:text-white")
-        self._header.enableEllipsis(False)
         self._header.setAlignment(Qt.AlignCenter)
 
-        self._message = LabelWithDefaultText()
+        self._message = Label()
         self._message.setFont(Factory.createFont(size=11))
         self._message.setClassName("text-black dark:text-white")
-        self._message.enableEllipsis(False)
         self._message.setAlignment(Qt.AlignCenter)
 
         self._acceptBtn = ActionButton()
         self._acceptBtn.setFont(Factory.createFont(family="Segoe UI Semibold", size=11))
 
-        self._mainLayout.addWidget(self._image)
-        self._mainLayout.addWidget(self._header)
-        self._mainLayout.addWidget(self._message)
-        self._mainLayout.addSpacing(8)
-        self._mainLayout.addWidget(self._acceptBtn)
+        self.addWidget(self._image)
+        self.addWidget(self._header)
+        self.addWidget(self._message)
+        self.addSpacing(8)
+        self.addWidget(self._acceptBtn)
 
     def _connectSignalSlots(self) -> None:
-        self._acceptBtn.clicked.connect(lambda: self.confirmed.emit())
-        self.confirmed.connect(lambda: self.close())
+        super()._connectSignalSlots()
+        self._acceptBtn.clicked.connect(lambda: self.closed.emit())
 
     def _assignShortcuts(self) -> None:
-        QShortcut(QKeySequence(Qt.Key_Return), self._acceptBtn).activated.connect(lambda: self.confirmed.emit())
-        QShortcut(QKeySequence(Qt.Key_Escape), self._acceptBtn).activated.connect(lambda: self.confirmed.emit())
-
-    def setFixedSize(self, w: int, h: int) -> None:
-        margins = self._inner.contentsMargins()
-        super().setFixedSize(w + margins.left() + margins.right(), h + margins.top() + margins.bottom())
-        self._inner.setFixedSize(w, h)
+        super()._assignShortcuts()
+        QShortcut(QKeySequence(Qt.Key_Return), self._acceptBtn).activated.connect(lambda: self.closed.emit())
 
     def setInfo(self, image: bytes, header: str, message: str, acceptText: str, onClose: Optional[callable]) -> None:
         self._image.setCover(CoverProps.fromBytes(image, width=128))
@@ -173,9 +157,7 @@ class _AlertDialog(QDialog, Component):
         self._acceptBtn.setText(acceptText)
 
         if onClose is not None:
-            self.confirmed.connect(lambda: onClose())
-
-        self.setFixedSize(360, self._inner.sizeHint().height())
+            self.closed.connect(lambda: onClose())
 
     def setState(self, state: str) -> None:
         if state == "info":
@@ -184,25 +166,6 @@ class _AlertDialog(QDialog, Component):
             self._acceptBtn.setClassName("text-white rounded-4 bg-danger-75 bg-danger py-8")
         if state == "success":
             self._acceptBtn.setClassName("text-white rounded-4 bg-danger-75 bg-success py-8")
-
-    def applyLightMode(self) -> None:
-        super().applyLightMode()
-        super().applyThemeToChildren()
-
-    def applyDarkMode(self) -> None:
-        super().applyDarkMode()
-        super().applyThemeToChildren()
-
-    def moveToCenter(self):
-        qtRectangle = self._inner.frameGeometry()
-        centerPoint = QDesktopWidget().availableGeometry().center()
-        qtRectangle.moveCenter(centerPoint)
-        self.move(qtRectangle.topLeft())
-
-    def open(self) -> None:
-        self.applyTheme()
-        self.moveToCenter()
-        self.exec_()
 
 
 @final
@@ -213,21 +176,21 @@ class Dialogs:
         dialog = _AlertDialog()
         dialog.setInfo(image, header, message, acceptText, onAccept)
         dialog.setState("info")
-        dialog.open()
+        dialog.show()
 
     @staticmethod
     def success(message: str, header: str = "Succeed", image: bytes = Images.SUCCESS, acceptText: str = "OK", onAccept: Optional[callable] = None):
         dialog = _AlertDialog()
         dialog.setInfo(image, header, message, acceptText, onAccept)
         dialog.setState("success")
-        dialog.open()
+        dialog.show()
 
     @staticmethod
     def alert(message: str, header: str = "Warning", image: bytes = Images.WARNING, acceptText: str = "OK", onAccept: Optional[callable] = None):
         dialog = _AlertDialog()
         dialog.setInfo(image, header, message, acceptText, onAccept)
         dialog.setState("danger")
-        dialog.open()
+        dialog.show()
 
     @staticmethod
     def confirm(

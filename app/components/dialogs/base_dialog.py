@@ -31,15 +31,15 @@ class BaseDialog(FramelessWindow):
         self._titleBar.setContentsMargins(8, 8, 8, 0)
 
         self._body = Box()
-        self._body.setContentsMargins(8, 8, 8, 0)
+        self._body.setContentsMargins(8, 8, 8, 8)
         self._body.setAlignment(Qt.AlignVCenter)
 
         super().addLayout(self._titleBar)
         super().addLayout(self._body)
 
     def _connectSignalSlots(self) -> None:
-        self._btnClose.clicked.connect(lambda: self.close())
         self._btnClose.clicked.connect(lambda: self.closed.emit())
+        self.closed.connect(lambda: self.close())
 
     def _assignShortcuts(self) -> None:
         cancelShortcut = QShortcut(QKeySequence(Qt.Key_Escape), self._btnClose)
@@ -64,3 +64,16 @@ class BaseDialog(FramelessWindow):
 
     def addSpacing(self, space: int) -> None:
         self._body.addSpacing(space)
+
+    def applyLightMode(self) -> None:
+        super().applyLightMode()
+        super().applyThemeToChildren()
+
+    def applyDarkMode(self) -> None:
+        super().applyDarkMode()
+        super().applyThemeToChildren()
+
+    def show(self) -> None:
+        self.applyTheme()
+        self.moveToCenter()
+        super().show()
