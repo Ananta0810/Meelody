@@ -2,7 +2,6 @@ import typing
 from typing import Optional, Union
 
 from PyQt5 import QtCore
-from PyQt5.QtCore import Qt
 from PyQt5.QtWidgets import QVBoxLayout, QWidget, QLayout, QHBoxLayout
 
 
@@ -52,7 +51,6 @@ class FlexBox(QHBoxLayout):
         super().__init__(parent)
         self.setSpacing(0)
         self.setContentsMargins(0, 0, 0, 0)
-        self.setAlignment(Qt.AlignHCenter | Qt.AlignLeft)
 
     def addLayout(self, layout: Optional[QLayout], stretch: int = None) -> None:
         if stretch is None:

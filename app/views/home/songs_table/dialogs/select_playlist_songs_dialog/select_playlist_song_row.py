@@ -1,7 +1,7 @@
 from typing import Optional
 
 from PyQt5 import QtGui
-from PyQt5.QtCore import pyqtSignal
+from PyQt5.QtCore import pyqtSignal, Qt
 
 from app.common.models import Song
 from app.components.base import Cover, Factory, LabelWithDefaultText, CoverProps, CheckBox
@@ -30,6 +30,7 @@ class SongRow(ExtendableStyleWidget):
         self._mainLayout = FlexBox()
         self._mainLayout.setContentsMargins(0, 8, 0, 8)
         self._mainLayout.setSpacing(0)
+        self._mainLayout.setAlignment(Qt.AlignHCenter | Qt.AlignLeft)
         self.setLayout(self._mainLayout)
 
         # ================================================= INFO  =================================================

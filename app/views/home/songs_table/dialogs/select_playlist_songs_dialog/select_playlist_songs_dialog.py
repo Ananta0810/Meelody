@@ -13,11 +13,12 @@ class SelectPlaylistSongsDialog(BaseDialog):
     def __init__(self, playlist: Playlist) -> None:
         self.__playlist: Playlist = playlist
         self.__selectedSongs: Playlist.Songs = playlist.getSongs().clone()
+        self.__playlistSongIds: list[str] = self.__songIdsOf(playlist.getSongs().getSongs())
 
         super().__init__()
         super()._initComponent()
 
-        self._menuBody.setSelectedSongs(self.__selectedSongs.getSongs())
+        self._menuBody.setSelectedSongs(playlist.getSongs().getSongs())
 
     def _createUI(self) -> None:
         super()._createUI()
@@ -45,9 +46,10 @@ class SelectPlaylistSongsDialog(BaseDialog):
 
         self._applyBtn = ActionButton()
         self._applyBtn.setFont(Factory.createFont(family="Segoe UI Semibold", size=10))
-        self._applyBtn.setClassName("text-white rounded-4 bg-black-90 hover:bg-black py-8 px-24")
+        self._applyBtn.setClassName("text-white rounded-4 bg-black-90 hover:bg-black py-8 px-24 disabled:bg-gray-10 disabled:text-gray")
         self._applyBtn.setMinimumWidth(64)
         self._applyBtn.setText("Save")
+        self._applyBtn.setDisabled(True)
 
         self._footerLayout.addWidget(self._applyBtn)
 
@@ -59,6 +61,7 @@ class SelectPlaylistSongsDialog(BaseDialog):
         super()._connectSignalSlots()
         self._menuBody.songSelected.connect(self._selectSong)
         self._menuBody.songUnSelected.connect(self._unSelectSong)
+        self._applyBtn.clicked.connect(self._savePlaylist)
 
     def applyLightMode(self) -> None:
         super().applyLightMode()
@@ -74,7 +77,25 @@ class SelectPlaylistSongsDialog(BaseDialog):
         super().show()
 
     def _selectSong(self, song: Song) -> None:
-        self.__selectedSongs.insert(song)
+        if not self.__selectedSongs.hasSong(song):
+            self.__selectedSongs.insert(song)
+            self._checkCanSave()
 
     def _unSelectSong(self, song: Song) -> None:
-        self.__selectedSongs.removeSong(song)
+        if self.__selectedSongs.hasSong(song):
+            self.__selectedSongs.removeSong(song)
+            self._checkCanSave()
+
+    def _checkCanSave(self) -> None:
+        canSave = self.__playlistSongIds != self.__songIdsOf(self.__selectedSongs.getSongs())
+        self._applyBtn.setDisabled(not canSave)
+
+    def _savePlaylist(self) -> None:
+        songs = self.__selectedSongs.getSongs()
+        print(self.__selectedSongs)
+        self.__playlist.getSongs().setSongs(songs)
+        self.close()
+
+    @staticmethod
+    def __songIdsOf(songs: list[Song]) -> list[str]:
+        return sorted([song.getId() for song in songs])

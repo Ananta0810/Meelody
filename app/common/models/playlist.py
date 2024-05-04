@@ -66,6 +66,10 @@ class Playlist:
             if songs is not None:
                 self.insertAll(songs)
 
+        def setSongs(self, songs: list[Song]) -> None:
+            self.__songs = []
+            self.insertAll(songs)
+
         def __str__(self):
             string = ""
             for index, song in enumerate(self.__songs):
@@ -144,6 +148,7 @@ class Playlist:
             if songs is not None:
                 for song in songs:
                     self.insert(song)
+                self.updated.emit()
 
         def removeSong(self, song: Song) -> None:
             self.__songs.remove(song)

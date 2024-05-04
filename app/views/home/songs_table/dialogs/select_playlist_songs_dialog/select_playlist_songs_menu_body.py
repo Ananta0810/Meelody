@@ -39,8 +39,8 @@ class MenuBody(StyleScrollArea):
         for song in appCenter.library.getSongs().getSongs():
             songRow = SongRow(song)
             songRow.applyTheme()
-            songRow.checked.connect(lambda: self.songSelected.emit(song))
-            songRow.unchecked.connect(lambda: self.songUnSelected.emit(song))
+            songRow.checked.connect(lambda _song: self.songSelected.emit(_song))
+            songRow.unchecked.connect(lambda _song: self.songUnSelected.emit(_song))
             self._mainLayout.addWidget(songRow)
             self.__rowDict[song.getId()] = songRow
 
