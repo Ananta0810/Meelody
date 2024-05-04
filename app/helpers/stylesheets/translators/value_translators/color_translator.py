@@ -3,7 +3,7 @@ from typing import List, Optional
 from app.helpers.stylesheets import Color, Colors
 from app.helpers.stylesheets.translators.value_translators.value_translator import ValueTranslator
 
-variants: dict[str, Color] = {
+_VARIANTS: dict[str, Color] = {
     "primary": Colors.PRIMARY,
 
     "success": Colors.SUCCESS,
@@ -15,6 +15,11 @@ variants: dict[str, Color] = {
     "black": Colors.BLACK,
     "gray": Colors.GRAY,
     "none": Colors.NONE,
+}
+
+_CONTRAST_BACKGROUNDS: dict[str, Color] = {
+    "b": Colors.BLACK,
+    "w": Colors.WHITE
 }
 
 
@@ -33,21 +38,36 @@ class ColorTranslator(ValueTranslator[str]):
 
         # ex: gray-12, white-10, black-50...
         if length == 2:
-            variant, opacity = parts
+            variant, mayBeOpacity = parts
 
-            if variant not in variants:
+            if variant not in _VARIANTS:
                 raise ValueError(f"Class name is not supported: {cn}. Variant '{variant}' is not existed.")
 
-            color = variants[variant]
-            opacity = int(opacity)
+            color = _VARIANTS[variant]
 
-            return color.withOpacity(opacity).toStylesheet()
+            isSolidColor = mayBeOpacity.startswith("[") and mayBeOpacity.endswith("]")
+            if not isSolidColor:
+                opacity = int(mayBeOpacity)
+                return color.darken(opacity / 100).toStylesheet() if opacity > 100 else color.withOpacity(opacity).toStylesheet()
+
+            mayBeOpacity = mayBeOpacity[1:-1]
+            contrastBg = mayBeOpacity.rstrip('0123456789')
+            opacity = mayBeOpacity[len(contrastBg):]
+
+            if contrastBg not in _CONTRAST_BACKGROUNDS:
+                raise ValueError(f"Class name is not supported: {cn}. contrast background '{contrastBg}' is not existed.")
+
+            contrastBackgroundColor = _CONTRAST_BACKGROUNDS[contrastBg]
+            opacity_ = int(opacity)
+
+            newColor = color.darken(opacity_ / 100) if opacity_ > 100 else color.withOpacity(opacity_)
+            return newColor.toSolidColor(contrastBackgroundColor).toStylesheet()
 
         # This can be primary, danger, warning or custom color such as [rgb(128, 128, 128)]
         color = parts[0]
 
-        if color in variants:
-            return variants[color].toStylesheet()
+        if color in _VARIANTS:
+            return _VARIANTS[color].toStylesheet()
 
         if not color.startswith("[") and color.endswith("]"):
             raise ValueError(f"Class name is not supported: {cn}. This is not in custom color format")
