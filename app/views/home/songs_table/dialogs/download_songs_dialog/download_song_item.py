@@ -1,4 +1,3 @@
-import os
 from datetime import datetime
 from typing import Callable
 from typing import Optional
@@ -112,10 +111,8 @@ class DownloadSongItem(ExtendableStyleWidget):
         super().applyDarkMode()
         super().applyThemeToChildren()
 
-    def download(self, url: str) -> None:
-        yt = YouTube(url)
-
-        self.setTitle(yt.title)
+    def download(self, yt: YouTube, title: str, artist: str) -> None:
+        self.setTitle(Strings.join(" | ", [title, artist if Strings.isNotBlank(artist) else None]))
 
         downloadSongThread = DownloadSongThread(yt, onDownloading=self.__onDownloading)
         loadingAnimationThread = UpdateUIThread(action=lambda: self.__onLoading(), interval=250)
@@ -123,7 +120,7 @@ class DownloadSongItem(ExtendableStyleWidget):
 
         downloadSongThread.loaded.connect(loadingAnimationThread.quit)
         downloadSongThread.loaded.connect(downloadingAnimationThread.start)
-        downloadSongThread.downloadSucceed.connect(lambda path: self.__markSucceed())
+        downloadSongThread.downloadSucceed.connect(lambda path: self.__createSong(path, title, artist))
         downloadSongThread.downloadSucceed.connect(lambda path: downloadingAnimationThread.quit())
         downloadSongThread.downloadFailed.connect(lambda exception: self.__markFailed(exception))
         downloadSongThread.downloadFailed.connect(lambda exception: loadingAnimationThread.quit())
@@ -148,6 +145,10 @@ class DownloadSongItem(ExtendableStyleWidget):
         description = f"{int(percentage)}%  |  {downloadedStr}/{totalStr}  |  estimate: {Times.toString(estimateTime)}"
         self.setProgress(percentage)
         self.setDescription(description)
+
+    def __createSong(self, path: str, title: str, artist: str) -> None:
+        # TODO: Update this.
+        pass
 
     def __markSucceed(self) -> None:
         self._gif.hide()
@@ -184,11 +185,7 @@ class DownloadSongThread(QThread):
             self.__ytb.register_on_progress_callback(
                 lambda stream, chunk, bytesRemaining: self.__onProgress(stream, bytesRemaining, downloadStartTime))
             downloadedFile = self.__ytb.streams.filter(abr='160kbps', only_audio=True).last().download("library/download")
-
-            base, ext = os.path.splitext(downloadedFile)
-            newFile = base + '.mp3'
-            os.rename(downloadedFile, newFile)
-            self.downloadSucceed.emit(newFile)
+            self.downloadSucceed.emit(downloadedFile)
         except Exception as e:
             self.downloadFailed.emit(e)
 

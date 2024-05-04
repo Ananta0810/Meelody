@@ -76,12 +76,17 @@ class DownloadSongsDialog(BaseDialog):
         try:
             ytb = YouTube(self._input.text().strip())
             dialog = SongInfoDialog(ytb)
+            dialog.acceptDownload.connect(lambda yt, title, artist: self.__downloadSong(yt, title, artist))
             dialog.show()
         except RegexMatchError as e:
             Dialogs.alert(header="Warning", message="Invalid youtube video url.")
         except Exception as e:
             print(e)
             Dialogs.alert(header="Warning", message="Youtube video is not found.")
+
+    def __downloadSong(self, ytb: YouTube, title: str, artist: str) -> None:
+        item = self._menu.addItem()
+        item.download(ytb, title, artist)
 
 
 class SongInfoDialog(BaseDialog):
@@ -165,6 +170,7 @@ class SongInfoDialog(BaseDialog):
 
         self._titleInput.changed.connect(lambda text: self.__checkValid())
         self._artistInput.changed.connect(lambda text: self.__checkValid())
+        self._acceptBtn.clicked.connect(lambda: self._download())
 
     def _assignShortcuts(self) -> None:
         super()._assignShortcuts()
@@ -182,6 +188,17 @@ class SongInfoDialog(BaseDialog):
 
         self.__canUpdate = True
         self._acceptBtn.setDisabled(False)
+
+    def _download(self) -> None:
+        self.__checkValid()
+        if not self.__canUpdate:
+            return
+
+        title = self._titleInput.text().strip()
+        artist = self._artistInput.text().strip()
+
+        self.acceptDownload.emit(self.__ytb, title, artist)
+        self.close()
 
     def show(self) -> None:
         self.moveToCenter()
