@@ -1,4 +1,4 @@
-from typing import List
+from typing import List, Optional
 
 from app.helpers.stylesheets import Color, Colors
 from app.helpers.stylesheets.translators.value_translators.value_translator import ValueTranslator
@@ -18,24 +18,39 @@ variants: dict[str, Color] = {
 }
 
 
-class ColorTranslator(ValueTranslator[Color]):
+class ColorTranslator(ValueTranslator[str]):
 
-    def translate(self, classNames: List[str]) -> Color:
-        colorsFound = [self.transform(cn) for cn in classNames if self.isValid(cn)]
+    def translate(self, classNames: List[str]) -> str:
+        colorsFound = [self.transform(cn) for cn in classNames]
         return colorsFound[0]
 
-    def isValid(self, cn: str) -> bool:
+    @staticmethod
+    def transform(cn: str) -> Optional[str]:
         parts = cn.split("-")
         length = len(parts)
-        if length <= 2:
-            return parts[0] in variants
-        return False
+        if length > 2:
+            raise ValueError(f"Class name is not supported: {cn}")
 
-    def transform(self, cn: str) -> Color:
-        parts = cn.split("-")
-        color_variant = parts[0]
-        color = variants[color_variant]
-        try:
-            return color.withOpacity(int(parts[-1]))
-        except ValueError:
-            return color
+        # ex: gray-12, white-10, black-50...
+        if length == 2:
+            variant, opacity = parts
+
+            if variant not in variants:
+                raise ValueError(f"Class name is not supported: {cn}. Variant '{variant}' is not existed.")
+
+            color = variants[variant]
+            opacity = int(opacity)
+
+            return color.withOpacity(opacity).toStylesheet()
+
+        # This can be primary, danger, warning or custom color such as [rgb(128, 128, 128)]
+        color = parts[0]
+
+        if color in variants:
+            return variants[color].toStylesheet()
+
+        if not color.startswith("[") and color.endswith("]"):
+            raise ValueError(f"Class name is not supported: {cn}. This is not in custom color format")
+
+        customColor = color[1:-1]
+        return customColor

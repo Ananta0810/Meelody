@@ -30,7 +30,7 @@ def _toProps(cn: ClassName) -> (Optional[str], str, int | str | Color):
     return _ALL_DIRECTIONS, key, value
 
 
-def _toProps0(value: Optional[str]) -> (str, int | str | Color):
+def _toProps0(value: Optional[str]) -> (str, int | str):
     if Strings.isBlank(value):
         return "size", 1
 
@@ -47,9 +47,9 @@ def _toProps0(value: Optional[str]) -> (str, int | str | Color):
 
 
 class BorderTranslator(PropsTranslator):
-    __defaultSize = 1
-    __defaultColor = Color(128, 128, 128)
-    __defaultStyle = "solid"
+    __defaultSize: int = 1
+    __defaultColor: str = Color(128, 128, 128).toStylesheet()
+    __defaultStyle: str = "solid"
 
     def ids(self) -> set[str]:
         return {"border"}
@@ -63,7 +63,7 @@ class BorderTranslator(PropsTranslator):
         color = generalProps.get('color', BorderTranslator.__defaultColor)
         style = generalProps.get('style', BorderTranslator.__defaultStyle)
 
-        props = [f"border: {size}px {style} {color.toStylesheet()}"]
+        props = [f"border: {size}px {style} {color}"]
 
         for direction, details in directions.items():
             if direction == _ALL_DIRECTIONS:
@@ -75,6 +75,6 @@ class BorderTranslator(PropsTranslator):
             directionColor = directionProps.get('color', color)
             directionStyle = directionProps.get('style', style)
 
-            props.append(f"border-{_DIRECTIONS[direction]}: {directionSize}px {directionStyle} {directionColor.toStylesheet()}")
+            props.append(f"border-{_DIRECTIONS[direction]}: {directionSize}px {directionStyle} {directionColor}")
 
         return Strings.joinStyles(props)
