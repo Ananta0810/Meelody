@@ -87,17 +87,32 @@ class SongsMenu(SmoothVerticalScrollArea):
 
     def __setPlaylistSongs(self, songs: list[Song]) -> None:
         self.__menuReset.emit()
-        self.__updateTitleMaps(songs)
 
         if len(songs) > len(self.__songRowDict):
-            for song in songs:
-                if song.getId() in self.__songRowDict:
-                    continue
-                songRow = SongRow(song)
-                songRow.hide()
-                songRow.applyTheme()
-                self.addWidget(songRow)
-                self.__songRowDict[song.getId()] = songRow
+            firstLoad = len(self.__songRowDict) == 0
+
+            if firstLoad:
+                for index, song in enumerate(songs):
+                    songRow = SongRow(song)
+                    songRow.applyTheme()
+                    songRow.hide()
+                    self.addWidget(songRow)
+                    self.__songRowDict[song.getId()] = songRow
+            else:
+                # We are adding some new songs, may be after downloaded songs or import from explorer.
+                for index, song in enumerate(songs):
+                    if song.getId() in self.__songRowDict:
+                        continue
+                    songRow = SongRow(song)
+
+                    self.insertWidget(index, songRow)
+                    self.__songRowDict[song.getId()] = songRow
+
+                    self.__loadCoverFor(songRow)
+                    songRow.applyTheme()
+                    songRow.show()
+
+            self.__updateTitleMaps(songs)
             return
 
         rows = [self.__songRowDict.get(song.getId()) for song in songs]

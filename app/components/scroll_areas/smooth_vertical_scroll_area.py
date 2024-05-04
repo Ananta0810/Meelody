@@ -48,6 +48,10 @@ class SmoothVerticalScrollArea(StyleScrollArea):
         self._mainLayout.addWidget(widget, stretch, alignment)
         self.__widgets.append(widget)
 
+    def insertWidget(self, index: int, widget: QWidget, stretch: int = None, alignment: Union[Qt.Alignment, Qt.AlignmentFlag] = None) -> None:
+        self._mainLayout.insertWidget(index, widget, stretch, alignment)
+        self.__widgets.insert(index, widget)
+
     def removeWidget(self, widget: QWidget) -> None:
         self._mainLayout.removeWidget(widget)
         self.__widgets.remove(widget)

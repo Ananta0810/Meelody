@@ -148,6 +148,14 @@ class SongRow(ExtendableStyleWidget):
 
         musicPlayer.songChanged.connect(self.__checkEditable)
 
+    def applyLightMode(self) -> None:
+        super().applyLightMode()
+        self.applyThemeToChildren()
+
+    def applyDarkMode(self) -> None:
+        super().applyDarkMode()
+        self.applyThemeToChildren()
+
     def __checkEditable(self, song: Song) -> None:
         self.setEditable(song != self.__song)
 
@@ -159,8 +167,8 @@ class SongRow(ExtendableStyleWidget):
         return self.__song
 
     def show(self) -> None:
-        super().show()
         self.showMoreButtons(False)
+        super().show()
 
     def loadCover(self) -> None:
         self.__song.loadCover()

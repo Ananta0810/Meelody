@@ -50,8 +50,8 @@ class Strings:
 
     @staticmethod
     def compare(text: str, other: str) -> int:
-        text = Strings.unaccent(text)
-        other = Strings.unaccent(other)
+        text = Strings.unaccent(text).lower()
+        other = Strings.unaccent(other).lower()
         if text < other:
             return -1
         if text > other:

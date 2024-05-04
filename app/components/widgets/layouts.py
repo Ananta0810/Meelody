@@ -30,6 +30,23 @@ class Box(QVBoxLayout):
             else:
                 super().addWidget(widget, stretch=stretch, alignment=alignment)
 
+    def insertWidget(
+        self,
+        index: int,
+        widget: Optional[QWidget], stretch: int = None,
+        alignment: Union[QtCore.Qt.Alignment, QtCore.Qt.AlignmentFlag] = None
+    ) -> None:
+        if stretch is None:
+            if alignment is None:
+                super().insertWidget(index, widget)
+            else:
+                super().insertWidget(index, widget, alignment=alignment)
+        else:
+            if alignment is None:
+                super().insertWidget(index, widget, stretch=stretch)
+            else:
+                super().insertWidget(index, widget, stretch=stretch, alignment=alignment)
+
     def addStretch(self, stretch: int = None) -> None:
         if stretch is None:
             super().addStretch()
@@ -69,6 +86,23 @@ class FlexBox(QHBoxLayout):
                 super().addWidget(widget, stretch=stretch)
             else:
                 super().addWidget(widget, stretch=stretch, alignment=alignment)
+
+    def insertWidget(
+        self,
+        index: int,
+        widget: Optional[QWidget], stretch: int = None,
+        alignment: Union[QtCore.Qt.Alignment, QtCore.Qt.AlignmentFlag] = None
+    ) -> None:
+        if stretch is None:
+            if alignment is None:
+                super().insertWidget(index, widget)
+            else:
+                super().insertWidget(index, widget, alignment=alignment)
+        else:
+            if alignment is None:
+                super().insertWidget(index, widget, stretch=stretch)
+            else:
+                super().insertWidget(index, widget, stretch=stretch, alignment=alignment)
 
     def addStretch(self, stretch: int = None) -> None:
         if stretch is None:
