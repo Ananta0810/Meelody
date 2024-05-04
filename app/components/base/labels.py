@@ -15,6 +15,7 @@ class EllipsisLabel(QLabel, Component):
 
         self.__text: str = ""
         self.__ellipsis: bool = True
+        self.enableEllipsis(True)
 
         super()._initComponent()
 
