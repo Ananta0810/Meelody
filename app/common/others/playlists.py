@@ -5,12 +5,19 @@ from .database import database
 
 
 class Playlists(QObject):
+    loaded = pyqtSignal()
     changed = pyqtSignal(list)
 
     def __init__(self) -> None:
         super().__init__()
         self.__items = []
         self.changed.connect(lambda playlists_: self.__updateToDatabase())
+
+    def load(self, items: list[Playlist]) -> None:
+        for item in items:
+            self.__items.append(item)
+            item.getSongs().updated.connect(lambda: self.__updateToDatabase())
+        self.loaded.emit()
 
     def append(self, item: Playlist) -> None:
         self.__items.append(item)

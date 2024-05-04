@@ -32,7 +32,7 @@ class ApplicationCenter(QObject):
         self.currentPlaylistChanged.emit(playlist)
 
     def setPlaylists(self, playlists: list[Playlist]) -> None:
-        self.playlists.appendAll(playlists)
+        self.playlists.load(playlists)
 
 
 appCenter = ApplicationCenter()

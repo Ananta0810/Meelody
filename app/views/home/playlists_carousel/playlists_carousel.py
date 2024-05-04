@@ -60,8 +60,9 @@ class PlaylistsCarousel(QScrollArea, Component):
         self._mainLayout.addStretch()
 
     def _connectSignalSlots(self) -> None:
-        appCenter.playlists.changed.connect(self.setPlaylists)
-        self._addPlaylistBtn.clicked.connect(self.__openNewPlaylistDialog)
+        appCenter.playlists.loaded.connect(lambda: self.setPlaylists(appCenter.playlists.items()))
+        appCenter.playlists.changed.connect(lambda playlists: self.setPlaylists(playlists))
+        self._addPlaylistBtn.clicked.connect(lambda: self.__openNewPlaylistDialog())
 
     def wheelEvent(self, event):
         delta = event.angleDelta().y()
