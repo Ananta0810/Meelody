@@ -19,7 +19,7 @@ class SmoothVerticalScrollArea(StyleScrollArea):
         self.__widgets: list[QWidget] = []
         self.__visibleWidgetIndexes: set[int] = set()
 
-        self.__animation = QVariantAnimation(self, valueChanged=self.__smoothScroll, duration=1000)
+        self.__animation = QVariantAnimation(self, valueChanged=lambda v: self.__smoothScroll(v))
         self.__animation.setEasingCurve(QEasingCurve.OutCubic)
 
     def _createUI(self) -> None:
@@ -83,10 +83,17 @@ class SmoothVerticalScrollArea(StyleScrollArea):
         try:
             item = self.__widgets[index]
             itemPosition = item.mapToParent(self.pos()) - self.__widgets[0].mapToParent(self.pos())
+
+            currentPosition = self.verticalScrollBar().value()
             targetPosition: int = Numbers.clamp(itemPosition.y(), 0, self.verticalScrollBar().maximum())
 
+            distance = abs(targetPosition - currentPosition)
+
+            duration = 1000 if distance > item.height() else (distance * 1000 // item.height())
+
             self.__animation.stop()
-            self.__animation.setStartValue(self.verticalScrollBar().value())
+            self.__animation.setDuration(duration)
+            self.__animation.setStartValue(currentPosition)
             self.__animation.setEndValue(targetPosition)
             self.__animation.start()
         except IndexError:
