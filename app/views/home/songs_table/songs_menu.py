@@ -9,7 +9,7 @@ from app.common.models import Song, Playlist
 from app.common.others import appCenter, musicPlayer
 from app.components.events import VisibleObserver
 from app.components.scroll_areas import SmoothVerticalScrollArea
-from app.helpers.base import Lists
+from app.helpers.base import Lists, Strings
 from app.views.home.songs_table.song_row import SongRow
 
 MAX_ITEMS_VISIBLE_ON_MENU = 6
@@ -24,7 +24,11 @@ class SongsMenu(SmoothVerticalScrollArea):
 
         self.__coverLoadedSongIds: set[str] = set()
         self.__songRowDict: dict[str, SongRow] = {}
+
+        # This map is used to find the index of the playing song in the playlist to navigate to.
         self.__titles: dict[str, int] = {}
+
+        # This map is used to navigate to songs by key.
         self.__titleKeys: dict[str, list[int]] = {}
 
         self._initComponent()
@@ -32,7 +36,7 @@ class SongsMenu(SmoothVerticalScrollArea):
     def _createUI(self) -> None:
         super()._createUI()
         self.setClassName("scroll/bg-primary-50 scroll/hover:bg-primary scroll/rounded-2")
-        self.setContentsMargins(8, 0, 8, 8)
+        self.setContentsMargins(8, 0, 8, 0)
 
     def _connectSignalSlots(self) -> None:
         super()._connectSignalSlots()
@@ -55,12 +59,15 @@ class SongsMenu(SmoothVerticalScrollArea):
         if not isHoldingAlt:
             return
         try:
-            key = chr(event.key())
+            key = event.key()
+            print(key)
+            key = chr(key)
             index = self.__findSongPositionToScroll(key)
             if index == -1:
                 return
             self.scrollToItemAt(index)
-        except ValueError:
+        except ValueError as e:
+            print(e)
             pass
 
     def __findSongPositionToScroll(self, key: str) -> int:
@@ -169,7 +176,7 @@ class SongsMenu(SmoothVerticalScrollArea):
 
         self.__titleKeys = {}
         for index, song in enumerate(songs):
-            firstChar = song.getTitle()[0]
+            firstChar = Strings.unaccent(song.getTitle()[0].upper())
             if firstChar not in self.__titleKeys:
                 self.__titleKeys[firstChar] = []
             self.__titleKeys[firstChar].append(index)
