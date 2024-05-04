@@ -26,16 +26,16 @@ class SingletonApplication(QApplication):
         if not self.memory.create(1):
             raise RuntimeError(self.memory.errorString())
 
-        self.server.newConnection.connect(self.__onNewConnection)
+        self.server.newConnection.connect(lambda: self.__onNewConnection())
         self.server.listen(key)
 
-    def __onNewConnection(self):
+    def __onNewConnection(self) -> None:
         socket = self.server.nextPendingConnection()
         if socket.waitForReadyRead(self.timeout):
             self.messageSent.emit(socket.readAll().data().decode('utf-8'))
             socket.disconnectFromServer()
 
-    def sendMessage(self, message: str):
+    def sendMessage(self, message: str) -> None:
         """ send message to another application """
         if not self.isRunning:
             return

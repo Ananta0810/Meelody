@@ -63,17 +63,17 @@ class _ConfirmDialog(QDialog, Component):
         self._mainLayout.addLayout(self._buttonBox)
 
     def _connectSignalSlots(self) -> None:
-        self._acceptBtn.clicked.connect(self.confirmed.emit)
-        self._cancelBtn.clicked.connect(self.canceled.emit)
-        self.confirmed.connect(self.close)
-        self.canceled.connect(self.close)
+        self._acceptBtn.clicked.connect(lambda: self.confirmed.emit())
+        self._cancelBtn.clicked.connect(lambda: self.canceled.emit())
+        self.confirmed.connect(lambda: self.close())
+        self.canceled.connect(lambda: self.close())
 
     def _assignShortcuts(self) -> None:
         acceptShortcut = QShortcut(QKeySequence(Qt.Key_Return), self._acceptBtn)
-        acceptShortcut.activated.connect(self.confirmed.emit)
+        acceptShortcut.activated.connect(lambda: self.confirmed.emit())
 
         cancelShortcut = QShortcut(QKeySequence(Qt.Key_Escape), self._cancelBtn)
-        cancelShortcut.activated.connect(self.canceled.emit)
+        cancelShortcut.activated.connect(lambda: self.canceled.emit())
 
     def setFixedSize(self, w: int, h: int) -> None:
         margins = self._inner.contentsMargins()
@@ -154,12 +154,12 @@ class _AlertDialog(QDialog, Component):
         self._mainLayout.addWidget(self._acceptBtn)
 
     def _connectSignalSlots(self) -> None:
-        self._acceptBtn.clicked.connect(self.confirmed.emit)
-        self.confirmed.connect(self.close)
+        self._acceptBtn.clicked.connect(lambda: self.confirmed.emit())
+        self.confirmed.connect(lambda: self.close())
 
     def _assignShortcuts(self) -> None:
-        QShortcut(QKeySequence(Qt.Key_Return), self._acceptBtn).activated.connect(self.confirmed.emit)
-        QShortcut(QKeySequence(Qt.Key_Escape), self._acceptBtn).activated.connect(self.confirmed.emit)
+        QShortcut(QKeySequence(Qt.Key_Return), self._acceptBtn).activated.connect(lambda: self.confirmed.emit())
+        QShortcut(QKeySequence(Qt.Key_Escape), self._acceptBtn).activated.connect(lambda: self.confirmed.emit())
 
     def setFixedSize(self, w: int, h: int) -> None:
         margins = self._inner.contentsMargins()

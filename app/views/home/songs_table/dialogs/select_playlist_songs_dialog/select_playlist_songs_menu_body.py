@@ -31,7 +31,7 @@ class MenuBody(SmoothVerticalScrollArea):
 
     def _connectSignalSlots(self) -> None:
         super()._connectSignalSlots()
-        self.__keyPressed.connect(self.__onKeyPressed)
+        self.__keyPressed.connect(lambda e: self.__onKeyPressed(e))
 
     def keyPressEvent(self, event: QKeyEvent) -> None:
         super().keyPressEvent(event)

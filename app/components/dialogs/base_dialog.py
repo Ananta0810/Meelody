@@ -38,12 +38,12 @@ class BaseDialog(FramelessWindow):
         super().addLayout(self._body)
 
     def _connectSignalSlots(self) -> None:
-        self._btnClose.clicked.connect(self.close)
+        self._btnClose.clicked.connect(lambda: self.close())
         self._btnClose.clicked.connect(lambda: self.closed.emit())
 
     def _assignShortcuts(self) -> None:
         cancelShortcut = QShortcut(QKeySequence(Qt.Key_Escape), self._btnClose)
-        cancelShortcut.activated.connect(self._btnClose.click)
+        cancelShortcut.activated.connect(lambda: self._btnClose.click())
 
     def setFixedWidth(self, w: int) -> None:
         super().setFixedWidth(w)

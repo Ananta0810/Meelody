@@ -59,9 +59,9 @@ class SelectPlaylistSongsDialog(BaseDialog):
 
     def _connectSignalSlots(self) -> None:
         super()._connectSignalSlots()
-        self._menuBody.songSelected.connect(self._selectSong)
-        self._menuBody.songUnSelected.connect(self._unSelectSong)
-        self._applyBtn.clicked.connect(self._savePlaylist)
+        self._menuBody.songSelected.connect(lambda song: self._selectSong(song))
+        self._menuBody.songUnSelected.connect(lambda song: self._unSelectSong(song))
+        self._applyBtn.clicked.connect(lambda: self._savePlaylist())
 
     def applyLightMode(self) -> None:
         super().applyLightMode()

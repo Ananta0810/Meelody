@@ -111,7 +111,7 @@ class LibraryPlaylistCard(PlaylistCard):
 
     def _connectSignalSlots(self) -> None:
         super()._connectSignalSlots()
-        self.clicked.connect(self.__selectLibraryPlaylist)
+        self.clicked.connect(lambda: self.__selectLibraryPlaylist())
 
     @staticmethod
     def __selectLibraryPlaylist():
@@ -135,7 +135,7 @@ class FavouritePlaylistCard(PlaylistCard):
 
         self._editCoverBtn = Factory.createIconButton(size=Icons.MEDIUM, padding=Paddings.RELATIVE_50)
         self._editCoverBtn.setLightModeIcon(Icons.IMAGE.withColor(Colors.WHITE))
-        self._editCoverBtn.setClassName("rounded-full bg-primary-75 hover:bg-primary-100")
+        self._editCoverBtn.setClassName("rounded-full bg-primary-[w75] hover:bg-primary")
 
         self._topLayout = QHBoxLayout()
         self._topLayout.addStretch(1)
@@ -146,8 +146,8 @@ class FavouritePlaylistCard(PlaylistCard):
 
     def _connectSignalSlots(self) -> None:
         super()._connectSignalSlots()
-        self.clicked.connect(self.__selectFavouritesPlaylist)
-        self._editCoverBtn.clicked.connect(self.__chooseCover)
+        self.clicked.connect(lambda: self.__selectFavouritesPlaylist())
+        self._editCoverBtn.clicked.connect(lambda: self.__chooseCover())
 
     def __selectFavouritesPlaylist(self) -> None:
         if appCenter.currentPlaylist.getInfo().getId() == "favourites":
@@ -195,12 +195,12 @@ class UserPlaylistCard(PlaylistCard):
 
         self._editBtn = Factory.createIconButton(size=Icons.MEDIUM, padding=Paddings.RELATIVE_50)
         self._editBtn.setLightModeIcon(Icons.EDIT.withColor(Colors.WHITE))
-        self._editBtn.setClassName("rounded-full bg-primary-75 hover:bg-primary-100")
+        self._editBtn.setClassName("rounded-full bg-primary-[w75] hover:bg-primary")
         self._editBtn.applyLightMode()
 
         self._deleteBtn = Factory.createIconButton(size=Icons.MEDIUM, padding=Paddings.RELATIVE_50)
         self._deleteBtn.setLightModeIcon(Icons.DELETE.withColor(Colors.WHITE))
-        self._deleteBtn.setClassName("rounded-full bg-danger-75 hover:bg-danger-100")
+        self._deleteBtn.setClassName("rounded-full bg-danger-[w75] hover:bg-danger")
         self._deleteBtn.applyLightMode()
 
         self._buttonsLayout = QVBoxLayout()
@@ -215,9 +215,9 @@ class UserPlaylistCard(PlaylistCard):
         self._mainLayout.insertLayout(0, self._topLayout)
 
     def _connectSignalSlots(self) -> None:
-        self.clicked.connect(self.__selectCurrentPlaylist)
+        self.clicked.connect(lambda: self.__selectCurrentPlaylist())
         self._editBtn.clicked.connect(lambda: UpdatePlaylistDialog(self.__playlist).show())
-        self._deleteBtn.clicked.connect(self.__openDeletePlaylistConfirm)
+        self._deleteBtn.clicked.connect(lambda: self.__openDeletePlaylistConfirm())
 
     def applyLightMode(self) -> None:
         pass

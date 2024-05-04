@@ -85,7 +85,7 @@ class SongsTableHeader(QWidget, Component):
         self._mainLayout.addWidget(self._buttons)
 
     def _connectSignalSlots(self) -> None:
-        appCenter.currentPlaylistChanged.connect(self.__showActionsToPlaylist)
+        appCenter.currentPlaylistChanged.connect(lambda playlist: self.__showActionsToPlaylist(playlist))
 
         self._importSongsToLibraryBtn.clicked.connect(lambda: self._importSongsFromExplorer())
         self._downloadSongsToLibraryBtn.clicked.connect(lambda: self._openDownloadSongDialogs())

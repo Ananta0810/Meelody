@@ -115,7 +115,7 @@ class SongRow(ExtendableStyleWidget):
 
         self._closeMenuBtn = Factory.createIconButton(size=Icons.MEDIUM, padding=Paddings.RELATIVE_50, parent=self)
         self._closeMenuBtn.setLightModeIcon(Icons.CLOSE.withColor(Colors.WHITE))
-        self._closeMenuBtn.setClassName("rounded-full bg-danger-75 hover:bg-danger")
+        self._closeMenuBtn.setClassName("rounded-full bg-danger-[w75] hover:bg-danger")
         self._closeMenuBtn.hide()
 
         self._moreButtons = StyleWidget()

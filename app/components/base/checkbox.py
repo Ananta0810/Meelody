@@ -38,8 +38,8 @@ class CheckBox(ExtendableStyleWidget):
         self._mainLayout.addWidget(self._active)
 
     def _connectSignalSlots(self) -> None:
-        self._normal.clicked.connect(self.nextCheckState)
-        self._active.clicked.connect(self.nextCheckState)
+        self._normal.clicked.connect(lambda: self.nextCheckState())
+        self._active.clicked.connect(lambda: self.nextCheckState())
 
     def nextCheckState(self) -> None:
         self.setCheckState(not self.__checked)

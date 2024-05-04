@@ -36,11 +36,11 @@ class SongsMenu(SmoothVerticalScrollArea):
 
     def _connectSignalSlots(self) -> None:
         super()._connectSignalSlots()
-        self.__keyPressed.connect(self.__onKeyPressed)
+        self.__keyPressed.connect(lambda e: self.__onKeyPressed(e))
         VisibleObserver(self).visible.connect(lambda visible: self.__showLibrary())
 
         appCenter.currentPlaylistChanged.connect(lambda playlist: self.__setPlaylist(playlist.getSongs()))
-        musicPlayer.songChanged.connect(self.__scrollToSong)
+        musicPlayer.songChanged.connect(lambda song: self.__scrollToSong(song))
 
     def __showLibrary(self) -> None:
         rows = [row for row in self.__songRowDict.values()]
@@ -128,7 +128,7 @@ class SongsMenu(SmoothVerticalScrollArea):
         rowToMove = displayingRows[movedIndex]
         self.moveWidget(rowToMove, newIndex)
         rowToMove.showMoreButtons(False)
-        
+
         self.__updateTitleMaps(newSongs)
         self.verticalScrollBar().setValue(currentPosition)
 
@@ -166,8 +166,8 @@ class SongsMenu(SmoothVerticalScrollArea):
         displayer = ChunksConsumer(items=rows, size=MAX_ITEMS_VISIBLE_ON_MENU)
         displayer.forEach(lambda row: row.show(), delay=10)
         self.__menuReset.connect(displayer.stop)
-        displayer.stopped.connect(self.__menuReset.disconnect)
-        displayer.stopped.connect(self.__loadCovers)
+        displayer.stopped.connect(lambda: self.__menuReset.disconnect())
+        displayer.stopped.connect(lambda: self.__loadCovers())
 
     def __loadCovers(self) -> None:
         allCoversAreLoaded = len(self.__coverLoadedSongIds) == len(self.__songRowDict)

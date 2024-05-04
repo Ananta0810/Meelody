@@ -36,7 +36,7 @@ class SmoothVerticalScrollArea(StyleScrollArea):
         self.setWidget(self._menu)
 
     def _connectSignalSlots(self) -> None:
-        self.verticalScrollBar().valueChanged.connect(self.__updateVisibleItems)
+        self.verticalScrollBar().valueChanged.connect(lambda: self.__updateVisibleItems())
 
     def setContentsMargins(self, left: int, top: int, right: int, bottom: int) -> None:
         self._menu.setContentsMargins(left, top, right, bottom)
@@ -59,7 +59,7 @@ class SmoothVerticalScrollArea(StyleScrollArea):
         self._mainLayout.removeWidget(widget)
         self._mainLayout.insertWidget(newIndex, widget)
 
-    def __updateVisibleItems(self):
+    def __updateVisibleItems(self) -> None:
         self.__visibleWidgetIndexes = {index for index, item in enumerate(self.__widgets) if Widgets.isInView(item)}
 
     def wheelEvent(self, event: QWheelEvent) -> None:
@@ -72,7 +72,7 @@ class SmoothVerticalScrollArea(StyleScrollArea):
     def setAnimationEasingCurve(self, easing_curve: QEasingCurve) -> None:
         self.__animation.setEasingCurve(easing_curve)
 
-    def getCurrentItemIndex(self):
+    def getCurrentItemIndex(self) -> int:
         return min(self.__visibleWidgetIndexes)
 
     def scrollToItemAt(self, index: int) -> None:

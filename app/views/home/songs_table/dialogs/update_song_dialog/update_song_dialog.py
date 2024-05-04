@@ -91,12 +91,12 @@ class UpdateSongDialog(BaseDialog):
 
         self._titleInput.changed.connect(lambda text: self.__checkValid())
         self._artistInput.changed.connect(lambda text: self.__checkValid())
-        self._acceptBtn.clicked.connect(self._updateSong)
+        self._acceptBtn.clicked.connect(lambda: self._updateSong())
 
     def _assignShortcuts(self) -> None:
         super()._assignShortcuts()
         acceptShortcut = QShortcut(QKeySequence(Qt.Key_Return), self._acceptBtn)
-        acceptShortcut.activated.connect(self._acceptBtn.click)
+        acceptShortcut.activated.connect(lambda: self._acceptBtn.click())
 
     def __checkValid(self) -> None:
         title = self._titleInput.text().strip()

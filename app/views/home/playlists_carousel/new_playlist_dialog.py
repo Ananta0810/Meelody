@@ -84,9 +84,9 @@ class NewPlaylistDialog(BaseDialog):
 
     def _connectSignalSlots(self) -> None:
         super()._connectSignalSlots()
-        self._acceptBtn.clicked.connect(self._addPlaylist)
-        self._editCoverBtn.clicked.connect(self.__onclickSelectCover)
-        self._titleInput.changed.connect(self.__checkTitle)
+        self._acceptBtn.clicked.connect(lambda: self._addPlaylist())
+        self._editCoverBtn.clicked.connect(lambda: self.__onclickSelectCover())
+        self._titleInput.changed.connect(lambda title: self.__checkTitle(title))
 
     def _assignShortcuts(self) -> None:
         super()._assignShortcuts()

@@ -237,16 +237,16 @@ class MusicPlayerBar(QWidget, Component):
 
     def _assignShortcuts(self) -> None:
         play_shortcut = QShortcut(QKeySequence(Qt.Key_Space), self._playSongBtn)
-        play_shortcut.activated.connect(self._playSongBtn.click)
+        play_shortcut.activated.connect(lambda: self._playSongBtn.click())
 
         pause_shortcut = QShortcut(QKeySequence(Qt.Key_Space), self._pauseSongBtn)
-        pause_shortcut.activated.connect(self._pauseSongBtn.click)
+        pause_shortcut.activated.connect(lambda: self._pauseSongBtn.click())
 
         prev_shortcut = QShortcut(QKeySequence(Qt.Key_Left), self._prevSongBtn)
-        prev_shortcut.activated.connect(self._prevSongBtn.click)
+        prev_shortcut.activated.connect(lambda: self._prevSongBtn.click())
 
         next_shortcut = QShortcut(QKeySequence(Qt.Key_Right), self._nextSongBtn)
-        next_shortcut.activated.connect(self._nextSongBtn.click)
+        next_shortcut.activated.connect(lambda: self._nextSongBtn.click())
 
         shortcut_0 = QShortcut(QKeySequence(Qt.Key_0), self._timeSlider)
         shortcut_0.activated.connect(lambda: self.__skipTo(0))
