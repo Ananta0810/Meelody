@@ -85,7 +85,7 @@ class SongsTableHeader(QWidget, Component):
         self._mainLayout.addStretch()
         self._mainLayout.addWidget(self._buttons)
 
-        self._downloadDialog = DownloadSongsDialog()
+        self._downloadDialog = None
 
     def _connectSignalSlots(self) -> None:
         appCenter.currentPlaylistChanged.connect(lambda playlist: self.__showActionsToPlaylist(playlist))
@@ -118,6 +118,8 @@ class SongsTableHeader(QWidget, Component):
             Dialogs.alert(header="Import failed", message=f"You have imported songs from explorer failed.")
 
     def _openDownloadSongDialogs(self) -> None:
+        if self._downloadDialog is None:
+            self._downloadDialog = DownloadSongsDialog()
         self._downloadDialog.show()
 
     @staticmethod

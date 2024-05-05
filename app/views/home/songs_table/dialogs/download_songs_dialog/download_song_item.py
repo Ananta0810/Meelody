@@ -160,12 +160,17 @@ class DownloadSongItem(ExtendableStyleWidget):
         thread.succeed.connect(lambda: self._convertingLabel.stop())
         thread.succeed.connect(lambda: textAnimationThread.quit())
         thread.succeed.connect(lambda: self.__markSucceed())
+        thread.succeed.connect(lambda song: self.__notifySongDownloaded(song))
 
         thread.failed.connect(lambda: self._convertingLabel.stop())
         thread.failed.connect(lambda: textAnimationThread.quit())
         thread.failed.connect(lambda e: self.__markConvertFailed(e))
 
         thread.start()
+
+    def __notifySongDownloaded(self, song: Song) -> None:
+        # Somehow, I need to add this method to work.
+        return self.songDownloaded.emit(song)
 
     def __updateConvertingAnimation(self) -> None:
         if self._convertingLabel.isVisible():

@@ -9,7 +9,7 @@ from app.common.others import appCenter
 from app.components.base import Cover, LabelWithDefaultText, Factory, Input, ActionButton, CoverProps, Label
 from app.components.dialogs import BaseDialog, Dialogs
 from app.helpers.base import Strings
-from app.resource.qt import Images
+from app.resource.qt import Images, Cursors
 from app.views.home.songs_table.dialogs.download_songs_dialog.download_songs_menu import DownloadSongsMenu
 
 
@@ -43,7 +43,7 @@ class DownloadSongsDialog(BaseDialog):
 
         self._searchBtn = ActionButton()
         self._searchBtn.setFont(Factory.createFont(family="Segoe UI Semibold", size=11))
-        self._searchBtn.setClassName("text-white rounded-4 bg-primary-75 bg-primary py-8")
+        self._searchBtn.setClassName("text-white rounded-4 bg-primary hover:bg-primary-[w125] py-8")
         self._searchBtn.setText("Search")
 
         self._menu = DownloadSongsMenu()
@@ -66,6 +66,7 @@ class DownloadSongsDialog(BaseDialog):
     def show(self) -> None:
         self.applyTheme()
         self._input.clear()
+        self._searchBtn.setCursor(Cursors.HAND)
         super().show()
 
     def applyLightMode(self) -> None:
@@ -77,6 +78,8 @@ class DownloadSongsDialog(BaseDialog):
         super().applyThemeToChildren()
 
     def __searchSong(self) -> None:
+        self._searchBtn.setCursor(Cursors.WAITING)
+
         try:
             ytb = YouTube(self._input.text().strip())
             dialog = SongInfoDialog(ytb)
@@ -88,6 +91,8 @@ class DownloadSongsDialog(BaseDialog):
             print(e)
             Dialogs.alert(header="Warning", message="Youtube video is not found.")
 
+        self._searchBtn.setCursor(Cursors.HAND)
+
     def __downloadSong(self, ytb: YouTube, title: str, artist: str) -> None:
         item = self._menu.addItem()
         item.download(ytb, title, artist)
@@ -95,7 +100,6 @@ class DownloadSongsDialog(BaseDialog):
 
     @staticmethod
     def __insertSongToLibrary(song: Song) -> None:
-        print(song)
         appCenter.library.getSongs().insert(song)
 
 
