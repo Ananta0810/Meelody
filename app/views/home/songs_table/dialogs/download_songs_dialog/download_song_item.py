@@ -1,3 +1,6 @@
+import io
+import os
+from contextlib import suppress
 from datetime import datetime
 from typing import Callable
 from typing import Optional
@@ -124,9 +127,9 @@ class DownloadSongItem(ExtendableStyleWidget):
 
         downloadSongThread.loaded.connect(lambda: loadingAnimationThread.quit())
         downloadSongThread.loaded.connect(lambda: downloadingAnimationThread.start())
-        downloadSongThread.downloadSucceed.connect(lambda: loadingAnimationThread.quit())
-        downloadSongThread.downloadSucceed.connect(lambda path: self.__createSong(path, title, artist))
-        downloadSongThread.downloadSucceed.connect(lambda path: downloadingAnimationThread.quit())
+        downloadSongThread.downloadSucceed.connect(lambda data: loadingAnimationThread.quit())
+        downloadSongThread.downloadSucceed.connect(lambda data: self.__createSong(data, title, artist))
+        downloadSongThread.downloadSucceed.connect(lambda data: downloadingAnimationThread.quit())
         downloadSongThread.downloadFailed.connect(lambda exception: Logger.error(f"Download song '{title}' failed"))
         downloadSongThread.downloadFailed.connect(lambda exception: self.__markDownloadFailed(exception))
         downloadSongThread.downloadFailed.connect(lambda exception: loadingAnimationThread.quit())
@@ -152,43 +155,11 @@ class DownloadSongItem(ExtendableStyleWidget):
         self.setProgress(percentage)
         self.setDescription(description)
 
-    def __createSong(self, path: str, title: str, artist: str) -> None:
-        songLocation = f"library/{title}.mp3"
-
-        try:
-            convertedMp3Path = Strings.joinPath(Strings.getDirectoryOf(path), f"{title}.mp3")
-
-            editor = AudioEditor()
-            editor.convertToMp3File(path.replace("\\", "/"), convertedMp3Path)
-
-            Files.copyFile(convertedMp3Path, songLocation)
-            song = Song.fromFile(songLocation)
-
-            if Strings.isNotBlank(artist):
-                try:
-                    song.updateInfo(title, artist)
-                except AttributeError:
-                    raise ResourceException.brokenFile()
-
-            self.songDownloaded.emit(song)
-            self.__markSucceed()
-            Logger.info(f"Download song '{title}' successfully")
-        except FileExistsError as e:
-            Logger.error(f"Can't convert song '{title}' because it is already existed in library.")
-            self.__markConvertFailed(e)
-
-        except ResourceException as e:
-            Logger.error(f"Can't convert song '{title}' because it is broken.")
-            self.__markConvertFailed(e)
-            Files.removeFile(songLocation)
-
-        except Exception as e:
-            Logger.error(f"Convert song '{title}' failed  with following error: {e}")
-            self.__markConvertFailed(e)
-            Files.removeFile(songLocation)
-
-        # Clean up after downloaded, even if it is successfully.
-        Files.removeFile(path)
+    def __createSong(self, data: io.BytesIO, title: str, artist: str) -> None:
+        thread = ConvertSongThread(data, title, artist)
+        thread.succeed.connect(lambda: self.__markSucceed())
+        thread.failed.connect(lambda e: self.__markConvertFailed(e))
+        thread.start()
 
     def __markSucceed(self) -> None:
         self._gif.hide()
@@ -224,7 +195,7 @@ pytube.request.default_range_size = 128000
 class DownloadSongThread(QThread):
     loaded = pyqtSignal()
     downloadFailed = pyqtSignal(Exception)
-    downloadSucceed = pyqtSignal(str)
+    downloadSucceed = pyqtSignal(io.BytesIO)
 
     def __init__(self, ytb: YouTube, onDownloading: Callable[[int, int, int], None]) -> None:
         super().__init__()
@@ -238,8 +209,10 @@ class DownloadSongThread(QThread):
 
             self.__ytb.register_on_progress_callback(
                 lambda stream, chunk, bytesRemaining: self.__onProgress(stream, bytesRemaining, downloadStartTime))
-            downloadedFile = self.__ytb.streams.get_audio_only().download("library/download", filename=f"{Strings.randomId()}.wav")
-            self.downloadSucceed.emit(downloadedFile)
+
+            audioBytes = io.BytesIO()
+            self.__ytb.streams.get_audio_only().stream_to_buffer(audioBytes)
+            self.downloadSucceed.emit(audioBytes)
         except Exception as e:
             self.downloadFailed.emit(e)
 
@@ -255,3 +228,48 @@ class DownloadSongThread(QThread):
         speed = round(((bytesDownloaded / 1024) / 1024) / secondsSinceDownloadStart, 2)
         secondsLeft = int(round(((bytesRemaining / 1024) / 1024) / float(speed), 2))
         self.__onDownloading(bytesDownloaded, totalSize, secondsLeft)
+
+
+class ConvertSongThread(QThread):
+    succeed = pyqtSignal(Song)
+    failed = pyqtSignal(Exception)
+
+    def __init__(self, songData: io.BytesIO, title: str, artist: str) -> None:
+        super().__init__()
+        self.__songData = songData
+        self.__title = title
+        self.__artist = artist
+
+    def run(self) -> None:
+        songLocation = f"library/{self.__title}.mp3"
+        if os.path.exists(songLocation):
+            self.failed.emit(FileExistsError())
+            Logger.error(f"Can't convert song '{self.__title}' because it is already existed in library.")
+            return
+        try:
+            editor = AudioEditor()
+            editor.toMp3FileFromBytes(self.__songData, songLocation)
+            song = Song.fromFile(songLocation)
+
+            if Strings.isNotBlank(self.__artist):
+                try:
+                    song.updateInfo(self.__title, self.__artist)
+                except AttributeError:
+                    raise ResourceException.brokenFile()
+
+            Logger.info(f"Download song '{self.__title}' successfully")
+            self.succeed.emit(song)
+
+        except ResourceException as e:
+            Logger.error(f"Can't convert song '{self.__title}' because it is broken.")
+            Files.removeFile(songLocation)
+            self.failed.emit(e)
+
+        except Exception as e:
+            Logger.error(f"Convert song '{self.__title}' failed  with following error: {e}")
+            Files.removeFile(songLocation)
+            self.failed.emit(e)
+
+        # Clean up after downloaded, even if it is successfully.
+        with suppress(Exception):
+            self.__songData.close()
