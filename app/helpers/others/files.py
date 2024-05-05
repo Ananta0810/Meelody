@@ -21,14 +21,22 @@ class Files:
         return {Strings.joinPath(directory, file.name) for file in files if file.name.endswith(withExtension)}
 
     @staticmethod
-    def copyFile(file: str, to_directory: str) -> str:
-        destiny = "/".join([to_directory, Strings.getFilename(file)])
+    def copyFileToDirectory(directory: str, file: str) -> str:
+        destiny = "/".join([directory, Strings.getFilename(file)])
         if not os.path.exists(file):
-            raise FileExistsError(f"{file} not found.")
+            raise FileNotFoundError(f"{file} not found.")
         if os.path.exists(destiny):
             raise FileExistsError(f"{destiny} already existed.")
         copyfile(file, destiny)
         return destiny
+
+    @staticmethod
+    def copyFile(file: str, destiny: str) -> None:
+        if not os.path.exists(file):
+            raise FileNotFoundError(f"{file} not found.")
+        if os.path.exists(destiny):
+            raise FileExistsError(f"{destiny} already existed.")
+        copyfile(file, destiny)
 
     @staticmethod
     def removeFile(file: str) -> None:
@@ -45,6 +53,6 @@ class Files:
     @staticmethod
     def saveImageFile(data: bytes, path: str) -> None:
         Files.createDirectoryIfNotExisted(Strings.getDirectoryOf(path))
-        
+
         image = Image.open(io.BytesIO(data))
         image.save(path)

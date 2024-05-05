@@ -85,6 +85,8 @@ class SongsTableHeader(QWidget, Component):
         self._mainLayout.addStretch()
         self._mainLayout.addWidget(self._buttons)
 
+        self._downloadDialog = DownloadSongsDialog()
+
     def _connectSignalSlots(self) -> None:
         appCenter.currentPlaylistChanged.connect(lambda playlist: self.__showActionsToPlaylist(playlist))
 
@@ -115,10 +117,8 @@ class SongsTableHeader(QWidget, Component):
         else:
             Dialogs.alert(header="Import failed", message=f"You have imported songs from explorer failed.")
 
-    @staticmethod
-    def _openDownloadSongDialogs() -> None:
-        downloadDialog = DownloadSongsDialog()
-        downloadDialog.show()
+    def _openDownloadSongDialogs(self) -> None:
+        self._downloadDialog.show()
 
     @staticmethod
     def _openSelectPlaylistSongsDialog() -> None:
@@ -148,7 +148,7 @@ class ImportSongsToLibraryThread(QThread):
         newPaths: list[str] = []
         for path in self.__songPaths:
             try:
-                songPath = Files.copyFile(path, "library/")
+                songPath = Files.copyFileToDirectory("library/", path)
                 print(f"Import song from '{path}' to library")
                 newPaths.append(songPath)
             except FileExistsError:

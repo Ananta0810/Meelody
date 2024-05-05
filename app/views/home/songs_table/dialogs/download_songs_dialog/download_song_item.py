@@ -9,17 +9,19 @@ from PyQt5.QtGui import QMovie
 from PyQt5.QtWidgets import QWidget, QLabel
 from pytube import YouTube, Stream
 
+from app.common.models import Song
 from app.components.base import Cover, LabelWithDefaultText, Factory, CoverProps
 from app.components.sliders import ProgressBar
 from app.components.widgets import ExtendableStyleWidget, Box, FlexBox
 from app.helpers.base import Strings
-from app.helpers.others import Times
+from app.helpers.others import Times, Files, Logger
 from app.helpers.stylesheets import Paddings, Colors
 from app.resource.qt import Images, Icons
 from app.views.threads import UpdateUIThread
 
 
 class DownloadSongItem(ExtendableStyleWidget):
+    songDownloaded = pyqtSignal(Song)
 
     def __init__(self, parent: Optional[QWidget] = None):
         super().__init__(parent)
@@ -118,11 +120,13 @@ class DownloadSongItem(ExtendableStyleWidget):
         loadingAnimationThread = UpdateUIThread(action=lambda: self.__onLoading(), interval=250)
         downloadingAnimationThread = UpdateUIThread(action=lambda: self.__updateDownloadingAnimation(), interval=1000 / 24)
 
-        downloadSongThread.loaded.connect(loadingAnimationThread.quit)
-        downloadSongThread.loaded.connect(downloadingAnimationThread.start)
+        downloadSongThread.loaded.connect(lambda: loadingAnimationThread.quit())
+        downloadSongThread.loaded.connect(lambda: downloadingAnimationThread.start())
+        downloadSongThread.downloadSucceed.connect(lambda: loadingAnimationThread.quit())
         downloadSongThread.downloadSucceed.connect(lambda path: self.__createSong(path, title, artist))
         downloadSongThread.downloadSucceed.connect(lambda path: downloadingAnimationThread.quit())
-        downloadSongThread.downloadFailed.connect(lambda exception: self.__markFailed(exception))
+        downloadSongThread.downloadFailed.connect(lambda exception: Logger.error(f"Download song '{title}' failed"))
+        downloadSongThread.downloadFailed.connect(lambda exception: self.__markDownloadFailed(exception))
         downloadSongThread.downloadFailed.connect(lambda exception: loadingAnimationThread.quit())
         downloadSongThread.downloadFailed.connect(lambda exception: downloadingAnimationThread.quit())
 
@@ -147,21 +151,52 @@ class DownloadSongItem(ExtendableStyleWidget):
         self.setDescription(description)
 
     def __createSong(self, path: str, title: str, artist: str) -> None:
-        # TODO: Update this.
-        pass
+        songLocation = f"library/{title}.mp3"
+
+        try:
+            Files.copyFile(path, songLocation)
+            song = Song.fromFile(songLocation)
+
+            if Strings.isNotBlank(artist):
+                try:
+                    song.updateInfo(title, artist)
+                except Exception as e:
+                    Logger.error(f"Update artist for song '{title}' failed with following error: {e}")
+
+            self.songDownloaded.emit(song)
+            self.__markSucceed()
+            Logger.info(f"Download song '{title}' successfully")
+        except FileExistsError as e:
+            Logger.error(f"Can't convert song '{title}' because it is already existed in library.")
+            self.__markConvertFailed(e)
+        except Exception as e:
+            Logger.error(f"Convert song '{title}' failed  with following error: {e}")
+            self.__markConvertFailed(e)
+            Files.removeFile(songLocation)
+
+        # Clean up after downloaded, even if it is successfully.
+        Files.removeFile(path)
 
     def __markSucceed(self) -> None:
         self._gif.hide()
         self._successIcon.show()
         self._descriptionLabel.setText("Download Succeed.")
 
-    def __markFailed(self, exception: Exception) -> None:
+    def __markDownloadFailed(self, exception: Exception) -> None:
         self._gif.hide()
         self._failedIcon.show()
         if isinstance(exception, FileExistsError):
-            self._descriptionLabel.setText("Download Failed. Song is already existed.")
+            self._descriptionLabel.setText("Download failed. Song is already existed.")
         else:
-            self._descriptionLabel.setText("Download Failed.")
+            self._descriptionLabel.setText("Download failed.")
+
+    def __markConvertFailed(self, exception: Exception) -> None:
+        self._gif.hide()
+        self._failedIcon.show()
+        if isinstance(exception, FileExistsError):
+            self._descriptionLabel.setText("Covert failed. Song is already existed.")
+        else:
+            self._descriptionLabel.setText("Covert failed.")
 
 
 pytube.request.default_range_size = 128000

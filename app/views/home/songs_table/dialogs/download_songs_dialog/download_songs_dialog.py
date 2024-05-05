@@ -4,6 +4,8 @@ from PyQt5.QtWidgets import QShortcut, QWidget, QVBoxLayout
 from pytube import YouTube
 from pytube.exceptions import RegexMatchError
 
+from app.common.models import Song
+from app.common.others import appCenter
 from app.components.base import Cover, LabelWithDefaultText, Factory, Input, ActionButton, CoverProps, Label
 from app.components.dialogs import BaseDialog, Dialogs
 from app.helpers.base import Strings
@@ -36,6 +38,7 @@ class DownloadSongsDialog(BaseDialog):
         self._input = Input()
         self._input.setFont(Factory.createFont(size=12))
         self._input.setFixedHeight(48)
+        self._input.setPlaceholderText("Enter youtube url...")
         self._input.setClassName("px-12 rounded-4 border border-primary-12 bg-primary-4")
 
         self._searchBtn = ActionButton()
@@ -62,6 +65,7 @@ class DownloadSongsDialog(BaseDialog):
 
     def show(self) -> None:
         self.applyTheme()
+        self._input.clear()
         super().show()
 
     def applyLightMode(self) -> None:
@@ -87,6 +91,12 @@ class DownloadSongsDialog(BaseDialog):
     def __downloadSong(self, ytb: YouTube, title: str, artist: str) -> None:
         item = self._menu.addItem()
         item.download(ytb, title, artist)
+        item.songDownloaded.connect(lambda song: self.__insertSongToLibrary(song))
+
+    @staticmethod
+    def __insertSongToLibrary(song: Song) -> None:
+        print(song)
+        appCenter.library.getSongs().insert(song)
 
 
 class SongInfoDialog(BaseDialog):
