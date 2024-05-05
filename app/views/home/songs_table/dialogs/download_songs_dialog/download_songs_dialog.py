@@ -42,7 +42,7 @@ class DownloadSongsDialog(BaseDialog):
         self._input.setClassName("px-12 rounded-4 border border-primary-12 bg-primary-4")
 
         self._searchBtn = ActionButton()
-        self._searchBtn.setFont(Factory.createFont(family="Segoe UI Semibold", size=11))
+        self._searchBtn.setFont(Factory.createFont(family="Segoe UI Semibold", size=10))
         self._searchBtn.setClassName("text-white rounded-4 bg-primary hover:bg-primary-[w125] py-8")
         self._searchBtn.setText("Search")
 
@@ -52,7 +52,7 @@ class DownloadSongsDialog(BaseDialog):
 
         self.addWidget(self._image)
         self.addWidget(self._header)
-        self.addSpacing(4)
+        self.addSpacing(12)
         self.addWidget(self._input)
         self.addSpacing(8)
         self.addWidget(self._searchBtn)

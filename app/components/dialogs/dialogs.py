@@ -1,6 +1,6 @@
 from typing import Optional, final
 
-from PyQt5.QtCore import Qt, pyqtSignal, QSize
+from PyQt5.QtCore import Qt, pyqtSignal
 from PyQt5.QtGui import QKeySequence, QResizeEvent
 from PyQt5.QtWidgets import QShortcut, QSizePolicy, QVBoxLayout
 
@@ -36,12 +36,12 @@ class _ConfirmDialog(FramelessWindow):
         self._message.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Expanding)
 
         self._acceptBtn = ActionButton()
-        self._acceptBtn.setFont(Factory.createFont(family="Segoe UI Semibold", size=11))
+        self._acceptBtn.setFont(Factory.createFont(family="Segoe UI Semibold", size=10))
         self._acceptBtn.setClassName("text-white rounded-4 bg-black-90 hover:bg-black py-8 px-24")
         self._acceptBtn.setMinimumWidth(64)
 
         self._cancelBtn = ActionButton()
-        self._cancelBtn.setFont(Factory.createFont(family="Segoe UI Semibold", size=11))
+        self._cancelBtn.setFont(Factory.createFont(family="Segoe UI Semibold", size=10))
         self._cancelBtn.setClassName("rounded-4 text-black border border-gray-40 hover:bg-black-8 py-8 px-24")
         self._cancelBtn.setMinimumWidth(64)
 
@@ -81,7 +81,7 @@ class _ConfirmDialog(FramelessWindow):
         self._cancelBtn.setText(cancelText)
 
         width = Numbers.clamp(self.sizeHint().width(), 480, 640)
-        self.setFixedSize(QSize(width, self.sizeHint().height()))
+        self.setFixedSize(width, self.sizeHint().height())
 
     def resizeEvent(self, event: QResizeEvent) -> None:
         super().resizeEvent(event)
@@ -127,7 +127,7 @@ class _AlertDialog(BaseDialog):
         self._message.setAlignment(Qt.AlignCenter)
 
         self._acceptBtn = ActionButton()
-        self._acceptBtn.setFont(Factory.createFont(family="Segoe UI Semibold", size=11))
+        self._acceptBtn.setFont(Factory.createFont(family="Segoe UI Semibold", size=10))
 
         self.addWidget(self._image)
         self.addWidget(self._header)

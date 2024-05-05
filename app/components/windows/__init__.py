@@ -1,1 +1,1 @@
-from .windows import FramelessWindow, TitleBar
+from .windows import FramelessWindow

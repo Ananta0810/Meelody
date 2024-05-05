@@ -1,7 +1,7 @@
-from typing import overload, Union
+from typing import Union
 
 from PyQt5 import QtCore
-from PyQt5.QtCore import Qt, QSize, QMargins, QPoint
+from PyQt5.QtCore import Qt, QPoint
 from PyQt5.QtGui import QShowEvent, QResizeEvent, QMouseEvent
 from PyQt5.QtWidgets import QMainWindow, QWidget, QDesktopWidget, QLayout, QHBoxLayout, QGraphicsDropShadowEffect
 
@@ -27,11 +27,12 @@ class FramelessWindow(QMainWindow, Component):
         self.setAttribute(Qt.WA_TranslucentBackground)
 
         self._inner = StyleWidget()
+        self._inner.setContentsMargins(0, 0, 0, 0)
         self.setCentralWidget(self._inner)
 
         self._mainLayout = Box(self._inner)
-        self._mainLayout.setContentsMargins(0, 0, 0, 0)
         self._mainLayout.setSpacing(0)
+        self._mainLayout.setContentsMargins(0, 0, 0, 0)
 
     def setShadow(self, color: Color, size: int) -> None:
         self.__shadowHeight = size
@@ -57,16 +58,8 @@ class FramelessWindow(QMainWindow, Component):
     def setFixedWidth(self, w: int) -> None:
         self._inner.setFixedWidth(w)
 
-    @overload
-    def setFixedSize(self, a0: QSize) -> None:
-        self._inner.setFixedSize(a0)
-
-    @overload
     def setFixedSize(self, w: int, h: int) -> None:
         self._inner.setFixedSize(w, h)
-
-    def setFixedSize(self, a0: QSize) -> None:
-        self._inner.setFixedSize(a0)
 
     def sizeHint(self) -> QtCore.QSize:
         return self._inner.sizeHint()
@@ -76,14 +69,6 @@ class FramelessWindow(QMainWindow, Component):
 
     def height(self) -> int:
         return self._inner.sizeHint().height()
-
-    @overload
-    def setContentsMargins(self, left: int, top: int, right: int, bottom: int) -> None:
-        self._inner.setContentsMargins(left, top, right, bottom)
-
-    @overload
-    def setContentsMargins(self, margins: QMargins) -> None:
-        self._inner.setContentsMargins(margins)
 
     def setContentsMargins(self, left: int, top: int, right: int, bottom: int) -> None:
         self._inner.setContentsMargins(left, top, right, bottom)
@@ -99,33 +84,6 @@ class FramelessWindow(QMainWindow, Component):
         self._inner.setClassName(Strings.join(" ", classNames))
 
 
-class TitleBar(QWidget):
-
-    def __init__(self, window: QWidget) -> None:
-        super().__init__()
-        self.__window = window
-        self.__offset: int = 0
-        self.__initUI()
-
-    def __initUI(self) -> None:
-        self._mainLayout = QHBoxLayout()
-        self._mainLayout.setContentsMargins(0, 0, 0, 0)
-        self._mainLayout.setSpacing(8)
-        self.setLayout(self._mainLayout)
-
-        self._minimizeBtn = Factory.createIconButton(size=Icons.MEDIUM, padding=Paddings.RELATIVE_50)
-        self._minimizeBtn.setLightModeIcon(Icons.MINIMIZE.withColor(Colors.PRIMARY))
-        self._minimizeBtn.setClassName("rounded-8 bg-none hover:bg-primary-25")
-
-        self._closeBtn = Factory.createIconButton(size=Icons.MEDIUM, padding=Paddings.RELATIVE_50)
-        self._closeBtn.setLightModeIcon(Icons.CLOSE.withColor(Colors.DANGER))
-        self._closeBtn.setClassName("rounded-8 bg-danger-25 hover:bg-danger-33")
-
-        self._mainLayout.addStretch()
-        self._mainLayout.addWidget(self._minimizeBtn)
-        self._mainLayout.addWidget(self._closeBtn)
-
-
 class TitleBarWindow(FramelessWindow):
 
     def __init__(self):
@@ -136,6 +94,7 @@ class TitleBarWindow(FramelessWindow):
     def __initUI(self) -> None:
         self._titleBar = QWidget()
         self._titleBar.setContentsMargins(12, 12, 12, 12)
+
         self._titleBarLayout = QHBoxLayout()
         self._titleBarLayout.setContentsMargins(0, 0, 0, 0)
         self._titleBarLayout.setSpacing(8)

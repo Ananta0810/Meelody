@@ -45,7 +45,7 @@ class UpdatePlaylistDialog(BaseDialog):
         self._titleInput.setPlaceholderText("Name...")
 
         self._acceptBtn = ActionButton()
-        self._acceptBtn.setFont(Factory.createFont(family="Segoe UI Semibold", size=11))
+        self._acceptBtn.setFont(Factory.createFont(family="Segoe UI Semibold", size=10))
         self._acceptBtn.setClassName("text-white rounded-4 bg-primary-75 bg-primary py-8 disabled:bg-gray-10 disabled:text-gray")
         self._acceptBtn.setText("Update Playlist")
         self._acceptBtn.setDisabled(True)

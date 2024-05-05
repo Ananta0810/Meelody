@@ -31,7 +31,7 @@ class BaseDialog(FramelessWindow):
         self._titleBar.setContentsMargins(16, 16, 16, 0)
 
         self._body = Box()
-        self._body.setContentsMargins(16, 16, 16, 16)
+        self._body.setContentsMargins(4, 4, 4, 4)
         self._body.setAlignment(Qt.AlignVCenter)
 
         super().addLayout(self._titleBar)

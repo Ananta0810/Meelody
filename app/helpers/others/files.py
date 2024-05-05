@@ -42,7 +42,7 @@ class Files:
     def removeFile(file: str) -> None:
         try:
             os.remove(file)
-        except FileNotFoundError:
+        except (FileNotFoundError, OSError):
             pass
 
     @staticmethod
