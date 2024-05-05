@@ -40,8 +40,8 @@ class PlaylistCard(ExtendableStyleWidget):
 
         self._title = LabelWithDefaultText(autoChangeTheme=False)
         self._title.enableEllipsis()
-        self._title.setFixedWidth(320)
         self._title.setFont(Factory.createFont(size=16, bold=True))
+        self._title.setFixedWidth(self.width() - self._mainLayout.contentsMargins().left() - self._mainLayout.contentsMargins().right())
         self._title.setClassName("text-black dark:text-white")
 
         self._mainLayout.addStretch()

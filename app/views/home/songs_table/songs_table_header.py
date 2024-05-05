@@ -10,7 +10,7 @@ from app.components.dialogs import Dialogs
 from app.helpers.others import Files, Logger
 from app.helpers.stylesheets import Paddings, Colors
 from app.resource.others import FileType
-from app.resource.qt import Icons
+from app.resource.qt import Icons, Cursors
 from app.views.home.songs_table.dialogs.download_songs_dialog import DownloadSongsDialog
 from app.views.home.songs_table.dialogs.select_playlist_songs_dialog import SelectPlaylistSongsDialog
 
@@ -122,10 +122,11 @@ class SongsTableHeader(QWidget, Component):
             self._downloadDialog = DownloadSongsDialog()
         self._downloadDialog.show()
 
-    @staticmethod
-    def _openSelectPlaylistSongsDialog() -> None:
+    def _openSelectPlaylistSongsDialog(self) -> None:
+        self._selectSongsToPlaylistBtn.setCursor(Cursors.WAITING)
         dialog = SelectPlaylistSongsDialog(appCenter.currentPlaylist)
         dialog.show()
+        self._selectSongsToPlaylistBtn.setCursor(Cursors.HAND)
 
 
 class ImportSongsToLibraryThread(QThread):

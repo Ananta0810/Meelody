@@ -43,7 +43,7 @@ class MenuHeader(ExtendableStyleWidget):
         self._mainLayout.addSpacing(64)
         self._mainLayout.addWidget(self._titleLabel)
         self._mainLayout.addSpacing(24)
-        self._mainLayout.addSpacing(240)
+        self._mainLayout.addSpacing(200)
         self._mainLayout.addSpacing(24)
         self._mainLayout.addWidget(self._artistLabel)
         self._mainLayout.addSpacing(24)

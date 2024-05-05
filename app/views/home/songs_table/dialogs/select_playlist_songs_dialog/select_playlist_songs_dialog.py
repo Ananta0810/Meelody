@@ -22,7 +22,7 @@ class SelectPlaylistSongsDialog(BaseDialog):
 
     def _createUI(self) -> None:
         super()._createUI()
-        self.setContentsMargins(32, 20, 32, 20)
+        self.setContentsMargins(20, 20, 20, 20)
 
         self._menuHeader = MenuHeader()
         self._menuHeader.setFixedWidth(640)

@@ -43,7 +43,7 @@ class SongRow(ExtendableStyleWidget):
 
         self._titleLabel = LabelWithDefaultText()
         self._titleLabel.enableEllipsis()
-        self._titleLabel.setFixedWidth(240)
+        self._titleLabel.setFixedWidth(200)
         self._titleLabel.setFont(Factory.createFont(size=10))
         self._titleLabel.setClassName("text-black dark:text-white")
 
