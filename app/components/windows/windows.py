@@ -1,9 +1,9 @@
 from typing import Union
 
 from PyQt5 import QtCore
-from PyQt5.QtCore import Qt, QPoint
+from PyQt5.QtCore import Qt
 from PyQt5.QtGui import QShowEvent, QResizeEvent, QMouseEvent
-from PyQt5.QtWidgets import QMainWindow, QWidget, QDesktopWidget, QLayout, QHBoxLayout, QGraphicsDropShadowEffect
+from PyQt5.QtWidgets import QMainWindow, QWidget, QLayout, QHBoxLayout, QGraphicsDropShadowEffect, QApplication
 
 from app.components.base import Factory, Component
 from app.components.widgets import Box, StyleWidget
@@ -41,10 +41,11 @@ class FramelessWindow(QMainWindow, Component):
         super().setContentsMargins(size * 2, size * 2, size * 2, size * 2)
 
     def moveToCenter(self):
-        qtRectangle = self._inner.frameGeometry()
-        centerPoint = QDesktopWidget().availableGeometry().center()
-        qtRectangle.moveCenter(centerPoint)
-        self.move(qtRectangle.topLeft() - QPoint(self.__shadowHeight * 2, self.__shadowHeight * 2))
+        frameGm = self.frameGeometry()
+        screen = QApplication.desktop().screenNumber(QApplication.desktop().cursor().pos())
+        centerPoint = QApplication.desktop().screenGeometry(screen).center()
+        frameGm.moveCenter(centerPoint)
+        self.move(frameGm.topLeft())
 
     def addLayout(self, widget: QLayout) -> None:
         self._mainLayout.addLayout(widget)

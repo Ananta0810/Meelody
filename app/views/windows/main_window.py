@@ -17,7 +17,6 @@ class MainWindow(TitleBarWindow, Component):
 
         self.setFixedWidth(width)
         self.setFixedHeight(height)
-        self.moveToCenter()
 
     def _createUI(self) -> None:
         self._inner.setClassName("rounded-24 bg-white dark:bg-dark")
@@ -44,3 +43,7 @@ class MainWindow(TitleBarWindow, Component):
 
     def applyDarkMode(self) -> None:
         super().applyDarkMode()
+
+    def show(self) -> None:
+        super().show()
+        self.moveToCenter()
