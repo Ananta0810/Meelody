@@ -6,15 +6,15 @@ from typing import Callable
 from typing import Optional
 
 import pytube.request
-from PyQt5.QtCore import Qt, QSize
+from PyQt5.QtCore import Qt
 from PyQt5.QtCore import pyqtSignal, QThread
-from PyQt5.QtGui import QMovie
-from PyQt5.QtWidgets import QWidget, QLabel, QHBoxLayout
+from PyQt5.QtWidgets import QWidget, QHBoxLayout
 from pytube import YouTube, Stream
 
 from app.common.exceptions import ResourceException
 from app.common.models import Song
 from app.components.base import Cover, LabelWithDefaultText, Factory, CoverProps
+from app.components.base.gif import Gif
 from app.components.sliders import ProgressBar
 from app.components.widgets import ExtendableStyleWidget, Box, FlexBox
 from app.helpers.base import Strings
@@ -72,16 +72,13 @@ class DownloadSongItem(ExtendableStyleWidget):
         self._failedIcon.setClassName("rounded-full bg-danger")
         self._failedIcon.hide()
 
-        self._downloadLabel = QLabel()
+        self._downloadLabel = Gif("app/resource/images/defaults/downloading.gif")
         self._downloadLabel.setFixedSize(48, 48)
-        self._downloadLabel.setMovie(QMovie("app/resource/images/defaults/downloading.gif"))
-        self._downloadLabel.movie().setScaledSize(QSize(32, 32))
+        self._downloadLabel.setGifSize(32)
         self._downloadLabel.hide()
 
-        self._convertingLabel = QLabel()
+        self._convertingLabel = Gif("app/resource/images/defaults/loading-bubble.gif")
         self._convertingLabel.setFixedSize(48, 48)
-        self._convertingLabel.setMovie(QMovie("app/resource/images/defaults/loading.gif"))
-        self._convertingLabel.movie().setScaledSize(QSize(48, 48))
         self._convertingLabel.hide()
 
         self._icons = QWidget()
@@ -130,54 +127,47 @@ class DownloadSongItem(ExtendableStyleWidget):
 
         downloadSongThread = DownloadSongThread(yt, onDownloading=self.__onDownloading)
         loadingAnimationThread = UpdateUIThread(action=lambda: self.__onLoading(), interval=250)
-        downloadingAnimationThread = UpdateUIThread(action=lambda: self.__updateDownloadingAnimation(), interval=1000 / 24)
-
-        downloadingAnimationThread.started.connect(lambda: self._downloadLabel.show())
 
         downloadSongThread.loaded.connect(lambda: loadingAnimationThread.quit())
-        downloadSongThread.loaded.connect(lambda: downloadingAnimationThread.start())
+        downloadSongThread.loaded.connect(lambda: self._downloadLabel.show())
+        downloadSongThread.loaded.connect(lambda: self._downloadLabel.start())
 
         downloadSongThread.downloadSucceed.connect(lambda data: self.setProgress(100))
         downloadSongThread.downloadSucceed.connect(lambda data: self._downloadLabel.hide())
         downloadSongThread.downloadSucceed.connect(lambda data: loadingAnimationThread.quit())
-        downloadSongThread.downloadSucceed.connect(lambda data: downloadingAnimationThread.quit())
+        downloadSongThread.downloadSucceed.connect(lambda data: self._downloadLabel.stop())
         downloadSongThread.downloadSucceed.connect(lambda data: self.__createSong(data, title, artist))
 
         downloadSongThread.downloadFailed.connect(lambda data: self._downloadLabel.hide())
         downloadSongThread.downloadFailed.connect(lambda exception: loadingAnimationThread.quit())
-        downloadSongThread.downloadFailed.connect(lambda exception: downloadingAnimationThread.quit())
+        downloadSongThread.downloadFailed.connect(lambda exception: self._downloadLabel.stop())
         downloadSongThread.downloadFailed.connect(lambda exception: self.__markDownloadFailed(exception))
 
-        loadingAnimationThread.start()
         downloadSongThread.start()
+        loadingAnimationThread.start()
 
     def __createSong(self, data: io.BytesIO, title: str, artist: str) -> None:
         self._dot = 0
         self._convertingLabel.show()
 
-        gifAnimationThread = UpdateUIThread(action=lambda: self.____updateConvertingAnimation(), interval=1000 / 24)
         textAnimationThread = UpdateUIThread(action=lambda: self.__onConverting(), interval=250)
 
-        gifAnimationThread.start()
+        self._convertingLabel.start()
         textAnimationThread.start()
 
         thread = ConvertSongThread(data, title, artist)
 
-        thread.succeed.connect(lambda: gifAnimationThread.quit())
+        thread.succeed.connect(lambda: self._convertingLabel.stop())
         thread.succeed.connect(lambda: textAnimationThread.quit())
         thread.succeed.connect(lambda: self.__markSucceed())
 
-        thread.failed.connect(lambda: gifAnimationThread.quit())
+        thread.failed.connect(lambda: self._convertingLabel.stop())
         thread.failed.connect(lambda: textAnimationThread.quit())
         thread.failed.connect(lambda e: self.__markConvertFailed(e))
 
         thread.start()
 
-    def __updateDownloadingAnimation(self) -> None:
-        if self._downloadLabel.isVisible():
-            self._downloadLabel.movie().jumpToNextFrame()
-
-    def ____updateConvertingAnimation(self) -> None:
+    def __updateConvertingAnimation(self) -> None:
         if self._convertingLabel.isVisible():
             self._convertingLabel.movie().jumpToNextFrame()
 

@@ -1,11 +1,12 @@
 from time import sleep
+from typing import Optional
 
 from PyQt5.QtCore import QThread
 
 
 class UpdateUIThread(QThread):
 
-    def __init__(self, action: callable, interval) -> None:
+    def __init__(self, action: callable, interval: Optional[int | float]) -> None:
         super().__init__()
         self.__action = action
         self.__interval = interval / 1000
