@@ -1,14 +1,14 @@
 from typing import overload, Union
 
 from PyQt5 import QtCore
-from PyQt5.QtCore import Qt, QSize, QMargins
+from PyQt5.QtCore import Qt, QSize, QMargins, QPoint
 from PyQt5.QtGui import QShowEvent, QResizeEvent, QMouseEvent
-from PyQt5.QtWidgets import QMainWindow, QWidget, QDesktopWidget, QLayout, QHBoxLayout
+from PyQt5.QtWidgets import QMainWindow, QWidget, QDesktopWidget, QLayout, QHBoxLayout, QGraphicsDropShadowEffect
 
 from app.components.base import Factory, Component
 from app.components.widgets import Box, StyleWidget
 from app.helpers.base import Strings
-from app.helpers.stylesheets import Colors, Paddings
+from app.helpers.stylesheets import Colors, Paddings, Color
 from app.resource.qt import Icons
 
 
@@ -16,25 +16,34 @@ class FramelessWindow(QMainWindow, Component):
 
     def __init__(self) -> None:
         super().__init__()
+
+        self.__shadowHeight = 0
+
         self.__initUI()
+        self.setShadow(Colors.GRAY, 32)
 
     def __initUI(self) -> None:
         self.setWindowFlags(Qt.Window | Qt.FramelessWindowHint | Qt.WindowMinMaxButtonsHint)
         self.setAttribute(Qt.WA_TranslucentBackground)
 
         self._inner = StyleWidget()
-        self._inner.setObjectName(f"window-{Strings.randomId()}")
         self.setCentralWidget(self._inner)
 
         self._mainLayout = Box(self._inner)
         self._mainLayout.setContentsMargins(0, 0, 0, 0)
         self._mainLayout.setSpacing(0)
 
+    def setShadow(self, color: Color, size: int) -> None:
+        self.__shadowHeight = size
+
+        self._inner.setGraphicsEffect(QGraphicsDropShadowEffect(blurRadius=size, color=color.withAlpha(50).toQColor(), xOffset=0, yOffset=3))
+        super().setContentsMargins(size * 2, size * 2, size * 2, size * 2)
+
     def moveToCenter(self):
         qtRectangle = self._inner.frameGeometry()
         centerPoint = QDesktopWidget().availableGeometry().center()
         qtRectangle.moveCenter(centerPoint)
-        self.move(qtRectangle.topLeft())
+        self.move(qtRectangle.topLeft() - QPoint(self.__shadowHeight * 2, self.__shadowHeight * 2))
 
     def addLayout(self, widget: QLayout) -> None:
         self._mainLayout.addLayout(widget)

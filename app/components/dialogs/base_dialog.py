@@ -45,6 +45,9 @@ class BaseDialog(FramelessWindow):
         cancelShortcut = QShortcut(QKeySequence(Qt.Key_Escape), self._btnClose)
         cancelShortcut.activated.connect(lambda: self._btnClose.click())
 
+    def _hideTitleBar(self) -> None:
+        self._titleBar.hide()
+
     def setFixedWidth(self, w: int) -> None:
         super().setFixedWidth(w)
         self._btnClose.move(w - self._btnClose.width() - 4, 4)

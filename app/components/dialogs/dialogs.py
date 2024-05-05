@@ -1,33 +1,29 @@
 from typing import Optional, final
 
-from PyQt5.QtCore import Qt, pyqtSignal
-from PyQt5.QtGui import QKeySequence
-from PyQt5.QtWidgets import QShortcut, QDialog, QDesktopWidget, QSizePolicy
+from PyQt5.QtCore import Qt, pyqtSignal, QSize
+from PyQt5.QtGui import QKeySequence, QResizeEvent
+from PyQt5.QtWidgets import QShortcut, QSizePolicy, QVBoxLayout
 
-from app.components.base import CoverProps, Component, Cover, Factory, ActionButton, Label
+from app.components.base import CoverProps, Cover, Factory, ActionButton, Label
 from app.components.dialogs import BaseDialog
-from app.components.widgets import Box, StyleWidget, FlexBox
+from app.components.widgets import FlexBox
+from app.components.windows import FramelessWindow
 from app.helpers.base import Numbers
 from app.resource.qt import Images
 
 
-class _ConfirmDialog(QDialog, Component):
+class _ConfirmDialog(FramelessWindow):
     confirmed: pyqtSignal() = pyqtSignal()
     canceled: pyqtSignal() = pyqtSignal()
 
     def __init__(self):
         super().__init__()
         self._initComponent()
-        self.applyTheme()
 
     def _createUI(self) -> None:
-        self.setWindowFlags(Qt.Window | Qt.FramelessWindowHint | Qt.WindowMinMaxButtonsHint)
-        self.setAttribute(Qt.WA_TranslucentBackground)
         self.setWindowModality(Qt.ApplicationModal)
-
-        self._inner = StyleWidget(self)
-        self._inner.setContentsMargins(24, 24, 24, 24)
-        self._inner.setClassName("rounded-12 bg-white dark:bg-dark")
+        self.setContentsMargins(24, 16, 24, 16)
+        self.setClassName("rounded-12 bg-white dark:bg-dark")
 
         self._header = Label()
         self._header.setFont(Factory.createFont(family="Segoe UI Semibold", size=16, bold=True))
@@ -46,7 +42,7 @@ class _ConfirmDialog(QDialog, Component):
 
         self._cancelBtn = ActionButton()
         self._cancelBtn.setFont(Factory.createFont(family="Segoe UI Semibold", size=11))
-        self._cancelBtn.setClassName("rounded-4 text-black border-gray-40 hover:bg-black-8 py-8 px-24")
+        self._cancelBtn.setClassName("rounded-4 text-black border border-gray-40 hover:bg-black-8 py-8 px-24")
         self._cancelBtn.setMinimumWidth(64)
 
         self._buttonBox = FlexBox()
@@ -55,13 +51,15 @@ class _ConfirmDialog(QDialog, Component):
         self._buttonBox.addWidget(self._acceptBtn)
         self._buttonBox.addWidget(self._cancelBtn)
 
-        self._mainLayout = Box(self._inner)
-        self._mainLayout.setAlignment(Qt.AlignLeft)
+        self._body = QVBoxLayout()
+        self._body.setAlignment(Qt.AlignLeft)
 
-        self._mainLayout.addWidget(self._header)
-        self._mainLayout.addWidget(self._message)
-        self._mainLayout.addSpacing(8)
-        self._mainLayout.addLayout(self._buttonBox)
+        self._body.addWidget(self._header)
+        self._body.addWidget(self._message)
+        self._body.addSpacing(8)
+        self._body.addLayout(self._buttonBox)
+
+        super().addLayout(self._body)
 
     def _connectSignalSlots(self) -> None:
         self._acceptBtn.clicked.connect(lambda: self.confirmed.emit())
@@ -76,16 +74,18 @@ class _ConfirmDialog(QDialog, Component):
         cancelShortcut = QShortcut(QKeySequence(Qt.Key_Escape), self._cancelBtn)
         cancelShortcut.activated.connect(lambda: self.canceled.emit())
 
-    def setFixedSize(self, w: int, h: int) -> None:
-        margins = self._inner.contentsMargins()
-        super().setFixedSize(w + margins.left() + margins.right(), h + margins.top() + margins.bottom())
-        self._inner.setFixedSize(w, h)
-
     def setInfo(self, header: str, message: str, acceptText: str, cancelText: str) -> None:
         self._header.setText(header)
         self._message.setText(message)
         self._acceptBtn.setText(acceptText)
         self._cancelBtn.setText(cancelText)
+
+        width = Numbers.clamp(self.sizeHint().width(), 480, 640)
+        self.setFixedSize(QSize(width, self.sizeHint().height()))
+
+    def resizeEvent(self, event: QResizeEvent) -> None:
+        super().resizeEvent(event)
+        self.moveToCenter()
 
     def applyLightMode(self) -> None:
         super().applyLightMode()
@@ -95,19 +95,10 @@ class _ConfirmDialog(QDialog, Component):
         super().applyDarkMode()
         super().applyThemeToChildren()
 
-    def moveToCenter(self):
-        width = Numbers.clamp(self._inner.sizeHint().width(), 480, 640)
-        self.setFixedSize(width, self._inner.sizeHint().height())
-
-        qtRectangle = self._inner.frameGeometry()
-        centerPoint = QDesktopWidget().availableGeometry().center()
-        qtRectangle.moveCenter(centerPoint)
-        self.move(qtRectangle.topLeft())
-
-    def open(self) -> None:
+    def show(self) -> None:
         self.applyTheme()
         self.moveToCenter()
-        self.exec_()
+        super().show()
 
 
 class _AlertDialog(BaseDialog):
@@ -119,7 +110,8 @@ class _AlertDialog(BaseDialog):
     def _createUI(self) -> None:
         super()._createUI()
         self.setFixedWidth(360)
-        self._body.setContentsMargins(16, 16, 16, 0)
+
+        self.setContentsMargins(16, 16, 16, 16)
 
         self._image = Cover()
         self._image.setAlignment(Qt.AlignCenter)
@@ -211,4 +203,4 @@ class Dialogs:
         if onCancel is not None:
             dialog.canceled.connect(lambda: onCancel())
 
-        dialog.open()
+        dialog.show()
