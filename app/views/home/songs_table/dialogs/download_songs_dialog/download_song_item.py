@@ -9,11 +9,13 @@ from PyQt5.QtGui import QMovie
 from PyQt5.QtWidgets import QWidget, QLabel
 from pytube import YouTube, Stream
 
+from app.common.exceptions import ResourceException
 from app.common.models import Song
 from app.components.base import Cover, LabelWithDefaultText, Factory, CoverProps
 from app.components.sliders import ProgressBar
 from app.components.widgets import ExtendableStyleWidget, Box, FlexBox
 from app.helpers.base import Strings
+from app.helpers.builders import AudioEditor
 from app.helpers.others import Times, Files, Logger
 from app.helpers.stylesheets import Paddings, Colors
 from app.resource.qt import Images, Icons
@@ -154,14 +156,19 @@ class DownloadSongItem(ExtendableStyleWidget):
         songLocation = f"library/{title}.mp3"
 
         try:
-            Files.copyFile(path, songLocation)
+            convertedMp3Path = Strings.joinPath(Strings.getDirectoryOf(path), f"{title}.mp3")
+
+            editor = AudioEditor()
+            editor.convertToMp3File(path.replace("\\", "/"), convertedMp3Path)
+
+            Files.copyFile(convertedMp3Path, songLocation)
             song = Song.fromFile(songLocation)
 
             if Strings.isNotBlank(artist):
                 try:
                     song.updateInfo(title, artist)
-                except Exception as e:
-                    Logger.error(f"Update artist for song '{title}' failed with following error: {e}")
+                except AttributeError:
+                    raise ResourceException.brokenFile()
 
             self.songDownloaded.emit(song)
             self.__markSucceed()
@@ -169,6 +176,12 @@ class DownloadSongItem(ExtendableStyleWidget):
         except FileExistsError as e:
             Logger.error(f"Can't convert song '{title}' because it is already existed in library.")
             self.__markConvertFailed(e)
+
+        except ResourceException as e:
+            Logger.error(f"Can't convert song '{title}' because it is broken.")
+            self.__markConvertFailed(e)
+            Files.removeFile(songLocation)
+
         except Exception as e:
             Logger.error(f"Convert song '{title}' failed  with following error: {e}")
             self.__markConvertFailed(e)
@@ -193,10 +206,16 @@ class DownloadSongItem(ExtendableStyleWidget):
     def __markConvertFailed(self, exception: Exception) -> None:
         self._gif.hide()
         self._failedIcon.show()
+
         if isinstance(exception, FileExistsError):
-            self._descriptionLabel.setText("Covert failed. Song is already existed.")
-        else:
-            self._descriptionLabel.setText("Covert failed.")
+            self._descriptionLabel.setText("Convert failed. Song is already existed.")
+            return
+
+        if isinstance(exception, ResourceException):
+            self._descriptionLabel.setText("Convert failed. Song is broken.")
+            return
+
+        self._descriptionLabel.setText("Convert failed. Please try again.")
 
 
 pytube.request.default_range_size = 128000
@@ -219,7 +238,7 @@ class DownloadSongThread(QThread):
 
             self.__ytb.register_on_progress_callback(
                 lambda stream, chunk, bytesRemaining: self.__onProgress(stream, bytesRemaining, downloadStartTime))
-            downloadedFile = self.__ytb.streams.filter(abr='160kbps', only_audio=True).last().download("library/download")
+            downloadedFile = self.__ytb.streams.get_audio_only().download("library/download", filename=f"{Strings.randomId()}.wav")
             self.downloadSucceed.emit(downloadedFile)
         except Exception as e:
             self.downloadFailed.emit(e)

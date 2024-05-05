@@ -97,11 +97,13 @@ class Strings:
 
     @staticmethod
     def joinPath(directory: str, filePath: str) -> str:
-        return f"{directory}/{filePath}"
+        dir_ = directory.replace("\\", "/")
+        dir_ = dir_[0:-1] if dir_.endswith("/") else dir_
+        return f"{dir_}/{filePath}"
 
     @staticmethod
     def getDirectoryOf(filePath: str) -> str:
-        return filePath.replace(os.path.basename(filePath), "")
+        return filePath.replace(os.path.basename(filePath), "").replace("\\", "/")
 
     @staticmethod
     def getFileBasename(filePath: str) -> str:

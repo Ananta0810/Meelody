@@ -32,3 +32,7 @@ class ResourceException(Exception):
     @staticmethod
     def fileExisted() -> 'ResourceException':
         return ResourceException(ResourceException.__Reason.EXISTED)
+
+    @staticmethod
+    def brokenFile() -> 'ResourceException':
+        return ResourceException(ResourceException.__Reason.BROKEN)
