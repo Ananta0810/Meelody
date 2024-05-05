@@ -1,10 +1,13 @@
 from typing import Optional
 
-from PyQt5.QtWidgets import QWidget, QPushButton
+from PyQt5.QtCore import Qt
+from PyQt5.QtWidgets import QWidget, QPushButton, QVBoxLayout
 
 from app.common.others import appCenter
 from app.components.base.app_icon import AppIcon
 from app.components.base.base_component import Component
+from app.components.base.gif import Gif
+from app.components.widgets import ExtendableStyleWidget
 from app.helpers.base import Strings
 from app.helpers.stylesheets import Padding
 from app.helpers.stylesheets.translators import ClassNameTranslator
@@ -197,3 +200,37 @@ class IconButton(QPushButton, Component):
     def applyDarkMode(self) -> None:
         super().applyDarkMode()
         self.setIcon(self.__darkModeIcon or self.__lightModeIcon)
+
+
+class LoadingButton(ExtendableStyleWidget):
+
+    def __init__(self, parent: Optional[QWidget] = None):
+        self.__trackTo: Optional[QWidget] = None
+        super().__init__(parent)
+        super()._initComponent()
+
+    def _createUI(self) -> None:
+        self.setCursor(Cursors.WAITING)
+
+        self._layout = QVBoxLayout(self)
+        self._layout.setContentsMargins(0, 0, 0, 0)
+
+        self._gif = Gif("app/resource/images/defaults/loading-circle.gif", fps=25)
+        self._layout.addWidget(self._gif, alignment=Qt.AlignCenter)
+
+    def trackSizeTo(self, widget: QWidget) -> None:
+        self.__trackTo = widget
+
+    def setLoadingSize(self, size: int) -> None:
+        self._gif.setFixedHeight(size)
+
+    def show(self) -> None:
+        if self.__trackTo is not None:
+            self.setFixedSize(self.__trackTo.width(), self.__trackTo.height())
+
+        self._gif.start()
+        super().show()
+
+    def hide(self) -> None:
+        super().hide()
+        self._gif.stop()

@@ -13,3 +13,11 @@ class Cursors:
     @memoizeStaticProperty
     def DEFAULT(self) -> QCursor:
         return QCursor(Qt.ArrowCursor)
+
+    @memoizeStaticProperty
+    def NOT_ALLOWED(self) -> QCursor:
+        return QCursor(Qt.ForbiddenCursor)
+
+    @memoizeStaticProperty
+    def WAITING(self) -> QCursor:
+        return QCursor(Qt.WaitCursor)

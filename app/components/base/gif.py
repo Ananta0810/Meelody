@@ -39,5 +39,8 @@ class Gif(QLabel):
         self.__animationThread.quit()
 
     def __updateAnimation(self) -> None:
-        if self.isVisible():
-            self.movie().jumpToNextFrame()
+        try:
+            if self.isVisible():
+                self.movie().jumpToNextFrame()
+        except RuntimeError:
+            pass
