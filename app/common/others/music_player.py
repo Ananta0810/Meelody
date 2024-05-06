@@ -5,7 +5,8 @@ from typing import Optional, Callable
 from PyQt5.QtCore import QObject, pyqtSignal, QThread, QTimer
 from pygame import mixer
 
-from app.common.models import Song, Playlist, ShufflePlaylistSongs
+from app.common.models import Song, Playlist
+from app.common.models.impl import MusicPlayerPlaylistSongs
 from app.helpers.base import Numbers
 
 os.environ['PYGAME_HIDE_SUPPORT_PROMPT'] = "hide"
@@ -25,8 +26,7 @@ class MusicPlayer(QObject):
         mixer.pre_init()
         mixer.init()
 
-        self.__songs: Optional[Playlist.Songs] = None
-        self.__shuffledSongs: Optional[Playlist.Songs] = None
+        self.__songs: Optional[MusicPlayerPlaylistSongs] = None
         self.__currentSong: Optional[Song] = None
         self.__currentSongIndex: int = 0
         self.__timeStartInSec: float = 0
@@ -54,7 +54,7 @@ class MusicPlayer(QObject):
     def loadPlaylist(self, songs: Playlist.Songs) -> None:
         if self.__songs is not None:
             self.__songs.updated.disconnect(self.__findCurrentSongIndex)
-        self.__songs = songs
+        self.__songs = MusicPlayerPlaylistSongs(songs)
         self.__songs.updated.connect(self.__findCurrentSongIndex)
         self.setShuffle(self.__isShuffle)
 
@@ -62,6 +62,8 @@ class MusicPlayer(QObject):
         if self.__songs is not None and self.__currentSong is not None:
             newIndex = self.__songs.indexOf(self.__currentSong)
             self.__currentSongIndex = newIndex
+
+        return self.__songs
 
     def setStartTime(self, timeStart: float):
         self.__timeStartInSec = timeStart
@@ -73,12 +75,10 @@ class MusicPlayer(QObject):
         if self.__loaded:
             return
 
-        songs = self.__getSongs()
-
-        if not songs.hasAnySong():
+        if not self.__songs.hasAnySong():
             return
 
-        song = songs.getSongAt(self.__currentSongIndex)
+        song = self.__songs.getSongAt(self.__currentSongIndex)
         if song is None:
             return
 
@@ -88,9 +88,6 @@ class MusicPlayer(QObject):
         mixer.music.unload()
         mixer.music.load(song.getLocation())
         self.songChanged.emit(song)
-
-    def __getSongs(self):
-        return self.__shuffledSongs if self.__isShuffle else self.__songs
 
     def play(self):
         if not self.__loaded:
@@ -102,7 +99,7 @@ class MusicPlayer(QObject):
         if not self.hasAnySong():
             return
 
-        newIndex = self.__getSongs().indexOf(song)
+        newIndex = self.__songs.indexOf(song)
         self.stop()
         self.setCurrentSongIndex(newIndex)
         self.loadSongToPlay()
@@ -113,7 +110,7 @@ class MusicPlayer(QObject):
         if not self.hasAnySong():
             return
         self.stop()
-        self.setCurrentSongIndex((self.__currentSongIndex - 1) % self.__getSongs().size())
+        self.setCurrentSongIndex((self.__currentSongIndex - 1) % self.__songs.size())
         self.loadSongToPlay()
         self.setStartTime(0)
         self.play()
@@ -122,7 +119,7 @@ class MusicPlayer(QObject):
         if not self.hasAnySong():
             return
         self.stop()
-        self.setCurrentSongIndex((self.__currentSongIndex + 1) % self.__getSongs().size())
+        self.setCurrentSongIndex((self.__currentSongIndex + 1) % self.__songs.size())
         self.loadSongToPlay()
         self.setStartTime(0)
         self.play()
@@ -167,19 +164,10 @@ class MusicPlayer(QObject):
 
     def setShuffle(self, a0: bool) -> None:
         self.__isShuffle = a0
-
-        if self.__isShuffle:
-            self.__shuffledSongs = ShufflePlaylistSongs.of(self.__songs)
-            self.__shuffledSongs.listenUpdateToOriginalPlaylist()
-        else:
-            if self.__shuffledSongs is not None:
-                self.__shuffledSongs.removeListenUpdateToOriginalPlaylist()
-
-            self.__shuffledSongs = None
+        self.__songs.setShuffle(a0)
 
         if self.__currentSong is not None:
-            currentSongNewIndex = self.__getSongs().indexOf(self.__currentSong)
-            self.__currentSongIndex = currentSongNewIndex
+            self.__currentSongIndex = self.__songs.indexOf(self.__currentSong)
 
         self.shuffleChanged.emit(a0)
 
