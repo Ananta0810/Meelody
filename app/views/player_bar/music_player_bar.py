@@ -285,7 +285,6 @@ class MusicPlayerBar(QWidget, Component):
         self._timeSlider.setValue(position)
         try:
             musicPlayer.skipToTime(musicPlayer.getCurrentSong().getLength() * position / 100)
-            musicPlayer.play()
         except AttributeError:
             self._timeSlider.setValue(0)
 

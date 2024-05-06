@@ -3,7 +3,7 @@ import random
 from time import sleep
 from typing import Optional, Callable
 
-from PyQt5.QtCore import QObject, pyqtSignal, QThread
+from PyQt5.QtCore import QObject, pyqtSignal, QThread, QTimer
 from pygame import mixer
 
 from app.common.models import Song, Playlist
@@ -37,7 +37,17 @@ class MusicPlayer(QObject):
         self.__isLooping = False
         self.__isShuffle = False
 
-        self.__finishTrackerThread = _MusicFinishedTrackThread(onSongFinished=self.__onSongFinished)
+        self.__finishTrackerThread = _MusicFinishedTrackThread(onSongFinished=lambda: self.__onSongFinished())
+        self.__checkThreadTimer = QTimer(self)
+        self.__checkThreadTimer.timeout.connect(lambda: self.__startTrackingIfNotStarted())
+
+        self.played.connect(lambda: self.__finishTrackerThread.start())
+        self.played.connect(lambda: self.__checkThreadTimer.start(500))
+        self.paused.connect(lambda: self.__finishTrackerThread.quit())
+
+    def __startTrackingIfNotStarted(self):
+        if self.isPlaying() and not self.__finishTrackerThread.isRunning():
+            self.__finishTrackerThread.start()
 
     def hasAnySong(self):
         return self.__songs is not None and self.__songs.hasAnySong()
@@ -87,7 +97,6 @@ class MusicPlayer(QObject):
         if not self.__loaded:
             return
         mixer.music.play(start=self.getPlayingTime())
-        self.__finishTrackerThread.start()
         self.played.emit()
 
     def playSong(self, song: Song):
@@ -131,15 +140,14 @@ class MusicPlayer(QObject):
         return self.__currentSongIndex
 
     def skipToTime(self, time: float) -> None:
-        self.pause()
         self.setStartTime(time)
+        self.play()
 
     def pause(self, emitSignal: bool = True) -> None:
         if not self.isPlaying():
             return
         self.setStartTime(self.getPlayingTime())
         mixer.music.stop()
-        self.__finishTrackerThread.quit()
         if emitSignal:
             self.paused.emit()
 
@@ -148,7 +156,6 @@ class MusicPlayer(QObject):
             return
         mixer.music.stop()
         mixer.music.unload()
-        self.__finishTrackerThread.quit()
         self.__loaded = False
         self.paused.emit()
 
@@ -209,11 +216,14 @@ class MusicPlayer(QObject):
 
     def __onSongFinished(self) -> None:
         if self.__isLooping:
-            self.pause(emitSignal=False)
-            self.setStartTime(0)
-            self.play()
+            self.__playAgain()
             return
         self.playNextSong()
+
+    def __playAgain(self):
+        self.pause(emitSignal=False)
+        self.setStartTime(0)
+        self.play()
 
 
 class _MusicFinishedTrackThread(QThread):
@@ -221,24 +231,24 @@ class _MusicFinishedTrackThread(QThread):
     def __init__(self, onSongFinished: Callable) -> None:
         super().__init__()
         self.__onSongFinished = onSongFinished
-        self.__thread_id: int = 0
+        self.__threadId: int = 0
 
     def run(self) -> None:
-        self.__thread_id += 1
-        thread_id = self.__thread_id
+        self.__threadId += 1
+        threadId = self.__threadId
 
         refreshRate: float = musicPlayer.refreshRate()
 
-        while thread_id == self.__thread_id and musicPlayer.isPlaying():
+        while threadId == self.__threadId and musicPlayer.isPlaying():
             sleep(refreshRate)
 
-        isPlayUntilTheEnd = thread_id == self.__thread_id
-        print(thread_id, self.__thread_id)
+        isPlayUntilTheEnd = threadId == self.__threadId
         if isPlayUntilTheEnd:
+            self.__threadId += 1
             self.__onSongFinished()
 
     def quit(self) -> None:
-        super().quit()
+        self.__threadId += 1
 
 
 musicPlayer = MusicPlayer()
