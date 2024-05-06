@@ -38,16 +38,23 @@ class Song(QObject):
             self.__cover = cover
 
     @staticmethod
-    def fromFile(location: str) -> 'Song':
-        data = SongReader(location)
+    def fromFile(location: str, title: str = None) -> Optional['Song']:
+        """
+        Load a song from explorer. Return None if song is load failed.
+        """
+        try:
+            data = SongReader(location)
 
-        return Song(
-            location,
-            title=Strings.getFileBasename(location),
-            artist=data.getArtist(),
-            length=data.getLength(),
-            sampleRate=data.getSampleRate()
-        )
+            song = Song(location, title=data.getTitle(), artist=data.getArtist(), length=data.getLength(), sampleRate=data.getSampleRate())
+
+            if song.getTitle() is None:
+                if title is not None:
+                    song.updateInfo(title, song.getArtist())
+                else:
+                    raise ResourceException("No title provided.")
+            return song
+        except ResourceException:
+            return None
 
     @staticmethod
     def fromDict(json: dict) -> 'Song':
@@ -146,33 +153,20 @@ class Song(QObject):
 
     def updateInfo(self, title: str, artist: str) -> None:
         """
-       Rename title and artist of the song. In addition, rename the audio file name if title changed.
+        Rename title and artist of the song.
+        throws: ResourceException if update failed
         """
+        writer = SongWriter(self.__location)
 
         if not Strings.equals(self.__title, title):
-            self.__updateTitle(title)
+            writer.writeTitle(title)
+            self.__title = title
             self.updated.emit("title")
 
         if not Strings.equals(self.__artist, artist):
-            self.__updateArtist(artist)
+            writer.writeArtist(artist)
+            self.__artist = artist
             self.updated.emit("artist")
-
-    def __updateTitle(self, title: str) -> None:
-        newLocation = Strings.getRenameFile(self.__location, title)
-
-        if os.path.exists(newLocation):
-            raise ResourceException.fileExisted()
-
-        try:
-            os.rename(self.__location, newLocation)
-            self.__location = newLocation
-            self.__title = title
-        except PermissionError:
-            raise ResourceException.unChangeable()
-
-    def __updateArtist(self, artist: str) -> None:
-        SongWriter(self.__location).writeArtist(artist)
-        self.__artist = artist
 
     def updateCover(self, cover: bytes) -> None:
         """
@@ -210,16 +204,22 @@ class Song(QObject):
 
 
 class SongReader:
-    __data: mp3.Mp3AudioFile
 
     def __init__(self, file: str):
-        self.__data = load(file)
+        self.__data: mp3.Mp3AudioFile = load(file)
 
-    def getArtist(self) -> str:
+    def getTitle(self) -> Optional[str]:
+        try:
+            print(self.__data.tag.title)
+            return self.__data.tag.title
+        except AttributeError:
+            return None
+
+    def getArtist(self) -> Optional[str]:
         try:
             return self.__data.tag.artist
         except AttributeError:
-            return ''
+            return None
 
     def getLength(self) -> int:
         try:
@@ -253,8 +253,23 @@ class SongWriter:
         except (FileNotFoundError, IOError):
             raise ResourceException.notFound()
 
+    def writeTitle(self, title: str) -> None:
+        try:
+            if self.__data.tag is None:
+                self.__data.initTag()
+
+            self.__data.tag.title = title
+            self.__data.tag.save(version=id3.ID3_V2_3)
+        except (FileNotFoundError, IOError):
+            raise ResourceException.notFound()
+        except PermissionError:
+            raise ResourceException.unChangeable()
+
     def writeArtist(self, artist: str) -> None:
         try:
+            if self.__data.tag is None:
+                self.__data.initTag()
+                
             self.__data.tag.artist = artist
             self.__data.tag.save(version=id3.ID3_V2_3)
         except (FileNotFoundError, IOError):

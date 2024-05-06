@@ -2,7 +2,7 @@ import os
 
 from app.common.models import Song, Playlist
 from app.common.models.impl import PlaylistSongs
-from app.helpers.base import Bytes
+from app.helpers.base import Bytes, Lists
 from app.helpers.others import Files, Jsons
 
 
@@ -25,7 +25,7 @@ class Database:
 
         def __loadSongsFromFolder(self, directory, withExtension):
             files: set = Files.getFrom(directory, withExtension)
-            songs = [Song.fromFile(file) for file in files]
+            songs = Lists.nonNull([Song.fromFile(file) for file in files])
             self.save(songs)
             return songs
 

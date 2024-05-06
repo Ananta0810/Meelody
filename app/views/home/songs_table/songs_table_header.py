@@ -7,6 +7,7 @@ from app.common.models import Playlist, Song
 from app.common.others import appCenter
 from app.components.base import Factory, EllipsisLabel, Component
 from app.components.dialogs import Dialogs
+from app.helpers.base import Strings, Lists
 from app.helpers.others import Files, Logger
 from app.helpers.stylesheets import Paddings, Colors
 from app.resource.others import FileType
@@ -139,7 +140,7 @@ class ImportSongsToLibraryThread(QThread):
     def run(self) -> None:
         try:
             paths = self.__copySongsToLibrary()
-            songs = [Song.fromFile(path) for path in paths]
+            songs = Lists.nonNull([Song.fromFile(path, title) for path, title in paths])
             appCenter.library.getSongs().insertAll(songs)
 
             self.finished.emit([True, len(songs)])
@@ -148,12 +149,14 @@ class ImportSongsToLibraryThread(QThread):
             self.finished.emit([False, 0])
 
     def __copySongsToLibrary(self) -> list[str]:
-        newPaths: list[str] = []
+        newPaths: list[[str, str]] = []
         for path in self.__songPaths:
             try:
-                songPath = Files.copyFileToDirectory("library/", path)
+                songPath = f"library/{Strings.randomId()}.mp3"
+                Files.copyFile(path, songPath)
+
                 print(f"Import song from '{path}' to library")
-                newPaths.append(songPath)
+                newPaths.append([songPath, Strings.getFileBasename(path)])
             except FileExistsError:
                 Logger.error(f"Copy failed for {path}")
                 pass
