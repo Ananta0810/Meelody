@@ -42,7 +42,7 @@ class SongsMenu(SmoothVerticalScrollArea):
         super()._connectSignalSlots()
         VisibleObserver(self).visible.connect(lambda visible: self.__showLibrary())
 
-        appCenter.currentPlaylistChanged.connect(lambda playlist: self.__setPlaylist(playlist.getSongs()))
+        appCenter.currentPlaylistChanged.connect(lambda playlist: self.__setPlaylist(playlist))
         musicPlayer.songChanged.connect(lambda song: self.__scrollToSong(song))
 
     def eventFilter(self, obj: QObject, event: QEvent) -> bool:
@@ -86,9 +86,16 @@ class SongsMenu(SmoothVerticalScrollArea):
         if song.getTitle() in self.__titles:
             self.scrollToItemAt(self.__titles[song.getTitle()])
 
-    def __setPlaylist(self, playlist: Playlist.Songs) -> None:
-        self.__setPlaylistSongs(playlist.getSongs())
-        playlist.updated.connect(lambda: self.__refreshSongs(playlist))
+    def __setPlaylist(self, playlist: Playlist) -> None:
+        playlist.getSongs().updated.connect(lambda: self.__refreshSongs(playlist.getSongs()))
+
+        self.__setPlaylistSongs(playlist.getSongs().getSongs())
+
+        rows: list[SongRow] = [row for row in self.widgets()]
+        editable = playlist.getInfo().getName() == "library"
+
+        for row in rows:
+            row.setEditable(editable)
 
     def __setPlaylistSongs(self, songs: list[Song]) -> None:
         self.__menuReset.emit()
