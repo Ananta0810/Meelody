@@ -1,24 +1,11 @@
+import random
 import uuid
-from typing import Callable, TypeVar
+from typing import Callable
 
 from PyQt5.QtCore import QObject, pyqtSignal
 
 from app.common.models.song import Song
 from app.helpers.base import Lists, Strings
-
-T = TypeVar('T')
-
-
-class _SongComparator:
-    def __init__(self, key_provider: Callable[[Song], T], comparator: Callable[[T, T], int]) -> None:
-        self.__key_provider = key_provider
-        self.__comparator = comparator
-
-    def keyOf(self, song: Song) -> T:
-        return self.__key_provider(song)
-
-    def comparator(self) -> Callable[[Song, Song], int]:
-        return lambda s1, s2: self.__comparator(self.__key_provider(s1), self.__key_provider(s2))
 
 
 class Playlist:
@@ -60,9 +47,11 @@ class Playlist:
 
         updated = pyqtSignal()
 
-        def __init__(self, songs: list[Song] = None):
+        def __init__(self, songs: list[Song] = None, isSorted: bool = True):
             super().__init__()
             self.__songs: list[Song] = []
+            self.__isSorted: bool = isSorted
+
             if songs is not None:
                 self.insertAll(songs)
 
@@ -118,14 +107,17 @@ class Playlist:
                     return index
             return -1
 
-        def insert(self, song: Song) -> int:
+        def insert(self, song: Song) -> None:
             """
-            Add song to the list of songs. If added successfully, it will return the position of the song in the playlist
+            Add song to the list of songs.
             """
-            position = self.__findInsertPosition(song)
+            if self.__isSorted:
+                position = self.__findInsertPosition(song)
+                self.__songs.insert(position, song)
+            else:
+                self.__songs.append(song)
+
             song.updated.connect(lambda updatedField: self.__onSongUpdated(song, updatedField))
-            self.__songs.insert(position, song)
-            return position
 
         def __onSongUpdated(self, song: Song, updatedField: str) -> None:
             if updatedField == "title":
@@ -150,6 +142,15 @@ class Playlist:
                     self.insert(song)
                 self.updated.emit()
 
+        def removeAll(self, songs: list[Song]) -> None:
+            if songs is not None:
+                for song in songs:
+                    try:
+                        self.__songs.remove(song)
+                    except ValueError:
+                        pass
+                self.updated.emit()
+
         def removeSong(self, song: Song) -> None:
             self.__songs.remove(song)
             self.updated.emit()
@@ -158,7 +159,11 @@ class Playlist:
             """
             Find the index Of song in the list
             """
-            return Lists.binarySearch(self.__songs, song, self.__comparator())
+            return (
+                Lists.binarySearch(self.__songs, song, self.__comparator())
+                if self.__isSorted
+                else Lists.linearSearch(self.__songs, song, self.__comparator())
+            )
 
         @staticmethod
         def __comparator() -> Callable[[Song, Song], int]:
@@ -193,3 +198,32 @@ class Playlist:
 
     def clone(self) -> 'Playlist':
         return Playlist(self.__info.clone(), self.__songs.clone())
+
+
+class ShufflePlaylistSongs(Playlist.Songs):
+
+    def __init__(self, originalPlaylist: Playlist.Songs, songs: list[Song] = None, isSorted: bool = True):
+        self.__originalPlaylist = originalPlaylist
+        super().__init__(songs, isSorted)
+
+    @staticmethod
+    def of(playlist: Playlist.Songs) -> 'ShufflePlaylistSongs':
+        songs = playlist.getSongs()
+        random.shuffle(songs)
+
+        newPlaylist = ShufflePlaylistSongs(playlist, songs, isSorted=False)
+        return newPlaylist
+
+    def listenUpdateToOriginalPlaylist(self) -> None:
+        self.__originalPlaylist.updated.connect(self.__updateSongsToOriginalPlaylist)
+
+    def removeListenUpdateToOriginalPlaylist(self) -> None:
+        self.__originalPlaylist.updated.disconnect(self.__updateSongsToOriginalPlaylist)
+        pass
+
+    def __updateSongsToOriginalPlaylist(self):
+        addedSongs = Lists.itemsInLeftOnly(self.__originalPlaylist.getSongs(), self.getSongs())
+        removedSongs = Lists.itemsInRightOnly(self.__originalPlaylist.getSongs(), self.getSongs())
+
+        self.insertAll(addedSongs)
+        self.removeAll(removedSongs)

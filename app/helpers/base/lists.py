@@ -34,6 +34,20 @@ class Lists:
         return -1, -1
 
     @staticmethod
+    def itemsInLeftOnly(left: list[T], right: list[T]) -> list[T]:
+        if left is None or right is None:
+            return []
+        rightSet = set(right)
+        return [item for item in left if item not in rightSet]
+
+    @staticmethod
+    def itemsInRightOnly(left: list[T], right: list[T]) -> list[T]:
+        if left is None or right is None:
+            return []
+        leftSet = set(left)
+        return [item for item in right if item not in leftSet]
+
+    @staticmethod
     def nonNull(collection: list[T]) -> list[T]:
         if collection is None:
             return []

@@ -1,12 +1,11 @@
 import os
-import random
 from time import sleep
 from typing import Optional, Callable
 
 from PyQt5.QtCore import QObject, pyqtSignal, QThread, QTimer
 from pygame import mixer
 
-from app.common.models import Song, Playlist
+from app.common.models import Song, Playlist, ShufflePlaylistSongs
 from app.helpers.base import Numbers
 
 os.environ['PYGAME_HIDE_SUPPORT_PROMPT'] = "hide"
@@ -170,10 +169,12 @@ class MusicPlayer(QObject):
         self.__isShuffle = a0
 
         if self.__isShuffle:
-            songs = self.__songs.getSongs()
-            random.shuffle(songs)
-            self.__shuffledSongs = Playlist.Songs(songs, isSorted=False)
+            self.__shuffledSongs = ShufflePlaylistSongs.of(self.__songs)
+            self.__shuffledSongs.listenUpdateToOriginalPlaylist()
         else:
+            if self.__shuffledSongs is not None:
+                self.__shuffledSongs.removeListenUpdateToOriginalPlaylist()
+
             self.__shuffledSongs = None
 
         if self.__currentSong is not None:
