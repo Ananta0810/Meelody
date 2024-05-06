@@ -75,7 +75,7 @@ class PlaylistSongs(Playlist.Songs):
         if updatedField == "love":
             self.updated.emit()
 
-    def __findInsertPosition(self, song) -> int:
+    def __findInsertPosition(self, song: Song) -> int:
         return Lists.binarySearch(self.__songs, song, comparator=self.__comparator(), nearest=True)
 
     def __moveSongAfterUpdate(self, song: Song) -> None:

@@ -1,3 +1,5 @@
+import os
+
 from PyQt5.QtCore import Qt, pyqtSignal
 from PyQt5.QtGui import QKeySequence
 from PyQt5.QtWidgets import QShortcut, QWidget, QVBoxLayout
@@ -9,6 +11,7 @@ from app.common.others import appCenter
 from app.components.base import Cover, LabelWithDefaultText, Factory, Input, ActionButton, CoverProps, Label
 from app.components.dialogs import BaseDialog, Dialogs
 from app.helpers.base import Strings
+from app.helpers.others import Logger
 from app.resource.qt import Images, Cursors
 from app.views.home.songs_table.dialogs.download_songs_dialog.download_songs_menu import DownloadSongsMenu
 
@@ -88,7 +91,7 @@ class DownloadSongsDialog(BaseDialog):
         except RegexMatchError as e:
             Dialogs.alert(header="Warning", message="Invalid youtube video url.")
         except Exception as e:
-            print(e)
+            Logger.error(e)
             Dialogs.alert(header="Warning", message="Youtube video is not found.")
 
         self._searchBtn.setCursor(Cursors.HAND)
@@ -96,11 +99,14 @@ class DownloadSongsDialog(BaseDialog):
     def __downloadSong(self, ytb: YouTube, title: str, artist: str) -> None:
         item = self._menu.addItem()
         item.download(ytb, title, artist)
-        item.songDownloaded.connect(lambda song: self.__insertSongToLibrary(song))
+        item.songDownloaded.connect(lambda songLocation: self.__insertSongToLibrary(songLocation))
 
     @staticmethod
-    def __insertSongToLibrary(song: Song) -> None:
-        appCenter.library.getSongs().insert(song)
+    def __insertSongToLibrary(path: str) -> None:
+        try:
+            appCenter.library.getSongs().insert(Song.fromFile(path))
+        except:
+            Dialogs.alert(message="Somthing wrong while save song.")
 
 
 class _SongInfoDialog(BaseDialog):
@@ -135,6 +141,11 @@ class _SongInfoDialog(BaseDialog):
         self._titleLabel.setClassName("text-black dark:text-white bg-none")
         self._titleLabel.setText("Title")
 
+        self._titleErrorLabel = Label()
+        self._titleErrorLabel.setFont(Factory.createFont(size=11))
+        self._titleErrorLabel.setClassName("text-danger bg-none")
+        self._titleErrorLabel.hide()
+
         self._titleInput = Input()
         self._titleInput.setFont(Factory.createFont(size=12))
         self._titleInput.setClassName("px-12 py-8 rounded-4 border border-primary-12 bg-primary-4")
@@ -147,6 +158,11 @@ class _SongInfoDialog(BaseDialog):
         self._artistInput = Input()
         self._artistInput.setFont(Factory.createFont(size=12))
         self._artistInput.setClassName("px-12 py-8 rounded-4 border border-primary-12 bg-primary-4")
+
+        self._artistErrorLabel = Label()
+        self._artistErrorLabel.setFont(Factory.createFont(size=11))
+        self._artistErrorLabel.setClassName("text-danger bg-none")
+        self._artistErrorLabel.hide()
 
         self._acceptBtn = ActionButton()
         self._acceptBtn.setFont(Factory.createFont(family="Segoe UI Semibold", size=11))
@@ -164,8 +180,10 @@ class _SongInfoDialog(BaseDialog):
         self._viewLayout.addWidget(self._header)
         self._viewLayout.addWidget(self._titleLabel)
         self._viewLayout.addWidget(self._titleInput)
+        self._viewLayout.addWidget(self._titleErrorLabel)
         self._viewLayout.addWidget(self._artistLabel)
         self._viewLayout.addWidget(self._artistInput)
+        self._viewLayout.addWidget(self._artistErrorLabel)
         self._viewLayout.addWidget(self._acceptBtn)
 
         self.addWidget(self._mainView)
@@ -192,16 +210,39 @@ class _SongInfoDialog(BaseDialog):
         acceptShortcut.activated.connect(lambda: self._acceptBtn.click())
 
     def __checkValid(self) -> None:
+        self.__canUpdate = self.__validateTitle() and self.__validateArtist()
+        self._acceptBtn.setDisabled(not self.__canUpdate)
+
+    def __validateTitle(self) -> bool:
         title = self._titleInput.text().strip()
+
+        if Strings.isBlank(title):
+            self._titleErrorLabel.show()
+            self._titleErrorLabel.setText("Title should not be blank.")
+            return False
+
+        if len(title) > 128:
+            self._titleErrorLabel.show()
+            self._titleErrorLabel.setText("Title should be less than 128 characters.")
+            return False
+
+        if os.path.exists(f"library/{Strings.sanitizeFileName(title)}.mp3"):
+            self._titleErrorLabel.show()
+            self._titleErrorLabel.setText("Title has already taken. Please try other title.")
+            return False
+
+        self._titleErrorLabel.hide()
+        return True
+
+    def __validateArtist(self) -> bool:
         artist = self._artistInput.text().strip()
+        if len(artist) > 64:
+            self._artistErrorLabel.show()
+            self._artistErrorLabel.setText("Artist should be less than 64 characters.")
+            return False
 
-        if Strings.isBlank(title) or len(title) > 128 or len(artist) > 64:
-            self.__canUpdate = False
-            self._acceptBtn.setDisabled(True)
-            return
-
-        self.__canUpdate = True
-        self._acceptBtn.setDisabled(False)
+        self._artistErrorLabel.hide()
+        return True
 
     def _download(self) -> None:
         self.__checkValid()

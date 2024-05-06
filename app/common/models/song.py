@@ -210,7 +210,6 @@ class SongReader:
 
     def getTitle(self) -> Optional[str]:
         try:
-            print(self.__data.tag.title)
             return self.__data.tag.title
         except AttributeError:
             return None
@@ -269,7 +268,7 @@ class SongWriter:
         try:
             if self.__data.tag is None:
                 self.__data.initTag()
-                
+
             self.__data.tag.artist = artist
             self.__data.tag.save(version=id3.ID3_V2_3)
         except (FileNotFoundError, IOError):

@@ -26,7 +26,7 @@ from app.views.threads import UpdateUIThread
 
 
 class DownloadSongItem(ExtendableStyleWidget):
-    songDownloaded = pyqtSignal(Song)
+    songDownloaded = pyqtSignal(str)
 
     def __init__(self, parent: Optional[QWidget] = None):
         super().__init__(parent)
@@ -160,17 +160,13 @@ class DownloadSongItem(ExtendableStyleWidget):
         thread.succeed.connect(lambda: self._convertingLabel.stop())
         thread.succeed.connect(lambda: textAnimationThread.quit())
         thread.succeed.connect(lambda: self.__markSucceed())
-        thread.succeed.connect(lambda song: self.__notifySongDownloaded(song))
+        thread.succeed.connect(lambda path: self.songDownloaded.emit(path))
 
         thread.failed.connect(lambda: self._convertingLabel.stop())
         thread.failed.connect(lambda: textAnimationThread.quit())
         thread.failed.connect(lambda e: self.__markConvertFailed(e))
 
         thread.start()
-
-    def __notifySongDownloaded(self, song: Song) -> None:
-        # Somehow, I need to add this method to work.
-        return self.songDownloaded.emit(song)
 
     def __updateConvertingAnimation(self) -> None:
         if self._convertingLabel.isVisible():
@@ -266,7 +262,7 @@ class DownloadSongThread(QThread):
 
 
 class ConvertSongThread(QThread):
-    succeed = pyqtSignal(Song)
+    succeed = pyqtSignal(str)
     failed = pyqtSignal(Exception)
 
     def __init__(self, songData: io.BytesIO, title: str, artist: str) -> None:
@@ -293,7 +289,7 @@ class ConvertSongThread(QThread):
                     raise ResourceException.brokenFile()
 
             Logger.info(f"Download song '{self.__title}' successfully")
-            self.succeed.emit(song)
+            self.succeed.emit(song.getLocation())
 
         except ResourceException as e:
             Logger.error(f"Can't convert song '{self.__title}' because it is broken.")
