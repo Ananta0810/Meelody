@@ -1,4 +1,3 @@
-import itertools
 from typing import TypeVar, Callable, final
 
 T = TypeVar('T')
@@ -7,45 +6,6 @@ R = TypeVar('R')
 
 @final
 class Lists:
-
-    @staticmethod
-    def flat(collection: list[list[T]]) -> list[T]:
-        return list(itertools.chain.from_iterable(collection))
-
-    @staticmethod
-    def clone(collection: list[T]) -> list[T]:
-        return [item for item in collection]
-
-    @staticmethod
-    def findMoved(originalList: list[T], newList: list[T]) -> (int, int):
-        if len(originalList) != len(newList):
-            return -1, -1  # different length
-
-        diff = [x for x, (c, d) in enumerate(zip(originalList, newList)) if c != d]
-        if not diff:
-            return -1, -1  # equal strings
-        oldIndex, newIndex = diff[0], diff[-1]
-
-        if originalList[oldIndex + 1:newIndex + 1] == newList[oldIndex:newIndex] and originalList[oldIndex] == newList[newIndex]:
-            return oldIndex, newIndex
-        if originalList[oldIndex:newIndex] == newList[oldIndex + 1:newIndex + 1] and originalList[newIndex] == newList[oldIndex]:
-            return newIndex, oldIndex
-
-        return -1, -1
-
-    @staticmethod
-    def itemsInLeftOnly(left: list[T], right: list[T]) -> list[T]:
-        if left is None or right is None:
-            return []
-        rightSet = set(right)
-        return [item for item in left if item not in rightSet]
-
-    @staticmethod
-    def itemsInRightOnly(left: list[T], right: list[T]) -> list[T]:
-        if left is None or right is None:
-            return []
-        leftSet = set(left)
-        return [item for item in right if item not in leftSet]
 
     @staticmethod
     def nonNull(collection: list[T]) -> list[T]:
@@ -82,6 +42,38 @@ class Lists:
             return []
 
     @staticmethod
+    def flat(collection: list[list[T]]) -> list[T]:
+        import itertools
+        return list(itertools.chain.from_iterable(collection))
+
+    @staticmethod
+    def clone(collection: list[T]) -> list[T]:
+        return [item for item in collection]
+
+    @staticmethod
+    def shuffle(collection: list[T]) -> list[T]:
+        """
+        Create a shuffled list of the input collection.
+        """
+        import random
+
+        return random.sample(list(Lists.clone(collection)), len(collection))
+
+    @staticmethod
+    def itemsInLeftOnly(left: list[T], right: list[T]) -> list[T]:
+        if left is None or right is None:
+            return []
+        rightSet = set(right)
+        return [item for item in left if item not in rightSet]
+
+    @staticmethod
+    def itemsInRightOnly(left: list[T], right: list[T]) -> list[T]:
+        if left is None or right is None:
+            return []
+        leftSet = set(left)
+        return [item for item in right if item not in leftSet]
+
+    @staticmethod
     def moveElement(collection: list[T], fromIndex: int, toIndex: int) -> None:
         start: int = fromIndex
         end: int = toIndex
@@ -93,6 +85,23 @@ class Lists:
         if start > end:
             start += 1
         collection.pop(start)
+
+    @staticmethod
+    def findMoved(originalList: list[T], newList: list[T]) -> (int, int):
+        if len(originalList) != len(newList):
+            return -1, -1  # different length
+
+        diff = [x for x, (c, d) in enumerate(zip(originalList, newList)) if c != d]
+        if not diff:
+            return -1, -1  # equal strings
+        oldIndex, newIndex = diff[0], diff[-1]
+
+        if originalList[oldIndex + 1:newIndex + 1] == newList[oldIndex:newIndex] and originalList[oldIndex] == newList[newIndex]:
+            return oldIndex, newIndex
+        if originalList[oldIndex:newIndex] == newList[oldIndex + 1:newIndex + 1] and originalList[newIndex] == newList[oldIndex]:
+            return newIndex, oldIndex
+
+        return -1, -1
 
     @staticmethod
     def binarySearch(

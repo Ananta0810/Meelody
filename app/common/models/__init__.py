@@ -1,2 +1,2 @@
-from .playlist import Playlist, ShufflePlaylistSongs
+from .playlist import Playlist
 from .song import Song

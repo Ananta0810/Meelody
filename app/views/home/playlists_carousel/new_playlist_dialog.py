@@ -9,6 +9,7 @@ from PyQt5.QtWidgets import QWidget, QShortcut, QFileDialog
 
 from app.common.exceptions import StorageException
 from app.common.models import Playlist
+from app.common.models.impl import PlaylistSongs
 from app.common.others import appCenter
 from app.components.base import Cover, CoverProps, Factory, Input, ActionButton
 from app.components.dialogs import BaseDialog, Dialogs
@@ -120,7 +121,7 @@ class NewPlaylistDialog(BaseDialog):
                 image = Image.open(io.BytesIO(cover))
                 image.save(f"configuration/playlists/{id}.png")
 
-            appCenter.playlists.append(Playlist(Playlist.Info(name=name, cover=cover, id=id, coverPath=path), Playlist.Songs()))
+            appCenter.playlists.append(Playlist(Playlist.Info(name=name, cover=cover, id=id, coverPath=path), PlaylistSongs()))
             self.close()
         except StorageException:
             if cover is not None:

@@ -12,3 +12,8 @@ class Numbers(ABC):
         if value > max_value:
             return max_value
         return value
+
+    @staticmethod
+    def randomInteger(lower: int, upper: int) -> int:
+        from random import randrange
+        return randrange(lower, upper + 1)

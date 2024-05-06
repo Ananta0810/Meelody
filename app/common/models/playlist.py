@@ -1,11 +1,9 @@
-import random
 import uuid
-from typing import Callable
 
 from PyQt5.QtCore import QObject, pyqtSignal
 
 from app.common.models.song import Song
-from app.helpers.base import Lists, Strings
+from app.helpers.base import Strings
 
 
 class Playlist:
@@ -44,138 +42,95 @@ class Playlist:
             return Playlist.Info(self.__name, self.__cover, self.__coverPath, self.__id)
 
     class Songs(QObject):
-
         updated = pyqtSignal()
 
-        def __init__(self, songs: list[Song] = None, isSorted: bool = True):
-            super().__init__()
-            self.__songs: list[Song] = []
-            self.__isSorted: bool = isSorted
-
-            if songs is not None:
-                self.insertAll(songs)
+        def clone(self) -> 'Playlist.Songs':
+            """
+               Create a shallow copy of this instance
+            """
+            ...
 
         def setSongs(self, songs: list[Song]) -> None:
-            self.__songs = []
-            self.insertAll(songs)
-
-        def __str__(self):
-            string = ""
-            for index, song in enumerate(self.__songs):
-                string += f"{index}. {str(song)}\n"
-            return string
-
-        def clone(self) -> 'Playlist.Songs':
-            return Playlist.Songs(self.__songs)
+            """
+                Initialize songs to library. A signal will be fired after init succeed.
+            """
+            ...
 
         def getSongs(self) -> list[Song]:
-            return [song for song in self.__songs]
+            """
+                Get a copy list of songs.
+            """
+            ...
 
         def hasAnySong(self) -> bool:
-            return len(self.__songs) > 0
+            """
+                Check if the playlist songs is empty or not.
+            """
+            ...
 
         def hasSong(self, song: Song) -> bool:
-            return any(song == song_ for song_ in self.__songs)
+            """
+                Check if certain song existed in the playlist.
+            """
+            ...
 
         def moveSong(self, fromIndex: int, toIndex: int) -> None:
-            Lists.moveElement(self.__songs, fromIndex, toIndex)
-            self.updated.emit()
+            """
+                Move a song from certain position to another position.
+            """
+            ...
 
         def size(self) -> int:
             """
-            return the number of songs in the list
+                return the number of songs in the list
             """
-            return len(self.__songs)
-
-        def getSongAt(self, index: int) -> Song:
-            """
-            Get the song at the given index
-            """
-            if self.size() == 0:
-                raise ValueError("Playlist has no song.")
-            return self.__songs[index]
-
-        def getSongIndexWithId(self, songId: str) -> int:
-            """
-            Get the song at the given index
-            """
-            if self.size() == 0:
-                raise ValueError("Playlist has no song.")
-
-            for index, song in enumerate(self.__songs):
-                if song.getId() == songId:
-                    return index
-            return -1
-
-        def insert(self, song: Song) -> None:
-            """
-            Add song to the list of songs.
-            """
-            if self.__isSorted:
-                position = self.__findInsertPosition(song)
-                self.__songs.insert(position, song)
-            else:
-                self.__songs.append(song)
-
-            song.updated.connect(lambda updatedField: self.__onSongUpdated(song, updatedField))
-
-        def __onSongUpdated(self, song: Song, updatedField: str) -> None:
-            if updatedField == "title":
-                self.__songs.remove(song)
-                newPosition = self.__findInsertPosition(song)
-                self.__songs.insert(newPosition, song)
-                self.updated.emit()
-            if updatedField == "love":
-                self.updated.emit()
-
-        def __findInsertPosition(self, song) -> int:
-            return Lists.binarySearch(self.__songs, song, comparator=self.__comparator(), nearest=True)
-
-        def __moveSongAfterUpdate(self, song: Song) -> None:
-            self.__songs.remove(song)
-            newPosition = self.__findInsertPosition(song)
-            self.__songs.insert(newPosition, song)
-
-        def insertAll(self, songs: list[Song]):
-            if songs is not None:
-                for song in songs:
-                    self.insert(song)
-                self.updated.emit()
-
-        def removeAll(self, songs: list[Song]) -> None:
-            if songs is not None:
-                for song in songs:
-                    try:
-                        self.__songs.remove(song)
-                    except ValueError:
-                        pass
-                self.updated.emit()
-
-        def removeSong(self, song: Song) -> None:
-            self.__songs.remove(song)
-            self.updated.emit()
+            ...
 
         def indexOf(self, song: Song) -> int:
             """
-            Find the index Of song in the list
+                Find the index Of song in the list
             """
-            return (
-                Lists.binarySearch(self.__songs, song, self.__comparator())
-                if self.__isSorted
-                else Lists.linearSearch(self.__songs, song, self.__comparator())
-            )
+            ...
 
-        @staticmethod
-        def __comparator() -> Callable[[Song, Song], int]:
-            return lambda s1, s2: Strings.compare(s1.getTitle(), s2.getTitle())
+        def getSongAt(self, index: int) -> Song:
+            """
+                Get the song at the given index
+            """
+            ...
+
+        def getSongIndexWithId(self, songId: str) -> int:
+            """
+                Find index of a song by its id. Return -1  if no song found.
+            """
+            ...
+
+        def insert(self, song: Song) -> None:
+            """
+                Add song to the list of songs. A signal will be fired after inserted succeed.
+            """
+            ...
+
+        def insertAll(self, songs: list[Song]):
+            """
+                Add list of songs to the list of songs. A signal will be fired after inserted succeed.
+            """
+            ...
+
+        def remove(self, song: Song) -> None:
+            """
+                Remove a song from current playlist if found. A signal will be fired after inserted succeed.
+            """
+            ...
+
+        def removeAll(self, songs: list[Song]) -> None:
+            """
+                Remove list of songs from current playlist. A signal will be fired after inserted succeed.
+            """
+            ...
 
     def __init__(self, info: 'Playlist.Info', songs: 'Playlist.Songs'):
         self.__info = info
         self.__songs = songs
-
-    @staticmethod
-    def create(name: str, cover: bytes = None, songs: 'Playlist.Songs' = None) -> 'Playlist':
-        return Playlist(Playlist.Info(name, cover), songs or Playlist.Songs())
 
     def getInfo(self) -> 'Playlist.Info':
         return self.__info
@@ -198,32 +153,3 @@ class Playlist:
 
     def clone(self) -> 'Playlist':
         return Playlist(self.__info.clone(), self.__songs.clone())
-
-
-class ShufflePlaylistSongs(Playlist.Songs):
-
-    def __init__(self, originalPlaylist: Playlist.Songs, songs: list[Song] = None, isSorted: bool = True):
-        self.__originalPlaylist = originalPlaylist
-        super().__init__(songs, isSorted)
-
-    @staticmethod
-    def of(playlist: Playlist.Songs) -> 'ShufflePlaylistSongs':
-        songs = playlist.getSongs()
-        random.shuffle(songs)
-
-        newPlaylist = ShufflePlaylistSongs(playlist, songs, isSorted=False)
-        return newPlaylist
-
-    def listenUpdateToOriginalPlaylist(self) -> None:
-        self.__originalPlaylist.updated.connect(self.__updateSongsToOriginalPlaylist)
-
-    def removeListenUpdateToOriginalPlaylist(self) -> None:
-        self.__originalPlaylist.updated.disconnect(self.__updateSongsToOriginalPlaylist)
-        pass
-
-    def __updateSongsToOriginalPlaylist(self):
-        addedSongs = Lists.itemsInLeftOnly(self.__originalPlaylist.getSongs(), self.getSongs())
-        removedSongs = Lists.itemsInRightOnly(self.__originalPlaylist.getSongs(), self.getSongs())
-
-        self.insertAll(addedSongs)
-        self.removeAll(removedSongs)
