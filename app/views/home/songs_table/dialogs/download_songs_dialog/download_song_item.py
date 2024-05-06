@@ -132,16 +132,16 @@ class DownloadSongItem(ExtendableStyleWidget):
         downloadSongThread.loaded.connect(lambda: self._downloadLabel.show())
         downloadSongThread.loaded.connect(lambda: self._downloadLabel.start())
 
-        downloadSongThread.downloadSucceed.connect(lambda data: self.setProgress(100))
-        downloadSongThread.downloadSucceed.connect(lambda data: self._downloadLabel.hide())
-        downloadSongThread.downloadSucceed.connect(lambda data: loadingAnimationThread.quit())
-        downloadSongThread.downloadSucceed.connect(lambda data: self._downloadLabel.stop())
-        downloadSongThread.downloadSucceed.connect(lambda data: self.__createSong(data, title, artist))
+        downloadSongThread.succeed.connect(lambda data: self.setProgress(100))
+        downloadSongThread.succeed.connect(lambda data: self._downloadLabel.hide())
+        downloadSongThread.succeed.connect(lambda data: loadingAnimationThread.quit())
+        downloadSongThread.succeed.connect(lambda data: self._downloadLabel.stop())
+        downloadSongThread.succeed.connect(lambda data: self.__createSong(data, title, artist))
 
-        downloadSongThread.downloadFailed.connect(lambda data: self._downloadLabel.hide())
-        downloadSongThread.downloadFailed.connect(lambda exception: loadingAnimationThread.quit())
-        downloadSongThread.downloadFailed.connect(lambda exception: self._downloadLabel.stop())
-        downloadSongThread.downloadFailed.connect(lambda exception: self.__markDownloadFailed(exception))
+        downloadSongThread.failed.connect(lambda data: self._downloadLabel.hide())
+        downloadSongThread.failed.connect(lambda exception: loadingAnimationThread.quit())
+        downloadSongThread.failed.connect(lambda exception: self._downloadLabel.stop())
+        downloadSongThread.failed.connect(lambda exception: self.__markDownloadFailed(exception))
 
         downloadSongThread.start()
         loadingAnimationThread.start()
@@ -229,8 +229,8 @@ pytube.request.default_range_size = 128000
 
 class DownloadSongThread(QThread):
     loaded = pyqtSignal()
-    downloadFailed = pyqtSignal(Exception)
-    downloadSucceed = pyqtSignal(io.BytesIO)
+    succeed = pyqtSignal(io.BytesIO)
+    failed = pyqtSignal(Exception)
 
     def __init__(self, ytb: YouTube, onDownloading: Callable[[int, int, int], None]) -> None:
         super().__init__()
@@ -247,9 +247,9 @@ class DownloadSongThread(QThread):
 
             audioBytes = io.BytesIO()
             self.__ytb.streams.get_audio_only().stream_to_buffer(audioBytes)
-            self.downloadSucceed.emit(audioBytes)
+            self.succeed.emit(audioBytes)
         except Exception as e:
-            self.downloadFailed.emit(e)
+            self.failed.emit(e)
 
     def __onProgress(self, stream: Stream, bytesRemaining: int, downloadStartTime: datetime) -> None:
         if not self.__loaded:
@@ -276,7 +276,7 @@ class ConvertSongThread(QThread):
         self.__artist = artist
 
     def run(self) -> None:
-        songLocation = f"library/{self.__title}.mp3"
+        songLocation = f"library/{Strings.sanitizeFileName(self.__title)}.mp3"
         if os.path.exists(songLocation):
             self.failed.emit(FileExistsError())
             Logger.error(f"Can't convert song '{self.__title}' because it is already existed in library.")
@@ -284,7 +284,7 @@ class ConvertSongThread(QThread):
         try:
             editor = AudioEditor()
             editor.toMp3FileFromBytes(self.__songData, songLocation)
-            song = Song.fromFile(songLocation)
+            song = Song.fromFile(songLocation, self.__title)
 
             if Strings.isNotBlank(self.__artist):
                 try:

@@ -152,7 +152,7 @@ class ImportSongsToLibraryThread(QThread):
         newPaths: list[[str, str]] = []
         for path in self.__songPaths:
             try:
-                songPath = f"library/{Strings.randomId()}.mp3"
+                songPath = f"library/{Strings.sanitizeFileName(Strings.getFileBasename(path))}.mp3"
                 Files.copyFile(path, songPath)
 
                 print(f"Import song from '{path}' to library")

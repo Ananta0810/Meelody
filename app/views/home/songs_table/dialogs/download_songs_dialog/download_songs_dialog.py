@@ -82,7 +82,7 @@ class DownloadSongsDialog(BaseDialog):
 
         try:
             ytb = YouTube(self._input.text().strip())
-            dialog = SongInfoDialog(ytb)
+            dialog = _SongInfoDialog(ytb)
             dialog.acceptDownload.connect(lambda yt, title, artist: self.__downloadSong(yt, title, artist))
             dialog.show()
         except RegexMatchError as e:
@@ -103,7 +103,7 @@ class DownloadSongsDialog(BaseDialog):
         appCenter.library.getSongs().insert(song)
 
 
-class SongInfoDialog(BaseDialog):
+class _SongInfoDialog(BaseDialog):
     acceptDownload = pyqtSignal(YouTube, str, str)
 
     def __init__(self, youtube: YouTube) -> None:

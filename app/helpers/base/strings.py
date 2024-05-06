@@ -5,6 +5,8 @@ from locale import setlocale, LC_ALL
 from random import choices
 from typing import final
 
+from yt_dlp.utils import sanitize_filename
+
 setlocale(LC_ALL, "")
 POPULATION = string.ascii_uppercase + string.digits
 
@@ -45,8 +47,8 @@ class Strings:
         return value
 
     @staticmethod
-    def cleanName(value: str) -> str:
-        return re.sub(r"[^A-Za-z0-9 ]+", "", Strings.unaccent(value))
+    def sanitizeFileName(value: str) -> str:
+        return sanitize_filename(value)
 
     @staticmethod
     def compare(text: str, other: str) -> int:
