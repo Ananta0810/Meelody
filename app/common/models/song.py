@@ -95,15 +95,11 @@ class Song(QObject):
         """
         if other is None:
             return False
-        return (
-            self.__location == other.__location
-            and self.__title == other.__title
-            and self.__artist == other.__artist
-            and self.getCover() == other.getCover()
-            and self.__length == other.__length
-            and self.__isLoved == other.__isLoved
-            and self.__sampleRate == other.__sampleRate
-        )
+
+        try:
+            return self.__id == other.__id
+        except AttributeError:
+            return False
 
     def __str__(self):
         return f"Song({self.__title}, {self.__artist}, {self.__length}, {self.__isLoved})"

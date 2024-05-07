@@ -110,7 +110,16 @@ class SongsMenu(SmoothVerticalScrollArea):
             row = self.__songRowDict[song.getId()]
             self.__removeRow(row)
 
+        self.__moveRows(songs)
         self.__menuReset.emit()
+
+    def __moveRows(self, newSongs: list[Song]) -> None:
+        oldSongs = [row.content() for row in self.widgets()]
+        oldIndex, newIndex = Lists.findMoved(oldSongs, newSongs)
+        if oldIndex >= 0:
+            rowToMove = self.widgets()[oldIndex]
+            self.moveWidget(rowToMove, newIndex)
+            rowToMove.showMoreButtons(False)
 
     def __addRow(self, song):
         songRow = SongRow(song)
@@ -139,54 +148,33 @@ class SongsMenu(SmoothVerticalScrollArea):
             playlist.getSongs().updated.connect(lambda: self.__showSongsOfPlaylist(playlist))
 
         self.__currentPlaylist = playlist
+        self.__updateTitleMaps(playlist.getSongs().getSongs())
 
         isLibrary = playlist.getInfo().getName() == "library"
-        songSet = set(playlist.getSongs().getSongs())
+        songIdSet = set([song.getId() for song in playlist.getSongs().getSongs()])
         songRows: list[SongRow] = self.widgets()
+
+        needUpdateVisible = any([row.isVisible() != (row.content().getId() in songIdSet) for row in songRows])
+        if not needUpdateVisible:
+            return
+
+        currentPosition = self.verticalScrollBar().value()
 
         for songRow in songRows:
             songRow.setEditable(isLibrary)
             songRow.showMoreButtons(False)
             songRow.hide()
 
-        rowsToShow = [row for row in songRows if row.content() in songSet]
+        self.__showRows([row for row in songRows if row.content().getId() in songIdSet])
 
-        displayer = ChunksConsumer(items=rowsToShow, size=MAX_ITEMS_VISIBLE_ON_MENU, parent=self)
-        displayer.forEach(lambda row: silence(lambda: row.show()), delay=10)
-        self.__menuReset.connect(displayer.stop)
-        displayer.stopped.connect(lambda: self.__menuReset.disconnect())
+        self.verticalScrollBar().setValue(currentPosition)
+
+    def __showRows(self, rows: list[SongRow]) -> None:
+        displayer = ChunksConsumer(items=rows, size=MAX_ITEMS_VISIBLE_ON_MENU, parent=self)
+        displayer.stopped.connect(lambda: silence(lambda: self.__menuReset.disconnect()))
         displayer.stopped.connect(lambda: self.__loadCovers())
-
-        self.__updateTitleMaps(playlist.getSongs().getSongs())
-
-    # def __refreshSongs(self, newPlaylist: Playlist.Songs) -> None:
-    #     newSongs = newPlaylist.getSongs()
-    #     displayingRows: list[SongRow] = [row for row in self.widgets() if row.isVisible()]
-    #
-    #     isDeletedSongs = len(newSongs) < len(displayingRows)
-    #     if isDeletedSongs:
-    #         self.__deleteRows(displayingRows, newSongs)
-    #         self.__updateTitleMaps(newSongs)
-    #
-    #     isAddedSongs = len(newSongs) > len(displayingRows)
-    #     if isAddedSongs:
-    #         self.__createSongRows(newSongs)
-    #         self.__updateTitleMaps(newSongs)
-    #
-    #     oldSongs = [row.content() for row in displayingRows]
-    #     movedIndex, newIndex = Lists.findMoved(oldSongs, newSongs)
-    #
-    #     if movedIndex == -1:
-    #         return
-    #
-    #     currentPosition = self.verticalScrollBar().value()
-    #
-    #     rowToMove = displayingRows[movedIndex]
-    #     self.moveWidget(rowToMove, newIndex)
-    #     rowToMove.showMoreButtons(False)
-    #
-    #     self.__updateTitleMaps(newSongs)
-    #     self.verticalScrollBar().setValue(currentPosition)
+        self.__menuReset.connect(lambda: displayer.stop())
+        displayer.forEach(lambda row: silence(lambda: row.show()), delay=10)
 
     def __updateTitleMaps(self, songs: list[Song]) -> None:
         self.__titles = {song.getTitle(): index for index, song in enumerate(songs)}
