@@ -7,7 +7,7 @@ from PyQt5.QtGui import QResizeEvent
 from PyQt5.QtWidgets import QWidget, QVBoxLayout, QHBoxLayout, QFileDialog
 
 from app.common.models import Playlist
-from app.common.models.playlists.common_playlist import CommonPlaylist
+from app.common.models.playlists import FavouritesPlaylist
 from app.common.others import appCenter
 from app.components.base import Cover, LabelWithDefaultText, Factory, CoverProps
 from app.components.dialogs import Dialogs
@@ -150,14 +150,14 @@ class FavouritePlaylistCard(PlaylistCard):
         self.clicked.connect(lambda: self.__selectFavouritesPlaylist())
         self._editCoverBtn.clicked.connect(lambda: self.__chooseCover())
 
-    def __selectFavouritesPlaylist(self) -> None:
+    @staticmethod
+    def __selectFavouritesPlaylist() -> None:
         if appCenter.currentPlaylist.getInfo().getId() == PlaylistIds.FAVOURITES:
             return
 
-        info = CommonPlaylist.Info(id=PlaylistIds.FAVOURITES, name="Favourites", cover=self.getCoverAsByte())
-        songs = CommonPlaylist.Songs([song for song in appCenter.library.getSongs().getSongs() if song.isLoved()])
-        favouritePlaylist = Playlist(info, songs)
-
+        favouritePlaylist = FavouritesPlaylist(appCenter.library)
+        favouritePlaylist.load()
+        
         appCenter.setActivePlaylist(favouritePlaylist)
 
     def __chooseCover(self) -> None:
