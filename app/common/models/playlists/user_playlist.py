@@ -1,3 +1,5 @@
+from contextlib import suppress
+
 from app.common.models.playlist import Playlist
 from app.common.models.song import Song
 from app.helpers.base import Bytes, Strings
@@ -40,7 +42,8 @@ class UserPlaylist(Playlist):
         def remove(self, song: Song) -> None:
             super().remove(song)
 
-            song.updated.disconnect(lambda updatedField: self._onSongUpdated(song, updatedField))
+            with suppress(TypeError):
+                song.updated.disconnect(lambda updatedField: self._onSongUpdated(song, updatedField))
             self.updated.emit()
 
         def moveSong(self, fromIndex: int, toIndex: int) -> None:

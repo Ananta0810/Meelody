@@ -9,6 +9,7 @@ from PyQt5.QtWidgets import QHBoxLayout, QVBoxLayout, QWidget, QShortcut
 from app.common.models import Song
 from app.common.others import musicPlayer
 from app.components.base import Component, Cover, LabelWithDefaultText, Factory, StateIcon, CoverProps
+from app.components.dialogs import Dialogs
 from app.components.sliders import HorizontalSlider
 from app.helpers.others import Times
 from app.helpers.stylesheets import Colors, Paddings
@@ -225,6 +226,7 @@ class MusicPlayerBar(QWidget, Component):
         self._shuffleBtn.clicked.connect(lambda: musicPlayer.setShuffle(self._shuffleBtn.isActive()))
         self._volumeSlider.valueChanged.connect(lambda: musicPlayer.setVolume(self._volumeSlider.value()))
 
+        musicPlayer.loadFailed.connect(lambda: self.__notifySongNotFound())
         musicPlayer.played.connect(lambda: self.__setPLaying(True))
         musicPlayer.paused.connect(lambda: self.__setPLaying(False))
 
@@ -291,12 +293,6 @@ class MusicPlayerBar(QWidget, Component):
     def setDefaultCover(self, cover: bytes) -> None:
         self._songCover.setDefaultCover(self.__createCover(cover))
 
-    @staticmethod
-    def __createCover(data: bytes) -> Union[CoverProps, None]:
-        if data is None:
-            return None
-        return CoverProps.fromBytes(data, width=64, height=64, radius=12)
-
     def __setPLaying(self, isPlaying: bool) -> None:
         self._playSongBtn.setVisible(not isPlaying)
         self._pauseSongBtn.setVisible(isPlaying)
@@ -357,6 +353,16 @@ class MusicPlayerBar(QWidget, Component):
         if 33 < volume <= 100:
             state = VOLUME_UP_STATE
         self._volumeBtn.setActiveState(state)
+
+    @staticmethod
+    def __notifySongNotFound():
+        return Dialogs.alert("The song that you are trying to play is deleted.")
+
+    @staticmethod
+    def __createCover(data: bytes) -> Union[CoverProps, None]:
+        if data is None:
+            return None
+        return CoverProps.fromBytes(data, width=64, height=64, radius=12)
 
 
 class PlayerTrackingThread(QThread):

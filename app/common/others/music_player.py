@@ -3,7 +3,7 @@ from time import sleep
 from typing import Optional, Callable
 
 from PyQt5.QtCore import QObject, pyqtSignal, QThread, QTimer
-from pygame import mixer
+from pygame import mixer, error
 
 from app.common.models import Song, Playlist
 from app.common.models.playlists import MusicPlayerPlaylistSongs
@@ -13,6 +13,8 @@ os.environ['PYGAME_HIDE_SUPPORT_PROMPT'] = "hide"
 
 
 class MusicPlayer(QObject):
+    loadFailed = pyqtSignal()
+
     played = pyqtSignal()
     paused = pyqtSignal()
 
@@ -82,12 +84,18 @@ class MusicPlayer(QObject):
         if song is None:
             return
 
-        self.resetTime()
-        self.__currentSong = song
-        self.__loaded = True
-        mixer.music.unload()
-        mixer.music.load(song.getLocation())
-        self.songChanged.emit(song)
+        try:
+            self.resetTime()
+            mixer.music.unload()
+            mixer.music.load(song.getLocation())
+
+            self.__currentSong = song
+            self.__loaded = True
+
+            self.songChanged.emit(song)
+        except error:
+            self.loadFailed.emit()
+            self.playSong(self.__currentSong)
 
     def play(self):
         if not self.__loaded:
