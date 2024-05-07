@@ -42,7 +42,7 @@ class MusicPlayerPlaylistSongs(Playlist.Songs):
         return self.__shufflePlaylist or self.__playlist
 
     def clone(self) -> 'Playlist.Songs':
-        return self.__playlist.clone()
+        return self
 
     def setSongs(self, songs: list[Song]) -> None:
         pass

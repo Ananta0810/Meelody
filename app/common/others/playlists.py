@@ -49,5 +49,4 @@ class Playlists(QObject):
         return self.__items
 
     def __updateToDatabase(self):
-        validItems = [item for item in self.__items if not item.getInfo().isNew()]
-        return database.playlists.save(validItems)
+        return database.playlists.save([item for item in self.__items])
