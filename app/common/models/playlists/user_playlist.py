@@ -53,6 +53,9 @@ class UserPlaylist(Playlist):
         def clone(self) -> Playlist.Songs:
             return UserPlaylist.Songs(self.getSongs(), self._isSorted)
 
+    def clone(self) -> 'Playlist':
+        return UserPlaylist(self.getInfo(), self.getSongs())
+
     def toDict(self) -> dict:
         playlistInfo = self.getInfo()
 

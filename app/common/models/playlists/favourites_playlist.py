@@ -64,3 +64,6 @@ class FavouritesPlaylist(Playlist, metaclass=SingletonMeta):
 
     def load(self) -> None:
         self.getSongs().load()
+
+    def clone(self) -> 'Playlist':
+        return self

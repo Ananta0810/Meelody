@@ -8,7 +8,6 @@ from PyQt5.QtGui import QKeySequence, QResizeEvent
 from PyQt5.QtWidgets import QWidget, QShortcut, QFileDialog
 
 from app.common.exceptions import StorageException
-from app.common.models import Playlist
 from app.common.models.playlists import UserPlaylist
 from app.common.others import appCenter
 from app.components.base import Cover, CoverProps, Factory, Input, ActionButton
@@ -121,7 +120,7 @@ class NewPlaylistDialog(BaseDialog):
                 image = Image.open(io.BytesIO(cover))
                 image.save(f"configuration/playlists/{id}.png")
 
-            playlist = Playlist(UserPlaylist.Info(name=name, cover=cover, id=id, coverPath=path), UserPlaylist.Songs())
+            playlist = UserPlaylist(UserPlaylist.Info(name=name, cover=cover, id=id, coverPath=path), UserPlaylist.Songs())
             appCenter.playlists.append(playlist)
             self.close()
         except StorageException:
