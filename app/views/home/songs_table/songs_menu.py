@@ -12,6 +12,7 @@ from app.components.events import VisibleObserver
 from app.components.scroll_areas import SmoothVerticalScrollArea
 from app.helpers.base import Lists, Strings, silence
 from app.helpers.qt import Widgets
+from app.resource.others import PlaylistIds
 from app.views.home.songs_table.song_row import SongRow
 
 MAX_ITEMS_VISIBLE_ON_MENU = 6
@@ -150,7 +151,7 @@ class SongsMenu(SmoothVerticalScrollArea):
         self.__currentPlaylist = playlist
         self.__updateTitleMaps(playlist.getSongs().getSongs())
 
-        isLibrary = playlist.getInfo().getName() == "Library"
+        isLibrary = playlist.getInfo().getId() == PlaylistIds.LIBRARY
         songIdSet = set([song.getId() for song in playlist.getSongs().getSongs()])
         songRows: list[SongRow] = self.widgets()
 
@@ -171,9 +172,9 @@ class SongsMenu(SmoothVerticalScrollArea):
 
     def __showRows(self, rows: list[SongRow]) -> None:
         displayer = ChunksConsumer(items=rows, size=MAX_ITEMS_VISIBLE_ON_MENU, parent=self)
-        displayer.stopped.connect(lambda: silence(lambda: self.__menuReset.disconnect()))
+        displayer.stopped.connect(lambda: silence(lambda: self.__menuReset.disconnect(displayer.stop)))
         displayer.stopped.connect(lambda: self.__loadCovers())
-        self.__menuReset.connect(lambda: displayer.stop())
+        self.__menuReset.connect(displayer.stop)
         displayer.forEach(lambda row: silence(lambda: row.show()), delay=10)
 
     def __updateTitleMaps(self, songs: list[Song]) -> None:

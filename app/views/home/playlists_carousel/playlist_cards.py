@@ -17,7 +17,7 @@ from app.helpers.builders import ImageEditor
 from app.helpers.others import Files, Logger
 from app.helpers.qt import Pixmaps, Widgets
 from app.helpers.stylesheets import Paddings, Colors
-from app.resource.others import FileType
+from app.resource.others import FileType, PlaylistIds
 from app.resource.qt import Cursors, Images, Icons
 from app.views.home.playlists_carousel.update_playlist_dialog import UpdatePlaylistDialog
 
@@ -116,7 +116,7 @@ class LibraryPlaylistCard(PlaylistCard):
 
     @staticmethod
     def __selectLibraryPlaylist():
-        if appCenter.currentPlaylist.getInfo().getId() != "library":
+        if appCenter.currentPlaylist.getInfo().getId() != PlaylistIds.LIBRARY:
             appCenter.setActivePlaylist(appCenter.library)
 
 
@@ -151,10 +151,10 @@ class FavouritePlaylistCard(PlaylistCard):
         self._editCoverBtn.clicked.connect(lambda: self.__chooseCover())
 
     def __selectFavouritesPlaylist(self) -> None:
-        if appCenter.currentPlaylist.getInfo().getId() == "favourites":
+        if appCenter.currentPlaylist.getInfo().getId() == PlaylistIds.FAVOURITES:
             return
 
-        info = Playlist.Info(id="favourites", name="Favourite", cover=self.getCoverAsByte())
+        info = Playlist.Info(id=PlaylistIds.FAVOURITES, name="Favourites", cover=self.getCoverAsByte())
         songs = PlaylistSongs([song for song in appCenter.library.getSongs().getSongs() if song.isLoved()])
         favouritePlaylist = Playlist(info, songs)
 
