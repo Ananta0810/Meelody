@@ -6,20 +6,20 @@ from app.common.others.playlists import Playlists
 
 
 class ApplicationCenter(QObject):
-    libraryInitialized = pyqtSignal()
     themeChanged = pyqtSignal(bool)
     currentPlaylistChanged = pyqtSignal(Playlist)
     exited = pyqtSignal()
 
     def __init__(self) -> None:
         super().__init__()
+        from app.common.models.impl import Library
         self.settings: AppSettings = AppSettings()
 
         self.isLightMode: bool = True
         self.playlists: Playlists = Playlists()
 
-        self.library: Playlist = None
-        self.currentPlaylist: Playlist = None
+        self.library: Library = Library(Library.Info(), Library.Songs())
+        self.currentPlaylist: Playlist = self.library
 
     def setLightMode(self, a0: bool) -> None:
         self.isLightMode = a0

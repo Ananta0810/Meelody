@@ -1,7 +1,7 @@
+from app.common.models.playlist import Playlist
+from app.common.models.song import Song
 from app.helpers.base import Lists, Numbers
 from .common_playlist import CommonPlaylist
-from .playlist import Playlist
-from .song import Song
 
 
 class MusicPlayerPlaylistSongs(Playlist.Songs):
@@ -74,7 +74,8 @@ class MusicPlayerPlaylistSongs(Playlist.Songs):
     def insert(self, song: Song) -> None:
         self.__playlist.insert(song)
 
-    def insertAll(self, songs: list[Song]):
+    def insertAll(self, songs: list[Song]) -> None:
+
         return self.__playlist.insertAll(songs)
 
     def remove(self, song: Song) -> None:

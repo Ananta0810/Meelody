@@ -100,7 +100,7 @@ class PlaylistSongs:
     def __find_insert_position(self, song) -> int:
         return Lists.binary_search(self.__songs, song, comparator=self.__comparator(), find_nearest=True)
 
-    def insertAll(self, songs: list[Song]):
+    def insertAll(self, songs: list[Song]) -> None:
         if songs is not None:
             for song in songs:
                 self.insert(song)

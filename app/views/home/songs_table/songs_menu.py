@@ -40,11 +40,7 @@ class SongsMenu(SmoothVerticalScrollArea):
     def _connectSignalSlots(self) -> None:
         super()._connectSignalSlots()
 
-        appCenter.libraryInitialized.connect(lambda: self.__createSongRows(appCenter.library.getSongs().getSongs()))
-        appCenter.libraryInitialized.connect(
-            lambda: appCenter.library.getSongs().updated.connect(lambda: self.__createSongRows(appCenter.library.getSongs().getSongs()))
-        )
-
+        appCenter.library.getSongs().updated.connect(lambda: self.__createSongRows(appCenter.library.getSongs().getSongs()))
         appCenter.currentPlaylistChanged.connect(lambda playlist: self.__showSongsOfPlaylist(playlist))
 
         musicPlayer.songChanged.connect(lambda song: self.__scrollToSong(song))

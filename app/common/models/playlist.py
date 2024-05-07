@@ -59,7 +59,7 @@ class Playlist:
 
         def setSongs(self, songs: list[Song]) -> None:
             """
-                Initialize songs to library. A signal will be fired after init succeed.
+                Initialize songs to playlist. A signal will be fired after init succeed.
             """
             ...
 
@@ -117,7 +117,7 @@ class Playlist:
             """
             ...
 
-        def insertAll(self, songs: list[Song]):
+        def insertAll(self, songs: list[Song]) -> None:
             """
                 Add list of songs to the list of songs. A signal will be fired after inserted succeed.
             """

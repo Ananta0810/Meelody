@@ -1,7 +1,7 @@
 import os
 
-from app.common.models import CommonPlaylist
 from app.common.models import Song, Playlist
+from app.common.models.impl import CommonPlaylist
 from app.helpers.base import Bytes, Lists
 from app.helpers.others import Files, Jsons
 

@@ -9,7 +9,7 @@ from PyQt5.QtWidgets import QWidget, QShortcut, QFileDialog
 
 from app.common.exceptions import StorageException
 from app.common.models import Playlist
-from app.common.models.common_playlist import CommonPlaylist
+from app.common.models.impl.common_playlist import CommonPlaylist
 from app.common.others import appCenter
 from app.components.base import Cover, CoverProps, Factory, Input, ActionButton
 from app.components.dialogs import BaseDialog, Dialogs

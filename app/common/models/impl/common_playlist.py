@@ -1,8 +1,8 @@
 from typing import Callable
 
+from app.common.models.playlist import Playlist
+from app.common.models.song import Song
 from app.helpers.base import Lists, Strings
-from .playlist import Playlist
-from .song import Song
 
 
 class CommonPlaylist:
@@ -114,7 +114,7 @@ class CommonPlaylist:
             newPosition = self.__findInsertPosition(song)
             self.__songs.insert(newPosition, song)
 
-        def insertAll(self, songs: list[Song]):
+        def insertAll(self, songs: list[Song]) -> None:
             if songs is not None:
                 for song in songs:
                     self.insert(song)
