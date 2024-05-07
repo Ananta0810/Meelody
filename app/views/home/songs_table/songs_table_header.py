@@ -4,13 +4,14 @@ from PyQt5.QtCore import Qt, QThread, pyqtSignal
 from PyQt5.QtWidgets import QWidget, QHBoxLayout, QFileDialog
 
 from app.common.models import Playlist, Song
+from app.common.models.playlists import FavouritesPlaylist, Library
 from app.common.others import appCenter
 from app.components.base import Factory, EllipsisLabel, Component
 from app.components.dialogs import Dialogs
 from app.helpers.base import Strings, Lists
 from app.helpers.others import Files, Logger
 from app.helpers.stylesheets import Paddings, Colors
-from app.resource.others import FileType, PlaylistIds
+from app.resource.others import FileType
 from app.resource.qt import Icons, Cursors
 from app.views.home.songs_table.dialogs.download_songs_dialog import DownloadSongsDialog
 from app.views.home.songs_table.dialogs.select_playlist_songs_dialog import SelectPlaylistSongsDialog
@@ -96,10 +97,14 @@ class SongsTableHeader(QWidget, Component):
         self._selectSongsToPlaylistBtn.clicked.connect(lambda: self._openSelectPlaylistSongsDialog())
 
     def __showActionsToPlaylist(self, playlist: Playlist) -> None:
+        libraryId = Library.Info().getId()
+        favouriteId = FavouritesPlaylist.Info().getId()
+
         playlistId = playlist.getInfo().getId()
-        self._downloadSongsToLibraryBtn.setVisible(playlistId == PlaylistIds.LIBRARY)
-        self._importSongsToLibraryBtn.setVisible(playlistId == PlaylistIds.LIBRARY)
-        self._selectSongsToPlaylistBtn.setVisible(playlistId not in {PlaylistIds.LIBRARY, PlaylistIds.FAVOURITES})
+        self._downloadSongsToLibraryBtn.setVisible(playlistId == libraryId)
+        self._importSongsToLibraryBtn.setVisible(playlistId == libraryId)
+
+        self._selectSongsToPlaylistBtn.setVisible(playlistId not in {libraryId, favouriteId})
 
     def _importSongsFromExplorer(self) -> None:
         paths = QFileDialog.getOpenFileNames(self, filter=FileType.AUDIO)[0]

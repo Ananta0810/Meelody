@@ -1,1 +1,1 @@
-from .properties import FileType, PlaylistIds
+from .properties import FileType

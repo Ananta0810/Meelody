@@ -112,7 +112,10 @@ class CommonPlaylist:
                         pass
 
         def remove(self, song: Song) -> None:
-            self._songs.remove(song)
+            try:
+                self._songs.remove(song)
+            except ValueError:
+                pass
 
         def indexOf(self, song: Song) -> int:
             return (

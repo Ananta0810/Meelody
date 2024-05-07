@@ -5,7 +5,7 @@ from .common_playlist import CommonPlaylist
 
 
 class FavouritesPlaylist(Playlist, metaclass=SingletonMeta):
-    class Info(CommonPlaylist.Info):
+    class Info(CommonPlaylist.Info, metaclass=SingletonMeta):
         def __init__(self):
             super().__init__(id="Favourites", name="Favourites", cover=Bytes.fromFile("configuration/playlists/favourite-cover.png"))
 

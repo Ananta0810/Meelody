@@ -7,7 +7,7 @@ from PyQt5.QtGui import QResizeEvent
 from PyQt5.QtWidgets import QWidget, QVBoxLayout, QHBoxLayout, QFileDialog
 
 from app.common.models import Playlist
-from app.common.models.playlists import FavouritesPlaylist
+from app.common.models.playlists import FavouritesPlaylist, Library
 from app.common.others import appCenter
 from app.components.base import Cover, LabelWithDefaultText, Factory, CoverProps
 from app.components.dialogs import Dialogs
@@ -17,7 +17,7 @@ from app.helpers.builders import ImageEditor
 from app.helpers.others import Files, Logger
 from app.helpers.qt import Pixmaps, Widgets
 from app.helpers.stylesheets import Paddings, Colors
-from app.resource.others import FileType, PlaylistIds
+from app.resource.others import FileType
 from app.resource.qt import Cursors, Images, Icons
 from app.views.home.playlists_carousel.update_playlist_dialog import UpdatePlaylistDialog
 
@@ -116,7 +116,7 @@ class LibraryPlaylistCard(PlaylistCard):
 
     @staticmethod
     def __selectLibraryPlaylist():
-        if appCenter.currentPlaylist.getInfo().getId() != PlaylistIds.LIBRARY:
+        if appCenter.currentPlaylist.getInfo().getId() != Library.Info().getId():
             appCenter.setActivePlaylist(appCenter.library)
 
 
@@ -152,12 +152,12 @@ class FavouritePlaylistCard(PlaylistCard):
 
     @staticmethod
     def __selectFavouritesPlaylist() -> None:
-        if appCenter.currentPlaylist.getInfo().getId() == PlaylistIds.FAVOURITES:
+        if appCenter.currentPlaylist.getInfo().getId() == FavouritesPlaylist.Info().getId():
             return
 
         favouritePlaylist = FavouritesPlaylist(appCenter.library)
         favouritePlaylist.load()
-        
+
         appCenter.setActivePlaylist(favouritePlaylist)
 
     def __chooseCover(self) -> None:

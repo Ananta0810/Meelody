@@ -7,12 +7,12 @@ from PyQt5.QtWidgets import QWidget, qApp
 
 from app.common.asyncs import ChunksConsumer
 from app.common.models import Song, Playlist
+from app.common.models.playlists import Library
 from app.common.others import appCenter, musicPlayer
 from app.components.events import VisibleObserver
 from app.components.scroll_areas import SmoothVerticalScrollArea
 from app.helpers.base import Lists, Strings, silence
 from app.helpers.qt import Widgets
-from app.resource.others import PlaylistIds
 from app.views.home.songs_table.song_row import SongRow
 
 MAX_ITEMS_VISIBLE_ON_MENU = 6
@@ -147,7 +147,7 @@ class SongsMenu(SmoothVerticalScrollArea):
         self.__currentPlaylist = playlist
         self.__updateTitleMaps(playlist.getSongs().getSongs())
 
-        isLibrary = playlist.getInfo().getId() == PlaylistIds.LIBRARY
+        isLibrary = playlist.getInfo().getId() == Library.Info().getId()
         songIdSet = set([song.getId() for song in playlist.getSongs().getSongs()])
         songRows: list[SongRow] = self.widgets()
 

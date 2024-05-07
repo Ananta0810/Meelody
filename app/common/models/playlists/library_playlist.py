@@ -1,11 +1,13 @@
+from contextlib import suppress
+
 from app.common.models.playlist import Playlist
 from app.common.models.song import Song
-from app.helpers.base import returnOnFailed
+from app.helpers.base import returnOnFailed, SingletonMeta
 from .common_playlist import CommonPlaylist
 
 
-class Library(Playlist):
-    class Info(CommonPlaylist.Info):
+class Library(Playlist, metaclass=SingletonMeta):
+    class Info(CommonPlaylist.Info, metaclass=SingletonMeta):
         def __init__(self):
             super().__init__(id="Library", name="Library")
 
@@ -50,7 +52,8 @@ class Library(Playlist):
         def remove(self, song: Song) -> None:
             super().remove(song)
 
-            song.loved.disconnect(lambda a0: self.__saveDatabase())
+            with suppress(TypeError):
+                song.loved.disconnect(lambda a0: self.__saveDatabase())
             self.updated.emit()
 
         def moveSong(self, fromIndex: int, toIndex: int) -> None:
