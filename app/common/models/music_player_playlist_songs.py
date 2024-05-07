@@ -1,7 +1,7 @@
-from app.common.models import Song
-from app.common.models.impl import PlaylistSongs
-from app.common.models.playlist import Playlist
 from app.helpers.base import Lists, Numbers
+from .common_playlist import CommonPlaylist
+from .playlist import Playlist
+from .song import Song
 
 
 class MusicPlayerPlaylistSongs(Playlist.Songs):
@@ -17,7 +17,7 @@ class MusicPlayerPlaylistSongs(Playlist.Songs):
     def setShuffle(self, shuffle: bool) -> None:
         if shuffle:
             songs = Lists.shuffle(self.__playlist.getSongs())
-            self.__shufflePlaylist = PlaylistSongs(songs, isSorted=False)
+            self.__shufflePlaylist = CommonPlaylist.Songs(songs, isSorted=False)
             self.__playlist.updated.connect(lambda: self.__updateShufflePlaylistSongs())
         else:
             try:

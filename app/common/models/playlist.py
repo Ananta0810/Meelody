@@ -1,45 +1,52 @@
-import uuid
-
 from PyQt5.QtCore import QObject, pyqtSignal
 
 from app.common.models.song import Song
-from app.helpers.base import Strings
 
 
 class Playlist:
     class Info:
-        def __init__(self, name: str = None, cover: bytes = None, coverPath: str = None, id: str | None = None):
-            self.__name: str = name
-            self.__cover: bytes = cover
-            self.__coverPath: str = coverPath
-            self.__id: str = id or str(uuid.uuid4())
-
-        def __eq__(self, other: 'Playlist.Info') -> bool:
-            return Strings.equals(self.__name, other.__name) and self.__cover == other.__cover
 
         def getId(self) -> str:
-            return self.__id
+            """
+            Return unique id of playlist.
+            """
+            ...
 
         def getName(self) -> str:
-            return self.__name
+            """
+                Return name of playlist. This name is not unique.
+            """
+            ...
 
         def setName(self, name: str) -> None:
-            self.__name = name
+            """
+                Change name for playlist.
+            """
+            ...
 
         def setCover(self, cover: bytes) -> None:
-            self.__cover = cover
+            """
+                Set the cover for playlist. This cover will be used to render to UI.
+            """
+            ...
 
         def getCover(self) -> bytes:
-            return self.__cover
+            """
+                Return cover as bytes to render to UI
+            """
+            ...
 
         def getCoverPath(self) -> str:
-            return self.__coverPath
-
-        def isNew(self) -> bool:
-            return self.__name is None
+            """
+                Return the path to load cover.
+            """
+            ...
 
         def clone(self) -> 'Playlist.Info':
-            return Playlist.Info(self.__name, self.__cover, self.__coverPath, self.__id)
+            """
+                Clone a shallow copy info from the current one.
+            """
+            ...
 
     class Songs(QObject):
         updated = pyqtSignal()
@@ -137,19 +144,6 @@ class Playlist:
 
     def getSongs(self) -> 'Playlist.Songs':
         return self.__songs
-
-    def size(self) -> int:
-        """
-        :return: total songs of this playlist. 0 if playlist has no songs.
-        :rtype: int
-        """
-        return 0 if self.__songs is None else self.__songs.size()
-
-    def equals(self, other) -> bool:
-        """
-        Check if two playlists are the same one
-        """
-        return self.__info == other.__info
 
     def clone(self) -> 'Playlist':
         return Playlist(self.__info.clone(), self.__songs.clone())

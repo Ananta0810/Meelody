@@ -1,7 +1,7 @@
 import os
 
+from app.common.models import CommonPlaylist
 from app.common.models import Song, Playlist
-from app.common.models.impl import PlaylistSongs
 from app.helpers.base import Bytes, Lists
 from app.helpers.others import Files, Jsons
 
@@ -85,8 +85,8 @@ class PlaylistJson:
         cover = None if path is None else Bytes.fromFile(path)
         path = None if cover is None else path
 
-        info = Playlist.Info(id=self.__info["id"], name=self.__info["name"], coverPath=path, cover=cover)
-        songs = PlaylistSongs(songs=[song for song in songs if song.getId() in songIds])
+        info = CommonPlaylist.Info(id=self.__info["id"], name=self.__info["name"], coverPath=path, cover=cover)
+        songs = CommonPlaylist.Songs([song for song in songs if song.getId() in songIds])
 
         return Playlist(info, songs)
 

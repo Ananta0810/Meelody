@@ -1,5 +1,5 @@
+from app.common.models import CommonPlaylist
 from app.common.models import Playlist
-from app.common.models.impl import PlaylistSongs
 from app.common.others import appCenter, database, musicPlayer
 from app.resource.others import PlaylistIds
 from app.views.windows import MainWindow
@@ -22,7 +22,8 @@ class Application:
 
     @staticmethod
     def __configureDatabase():
-        library = Playlist(Playlist.Info(id=PlaylistIds.LIBRARY, name="Library"), PlaylistSongs(database.songs.load("library", withExtension="mp3")))
+        library = Playlist(CommonPlaylist.Info(id=PlaylistIds.LIBRARY, name="Library"),
+                           CommonPlaylist.Songs(database.songs.load("library", withExtension="mp3")))
         playlists = database.playlists.load(library.getSongs().getSongs())
 
         appCenter.setPlaylists(playlists)
@@ -30,6 +31,8 @@ class Application:
         appCenter.setActivePlaylist(library)
 
         library.getSongs().updated.connect(lambda: database.songs.save(library.getSongs().getSongs()))
+        for song in library.getSongs().getSongs():
+            song.loved.connect(lambda a0: database.songs.save(library.getSongs().getSongs()))
 
     def __configureMusicPlayer(self):
         settings = appCenter.settings

@@ -5,8 +5,7 @@ from typing import Optional, Callable
 from PyQt5.QtCore import QObject, pyqtSignal, QThread, QTimer
 from pygame import mixer
 
-from app.common.models import Song, Playlist
-from app.common.models.impl import MusicPlayerPlaylistSongs
+from app.common.models import Song, Playlist, MusicPlayerPlaylistSongs
 from app.helpers.base import Numbers
 
 os.environ['PYGAME_HIDE_SUPPORT_PROMPT'] = "hide"
