@@ -25,6 +25,7 @@ class Application:
 
         appCenter.library.getSongs().setSongs(librarySongs)
         appCenter.setPlaylists(playlists)
+        appCenter.setActivePlaylist(appCenter.library)
 
     def __configureMusicPlayer(self):
         settings = appCenter.settings

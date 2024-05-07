@@ -25,10 +25,6 @@ class ApplicationCenter(QObject):
         self.isLightMode = a0
         self.themeChanged.emit(a0)
 
-    def setLibrary(self, playlist: Playlist) -> None:
-        self.library = playlist
-        self.libraryInitialized.emit()
-
     def setActivePlaylist(self, playlist: Playlist) -> None:
         self.currentPlaylist = playlist
         self.currentPlaylistChanged.emit(playlist)

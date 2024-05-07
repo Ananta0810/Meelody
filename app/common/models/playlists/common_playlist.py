@@ -71,7 +71,6 @@ class CommonPlaylist:
 
         def moveSong(self, fromIndex: int, toIndex: int) -> None:
             Lists.moveElement(self.__songs, fromIndex, toIndex)
-            self.updated.emit()
 
         def size(self) -> int:
             return len(self.__songs)
@@ -91,20 +90,14 @@ class CommonPlaylist:
             return -1
 
         def insert(self, song: Song) -> None:
+            self._insert(song)
+
+        def _insert(self, song: Song) -> None:
             if self.__isSorted:
                 position = self.__findInsertPosition(song)
                 self.__songs.insert(position, song)
             else:
                 self.__songs.append(song)
-
-            song.updated.connect(lambda updatedField: self.__onSongUpdated(song, updatedField))
-
-        def __onSongUpdated(self, song: Song, updatedField: str) -> None:
-            if updatedField == "title":
-                self.__songs.remove(song)
-                newPosition = self.__findInsertPosition(song)
-                self.__songs.insert(newPosition, song)
-                self.updated.emit()
 
         def __findInsertPosition(self, song: Song) -> int:
             return Lists.binarySearch(self.__songs, song, comparator=self.__comparator(), nearest=True)
@@ -117,8 +110,7 @@ class CommonPlaylist:
         def insertAll(self, songs: list[Song]) -> None:
             if songs is not None:
                 for song in songs:
-                    self.insert(song)
-                self.updated.emit()
+                    self._insert(song)
 
         def removeAll(self, songs: list[Song]) -> None:
             if songs is not None:
@@ -127,11 +119,9 @@ class CommonPlaylist:
                         self.__songs.remove(song)
                     except ValueError:
                         pass
-                self.updated.emit()
 
         def removeSong(self, song: Song) -> None:
             self.__songs.remove(song)
-            self.updated.emit()
 
         def indexOf(self, song: Song) -> int:
             return (

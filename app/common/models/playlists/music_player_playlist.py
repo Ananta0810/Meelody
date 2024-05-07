@@ -45,7 +45,7 @@ class MusicPlayerPlaylistSongs(Playlist.Songs):
         return self.__playlist.clone()
 
     def setSongs(self, songs: list[Song]) -> None:
-        self.__playlist.setSongs(songs)
+        pass
 
     def getSongs(self) -> list[Song]:
         return self.__getPlaylist().getSongs()
@@ -55,9 +55,6 @@ class MusicPlayerPlaylistSongs(Playlist.Songs):
 
     def hasSong(self, song: Song) -> bool:
         return self.__playlist.hasSong(song)
-
-    def moveSong(self, fromIndex: int, toIndex: int) -> None:
-        pass
 
     def size(self) -> int:
         return self.__playlist.size()
@@ -72,14 +69,16 @@ class MusicPlayerPlaylistSongs(Playlist.Songs):
         return self.__playlist.getSongIndexWithId(songId)
 
     def insert(self, song: Song) -> None:
-        self.__playlist.insert(song)
+        pass
 
     def insertAll(self, songs: list[Song]) -> None:
-
-        return self.__playlist.insertAll(songs)
+        pass
 
     def remove(self, song: Song) -> None:
-        self.__playlist.remove(song)
+        pass
 
     def removeAll(self, songs: list[Song]) -> None:
-        self.__playlist.removeAll(songs)
+        pass
+
+    def moveSong(self, fromIndex: int, toIndex: int) -> None:
+        pass
