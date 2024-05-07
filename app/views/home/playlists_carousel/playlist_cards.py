@@ -7,7 +7,7 @@ from PyQt5.QtGui import QResizeEvent
 from PyQt5.QtWidgets import QWidget, QVBoxLayout, QHBoxLayout, QFileDialog
 
 from app.common.models import Playlist
-from app.common.models.impl.common_playlist import CommonPlaylist
+from app.common.models.playlists.common_playlist import CommonPlaylist
 from app.common.others import appCenter
 from app.components.base import Cover, LabelWithDefaultText, Factory, CoverProps
 from app.components.dialogs import Dialogs
