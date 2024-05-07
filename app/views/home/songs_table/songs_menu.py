@@ -100,6 +100,8 @@ class SongsMenu(SmoothVerticalScrollArea):
         addedSongs = Lists.itemsInRightOnly(currentSongs, songs)
         removedSongs = Lists.itemsInLeftOnly(currentSongs, songs)
 
+        currentPosition = self.verticalScrollBar().value()
+
         for song in addedSongs:
             self.__addRow(song)
 
@@ -108,6 +110,9 @@ class SongsMenu(SmoothVerticalScrollArea):
             self.__removeRow(row)
 
         self.__moveRows(songs)
+
+        self.verticalScrollBar().setValue(currentPosition)
+
         self.__menuReset.emit()
 
     def __moveRows(self, newSongs: list[Song]) -> None:
