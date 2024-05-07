@@ -6,6 +6,7 @@ from app.common.others.playlists import Playlists
 
 
 class ApplicationCenter(QObject):
+    libraryInitialized = pyqtSignal()
     themeChanged = pyqtSignal(bool)
     currentPlaylistChanged = pyqtSignal(Playlist)
     exited = pyqtSignal()
@@ -26,6 +27,7 @@ class ApplicationCenter(QObject):
 
     def setLibrary(self, playlist: Playlist) -> None:
         self.library = playlist
+        self.libraryInitialized.emit()
 
     def setActivePlaylist(self, playlist: Playlist) -> None:
         self.currentPlaylist = playlist

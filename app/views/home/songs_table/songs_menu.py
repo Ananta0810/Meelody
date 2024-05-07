@@ -9,7 +9,7 @@ from app.common.models import Song, Playlist
 from app.common.others import appCenter, musicPlayer
 from app.components.events import VisibleObserver
 from app.components.scroll_areas import SmoothVerticalScrollArea
-from app.helpers.base import Lists, Strings
+from app.helpers.base import Lists, Strings, silence
 from app.helpers.qt import Widgets
 from app.views.home.songs_table.song_row import SongRow
 
@@ -33,16 +33,17 @@ class SongsMenu(SmoothVerticalScrollArea):
         self._initComponent()
         qApp.installEventFilter(self)
 
-    def _createUI(self) -> None:
-        super()._createUI()
-        self.setClassName("scroll/bg-primary-50 scroll/hover:bg-primary scroll/rounded-2")
-        self.setContentsMargins(8, 0, 8, 0)
-
     def _connectSignalSlots(self) -> None:
         super()._connectSignalSlots()
         VisibleObserver(self).visible.connect(lambda visible: self.__showLibrary())
 
-        appCenter.currentPlaylistChanged.connect(lambda playlist: self.__setPlaylist(playlist))
+        appCenter.libraryInitialized.connect(lambda: self.__createSongRows(appCenter.library.getSongs().getSongs()))
+        appCenter.libraryInitialized.connect(
+            lambda: appCenter.library.getSongs().updated.connect(lambda: self.__createSongRows(appCenter.library.getSongs().getSongs()))
+        )
+
+        appCenter.currentPlaylistChanged.connect(lambda playlist: self.__showSongsOfPlaylist(playlist))
+
         musicPlayer.songChanged.connect(lambda song: self.__scrollToSong(song))
 
     def eventFilter(self, obj: QObject, event: QEvent) -> bool:
@@ -50,10 +51,6 @@ class SongsMenu(SmoothVerticalScrollArea):
             if Widgets.isDescendantOf(self.window(), obj):
                 self.__onKeyPressed(event)
         return super().eventFilter(obj, event)
-
-    def __showLibrary(self) -> None:
-        rows = [row for row in self.__songRowDict.values()]
-        self.__showSongs(rows)
 
     def __onKeyPressed(self, event: QKeyEvent) -> None:
         isHoldingAlt = int(event.modifiers()) == Qt.AltModifier
@@ -86,49 +83,60 @@ class SongsMenu(SmoothVerticalScrollArea):
         if song.getTitle() in self.__titles:
             self.scrollToItemAt(self.__titles[song.getTitle()])
 
-    def __setPlaylist(self, playlist: Playlist) -> None:
-        playlist.getSongs().updated.connect(lambda: self.__refreshSongs(playlist.getSongs()))
+    def __showLibrary(self) -> None:
+        rows = [row for row in self.__songRowDict.values()]
+        self.__showSongs(rows)
 
-        self.__setPlaylistSongs(playlist.getSongs().getSongs())
+    def __createSongRows(self, songs: list[Song]) -> None:
+        """
+        This function is used to create rows on song menu. Those rows will be re-used later to shown as items on menu.
+        """
+        onStartup = len(self.__songRowDict) == 0
 
-        rows: list[SongRow] = [row for row in self.widgets()]
-        editable = playlist.getInfo().getName() == "library"
+        if onStartup:
+            for song in songs:
+                self.__addRow(song)
 
-        for row in rows:
-            row.setEditable(editable)
-
-    def __setPlaylistSongs(self, songs: list[Song]) -> None:
-        self.__menuReset.emit()
-
-        if len(songs) > len(self.__songRowDict):
-            firstLoad = len(self.__songRowDict) == 0
-
-            if firstLoad:
-                for index, song in enumerate(songs):
-                    songRow = SongRow(song)
-                    songRow.applyTheme()
-                    songRow.hide()
-                    self.addWidget(songRow)
-                    self.__songRowDict[song.getId()] = songRow
-            else:
-                # We are adding some new songs, may be after downloaded songs or import from explorer.
-                for index, song in enumerate(songs):
-                    if song.getId() in self.__songRowDict:
-                        continue
-                    songRow = SongRow(song)
-
-                    self.insertWidget(index, songRow)
-                    self.__songRowDict[song.getId()] = songRow
-
-                    self.__loadCoverFor(songRow)
-                    songRow.applyTheme()
-                    songRow.show()
-
-            self.__updateTitleMaps(songs)
+            self.__menuReset.emit()
             return
 
-        rows = [self.__songRowDict.get(song.getId()) for song in songs]
-        self.__showSongs(rows)
+        currentSongs = [row.content() for row in self.__songRowDict.values()]
+
+        addedSongs = Lists.itemsInRightOnly(currentSongs, songs)
+        removedSongs = Lists.itemsInLeftOnly(currentSongs, songs)
+
+        for song in addedSongs:
+            self.__addRow(song)
+
+        for song in removedSongs:
+            row = self.__songRowDict[song.getId()]
+            self.__removeRow(row)
+
+        self.__menuReset.emit()
+
+    def __addRow(self, song):
+        songRow = SongRow(song)
+        songRow.applyTheme()
+        songRow.hide()
+        self.addWidget(songRow)
+        self.__songRowDict[song.getId()] = songRow
+
+    def __removeRow(self, row: SongRow) -> None:
+        self.removeWidget(row)
+        row.deleteLater()
+
+        self.__songRowDict.pop(row.content().getId())
+
+    def __showSongsOfPlaylist(self, playlist: Playlist) -> None:
+        isLibrary = playlist.getInfo().getName() == "library"
+
+        songSet = set(playlist.getSongs().getSongs())
+
+        for row in self.widgets():
+            row.setEditable(isLibrary)
+            row.setVisible(row.content() in songSet)
+
+        playlist.getSongs().updated.connect(lambda: self.__refreshSongs(playlist.getSongs()))
 
     def __refreshSongs(self, newPlaylist: Playlist.Songs) -> None:
         newSongs = newPlaylist.getSongs()
@@ -141,7 +149,7 @@ class SongsMenu(SmoothVerticalScrollArea):
 
         isAddedSongs = len(newSongs) > len(displayingRows)
         if isAddedSongs:
-            self.__setPlaylistSongs(newSongs)
+            self.__createSongRows(newSongs)
             self.__updateTitleMaps(newSongs)
 
         oldSongs = [row.content() for row in displayingRows]
@@ -190,8 +198,8 @@ class SongsMenu(SmoothVerticalScrollArea):
         for songRow in self.__songRowDict.values():
             songRow.hide()
 
-        displayer = ChunksConsumer(items=rows, size=MAX_ITEMS_VISIBLE_ON_MENU)
-        displayer.forEach(lambda row: row.show(), delay=10)
+        displayer = ChunksConsumer(items=rows, size=MAX_ITEMS_VISIBLE_ON_MENU, parent=self)
+        displayer.forEach(lambda row: silence(lambda: row.show()), delay=10)
         self.__menuReset.connect(displayer.stop)
         displayer.stopped.connect(lambda: self.__menuReset.disconnect())
         displayer.stopped.connect(lambda: self.__loadCovers())
@@ -203,15 +211,9 @@ class SongsMenu(SmoothVerticalScrollArea):
 
         rows = [song for songId, song in self.__songRowDict.items() if songId not in self.__coverLoadedSongIds]
 
-        displayer = ChunksConsumer(items=rows, size=1)
+        displayer = ChunksConsumer(items=rows, size=1, parent=self)
         displayer.forEach(lambda row: self.__loadCoverFor(row))
 
     def __loadCoverFor(self, row: SongRow) -> None:
         row.loadCover()
         self.__coverLoadedSongIds.add(row.content().getId())
-
-    def __removeRow(self, row: SongRow) -> None:
-        self.removeWidget(row)
-        row.deleteLater()
-
-        self.__songRowDict.pop(row.content().getId())

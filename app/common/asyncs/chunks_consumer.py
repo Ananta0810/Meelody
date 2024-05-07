@@ -2,6 +2,7 @@ from abc import ABCMeta
 from typing import TypeVar, Generic, Callable
 
 from PyQt5.QtCore import QObject, QTimer, pyqtSignal
+from PyQt5.QtWidgets import QWidget
 
 QObjectType = type(QObject)
 T = TypeVar('T')
@@ -15,8 +16,8 @@ class ChunksConsumer(QObject, Generic[T], metaclass=QABCMeta):
     stopped = pyqtSignal()
     finished = pyqtSignal()
 
-    def __init__(self, items: list[T], size: int) -> None:
-        super().__init__()
+    def __init__(self, items: list[T], size: int, parent: QWidget) -> None:
+        super().__init__(parent)
         self.__chunks: list[list[T]] = [items[index:index + size] for index in range(0, len(items), size)]
         self.__timer: QTimer = QTimer()
         self.__currentChunkIndex: int = 0

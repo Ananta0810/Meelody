@@ -245,6 +245,7 @@ class DownloadSongThread(QThread):
             self.__ytb.streams.get_audio_only().stream_to_buffer(audioBytes)
             self.succeed.emit(audioBytes)
         except Exception as e:
+            Logger.error(e)
             self.failed.emit(e)
 
     def __onProgress(self, stream: Stream, bytesRemaining: int, downloadStartTime: datetime) -> None:

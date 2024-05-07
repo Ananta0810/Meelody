@@ -11,10 +11,10 @@ from app.views import Application
 #     - pip install PyQt5
 #     - pip install pygame==2.5.2
 #     - pip install eyed3==0.9.7
-#     - pip install yt-dlp==2023.2.17
 #     - pip install Pillow==9.5.0
 #     - pip install pillow==9.5.0
 #     - pip install pydub==0.25.0
+#     - pip install pytube==15.0.0
 # """
 
 
