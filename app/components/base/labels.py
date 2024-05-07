@@ -87,6 +87,9 @@ class LabelWithDefaultText(QLabel, Component):
     def text(self) -> str:
         return self.__displayingText
 
+    def ellipsisText(self) -> str:
+        return QFontMetrics(self.font()).elidedText(self.__displayingText, Qt.ElideRight, self.width())
+
     def setDefaultText(self, text: str) -> None:
         self.__defaultText = text
         if Strings.isBlank(self.text()):

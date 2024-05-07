@@ -104,6 +104,10 @@ class Lists:
         return -1, -1
 
     @staticmethod
+    def findMostFrequency(collection: list[T]) -> T:
+        return max(set(collection), key=collection.count)
+
+    @staticmethod
     def binarySearch(
         collection: list[T],
         item: T,

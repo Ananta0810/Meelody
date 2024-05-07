@@ -12,7 +12,7 @@ from app.common.others import appCenter
 from app.components.base import Cover, LabelWithDefaultText, Factory, CoverProps
 from app.components.dialogs import Dialogs
 from app.components.widgets import ExtendableStyleWidget
-from app.helpers.base import Bytes
+from app.helpers.base import Bytes, Lists
 from app.helpers.builders import ImageEditor
 from app.helpers.others import Files, Logger
 from app.helpers.qt import Pixmaps, Widgets
@@ -66,9 +66,16 @@ class PlaylistCard(ExtendableStyleWidget):
     def _adaptTitleColorToCover(self):
         if not Widgets.isInView(self):
             return
-        labelRect = QRect(self._title.pos().x(), self._title.pos().y(), self._title.rect().width() // 2, self._title.rect().height())
-        mainColor = Pixmaps.getDominantColorAt(labelRect, of=self._cover.currentCover().content())
-        if mainColor.isDarkColor():
+        width = self._title.fontMetrics().boundingRect(self._title.ellipsisText()).width()
+        labelRect = QRect(self._title.pos().x(),
+                          self._title.pos().y(),
+                          width,
+                          self._title.rect().height())
+
+        colors = Pixmaps.getDominantColorsAt(labelRect, of=self._cover.currentCover().content(), maxColors=5)
+        isDarkMode = Lists.findMostFrequency([color.isDarkColor() for color in colors])
+
+        if isDarkMode:
             self._title.applyDarkMode()
         else:
             self._title.applyLightMode()

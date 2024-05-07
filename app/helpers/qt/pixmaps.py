@@ -4,6 +4,7 @@ from typing import Union, final, Optional
 from PIL import Image
 from PyQt5.QtCore import QByteArray, QBuffer, QIODevice, QRect, Qt
 from PyQt5.QtGui import QPixmap, QPainter, QPainterPath
+from colorthief import MMCQ
 
 from app.helpers.stylesheets import Color
 
@@ -84,20 +85,32 @@ class Pixmaps:
         return target
 
     @staticmethod
-    def getDominantColor(pixmap: QPixmap) -> Color:
+    def getDominantColors(pixmap: QPixmap, maxColors: int = 10) -> list[Color]:
         pixmapBytes: bytes = Pixmaps.toBytes(pixmap)
         image: Image = Image.open(BytesIO(pixmapBytes))
-        BLURRED_IMAGE_SIZE: int = 200
 
-        image.thumbnail((BLURRED_IMAGE_SIZE, BLURRED_IMAGE_SIZE))
-
-        imagePalette = image.convert("P", palette=Image.ADAPTIVE, colors=16)
-
-        colorCount = sorted(imagePalette.getcolors(), reverse=True)
-        paletteIndex = colorCount[0][1]
-        red, green, blue = imagePalette.getpalette()[paletteIndex * 3: paletteIndex * 3 + 3]
-        return Color(red, green, blue)
+        palettes = Pixmaps.__getPalettes(image, maxColors, 10)
+        return [Color(red, green, blue) for red, green, blue in palettes]
 
     @staticmethod
-    def getDominantColorAt(rect: QRect, of: QPixmap) -> Color:
-        return Pixmaps.getDominantColor(of.copy(rect))
+    def __getPalettes(image: Image, color_count=10, quality=10):
+        image = image.convert('RGBA')
+        width, height = image.size
+        pixels = image.getdata()
+        pixelCount = width * height
+        validPixels = []
+        for i in range(0, pixelCount, quality):
+            r, g, b, a = pixels[i]
+            # If pixel is mostly opaque and not white
+            if a >= 125:
+                if not (r > 250 and g > 250 and b > 250):
+                    validPixels.append((r, g, b))
+
+        # Send array to quantize function which clusters values
+        # using median cut algorithm
+        cmap = MMCQ.quantize(validPixels, color_count)
+        return cmap.palette
+
+    @staticmethod
+    def getDominantColorsAt(rect: QRect, of: QPixmap, maxColors: int = 10) -> list[Color]:
+        return Pixmaps.getDominantColors(of.copy(rect), maxColors)
