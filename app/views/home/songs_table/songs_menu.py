@@ -11,7 +11,7 @@ from app.common.models.playlists import Library
 from app.common.others import appCenter, musicPlayer
 from app.components.events import VisibleObserver
 from app.components.scroll_areas import SmoothVerticalScrollArea
-from app.helpers.base import Lists, Strings, silence
+from app.helpers.base import Lists, Strings, silence, suppressException
 from app.helpers.qt import Widgets
 from app.views.home.songs_table.song_row import SongRow
 
@@ -121,6 +121,7 @@ class SongsMenu(SmoothVerticalScrollArea):
     def __addRow(self, song):
         songRow = SongRow(song)
         songRow.applyTheme()
+        songRow.setMinimumSize(songRow.sizeHint())
         songRow.hide()
         self.addWidget(songRow)
         self.__songRowDict[song.getId()] = songRow
@@ -167,11 +168,19 @@ class SongsMenu(SmoothVerticalScrollArea):
         self.verticalScrollBar().setValue(currentPosition)
 
     def __showRows(self, rows: list[SongRow]) -> None:
+
         displayer = ChunksConsumer(items=rows, size=MAX_ITEMS_VISIBLE_ON_MENU, parent=self)
         displayer.stopped.connect(lambda: silence(lambda: self.__menuReset.disconnect(displayer.stop)))
         displayer.stopped.connect(lambda: self.__loadCovers())
         self.__menuReset.connect(displayer.stop)
-        displayer.forEach(lambda row: silence(lambda: row.show()), delay=10)
+
+        self._menu.setMinimumHeight(0)
+        displayer.forEach(lambda row, index: self.__showRow(row, index), delay=10)
+
+    @suppressException
+    def __showRow(self, row: SongRow, index: int) -> None:
+        self._menu.setMinimumHeight((index + 1) * row.height())
+        row.show()
 
     def __updateTitleMaps(self, songs: list[Song]) -> None:
         self.__titles = {song.getTitle(): index for index, song in enumerate(songs)}
@@ -191,7 +200,7 @@ class SongsMenu(SmoothVerticalScrollArea):
         rows = [song for songId, song in self.__songRowDict.items() if songId not in self.__coverLoadedSongIds]
 
         displayer = ChunksConsumer(items=rows, size=1, parent=self)
-        displayer.forEach(lambda row: self.__loadCoverFor(row))
+        displayer.forEach(lambda row, index: self.__loadCoverFor(row))
 
     def __loadCoverFor(self, row: SongRow) -> None:
         row.loadCover()

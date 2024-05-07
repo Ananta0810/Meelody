@@ -18,16 +18,17 @@ class ChunksConsumer(QObject, Generic[T], metaclass=QABCMeta):
 
     def __init__(self, items: list[T], size: int, parent: QWidget) -> None:
         super().__init__(parent)
+        self.__size = size
         self.__chunks: list[list[T]] = [items[index:index + size] for index in range(0, len(items), size)]
         self.__timer: QTimer = QTimer()
         self.__currentChunkIndex: int = 0
 
-    def forEach(self, fn: Callable[[T], None], delay: int = 0) -> None:
+    def forEach(self, fn: Callable[[T, int], None], delay: int = 0) -> None:
         self.stop()
         self.__timer.start(delay)
         self.__timer.timeout.connect(lambda: self.__displayChunk(delay, fn))
 
-    def __displayChunk(self, delay: int, fn: Callable[[T], None]) -> None:
+    def __displayChunk(self, delay: int, fn: Callable[[T, int], None]) -> None:
         if self.__currentChunkIndex >= len(self.__chunks):
             self.stop()
             self.finished.emit()
@@ -35,8 +36,10 @@ class ChunksConsumer(QObject, Generic[T], metaclass=QABCMeta):
 
         chunk = self.__chunks[self.__currentChunkIndex]
 
-        for item in chunk:
-            fn(item)
+        lastIndex = self.__currentChunkIndex * self.__size
+
+        for index, item in enumerate(chunk):
+            fn(item, index + lastIndex)
 
         self.__currentChunkIndex += 1
         self.__timer.start(delay)
