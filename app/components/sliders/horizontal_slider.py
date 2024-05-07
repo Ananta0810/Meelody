@@ -4,7 +4,7 @@ from PyQt5.QtCore import Qt
 from PyQt5.QtWidgets import QSlider, QWidget
 
 from app.components.base import Component
-from app.helpers.base import Strings
+from app.helpers.base import Strings, suppressException
 from app.helpers.stylesheets import Backgrounds
 from app.helpers.stylesheets.translators import ClassNameTranslator
 from app.helpers.stylesheets.translators.classname_translator import ClassNameTheme
@@ -26,6 +26,7 @@ class HorizontalSlider(QSlider, Component):
         self._trackSize = track
         self.setClassName(self._currentClassName)
 
+    @suppressException
     def setClassName(self, *classNames: str) -> None:
         self._currentClassName = Strings.join(" ", classNames)
 

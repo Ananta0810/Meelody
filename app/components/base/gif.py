@@ -4,6 +4,7 @@ from PyQt5.QtCore import QSize
 from PyQt5.QtGui import QMovie
 from PyQt5.QtWidgets import QLabel, QWidget
 
+from app.helpers.base import suppressException
 from app.views.threads import UpdateUIThread
 
 
@@ -32,15 +33,14 @@ class Gif(QLabel):
     def setGifSize(self, w: int) -> None:
         self.movie().setScaledSize(QSize(w, w))
 
+    @suppressException
     def start(self) -> None:
         self.__animationThread.start()
 
+    @suppressException
     def stop(self) -> None:
         self.__animationThread.quit()
 
+    @suppressException
     def __updateAnimation(self) -> None:
-        try:
-            if self.isVisible():
-                self.movie().jumpToNextFrame()
-        except RuntimeError:
-            pass
+        self.movie().jumpToNextFrame()

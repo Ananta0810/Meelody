@@ -38,3 +38,29 @@ def memoizeResult(f):
         return result
 
     return wrapped
+
+
+def returnOnFailed(value: any):
+    def decorate(f):
+        def applicator(*args, **kwargs):
+            try:
+                return f(*args, **kwargs)
+            except:
+                print('Error')
+                return value
+
+        return applicator
+
+    return decorate
+
+
+def suppressException(f):
+    def applicator(*args, **kwargs):
+        try:
+            f(*args, **kwargs)
+        except Exception as e:
+            from app.helpers.others import Logger
+            Logger.error(e)
+            pass
+
+    return applicator

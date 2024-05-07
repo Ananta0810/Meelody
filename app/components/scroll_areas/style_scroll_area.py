@@ -4,7 +4,7 @@ from PyQt5.QtGui import QResizeEvent
 from PyQt5.QtWidgets import QScrollArea, QWidget
 
 from app.components.base import Component
-from app.helpers.base import Strings
+from app.helpers.base import Strings, suppressException
 from app.helpers.stylesheets.translators import ClassNameTranslator
 from app.helpers.stylesheets.translators.classname_translator import ClassNameTheme
 
@@ -22,6 +22,7 @@ class StyleScrollArea(QScrollArea, Component):
         super().resizeEvent(a0)
         self.widget().setFixedWidth(self.rect().width() - 4)
 
+    @suppressException
     def setClassName(self, *classNames: str) -> None:
         light, dark = ClassNameTranslator.translateElements(Strings.join(" ", classNames), self)
 

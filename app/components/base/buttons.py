@@ -8,7 +8,7 @@ from app.components.base.app_icon import AppIcon
 from app.components.base.base_component import Component
 from app.components.base.gif import Gif
 from app.components.widgets import ExtendableStyleWidget
-from app.helpers.base import Strings
+from app.helpers.base import Strings, suppressException
 from app.helpers.stylesheets import Padding
 from app.helpers.stylesheets.translators import ClassNameTranslator
 from app.helpers.stylesheets.translators.classname_translator import ClassNameTheme
@@ -96,6 +96,7 @@ class MultiStatesIconButton(QPushButton, Component):
             self.setIcon(button.darkModeIcon or button.lightModeIcon)
             super().applyDarkMode()
 
+    @suppressException
     def setClassName(self, *classNames: str) -> None:
         self._currentClassName = Strings.join(" ", classNames)
         super().setClassName(self._currentClassName)
@@ -152,6 +153,7 @@ class ToggleIconButton(MultiStatesIconButton):
     def isInactive(self) -> bool:
         return self._currentIndex == 1
 
+    @suppressException
     def setClassName(self, *classNames: str) -> None:
         self._currentClassName = Strings.join(" ", classNames)
 

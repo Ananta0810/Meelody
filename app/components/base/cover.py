@@ -4,7 +4,7 @@ from PyQt5.QtCore import QVariantAnimation, QEasingCurve, Qt
 from PyQt5.QtGui import QPixmap
 from PyQt5.QtWidgets import QLabel, QWidget
 
-from app.helpers.base import Bytes
+from app.helpers.base import Bytes, suppressException
 from app.helpers.qt.pixmaps import Pixmaps
 
 
@@ -47,7 +47,7 @@ class CoverProps:
         pixmap = Pixmaps.toQPixmap(imageByte)
         if pixmap.isNull():
             return props
-        
+
         if width > 0 or height > 0:
             pixmap = Pixmaps.scaleKeepingRatio(pixmap, max(width, height))
             pixmap = Pixmaps.crop(pixmap, width, height, cropCenter)
@@ -81,6 +81,7 @@ class Cover(QLabel):
     def setRadius(self, radius: int) -> None:
         self.__radius = radius
 
+    @suppressException
     def setCover(self, cover: CoverProps) -> None:
         if cover is None:
             cover = self.__defaultCover

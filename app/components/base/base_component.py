@@ -3,6 +3,7 @@ from typing import final, Optional
 
 from app.common.others import appCenter
 from app.helpers.base import Strings
+from app.helpers.base.decorators import suppressException
 from app.helpers.stylesheets.translators import ClassNameTranslator
 
 
@@ -32,22 +33,19 @@ class Component:
     def _assignShortcuts(self) -> None:
         pass
 
+    @suppressException
     def setClassName(self, *classNames: str) -> None:
         light, dark = ClassNameTranslator.translate(Strings.join(" ", classNames), self)
         self._lightModeStyle = light
         self._darkModeStyle = dark
 
+    @suppressException
     def applyLightMode(self) -> None:
-        try:
-            self.setStyleSheet(self._lightModeStyle)
-        except AttributeError:
-            pass
+        self.setStyleSheet(self._lightModeStyle)
 
+    @suppressException
     def applyDarkMode(self) -> None:
-        try:
-            self.setStyleSheet(self._darkModeStyle)
-        except AttributeError:
-            pass
+        self.setStyleSheet(self._darkModeStyle)
 
     @final
     def applyTheme(self) -> None:
@@ -56,6 +54,7 @@ class Component:
         else:
             self.applyDarkMode()
 
+    @suppressException
     def applyThemeToChildren(self) -> None:
         children = self.findChildren(Component)
 

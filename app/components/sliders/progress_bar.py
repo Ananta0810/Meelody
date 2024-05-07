@@ -4,7 +4,7 @@ from PyQt5.QtGui import QResizeEvent
 from PyQt5.QtWidgets import QWidget
 
 from app.components.widgets import ExtendableStyleWidget, StyleWidget
-from app.helpers.base import Numbers, Strings
+from app.helpers.base import Numbers, Strings, suppressException
 
 
 class ProgressBar(ExtendableStyleWidget):
@@ -28,6 +28,7 @@ class ProgressBar(ExtendableStyleWidget):
     def __updateProgress(self):
         self._bar.setFixedWidth(int(self.__value * self.width() / 100))
 
+    @suppressException
     def setClassName(self, *classNames: str) -> None:
         self._bar.setClassName(Strings.join(" ", classNames))
 

@@ -7,6 +7,7 @@ from app.common.others import musicPlayer, appCenter
 from app.components.base import Cover, Factory, LabelWithDefaultText, CoverProps
 from app.components.dialogs import Dialogs
 from app.components.widgets import ExtendableStyleWidget, StyleWidget, FlexBox
+from app.helpers.base import silence, suppressException
 from app.helpers.builders import ImageEditor
 from app.helpers.others import Times, Logger
 from app.helpers.qt import Widgets
@@ -133,18 +134,18 @@ class SongRow(ExtendableStyleWidget):
         self._mainLayout.addWidget(self._moreButtons)
 
     def _connectSignalSlots(self) -> None:
-        self._moreBtn.clicked.connect(lambda: self.showMoreButtons(True))
-        self._closeMenuBtn.clicked.connect(lambda: self.showMoreButtons(False))
+        self._moreBtn.clicked.connect(lambda: silence(lambda: self.showMoreButtons(True)))
+        self._closeMenuBtn.clicked.connect(lambda: silence(lambda: self.showMoreButtons(False)))
 
-        self._playBtn.clicked.connect(lambda: self.__playCurrentSong())
-        self._loveBtn.clicked.connect(lambda: self.__song.updateLoveState(self._loveBtn.isActive()))
-        self._editCoverBtn.clicked.connect(lambda: self.__changeCover())
-        self._editSongBtn.clicked.connect(lambda: self.__changeSongInfo())
-        self._deleteBtn.clicked.connect(lambda: self.__confirmToDeleteSong())
+        self._playBtn.clicked.connect(lambda: silence(lambda: self.__playCurrentSong()))
+        self._loveBtn.clicked.connect(lambda: silence(lambda: self.__song.updateLoveState(self._loveBtn.isActive())))
+        self._editCoverBtn.clicked.connect(lambda: silence(lambda: self.__changeCover()))
+        self._editSongBtn.clicked.connect(lambda: silence(lambda: self.__changeSongInfo()))
+        self._deleteBtn.clicked.connect(lambda: silence(lambda: self.__confirmToDeleteSong()))
 
-        self.__song.loved.connect(lambda loved: self._loveBtn.setActive(loved))
-        self.__song.coverChanged.connect(lambda cover: self._cover.setCover(CoverProps.fromBytes(cover, width=64, height=64, radius=12)))
-        self.__song.updated.connect(lambda updatedField: self.__updateSongField(updatedField))
+        self.__song.loved.connect(lambda loved: silence(lambda: self._loveBtn.setActive(loved)))
+        self.__song.coverChanged.connect(lambda cover: silence(lambda: self.__setCover(cover)))
+        self.__song.updated.connect(lambda updatedField: silence(lambda: self.__updateSongField(updatedField)))
 
         musicPlayer.songChanged.connect(self.__checkEditable)
 
@@ -159,6 +160,7 @@ class SongRow(ExtendableStyleWidget):
     def __checkEditable(self, song: Song) -> None:
         self.setEditable(song != self.__song)
 
+    @suppressException
     def deleteLater(self) -> None:
         musicPlayer.songChanged.disconnect(self.__checkEditable)
         super().deleteLater()
@@ -166,13 +168,16 @@ class SongRow(ExtendableStyleWidget):
     def content(self) -> Song:
         return self.__song
 
+    @suppressException
     def show(self) -> None:
         self.showMoreButtons(False)
         super().show()
 
+    @suppressException
     def loadCover(self) -> None:
         self.__song.loadCover()
 
+    @suppressException
     def showMoreButtons(self, a0: bool) -> None:
         self._mainButtons.setVisible(not a0)
         self._moreButtons.setVisible(a0)
@@ -182,6 +187,7 @@ class SongRow(ExtendableStyleWidget):
             self._closeMenuBtn.move(menuCorner.x() - self._closeMenuBtn.width() - 4, menuCorner.y() + 4)
             self._closeMenuBtn.raise_()
 
+    @suppressException
     def setEditable(self, editable: bool) -> None:
         self._editSongBtn.setVisible(editable)
         self._editCoverBtn.setVisible(editable)
@@ -191,15 +197,20 @@ class SongRow(ExtendableStyleWidget):
         musicPlayer.loadPlaylist(appCenter.currentPlaylist.getSongs())
         musicPlayer.playSong(self.__song)
 
+    @suppressException
     def __displaySongInfo(self) -> None:
         if self.__song.isCoverLoaded() and Widgets.isInView(self):
-            self._cover.setCover(CoverProps.fromBytes(self.__song.getCover(), width=64, height=64, radius=12))
+            self.__setCover(self.__song.getCover())
 
         self._titleLabel.setText(self.__song.getTitle())
         self._artistLabel.setText(self.__song.getArtist())
         self._lengthLabel.setText(Times.toString(self.__song.getLength()))
         self._loveBtn.setActive(self.__song.isLoved())
 
+    def __setCover(self, cover: bytes) -> None:
+        self._cover.setCover(CoverProps.fromBytes(cover, width=64, height=64, radius=12))
+
+    @suppressException
     def __updateSongField(self, field: str) -> None:
         if field == "title":
             self._titleLabel.setText(self.__song.getTitle())
