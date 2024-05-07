@@ -105,12 +105,6 @@ class Playlist:
             """
             ...
 
-        def getSongIndexWithId(self, songId: str) -> int:
-            """
-                Find index of a song by its id. Return -1  if no song found.
-            """
-            ...
-
         def insert(self, song: Song) -> None:
             """
                 Add song to the list of songs. A signal will be fired after inserted succeed.

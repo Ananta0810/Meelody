@@ -37,8 +37,8 @@ class UserPlaylist(Playlist):
             if songs is not None:
                 self.updated.emit()
 
-        def removeSong(self, song: Song) -> None:
-            super().removeSong(song)
+        def remove(self, song: Song) -> None:
+            super().remove(song)
 
             song.updated.disconnect(lambda updatedField: self._onSongUpdated(song, updatedField))
             self.updated.emit()

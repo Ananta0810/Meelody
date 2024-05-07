@@ -255,11 +255,11 @@ class SongRow(ExtendableStyleWidget):
     def __deleteCurrentSong(self) -> None:
         try:
             self.__song.delete()
-            appCenter.currentPlaylist.getSongs().removeSong(self.__song)
+            appCenter.currentPlaylist.getSongs().remove(self.__song)
             Logger.info("Delete song succeed.")
         except ResourceException as e:
             if e.isNotFound():
-                appCenter.currentPlaylist.getSongs().removeSong(self.__song)
+                appCenter.currentPlaylist.getSongs().remove(self.__song)
             if e.isBeingUsed():
                 Dialogs.alert(message="You can not delete the playing song. Please try again after you played other song.")
         except Exception as e:

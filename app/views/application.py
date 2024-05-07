@@ -1,4 +1,3 @@
-from app.common.models import Playlist
 from app.common.others import appCenter, database, musicPlayer
 from app.views.windows import MainWindow
 
@@ -27,27 +26,19 @@ class Application:
         appCenter.setPlaylists(playlists)
         appCenter.setActivePlaylist(appCenter.library)
 
-    def __configureMusicPlayer(self):
+    @staticmethod
+    def __configureMusicPlayer():
         settings = appCenter.settings
 
         musicPlayer.songChanged.connect(lambda song: settings.setPlayingSongId(song.getId()))
         musicPlayer.loopChanged.connect(lambda loop: settings.setIsLooping(loop))
         musicPlayer.shuffleChanged.connect(lambda shuffle: settings.setIsShuffle(shuffle))
 
-        library = appCenter.library.getSongs()
-
-        musicPlayer.loadPlaylist(library)
+        musicPlayer.loadPlaylist(appCenter.library.getSongs())
         musicPlayer.setLooping(settings.isLooping)
         musicPlayer.setShuffle(settings.isShuffle)
-        musicPlayer.setCurrentSongIndex(self.__getLastPlayingSongIndex(library))
+        musicPlayer.setCurrentSongIndex(appCenter.library.getSongs().getSongIndexWithId(appCenter.settings.playingSongId))
         musicPlayer.loadSongToPlay()
-
-    @staticmethod
-    def __getLastPlayingSongIndex(library: Playlist.Songs) -> int:
-        try:
-            return 0 if appCenter.settings.playingSongId is None else max(0, library.getSongIndexWithId(appCenter.settings.playingSongId))
-        except:
-            return 0
 
     def run(self) -> 'Application':
         self._mainWindow.show()

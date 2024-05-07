@@ -65,9 +65,6 @@ class MusicPlayerPlaylistSongs(Playlist.Songs):
     def getSongAt(self, index: int) -> Song:
         return self.__getPlaylist().getSongAt(index)
 
-    def getSongIndexWithId(self, songId: str) -> int:
-        return self.__playlist.getSongIndexWithId(songId)
-
     def insert(self, song: Song) -> None:
         pass
 

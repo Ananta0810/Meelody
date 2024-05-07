@@ -80,15 +80,6 @@ class CommonPlaylist:
                 raise ValueError("Playlist has no song.")
             return self._songs[index]
 
-        def getSongIndexWithId(self, songId: str) -> int:
-            if self.size() == 0:
-                raise ValueError("Playlist has no song.")
-
-            for index, song in enumerate(self._songs):
-                if song.getId() == songId:
-                    return index
-            return -1
-
         def insert(self, song: Song) -> None:
             self._insert(song)
 
@@ -120,7 +111,7 @@ class CommonPlaylist:
                     except ValueError:
                         pass
 
-        def removeSong(self, song: Song) -> None:
+        def remove(self, song: Song) -> None:
             self._songs.remove(song)
 
         def indexOf(self, song: Song) -> int:

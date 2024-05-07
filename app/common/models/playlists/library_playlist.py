@@ -1,5 +1,6 @@
 from app.common.models.playlist import Playlist
 from app.common.models.song import Song
+from app.helpers.base import returnOnFailed
 from .common_playlist import CommonPlaylist
 
 
@@ -46,8 +47,8 @@ class Library(Playlist):
                     song.loved.disconnect(lambda a0: self.__saveDatabase())
                 self.updated.emit()
 
-        def removeSong(self, song: Song) -> None:
-            super().removeSong(song)
+        def remove(self, song: Song) -> None:
+            super().remove(song)
 
             song.loved.disconnect(lambda a0: self.__saveDatabase())
             self.updated.emit()
@@ -55,6 +56,16 @@ class Library(Playlist):
         def moveSong(self, fromIndex: int, toIndex: int) -> None:
             super().moveSong(fromIndex, toIndex)
             self.updated.emit()
+
+        @returnOnFailed(0)
+        def getSongIndexWithId(self, songId: str) -> int:
+            if self.size() == 0:
+                raise 0
+
+            for index, song in enumerate(self._songs):
+                if song.getId() == songId:
+                    return index
+            return 0
 
         def clone(self) -> Playlist.Songs:
             return self

@@ -83,7 +83,7 @@ class SelectPlaylistSongsDialog(BaseDialog):
 
     def _unSelectSong(self, song: Song) -> None:
         if self.__selectedSongs.hasSong(song):
-            self.__selectedSongs.removeSong(song)
+            self.__selectedSongs.remove(song)
             self._checkCanSave()
 
     def _checkCanSave(self) -> None:
