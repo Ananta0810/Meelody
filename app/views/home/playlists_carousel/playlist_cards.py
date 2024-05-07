@@ -233,6 +233,10 @@ class UserPlaylistCard(PlaylistCard):
         appCenter.setActivePlaylist(self.__playlist)
 
     def __openDeletePlaylistConfirm(self) -> None:
+        if appCenter.currentPlaylist.getInfo().getId() == self.__playlist.getInfo().getId():
+            Dialogs.alert("You can not delete current selecting playlist.")
+            return
+
         Dialogs.confirm(
             message="Are you sure want to delete this playlist. This action can not be reverted.",
             onAccept=self.__deletePlaylist
