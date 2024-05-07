@@ -150,7 +150,7 @@ class SongsMenu(SmoothVerticalScrollArea):
         self.__currentPlaylist = playlist
         self.__updateTitleMaps(playlist.getSongs().getSongs())
 
-        isLibrary = playlist.getInfo().getName() == "library"
+        isLibrary = playlist.getInfo().getName() == "Library"
         songIdSet = set([song.getId() for song in playlist.getSongs().getSongs()])
         songRows: list[SongRow] = self.widgets()
 

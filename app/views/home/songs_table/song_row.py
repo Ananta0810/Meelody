@@ -20,6 +20,7 @@ from app.views.home.songs_table.dialogs.update_song_dialog import UpdateSongDial
 class SongRow(ExtendableStyleWidget):
     def __init__(self, song: Song):
         self.__song = song
+        self.__editable = True
 
         super().__init__()
         super()._initComponent()
@@ -158,7 +159,7 @@ class SongRow(ExtendableStyleWidget):
         self.applyThemeToChildren()
 
     def __checkEditable(self, song: Song) -> None:
-        self.setEditable(song != self.__song)
+        self.setEditable(self.__editable and song != self.__song)
 
     @suppressException
     def deleteLater(self) -> None:
@@ -189,6 +190,7 @@ class SongRow(ExtendableStyleWidget):
 
     @suppressException
     def setEditable(self, editable: bool) -> None:
+        self.__editable = editable
         self._editSongBtn.setVisible(editable)
         self._editCoverBtn.setVisible(editable)
         self._deleteBtn.setVisible(editable)
