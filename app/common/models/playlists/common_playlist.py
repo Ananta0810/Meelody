@@ -118,11 +118,7 @@ class CommonPlaylist:
                 pass
 
         def indexOf(self, song: Song) -> int:
-            return (
-                Lists.binarySearch(self._songs, song, self.__comparator())
-                if self._isSorted
-                else Lists.linearSearch(self._songs, song, self.__comparator())
-            )
+            return Lists.linearSearch(self._songs, song)
 
         @staticmethod
         def __comparator() -> Callable[[Song, Song], int]:

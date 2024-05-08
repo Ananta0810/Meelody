@@ -1,3 +1,5 @@
+import traceback
+
 from app.common.others import appCenter, database, musicPlayer
 from app.views.windows import MainWindow
 
@@ -13,9 +15,12 @@ class Application:
         self._mainWindow = MainWindow()
 
     def __configureApplication(self):
-        appCenter.exited.connect(lambda: musicPlayer.stop())
-        appCenter.exited.connect(lambda: self._mainWindow.close())
-        appCenter.setLightMode(True)
+        try:
+            appCenter.exited.connect(lambda: musicPlayer.stop())
+            appCenter.exited.connect(lambda: self._mainWindow.close())
+            appCenter.setLightMode(True)
+        except:
+            traceback.print_exc()
 
     @staticmethod
     def __configureDatabase():
@@ -30,15 +35,18 @@ class Application:
     def __configureMusicPlayer():
         settings = appCenter.settings
 
-        musicPlayer.songChanged.connect(lambda song: settings.setPlayingSongId(song.getId()))
-        musicPlayer.loopChanged.connect(lambda loop: settings.setIsLooping(loop))
-        musicPlayer.shuffleChanged.connect(lambda shuffle: settings.setIsShuffle(shuffle))
+        try:
+            musicPlayer.songChanged.connect(lambda song: settings.setPlayingSongId(song.getId()))
+            musicPlayer.loopChanged.connect(lambda loop: settings.setIsLooping(loop))
+            musicPlayer.shuffleChanged.connect(lambda shuffle: settings.setIsShuffle(shuffle))
 
-        musicPlayer.loadPlaylist(appCenter.library.getSongs())
-        musicPlayer.setLooping(settings.isLooping)
-        musicPlayer.setShuffle(settings.isShuffle)
-        musicPlayer.setCurrentSongIndex(appCenter.library.getSongs().getSongIndexWithId(appCenter.settings.playingSongId))
-        musicPlayer.loadSongToPlay()
+            musicPlayer.loadPlaylist(appCenter.library.getSongs())
+            musicPlayer.setLooping(settings.isLooping)
+            musicPlayer.setShuffle(settings.isShuffle)
+            musicPlayer.setCurrentSongIndex(appCenter.library.getSongs().getSongIndexWithId(appCenter.settings.playingSongId))
+            musicPlayer.loadSongToPlay()
+        except:
+            traceback.print_exc()
 
     def run(self) -> 'Application':
         self._mainWindow.show()

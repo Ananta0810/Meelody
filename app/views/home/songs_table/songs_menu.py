@@ -29,7 +29,7 @@ class SongsMenu(SmoothVerticalScrollArea):
         self.__currentPlaylist: Optional[Playlist.Songs] = None
 
         # This map is used to find the index of the playing song in the playlist to navigate to.
-        self.__titles: dict[str, int] = {}
+        self.__songMap: dict[str, str] = {}
 
         # This map is used to navigate to songs by key.
         self.__titleKeys: dict[str, list[int]] = {}
@@ -79,8 +79,8 @@ class SongsMenu(SmoothVerticalScrollArea):
             return indexes[0]
 
     def __scrollToSong(self, song: Song) -> None:
-        if song.getTitle() in self.__titles:
-            self.scrollToItemAt(self.__titles[song.getTitle()])
+        if song.getId() in self.__songMap:
+            self.scrollToItemAt(self.__songMap[song.getId()])
 
     def __createSongRows(self, songs: list[Song]) -> None:
         """
@@ -191,7 +191,7 @@ class SongsMenu(SmoothVerticalScrollArea):
         row.show()
 
     def __updateTitleMaps(self, songs: list[Song]) -> None:
-        self.__titles = {song.getTitle(): index for index, song in enumerate(songs)}
+        self.__songMap = {song.getId(): index for index, song in enumerate(songs)}
 
         self.__titleKeys = {}
         for index, song in enumerate(songs):

@@ -1,9 +1,9 @@
+import traceback
 from sys import argv, exit
 
 from PyQt5.QtCore import Qt
 
 from app.components.applications import SingletonApplication
-from app.helpers.others import Times
 from app.views import Application
 
 
@@ -19,16 +19,19 @@ from app.views import Application
 
 
 def runApplication():
-    APP_NAME = "MeelodX"
+    APP_NAME = "Meelody"
 
     app = SingletonApplication(argv, APP_NAME)
     app.setAttribute(Qt.AA_DontCreateNativeWidgetSiblings)
     app.setApplicationName(APP_NAME)
 
-    Times.measure(lambda: Application().run(), lambda time: print(f"Time to start application: {time}"))
+    Application().run()
 
     exit(app.exec_())
 
 
 if __name__ == '__main__':
-    runApplication()
+    try:
+        runApplication()
+    except Exception as e:
+        traceback.print_exc()
