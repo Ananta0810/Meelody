@@ -4,6 +4,7 @@ from PyQt5.QtCore import Qt
 from PyQt5.QtWidgets import QWidget, QVBoxLayout
 
 from app.components.scroll_areas import StyleScrollArea
+from app.resource.qt import Cursors
 from app.views.home.songs_table.dialogs.download_songs_dialog.download_song_item import DownloadSongItem
 
 
@@ -18,6 +19,7 @@ class DownloadSongsMenu(StyleScrollArea):
     def _createUI(self) -> None:
         self.setWidgetResizable(True)
         self.setHorizontalScrollBarPolicy(Qt.ScrollBarAlwaysOff)
+        self.verticalScrollBar().setCursor(Cursors.HAND)
 
         self._menu = QWidget(self)
         self.setWidget(self._menu)

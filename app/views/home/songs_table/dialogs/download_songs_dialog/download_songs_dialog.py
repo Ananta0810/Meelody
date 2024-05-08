@@ -50,7 +50,7 @@ class DownloadSongsDialog(BaseDialog):
         self._searchBtn.setText("Search")
 
         self._menu = DownloadSongsMenu()
-        self._menu.setClassName("scroll/bg-primary-50 scroll/hover:bg-primary scroll/rounded-2")
+        self._menu.setClassName("scroll/bg-primary-75 scroll/hover:bg-primary scroll/rounded-2")
         self._menu.applyTheme()
 
         self.addWidget(self._image)

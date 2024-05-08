@@ -9,6 +9,7 @@ from app.common.others import appCenter
 from app.components.scroll_areas import SmoothVerticalScrollArea
 from app.helpers.base import Lists, Dicts
 from app.helpers.stylesheets import Colors
+from app.resource.qt import Cursors
 from app.views.home.songs_table.dialogs.select_playlist_songs_dialog.select_playlist_song_row import SongRow
 
 
@@ -30,6 +31,7 @@ class MenuBody(SmoothVerticalScrollArea):
         super()._createUI()
         self._menu.setContentsMargins(0, 0, 0, 0)
         self.setFrameShape(QFrame.NoFrame)
+        self.verticalScrollBar().setCursor(Cursors.HAND)
 
     def _connectSignalSlots(self) -> None:
         super()._connectSignalSlots()

@@ -3,6 +3,7 @@ from typing import Optional
 from PyQt5.QtCore import Qt
 from PyQt5.QtWidgets import QWidget, QVBoxLayout
 
+from app.resource.qt import Cursors
 from app.views.home.songs_table.songs_menu import SongsMenu
 from app.views.home.songs_table.songs_table_header import SongsTableHeader
 
@@ -25,8 +26,9 @@ class SongsTable(QWidget):
         self._header.setFixedHeight(48)
 
         self._menu = SongsMenu()
-        self._menu.setClassName("scroll/bg-primary-50 scroll/hover:bg-primary scroll/rounded-2")
+        self._menu.setClassName("scroll/bg-primary-75 scroll/hover:bg-primary scroll/rounded-2")
         self._menu.setContentsMargins(8, 0, 8, 0)
+        self._menu.verticalScrollBar().setCursor(Cursors.HAND)
 
         self._mainLayout.addWidget(self._header)
         self._mainLayout.addWidget(self._menu)
