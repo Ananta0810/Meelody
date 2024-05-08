@@ -1,4 +1,7 @@
-from PyQt5.QtCore import Qt
+from typing import Optional
+
+from PyQt5.QtCore import Qt, QRegExp
+from PyQt5.QtGui import QRegExpValidator
 from PyQt5.QtWidgets import QWidget
 
 from app.components.base import Cover, CoverProps, Input, Factory, ActionButton, Label
@@ -21,14 +24,14 @@ class TimerDialog(BaseDialog):
         self._cover = Cover()
         self._cover.setDefaultCover(CoverProps.fromBytes(Images.TIMER, width=184))
 
-        self._minuteInput = Input()
+        self._minuteInput = TimerInput(99)
         self._minuteInput.setFixedSize(64, 48)
         self._minuteInput.setAlignment(Qt.AlignCenter)
         self._minuteInput.setFont(Factory.createFont(size=14, bold=True))
         self._minuteInput.setClassName("px-12 rounded-4 border border-primary-12 bg-primary-4")
         self._minuteInput.setText("60")
 
-        self._secondInput = Input()
+        self._secondInput = TimerInput(60)
         self._secondInput.setFixedSize(64, 48)
         self._secondInput.setAlignment(Qt.AlignCenter)
         self._secondInput.setFont(Factory.createFont(size=14, bold=True))
@@ -73,3 +76,28 @@ class TimerDialog(BaseDialog):
 
     def _assignShortcuts(self) -> None:
         super()._assignShortcuts()
+
+
+class TimerInput(Input):
+
+    def __init__(self, maxValue: int, parent: Optional[QWidget] = None):
+        super().__init__(parent)
+
+        self.__max = maxValue
+        self.setValidator(QRegExpValidator(QRegExp("^[0-9]+$")))
+        self.textChanged.connect(lambda: self._reformat())
+
+    def _reformat(self) -> None:
+        text = self.text()
+        number = int(text)
+
+        if number < 10:
+            self.setText(f"0{number}")
+            return
+
+        if len(text) > 2:
+            self.setText(f"{int(text[1:])}")
+            return
+
+        if number > self.__max:
+            self.setText(f"{self.__max}")
