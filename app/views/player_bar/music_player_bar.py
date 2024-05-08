@@ -14,6 +14,7 @@ from app.components.sliders import HorizontalSlider
 from app.helpers.others import Times
 from app.helpers.stylesheets import Colors, Paddings
 from app.resource.qt import Images, Icons
+from app.views.player_bar.timer_dialog import TimerDialog
 
 
 class MusicPlayerBar(QWidget, Component):
@@ -225,6 +226,7 @@ class MusicPlayerBar(QWidget, Component):
         self._loopBtn.clicked.connect(lambda: musicPlayer.setLooping(self._loopBtn.isActive()))
         self._shuffleBtn.clicked.connect(lambda: musicPlayer.setShuffle(self._shuffleBtn.isActive()))
         self._volumeSlider.valueChanged.connect(lambda: musicPlayer.setVolume(self._volumeSlider.value()))
+        self._timerBtn.clicked.connect(lambda: self.__openTimer())
 
         musicPlayer.loadFailed.connect(lambda: self.__notifySongNotFound())
         musicPlayer.played.connect(lambda: self.__setPLaying(True))
@@ -238,47 +240,47 @@ class MusicPlayerBar(QWidget, Component):
         musicPlayer.volumeChanged.connect(lambda volume: self.__changeVolumeIcon(volume))
 
     def _assignShortcuts(self) -> None:
-        play_shortcut = QShortcut(QKeySequence(Qt.Key_Space), self._playSongBtn)
-        play_shortcut.activated.connect(lambda: self._playSongBtn.click())
+        playShortcut = QShortcut(QKeySequence(Qt.Key_Space), self._playSongBtn)
+        playShortcut.activated.connect(lambda: self._playSongBtn.click())
 
-        pause_shortcut = QShortcut(QKeySequence(Qt.Key_Space), self._pauseSongBtn)
-        pause_shortcut.activated.connect(lambda: self._pauseSongBtn.click())
+        pauseShortcut = QShortcut(QKeySequence(Qt.Key_Space), self._pauseSongBtn)
+        pauseShortcut.activated.connect(lambda: self._pauseSongBtn.click())
 
-        prev_shortcut = QShortcut(QKeySequence(Qt.Key_Left), self._prevSongBtn)
-        prev_shortcut.activated.connect(lambda: self._prevSongBtn.click())
+        prevShortcut = QShortcut(QKeySequence(Qt.Key_Left), self._prevSongBtn)
+        prevShortcut.activated.connect(lambda: self._prevSongBtn.click())
 
-        next_shortcut = QShortcut(QKeySequence(Qt.Key_Right), self._nextSongBtn)
-        next_shortcut.activated.connect(lambda: self._nextSongBtn.click())
+        nextShortcut = QShortcut(QKeySequence(Qt.Key_Right), self._nextSongBtn)
+        nextShortcut.activated.connect(lambda: self._nextSongBtn.click())
 
-        shortcut_0 = QShortcut(QKeySequence(Qt.Key_0), self._timeSlider)
-        shortcut_0.activated.connect(lambda: self.__skipTo(0))
+        shortcut0 = QShortcut(QKeySequence(Qt.Key_0), self._timeSlider)
+        shortcut0.activated.connect(lambda: self.__skipTo(0))
 
-        shortcut_1 = QShortcut(QKeySequence(Qt.Key_1), self._timeSlider)
-        shortcut_1.activated.connect(lambda: self.__skipTo(10))
+        shortcut1 = QShortcut(QKeySequence(Qt.Key_1), self._timeSlider)
+        shortcut1.activated.connect(lambda: self.__skipTo(10))
 
-        shortcut_2 = QShortcut(QKeySequence(Qt.Key_2), self._timeSlider)
-        shortcut_2.activated.connect(lambda: self.__skipTo(20))
+        shortcut2 = QShortcut(QKeySequence(Qt.Key_2), self._timeSlider)
+        shortcut2.activated.connect(lambda: self.__skipTo(20))
 
-        shortcut_3 = QShortcut(QKeySequence(Qt.Key_3), self._timeSlider)
-        shortcut_3.activated.connect(lambda: self.__skipTo(30))
+        shortcut3 = QShortcut(QKeySequence(Qt.Key_3), self._timeSlider)
+        shortcut3.activated.connect(lambda: self.__skipTo(30))
 
-        shortcut_4 = QShortcut(QKeySequence(Qt.Key_4), self._timeSlider)
-        shortcut_4.activated.connect(lambda: self.__skipTo(40))
+        shortcut4 = QShortcut(QKeySequence(Qt.Key_4), self._timeSlider)
+        shortcut4.activated.connect(lambda: self.__skipTo(40))
 
-        shortcut_5 = QShortcut(QKeySequence(Qt.Key_5), self._timeSlider)
-        shortcut_5.activated.connect(lambda: self.__skipTo(50))
+        shortcut5 = QShortcut(QKeySequence(Qt.Key_5), self._timeSlider)
+        shortcut5.activated.connect(lambda: self.__skipTo(50))
 
-        shortcut_6 = QShortcut(QKeySequence(Qt.Key_6), self._timeSlider)
-        shortcut_6.activated.connect(lambda: self.__skipTo(60))
+        shortcut6 = QShortcut(QKeySequence(Qt.Key_6), self._timeSlider)
+        shortcut6.activated.connect(lambda: self.__skipTo(60))
 
-        shortcut_7 = QShortcut(QKeySequence(Qt.Key_7), self._timeSlider)
-        shortcut_7.activated.connect(lambda: self.__skipTo(70))
+        shortcut7 = QShortcut(QKeySequence(Qt.Key_7), self._timeSlider)
+        shortcut7.activated.connect(lambda: self.__skipTo(70))
 
-        shortcut_8 = QShortcut(QKeySequence(Qt.Key_8), self._timeSlider)
-        shortcut_8.activated.connect(lambda: self.__skipTo(80))
+        shortcut8 = QShortcut(QKeySequence(Qt.Key_8), self._timeSlider)
+        shortcut8.activated.connect(lambda: self.__skipTo(80))
 
-        shortcut_9 = QShortcut(QKeySequence(Qt.Key_9), self._timeSlider)
-        shortcut_9.activated.connect(lambda: self.__skipTo(90))
+        shortcut9 = QShortcut(QKeySequence(Qt.Key_9), self._timeSlider)
+        shortcut9.activated.connect(lambda: self.__skipTo(90))
 
     def setContentsMargins(self, left: int, top: int, right: int, bottom: int) -> None:
         self._mainLayout.setContentsMargins(left, top, right, bottom)
@@ -353,6 +355,10 @@ class MusicPlayerBar(QWidget, Component):
         if 33 < volume <= 100:
             state = VOLUME_UP_STATE
         self._volumeBtn.setActiveState(state)
+
+    def __openTimer(self) -> None:
+        dialog = TimerDialog()
+        dialog.show()
 
     @staticmethod
     def __notifySongNotFound():
