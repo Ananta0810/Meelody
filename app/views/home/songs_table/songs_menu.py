@@ -100,6 +100,9 @@ class SongsMenu(SmoothVerticalScrollArea):
         addedSongs = Lists.itemsInRightOnly(currentSongs, songs)
         removedSongs = Lists.itemsInLeftOnly(currentSongs, songs)
 
+        maxHeight = sum([row.minimumHeight() for row in self.__songRowDict.values()])
+        self._menu.setMaximumHeight(maxHeight)
+
         currentPosition = self.verticalScrollBar().value()
 
         for song in addedSongs:
@@ -184,7 +187,7 @@ class SongsMenu(SmoothVerticalScrollArea):
 
     @suppressException
     def __showRow(self, row: SongRow, index: int) -> None:
-        self._menu.setMinimumHeight((index + 1) * row.height())
+        self._menu.setMinimumHeight(min((index + 1) * row.minimumHeight(), self._menu.maximumHeight()))
         row.show()
 
     def __updateTitleMaps(self, songs: list[Song]) -> None:
