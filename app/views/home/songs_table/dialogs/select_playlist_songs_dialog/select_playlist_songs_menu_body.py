@@ -1,13 +1,14 @@
 from typing import Optional
 
 from PyQt5.QtCore import pyqtSignal, Qt
-from PyQt5.QtGui import QKeyEvent
-from PyQt5.QtWidgets import QWidget
+from PyQt5.QtGui import QKeyEvent, QPalette
+from PyQt5.QtWidgets import QWidget, QFrame
 
 from app.common.models import Song
 from app.common.others import appCenter
 from app.components.scroll_areas import SmoothVerticalScrollArea
-from app.helpers.base import Lists
+from app.helpers.base import Lists, Dicts
+from app.helpers.stylesheets import Colors
 from app.views.home.songs_table.dialogs.select_playlist_songs_dialog.select_playlist_song_row import SongRow
 
 
@@ -28,10 +29,39 @@ class MenuBody(SmoothVerticalScrollArea):
     def _createUI(self) -> None:
         super()._createUI()
         self._menu.setContentsMargins(0, 0, 0, 0)
+        self.setFrameShape(QFrame.NoFrame)
 
     def _connectSignalSlots(self) -> None:
         super()._connectSignalSlots()
         self.__keyPressed.connect(lambda e: self.__onKeyPressed(e))
+
+    def applyLightMode(self) -> None:
+        group = Dicts.group(self._lightModeStyle.split("\n"), lambda props: "QScrollArea" in props)
+        scrollAreaStyle = "\n".join(group.get(False))
+        scrollbarStyle = "\n".join(group.get(True))
+
+        self.setStyleSheet(scrollAreaStyle)
+        self.verticalScrollBar().setStyleSheet(scrollbarStyle)
+
+        # Remove background color.
+        palette = self.widget().palette()
+        palette.setColor(QPalette.Background, Colors.WHITE.toQColor())
+        self.widget().setPalette(palette)
+        self.update()
+
+    def applyDarkMode(self) -> None:
+        group = Dicts.group(self._darkModeStyle.split("\n"), lambda props: "QScrollArea" in props)
+        scrollAreaStyle = "\n".join(group.get(False))
+        scrollbarStyle = "\n".join(group.get(True))
+
+        self.setStyleSheet(scrollAreaStyle)
+        self.verticalScrollBar().setStyleSheet(scrollbarStyle)
+
+        # Remove background color.
+        palette = self.widget().palette()
+        palette.setColor(QPalette.Background, Colors.BLACK.toQColor())
+        self.widget().setPalette(palette)
+        self.update()
 
     def keyPressEvent(self, event: QKeyEvent) -> None:
         super().keyPressEvent(event)
@@ -45,9 +75,9 @@ class MenuBody(SmoothVerticalScrollArea):
             songRow.unchecked.connect(lambda _song: self.songUnSelected.emit(_song))
 
             if index != len(songs) - 1:
-                songRow.setClassName("bg-none hover:bg-gray-8 border-x border-b border-gray-12")
+                songRow.setClassName("bg-none hover:bg-gray-8 border-l border-b border-gray-12")
             else:
-                songRow.setClassName("bg-none hover:bg-gray-8 border-x border-gray-12")
+                songRow.setClassName("bg-none hover:bg-gray-8 border-l border-gray-12")
 
             songRow.applyTheme()
 
