@@ -1,9 +1,11 @@
+import time
 from typing import Optional
 
-from PyQt5.QtCore import Qt, QRegExp
+from PyQt5.QtCore import Qt, QRegExp, QThread, QObject, pyqtSignal
 from PyQt5.QtGui import QRegExpValidator, QWheelEvent
 from PyQt5.QtWidgets import QWidget
 
+from app.common.others import musicPlayer
 from app.components.base import Cover, CoverProps, Input, Factory, ActionButton, Label
 from app.components.dialogs import BaseDialog
 from app.components.widgets import Box, FlexBox
@@ -15,8 +17,6 @@ class TimerDialog(BaseDialog):
     def __init__(self):
         super().__init__()
         super()._initComponent()
-
-        self.setCountDownTime(2000)
 
     def _createUI(self) -> None:
         super()._createUI()
@@ -60,7 +60,6 @@ class TimerDialog(BaseDialog):
 
         self._setupTimer = QWidget()
         self._setupTimer.setContentsMargins(0, 0, 0, 0)
-        self._setupTimer.hide()
 
         self._setupTimerLayout = Box(self._setupTimer)
         self._setupTimerLayout.setAlignment(Qt.AlignCenter)
@@ -86,13 +85,13 @@ class TimerDialog(BaseDialog):
         self._countDownSeparator.setFont(Factory.createFont(size=14, bold=True))
         self._countDownSeparator.setClassName("text-black bg-none")
         self._countDownSeparator.setText(":")
-        self._countDownSeparator.setFixedWidth(self._separator.sizeHint().width())
+        self._countDownSeparator.setFixedWidth(self._countDownSeparator.sizeHint().width())
 
         self._timeLabelLayout = FlexBox()
         self._timeLabelLayout.setSpacing(8)
         self._timeLabelLayout.setAlignment(Qt.AlignCenter)
         self._timeLabelLayout.addWidget(self._minuteLabel)
-        self._timeLabelLayout.addWidget(self._separator)
+        self._timeLabelLayout.addWidget(self._countDownSeparator)
         self._timeLabelLayout.addWidget(self._secondLabel)
 
         self._stopBtn = ActionButton()
@@ -103,6 +102,7 @@ class TimerDialog(BaseDialog):
 
         self._countDown = QWidget()
         self._countDown.setContentsMargins(0, 0, 0, 0)
+        self._countDown.hide()
 
         self._countDownLayout = Box(self._countDown)
         self._countDownLayout.setAlignment(Qt.AlignCenter)
@@ -125,18 +125,43 @@ class TimerDialog(BaseDialog):
 
         self.addWidget(self._mainView)
 
+    def _createThreads(self) -> None:
+        self._countDownThread = CountDownThread()
+
     def _connectSignalSlots(self) -> None:
         super()._connectSignalSlots()
+
+        self._startBtn.clicked.connect(lambda: self.__startCountDown())
+        self._countDownThread.finished.connect(lambda: self.__stopCountDown())
+
+        self._countDownThread.tick.connect(lambda value: self.__setCountDownTime(value))
 
     def _assignShortcuts(self) -> None:
         super()._assignShortcuts()
 
-    def setCountDownTime(self, time: int) -> None:
-        mm = time // 60
-        ss = int(time) % 60
+    def __startCountDown(self) -> None:
+        self.__setCountDown(True)
+        self.__setCountDownTime(self._getCountDownTime())
+        self._countDownThread.setTime(self._getCountDownTime())
+        self._countDownThread.start()
+
+    def __stopCountDown(self) -> None:
+        self.__setCountDown(False)
+        musicPlayer.pause()
+
+    def __setCountDownTime(self, value: int) -> None:
+        mm = value // 60
+        ss = int(value) % 60
 
         self._minuteLabel.setText(str(mm).zfill(2))
         self._secondLabel.setText(str(ss).zfill(2))
+
+    def __setCountDown(self, countdownStarted: bool) -> None:
+        self._setupTimer.setVisible(not countdownStarted)
+        self._countDown.setVisible(countdownStarted)
+
+    def _getCountDownTime(self) -> int:
+        return int(self._minuteInput.text()) * 60 + int(self._secondInput.text())
 
 
 class TimerInput(Input):
@@ -172,3 +197,40 @@ class TimerInput(Input):
         super().wheelEvent(a0)
         rate = a0.angleDelta().y() / abs(a0.angleDelta().y())
         self.setText(f"{int(self.text()) + int(rate)}")
+
+
+class CountDownThread(QThread):
+    finished = pyqtSignal()
+    tick = pyqtSignal(int)
+
+    def __init__(self, parent: Optional[QObject] = None) -> None:
+        self.__currentTime = 0
+        self.__started = False
+
+        super().__init__(parent)
+
+    def setTime(self, value: int) -> None:
+        self.__currentTime = value
+
+    def start(self, priority: QThread.Priority = None) -> None:
+        if priority is None:
+            super().start()
+        else:
+            super().start(priority)
+
+        self.__started = True
+
+    def quit(self) -> None:
+        self.__started = False
+        super().quit()
+
+    def run(self) -> None:
+        while self.__started and self.__currentTime > 0 and musicPlayer.isPlaying():
+            time.sleep(1)
+            self.__currentTime = self.__currentTime - 1
+            self.tick.emit(self.__currentTime)
+
+        if self.__currentTime <= 0:
+            self.__currentTime = 0
+            self.finished.emit()
+            self.quit()
