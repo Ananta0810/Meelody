@@ -1,7 +1,7 @@
 from typing import Optional
 
 from PyQt5.QtCore import Qt, QRegExp
-from PyQt5.QtGui import QRegExpValidator
+from PyQt5.QtGui import QRegExpValidator, QWheelEvent
 from PyQt5.QtWidgets import QWidget
 
 from app.components.base import Cover, CoverProps, Input, Factory, ActionButton, Label
@@ -31,12 +31,12 @@ class TimerDialog(BaseDialog):
         self._minuteInput.setClassName("px-12 rounded-4 border border-primary-12 bg-primary-4")
         self._minuteInput.setText("60")
 
-        self._secondInput = TimerInput(60)
+        self._secondInput = TimerInput(59)
         self._secondInput.setFixedSize(64, 48)
         self._secondInput.setAlignment(Qt.AlignCenter)
         self._secondInput.setFont(Factory.createFont(size=14, bold=True))
         self._secondInput.setClassName("px-12 rounded-4 border border-primary-12 bg-primary-4")
-        self._secondInput.setPlaceholderText("00")
+        self._secondInput.setText("00")
 
         self._separator = Label()
         self._separator.setFont(Factory.createFont(size=14, bold=True))
@@ -84,12 +84,17 @@ class TimerInput(Input):
         super().__init__(parent)
 
         self.__max = maxValue
+
         self.setValidator(QRegExpValidator(QRegExp("^[0-9]+$")))
         self.textChanged.connect(lambda: self._reformat())
 
     def _reformat(self) -> None:
         text = self.text()
         number = int(text)
+
+        if number < 0:
+            self.setText(f"{self.__max}")
+            return
 
         if number < 10:
             self.setText(f"0{number}")
@@ -100,4 +105,9 @@ class TimerInput(Input):
             return
 
         if number > self.__max:
-            self.setText(f"{self.__max}")
+            self.setText(f"00")
+
+    def wheelEvent(self, a0: Optional[QWheelEvent]) -> None:
+        super().wheelEvent(a0)
+        rate = a0.angleDelta().y() / abs(a0.angleDelta().y())
+        self.setText(f"{int(self.text()) + int(rate)}")
