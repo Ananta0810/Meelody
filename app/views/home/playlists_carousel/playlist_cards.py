@@ -143,7 +143,7 @@ class FavouritePlaylistCard(PlaylistCard):
 
         self._editCoverBtn = Factory.createIconButton(size=Icons.MEDIUM, padding=Paddings.RELATIVE_50)
         self._editCoverBtn.setLightModeIcon(Icons.IMAGE.withColor(Colors.WHITE))
-        self._editCoverBtn.setClassName("rounded-full bg-primary-[w75] hover:bg-primary")
+        self._editCoverBtn.setClassName("rounded-full bg-primary hover:bg-primary-[w120]")
 
         self._topLayout = QHBoxLayout()
         self._topLayout.addStretch(1)
@@ -203,12 +203,12 @@ class UserPlaylistCard(PlaylistCard):
 
         self._editBtn = Factory.createIconButton(size=Icons.MEDIUM, padding=Paddings.RELATIVE_50)
         self._editBtn.setLightModeIcon(Icons.EDIT.withColor(Colors.WHITE))
-        self._editBtn.setClassName("rounded-full bg-primary-[w75] hover:bg-primary")
+        self._editBtn.setClassName("rounded-full bg-primary hover:bg-primary-[w120]")
         self._editBtn.applyLightMode()
 
         self._deleteBtn = Factory.createIconButton(size=Icons.MEDIUM, padding=Paddings.RELATIVE_50)
         self._deleteBtn.setLightModeIcon(Icons.DELETE.withColor(Colors.WHITE))
-        self._deleteBtn.setClassName("rounded-full bg-danger-[w75] hover:bg-danger")
+        self._deleteBtn.setClassName("rounded-full bg-danger hover:bg-danger-[w120]")
         self._deleteBtn.applyLightMode()
 
         self._buttonsLayout = QVBoxLayout()

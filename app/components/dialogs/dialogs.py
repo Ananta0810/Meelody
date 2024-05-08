@@ -37,7 +37,7 @@ class _ConfirmDialog(FramelessWindow):
 
         self._acceptBtn = ActionButton()
         self._acceptBtn.setFont(Factory.createFont(family="Segoe UI Semibold", size=10))
-        self._acceptBtn.setClassName("text-white rounded-4 bg-black-90 hover:bg-black py-8 px-24")
+        self._acceptBtn.setClassName("text-white rounded-4 bg-danger hover:bg-danger-[w120] py-8 px-24")
         self._acceptBtn.setMinimumWidth(64)
 
         self._cancelBtn = ActionButton()
@@ -154,11 +154,11 @@ class _AlertDialog(BaseDialog):
 
     def setState(self, state: str) -> None:
         if state == "info":
-            self._acceptBtn.setClassName("text-white rounded-4 bg-danger-75 bg-primary py-8")
+            self._acceptBtn.setClassName("text-white rounded-4 bg-primary-75 bg-primary py-8")
         if state == "danger":
             self._acceptBtn.setClassName("text-white rounded-4 bg-danger-75 bg-danger py-8")
         if state == "success":
-            self._acceptBtn.setClassName("text-white rounded-4 bg-danger-75 bg-success py-8")
+            self._acceptBtn.setClassName("text-white rounded-4 bg-success-75 bg-success py-8")
 
 
 @final
