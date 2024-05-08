@@ -76,14 +76,6 @@ class UpdatePlaylistDialog(BaseDialog):
             self._cover.y() + 8 + margin.top(),
         )
 
-    def applyLightMode(self) -> None:
-        super().applyLightMode()
-        super().applyThemeToChildren()
-
-    def applyDarkMode(self) -> None:
-        super().applyDarkMode()
-        super().applyThemeToChildren()
-
     def _connectSignalSlots(self) -> None:
         super()._connectSignalSlots()
         self._acceptBtn.clicked.connect(lambda: self._savePlaylist())

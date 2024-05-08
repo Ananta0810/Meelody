@@ -78,14 +78,6 @@ class UpdateSongDialog(BaseDialog):
         self.addWidget(self._mainView)
         self.setFixedWidth(480 + 24 * 2)
 
-    def applyLightMode(self) -> None:
-        super().applyLightMode()
-        super().applyThemeToChildren()
-
-    def applyDarkMode(self) -> None:
-        super().applyDarkMode()
-        super().applyThemeToChildren()
-
     def _connectSignalSlots(self) -> None:
         super()._connectSignalSlots()
 
@@ -142,8 +134,3 @@ class UpdateSongDialog(BaseDialog):
             Logger.error("Update song infor failed.")
             Dialogs.alert(message="Something is wrong when saving the song. Please try again.")
             self.close()
-
-    def show(self) -> None:
-        self.moveToCenter()
-        self.applyTheme()
-        super().show()

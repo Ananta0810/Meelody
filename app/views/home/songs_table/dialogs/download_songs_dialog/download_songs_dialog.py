@@ -24,8 +24,6 @@ class DownloadSongsDialog(BaseDialog):
 
     def _createUI(self) -> None:
         super()._createUI()
-        self.setFixedWidth(640)
-        self.setContentsMargins(24, 24, 24, 12)
 
         self._image = Cover()
         self._image.setAlignment(Qt.AlignHCenter)
@@ -53,14 +51,24 @@ class DownloadSongsDialog(BaseDialog):
         self._menu.setClassName("scroll/bg-primary-75 scroll/hover:bg-primary scroll/rounded-2")
         self._menu.applyTheme()
 
-        self.addWidget(self._image)
-        self.addWidget(self._header)
-        self.addSpacing(12)
-        self.addWidget(self._input)
-        self.addSpacing(8)
-        self.addWidget(self._searchBtn)
-        self.addSpacing(12)
-        self.addWidget(self._menu)
+        self._mainView = QWidget()
+        self._mainView.setFixedWidth(640)
+        self._mainView.setContentsMargins(12, 4, 12, 0)
+
+        self._viewLayout = QVBoxLayout(self._mainView)
+        self._viewLayout.setSpacing(0)
+        self._viewLayout.setContentsMargins(0, 0, 0, 0)
+
+        self._viewLayout.addWidget(self._image)
+        self._viewLayout.addWidget(self._header)
+        self._viewLayout.addSpacing(12)
+        self._viewLayout.addWidget(self._input)
+        self._viewLayout.addSpacing(8)
+        self._viewLayout.addWidget(self._searchBtn)
+        self._viewLayout.addSpacing(12)
+        self._viewLayout.addWidget(self._menu)
+
+        self.addWidget(self._mainView)
 
     def _connectSignalSlots(self) -> None:
         super()._connectSignalSlots()
@@ -170,12 +178,12 @@ class _SongInfoDialog(BaseDialog):
         self._acceptBtn.setText("Download")
 
         self._mainView = QWidget()
+        self._mainView.setFixedWidth(480)
         self._mainView.setContentsMargins(12, 4, 12, 12)
 
         self._viewLayout = QVBoxLayout(self._mainView)
         self._viewLayout.setSpacing(8)
         self._viewLayout.setContentsMargins(0, 0, 0, 0)
-        self._viewLayout.setAlignment(Qt.AlignVCenter)
         self._viewLayout.addWidget(self._image)
         self._viewLayout.addWidget(self._header)
         self._viewLayout.addWidget(self._titleLabel)
@@ -187,15 +195,6 @@ class _SongInfoDialog(BaseDialog):
         self._viewLayout.addWidget(self._acceptBtn)
 
         self.addWidget(self._mainView)
-        self.setFixedWidth(480 + 24 * 2)
-
-    def applyLightMode(self) -> None:
-        super().applyLightMode()
-        super().applyThemeToChildren()
-
-    def applyDarkMode(self) -> None:
-        super().applyDarkMode()
-        super().applyThemeToChildren()
 
     def _connectSignalSlots(self) -> None:
         super()._connectSignalSlots()

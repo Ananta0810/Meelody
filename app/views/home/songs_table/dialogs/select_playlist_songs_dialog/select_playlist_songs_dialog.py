@@ -69,19 +69,6 @@ class SelectPlaylistSongsDialog(BaseDialog):
         self._menuBody.songUnSelected.connect(lambda song: self._unSelectSong(song))
         self._applyBtn.clicked.connect(lambda: self._savePlaylist())
 
-    def applyLightMode(self) -> None:
-        super().applyLightMode()
-        self.applyThemeToChildren()
-
-    def applyDarkMode(self) -> None:
-        super().applyDarkMode()
-        self.applyThemeToChildren()
-
-    def show(self) -> None:
-        self.moveToCenter()
-        self.applyTheme()
-        super().show()
-
     def _selectSong(self, song: Song) -> None:
         if not self.__selectedSongs.hasSong(song):
             self.__selectedSongs.insert(song)
