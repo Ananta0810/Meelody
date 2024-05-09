@@ -1,5 +1,4 @@
 from PyQt5.QtCore import Qt
-from PyQt5.QtWidgets import QSystemTrayIcon
 from PyQt5.QtWinExtras import QWinThumbnailToolBar, QWinThumbnailToolButton
 
 from app.common.others import appCenter, musicPlayer
@@ -58,8 +57,6 @@ class MainWindow(TitleBarWindow, Component):
         self._toolbar.addButton(self._toolbarPlayBtn)
         self._toolbar.addButton(self._toolbarNextBtn)
 
-        self._tray = SystemTrayIcon()
-
     def _connectSignalSlots(self) -> None:
         self._closeBtn.clicked.connect(lambda: appCenter.exited.emit())
 
@@ -73,8 +70,7 @@ class MainWindow(TitleBarWindow, Component):
         musicPlayer.paused.connect(lambda: self._toolbarPlayBtn.setToolTip("Play"))
         musicPlayer.paused.connect(lambda: self._toolbarPlayBtn.setIcon(Icons.PLAY.withColor(Colors.PRIMARY)))
 
-        self._minimizeBtn.clicked.connect(lambda: self.hide())
-        self._tray.activated.connect(lambda reason: self.show() if reason == QSystemTrayIcon.Trigger else None)
+        self._minimizeBtn.clicked.connect(lambda: self.showMinimized())
 
     def applyLightMode(self) -> None:
         super().applyLightMode()
@@ -86,16 +82,3 @@ class MainWindow(TitleBarWindow, Component):
         super().show()
         self.moveToCenter()
         self._toolbar.setWindow(self.windowHandle())
-        self._tray.hide()
-
-    def hide(self) -> None:
-        super().hide()
-        self._tray.show()
-
-
-class SystemTrayIcon(QSystemTrayIcon):
-
-    def __init__(self, parent=None):
-        QSystemTrayIcon.__init__(self, parent)
-        self.setIcon(Icons.LOGO)
-        self.setToolTip("Meelody")

@@ -23,7 +23,6 @@ class SongsMenu(SmoothVerticalScrollArea):
 
     def __init__(self, parent: Optional[QWidget] = None) -> None:
         super().__init__(parent)
-        self.__coverLoadedSongIds: set[str] = set()
         self.__songRowDict: dict[str, SongRow] = {}
 
         self.__currentPlaylist: Optional[Playlist.Songs] = None
@@ -179,7 +178,6 @@ class SongsMenu(SmoothVerticalScrollArea):
 
         displayer = ChunksConsumer(items=rows, size=MAX_ITEMS_VISIBLE_ON_MENU, parent=self)
         displayer.stopped.connect(lambda: silence(lambda: self.__menuReset.disconnect(displayer.stop)))
-        displayer.stopped.connect(lambda: self.__loadCovers())
         self.__menuReset.connect(displayer.stop)
 
         self._menu.setMinimumHeight(0)
@@ -199,17 +197,3 @@ class SongsMenu(SmoothVerticalScrollArea):
             if firstChar not in self.__titleKeys:
                 self.__titleKeys[firstChar] = []
             self.__titleKeys[firstChar].append(index)
-
-    def __loadCovers(self) -> None:
-        allCoversAreLoaded = len(self.__coverLoadedSongIds) == len(self.__songRowDict)
-        if allCoversAreLoaded:
-            return
-
-        rows = [song for songId, song in self.__songRowDict.items() if songId not in self.__coverLoadedSongIds]
-
-        displayer = ChunksConsumer(items=rows, size=1, parent=self)
-        displayer.forEach(lambda row, index: self.__loadCoverFor(row))
-
-    def __loadCoverFor(self, row: SongRow) -> None:
-        row.loadCover()
-        self.__coverLoadedSongIds.add(row.content().getId())

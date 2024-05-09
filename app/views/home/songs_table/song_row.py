@@ -1,4 +1,4 @@
-from PyQt5.QtCore import Qt
+from PyQt5.QtCore import Qt, QThread
 from PyQt5.QtWidgets import QWidget, QHBoxLayout, QFileDialog
 
 from app.common.exceptions import ResourceException
@@ -174,6 +174,10 @@ class SongRow(ExtendableStyleWidget):
         self.showMoreButtons(False)
         super().show()
 
+        if not self.__song.isCoverLoaded():
+            timer = LoadCoverThread(self.__song)
+            timer.run()
+
     @suppressException
     def loadCover(self) -> None:
         self.__song.loadCover()
@@ -229,7 +233,7 @@ class SongRow(ExtendableStyleWidget):
             return
         try:
             imageEditor = ImageEditor.ofFile(path)
-            cover = imageEditor.square().resize(320, 320).toBytes()
+            cover = imageEditor.square().resize(512, 512).toBytes()
             self.__song.updateCover(cover)
             Logger.info("Update song cover succeed.")
         except ResourceException as e:
@@ -266,3 +270,13 @@ class SongRow(ExtendableStyleWidget):
             Logger.error(e)
             Logger.error("Delete song failed.")
             Dialogs.alert(message="Something is wrong when delete the song. Please try again.")
+
+
+class LoadCoverThread(QThread):
+
+    def __init__(self, song: Song) -> None:
+        super().__init__()
+        self.__song = song
+
+    def run(self) -> None:
+        self.__song.loadCover()
