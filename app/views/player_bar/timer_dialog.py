@@ -17,6 +17,7 @@ class TimerDialog(BaseDialog):
     def __init__(self):
         super().__init__()
         super()._initComponent()
+        self.__setCountDown(False)
 
     def _createUI(self) -> None:
         super()._createUI()
@@ -28,15 +29,17 @@ class TimerDialog(BaseDialog):
         self._minuteInput = TimerInput(99)
         self._minuteInput.setFixedSize(64, 48)
         self._minuteInput.setAlignment(Qt.AlignCenter)
-        self._minuteInput.setFont(Factory.createFont(size=14, bold=True))
-        self._minuteInput.setClassName("px-12 rounded-4 border border-primary-12 bg-primary-4")
-        self._minuteInput.setText("60")
+        self._minuteInput.setFont(Factory.createFont(size=16, bold=True))
+        self._minuteInput.setClassName(
+            "px-12 rounded-4 border border-primary-12 bg-primary-4 disabled:bg-none disabled:border-none disabled:text-black")
+        self._minuteInput.setText("01")
 
         self._secondInput = TimerInput(59)
         self._secondInput.setFixedSize(64, 48)
         self._secondInput.setAlignment(Qt.AlignCenter)
-        self._secondInput.setFont(Factory.createFont(size=14, bold=True))
-        self._secondInput.setClassName("px-12 rounded-4 border border-primary-12 bg-primary-4")
+        self._secondInput.setFont(Factory.createFont(size=16, bold=True))
+        self._secondInput.setClassName(
+            "px-12 rounded-4 border border-primary-12 bg-primary-4 disabled:bg-none disabled:border-none disabled:text-black")
         self._secondInput.setText("00")
 
         self._separator = Label()
@@ -47,83 +50,47 @@ class TimerDialog(BaseDialog):
 
         self._inputLayout = FlexBox()
         self._inputLayout.setSpacing(8)
-        self._inputLayout.setAlignment(Qt.AlignCenter)
+        self._inputLayout.setAlignment(Qt.AlignHCenter)
         self._inputLayout.addWidget(self._minuteInput)
-        self._inputLayout.addWidget(self._separator)
+        self._inputLayout.addWidget(self._separator, alignment=Qt.AlignVCenter)
         self._inputLayout.addWidget(self._secondInput)
 
         self._startBtn = ActionButton()
         self._startBtn.setFont(Factory.createFont(family="Segoe UI Semibold", size=10))
         self._startBtn.setClassName("text-white rounded-4 bg-primary-75 bg-primary py-8 disabled:bg-gray-10 disabled:text-gray")
-        self._startBtn.setText("Start Now")
+        self._startBtn.setText("Set Timer")
         self._startBtn.setFixedWidth(320)
-
-        self._setupTimer = QWidget()
-        self._setupTimer.setContentsMargins(0, 0, 0, 0)
-
-        self._setupTimerLayout = Box(self._setupTimer)
-        self._setupTimerLayout.setAlignment(Qt.AlignCenter)
-
-        self._setupTimerLayout.addLayout(self._inputLayout)
-        self._setupTimerLayout.addSpacing(12)
-        self._setupTimerLayout.addWidget(self._startBtn)
-
-        # ================================= Countdown Timer =================================
-        self._minuteLabel = Label()
-        self._minuteLabel.setFixedSize(64, 48)
-        self._minuteLabel.setAlignment(Qt.AlignCenter)
-        self._minuteLabel.setFont(Factory.createFont(size=14, bold=True))
-        self._minuteLabel.setClassName("bg-none")
-
-        self._secondLabel = Label()
-        self._secondLabel.setFixedSize(64, 48)
-        self._secondLabel.setAlignment(Qt.AlignCenter)
-        self._secondLabel.setFont(Factory.createFont(size=14, bold=True))
-        self._secondLabel.setClassName("bg-none")
-
-        self._countDownSeparator = Label()
-        self._countDownSeparator.setFont(Factory.createFont(size=14, bold=True))
-        self._countDownSeparator.setClassName("text-black bg-none")
-        self._countDownSeparator.setText(":")
-        self._countDownSeparator.setFixedWidth(self._countDownSeparator.sizeHint().width())
-
-        self._timeLabelLayout = FlexBox()
-        self._timeLabelLayout.setSpacing(8)
-        self._timeLabelLayout.setAlignment(Qt.AlignCenter)
-        self._timeLabelLayout.addWidget(self._minuteLabel)
-        self._timeLabelLayout.addWidget(self._countDownSeparator)
-        self._timeLabelLayout.addWidget(self._secondLabel)
 
         self._stopBtn = ActionButton()
         self._stopBtn.setFont(Factory.createFont(family="Segoe UI Semibold", size=10))
         self._stopBtn.setClassName("text-white rounded-4 bg-danger-75 bg-danger py-8 ")
-        self._stopBtn.setText("Stop Now")
+        self._stopBtn.setText("Cancel")
         self._stopBtn.setFixedWidth(320)
 
-        self._countDown = QWidget()
-        self._countDown.setContentsMargins(0, 0, 0, 0)
-        self._countDown.hide()
+        self._setupTimer = QWidget()
 
-        self._countDownLayout = Box(self._countDown)
-        self._countDownLayout.setAlignment(Qt.AlignCenter)
+        self._setupTimerLayout = Box(self._setupTimer)
+        self._setupTimerLayout.setSpacing(12)
 
-        self._countDownLayout.addLayout(self._timeLabelLayout)
-        self._countDownLayout.addSpacing(12)
-        self._countDownLayout.addWidget(self._stopBtn)
+        self._setupTimerLayout.addLayout(self._inputLayout)
+        self._setupTimerLayout.addWidget(self._startBtn)
+        self._setupTimerLayout.addWidget(self._stopBtn)
 
         # ================================= Main Layout =================================
         self._mainView = QWidget()
-        self._mainView.setContentsMargins(12, 4, 12, 12)
 
         self._viewLayout = Box(self._mainView)
-        self._viewLayout.setAlignment(Qt.AlignCenter)
+        self._viewLayout.setSpacing(0)
+        self._viewLayout.setContentsMargins(12, 0, 12, 0)
 
-        self._viewLayout.addWidget(self._cover, alignment=Qt.AlignCenter)
-        self._setupTimerLayout.addSpacing(8)
-        self._viewLayout.addWidget(self._setupTimer, alignment=Qt.AlignCenter)
-        self._viewLayout.addWidget(self._countDown, alignment=Qt.AlignCenter)
+        self._viewLayout.addWidget(self._cover, alignment=Qt.AlignHCenter)
+        self._viewLayout.addSpacing(8)
+        self._viewLayout.addWidget(self._setupTimer, alignment=Qt.AlignHCenter)
 
+        self._body.setContentsMargins(4, 4, 4, 0)
         self.addWidget(self._mainView)
+
+        self.setFixedHeight(self.sizeHint().height())
 
     def _createThreads(self) -> None:
         self._countDownThread = CountDownThread()
@@ -132,8 +99,9 @@ class TimerDialog(BaseDialog):
         super()._connectSignalSlots()
 
         self._startBtn.clicked.connect(lambda: self.__startCountDown())
-        self._countDownThread.finished.connect(lambda: self.__stopCountDown())
+        self._stopBtn.clicked.connect(lambda: self.__stopCountDown())
 
+        self._countDownThread.finished.connect(lambda: self.__onTimerFinished())
         self._countDownThread.tick.connect(lambda value: self.__setCountDownTime(value))
 
     def _assignShortcuts(self) -> None:
@@ -147,18 +115,24 @@ class TimerDialog(BaseDialog):
 
     def __stopCountDown(self) -> None:
         self.__setCountDown(False)
+        self._countDownThread.quit()
+
+    def __onTimerFinished(self) -> None:
+        self.__setCountDown(False)
         musicPlayer.pause()
 
     def __setCountDownTime(self, value: int) -> None:
         mm = value // 60
         ss = int(value) % 60
 
-        self._minuteLabel.setText(str(mm).zfill(2))
-        self._secondLabel.setText(str(ss).zfill(2))
+        self._minuteInput.setText(str(mm).zfill(2))
+        self._secondInput.setText(str(ss).zfill(2))
 
     def __setCountDown(self, countdownStarted: bool) -> None:
-        self._setupTimer.setVisible(not countdownStarted)
-        self._countDown.setVisible(countdownStarted)
+        self._startBtn.setVisible(not countdownStarted)
+        self._stopBtn.setVisible(countdownStarted)
+        self._minuteInput.setDisabled(countdownStarted)
+        self._secondInput.setDisabled(countdownStarted)
 
     def _getCountDownTime(self) -> int:
         return int(self._minuteInput.text()) * 60 + int(self._secondInput.text())

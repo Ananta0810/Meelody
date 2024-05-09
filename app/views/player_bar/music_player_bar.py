@@ -210,6 +210,8 @@ class MusicPlayerBar(QWidget, Component):
         self._right.addWidget(self._volumeBox, 1)
         self._right.addWidget(self._timerBtn)
 
+        self._timerDialog = None
+
     def _createThreads(self):
         self._playerTrackingThread = PlayerTrackingThread(self)
 
@@ -357,8 +359,9 @@ class MusicPlayerBar(QWidget, Component):
         self._volumeBtn.setActiveState(state)
 
     def __openTimer(self) -> None:
-        dialog = TimerDialog()
-        dialog.show()
+        if self._timerDialog is None:
+            self._timerDialog = TimerDialog()
+        self._timerDialog.show()
 
     @staticmethod
     def __notifySongNotFound():
