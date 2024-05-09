@@ -1,3 +1,5 @@
+from contextlib import suppress
+
 from app.common.models.playlist import Playlist
 from app.common.models.song import Song
 from app.helpers.base import Bytes, Lists, SingletonMeta
@@ -18,7 +20,20 @@ class FavouritesPlaylist(Playlist, metaclass=SingletonMeta):
             library.getSongs().updated.connect(lambda: self.updated.emit())
 
         def load(self):
+            for song in self._songs:
+                self.__disconnectToSong(song)
+
             self._songs = [song for song in self.__library.getSongs().getSongs() if song.isLoved()]
+            
+            for song in self._songs:
+                self.__connectToSong(song)
+
+        def __connectToSong(self, song: Song) -> None:
+            song.deleted.connect(lambda: self.remove(song))
+
+        def __disconnectToSong(self, song: Song) -> None:
+            with suppress(TypeError):
+                song.deleted.disconnect(lambda: self.remove(song))
 
         def getSongs(self) -> list[Song]:
             return self._songs
