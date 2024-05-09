@@ -81,8 +81,10 @@ class SmoothVerticalScrollArea(StyleScrollArea):
 
     def scrollToItemAt(self, index: int) -> None:
         try:
-            item = self.__widgets[index]
-            itemPosition = item.mapToParent(self.pos()) - self.__widgets[0].mapToParent(self.pos())
+            widgets = [widget for widget in self.__widgets if widget.isVisible()]
+
+            item = widgets[index]
+            itemPosition = item.mapToParent(self.pos()) - widgets[0].mapToParent(self.pos())
 
             currentPosition = self.verticalScrollBar().value()
             targetPosition: int = Numbers.clamp(itemPosition.y(), 0, self.verticalScrollBar().maximum())
