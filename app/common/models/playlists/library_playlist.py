@@ -19,13 +19,46 @@ class Library(Playlist, metaclass=SingletonMeta):
 
         def setSongs(self, songs: list[Song]) -> None:
             super().setSongs(songs)
+
+            for song in songs:
+                self.__connectToSong(song)
+
             self.updated.emit()
 
         def insert(self, song: Song) -> None:
             super().insert(song)
-            song.updated.connect(lambda updatedField: self._onSongUpdated(song, updatedField))
+            self.__connectToSong(song)
+            self.updated.emit()
+
+        def insertAll(self, songs: list[Song]) -> None:
+            super().insertAll(songs)
+
+            if songs is None:
+                return
+
+            for song in songs:
+                self.__connectToSong(song)
 
             self.updated.emit()
+
+        def removeAll(self, songs: list[Song]) -> None:
+            super().removeAll(songs)
+            if songs is None:
+                return
+
+            for song in songs:
+                self.__disconnectToSong(song)
+
+            self.updated.emit()
+
+        def remove(self, song: Song) -> None:
+            super().remove(song)
+            self.__disconnectToSong(song)
+            self.updated.emit()
+
+        def __connectToSong(self, song: Song) -> None:
+            song.updated.connect(lambda updatedField: self._onSongUpdated(song, updatedField))
+            song.deleted.connect(lambda: self.remove(song))
 
         def _onSongUpdated(self, song: Song, updatedField: str) -> None:
             if updatedField == "title":
@@ -35,26 +68,10 @@ class Library(Playlist, metaclass=SingletonMeta):
 
             self.updated.emit()
 
-        def insertAll(self, songs: list[Song]) -> None:
-            super().insertAll(songs)
-            if songs is not None:
-                for song in songs:
-                    song.loved.connect(lambda a0: self.__saveDatabase())
-                self.updated.emit()
-
-        def removeAll(self, songs: list[Song]) -> None:
-            super().removeAll(songs)
-            if songs is not None:
-                for song in songs:
-                    song.loved.disconnect(lambda a0: self.__saveDatabase())
-                self.updated.emit()
-
-        def remove(self, song: Song) -> None:
-            super().remove(song)
-
+        def __disconnectToSong(self, song: Song) -> None:
             with suppress(TypeError):
-                song.loved.disconnect(lambda a0: self.__saveDatabase())
-            self.updated.emit()
+                song.updated.disconnect(lambda updatedField: self._onSongUpdated(song, updatedField))
+                song.deleted.disconnect(lambda: self.remove(song))
 
         def moveSong(self, fromIndex: int, toIndex: int) -> None:
             super().moveSong(fromIndex, toIndex)

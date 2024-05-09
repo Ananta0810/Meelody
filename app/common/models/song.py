@@ -23,6 +23,7 @@ class Song(QObject):
     loved = pyqtSignal(bool)
     coverChanged = pyqtSignal(bytes)
     updated = pyqtSignal(str)
+    deleted = pyqtSignal()
 
     def __init__(self, location: str = None, title: str = None, artist: str = None, cover: bytes = None, length: float = 0, sampleRate: float = 48000,
                  loved: bool = False):
@@ -192,11 +193,12 @@ class Song(QObject):
         """
         try:
             os.remove(self.__location)
+            self.deleted.emit()
             Logger.info(f"Remove song at location {self.__location} successfully.")
         except PermissionError:
             raise ResourceException.unChangeable()
         except FileNotFoundError:
-            raise ResourceException.notFound()
+            self.deleted.emit()
 
 
 class SongReader:
