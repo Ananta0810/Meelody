@@ -15,9 +15,10 @@ from app.resource.qt import Images
 class TimerDialog(BaseDialog):
 
     def __init__(self):
+        self.__isCountDown: bool = False
         super().__init__()
         super()._initComponent()
-        self.__setCountDown(False)
+        self.__setIsCountDown(False)
 
     def _createUI(self) -> None:
         super()._createUI()
@@ -58,7 +59,7 @@ class TimerDialog(BaseDialog):
         self._startBtn = ActionButton()
         self._startBtn.setFont(Factory.createFont(family="Segoe UI Semibold", size=10))
         self._startBtn.setClassName("text-white rounded-4 bg-primary-75 bg-primary py-8 disabled:bg-gray-10 disabled:text-gray")
-        self._startBtn.setText("Set Timer")
+        self._startBtn.setText("Start Now")
         self._startBtn.setFixedWidth(320)
 
         self._stopBtn = ActionButton()
@@ -104,21 +105,31 @@ class TimerDialog(BaseDialog):
         self._countDownThread.finished.connect(lambda: self.__onTimerFinished())
         self._countDownThread.tick.connect(lambda value: self.__setCountDownTime(value))
 
+        musicPlayer.played.connect(lambda: self.__continueCountDown())
+        musicPlayer.paused.connect(lambda: self.__pauseCountDown())
+
+    def __continueCountDown(self) -> None:
+        if self.__isCountDown and not self._countDownThread.isRunning():
+            self._countDownThread.start()
+
+    def __pauseCountDown(self) -> None:
+        self._countDownThread.quit()
+
     def _assignShortcuts(self) -> None:
         super()._assignShortcuts()
 
     def __startCountDown(self) -> None:
-        self.__setCountDown(True)
+        self.__setIsCountDown(True)
         self.__setCountDownTime(self._getCountDownTime())
         self._countDownThread.setTime(self._getCountDownTime())
         self._countDownThread.start()
 
     def __stopCountDown(self) -> None:
-        self.__setCountDown(False)
+        self.__setIsCountDown(False)
         self._countDownThread.quit()
 
     def __onTimerFinished(self) -> None:
-        self.__setCountDown(False)
+        self.__setIsCountDown(False)
         musicPlayer.pause()
 
     def __setCountDownTime(self, value: int) -> None:
@@ -128,7 +139,9 @@ class TimerDialog(BaseDialog):
         self._minuteInput.setText(str(mm).zfill(2))
         self._secondInput.setText(str(ss).zfill(2))
 
-    def __setCountDown(self, countdownStarted: bool) -> None:
+    def __setIsCountDown(self, countdownStarted: bool) -> None:
+        self.__isCountDown = countdownStarted
+
         self._startBtn.setVisible(not countdownStarted)
         self._stopBtn.setVisible(countdownStarted)
         self._minuteInput.setDisabled(countdownStarted)
