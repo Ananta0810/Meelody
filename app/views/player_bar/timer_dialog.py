@@ -9,6 +9,7 @@ from app.common.others import musicPlayer
 from app.components.base import Cover, CoverProps, Input, Factory, ActionButton, Label
 from app.components.dialogs import BaseDialog
 from app.components.widgets import Box, FlexBox
+from app.helpers.others import Logger
 from app.resource.qt import Images
 
 
@@ -19,6 +20,7 @@ class TimerDialog(BaseDialog):
         super().__init__()
         super()._initComponent()
         self.__setIsCountDown(False)
+        self.__checkValidTime()
 
     def _createUI(self) -> None:
         super()._createUI()
@@ -99,6 +101,9 @@ class TimerDialog(BaseDialog):
     def _connectSignalSlots(self) -> None:
         super()._connectSignalSlots()
 
+        self._minuteInput.textChanged.connect(lambda: self.__checkValidTime() if not self.__isCountDown else None)
+        self._secondInput.textChanged.connect(lambda: self.__checkValidTime() if not self.__isCountDown else None)
+
         self._startBtn.clicked.connect(lambda: self.__startCountDown())
         self._stopBtn.clicked.connect(lambda: self.__stopCountDown())
 
@@ -108,6 +113,13 @@ class TimerDialog(BaseDialog):
         musicPlayer.played.connect(lambda: self.__continueCountDown())
         musicPlayer.paused.connect(lambda: self.__pauseCountDown())
 
+    def _assignShortcuts(self) -> None:
+        super()._assignShortcuts()
+
+    def __checkValidTime(self) -> None:
+        isInvalid = self.__getCountDownTime() < 60
+        self._startBtn.setDisabled(isInvalid)
+
     def __continueCountDown(self) -> None:
         if self.__isCountDown and not self._countDownThread.isRunning():
             self._countDownThread.start()
@@ -115,22 +127,23 @@ class TimerDialog(BaseDialog):
     def __pauseCountDown(self) -> None:
         self._countDownThread.quit()
 
-    def _assignShortcuts(self) -> None:
-        super()._assignShortcuts()
-
     def __startCountDown(self) -> None:
         self.__setIsCountDown(True)
-        self.__setCountDownTime(self._getCountDownTime())
-        self._countDownThread.setTime(self._getCountDownTime())
+        self.__setCountDownTime(self.__getCountDownTime())
+        self._countDownThread.setTime(self.__getCountDownTime())
         self._countDownThread.start()
+        self.close()
+        Logger.info("Starting timer")
 
     def __stopCountDown(self) -> None:
         self.__setIsCountDown(False)
         self._countDownThread.quit()
+        Logger.info("Stop timer")
 
     def __onTimerFinished(self) -> None:
         self.__setIsCountDown(False)
         musicPlayer.pause()
+        Logger.info("Time up. Pause song.")
 
     def __setCountDownTime(self, value: int) -> None:
         mm = value // 60
@@ -147,7 +160,7 @@ class TimerDialog(BaseDialog):
         self._minuteInput.setDisabled(countdownStarted)
         self._secondInput.setDisabled(countdownStarted)
 
-    def _getCountDownTime(self) -> int:
+    def __getCountDownTime(self) -> int:
         return int(self._minuteInput.text()) * 60 + int(self._secondInput.text())
 
 
