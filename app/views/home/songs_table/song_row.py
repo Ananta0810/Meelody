@@ -83,10 +83,11 @@ class SongRow(ExtendableStyleWidget):
             "dark:active/hover:bg-danger-20 dark:inactive/hover:bg-white-20"
         )
 
-        self._playBtn = Factory.createIconButton(size=Icons.LARGE, padding=Paddings.RELATIVE_50)
-        self._playBtn.setLightModeIcon(Icons.PLAY.withColor(Colors.PRIMARY))
-        self._playBtn.setDarkModeIcon(Icons.PLAY.withColor(Colors.WHITE))
+        self._playBtn = Factory.createToggleButton(size=Icons.LARGE, padding=Paddings.RELATIVE_50)
+        self._playBtn.setActiveIcon(Icons.PAUSE.withColor(Colors.PRIMARY), Icons.PAUSE.withColor(Colors.WHITE))
+        self._playBtn.setInactiveIcon(Icons.PLAY.withColor(Colors.PRIMARY), Icons.PLAY.withColor(Colors.WHITE))
         self._playBtn.setClassName("hover:bg-primary-25 bg-primary-10 rounded-full", "dark:bg-white-20 dark:hover:bg-primary")
+        self._playBtn.setActive(False)
 
         self._mainButtons = QWidget()
         self._mainButtonsLayout = FlexBox(self._mainButtons)
@@ -138,36 +139,49 @@ class SongRow(ExtendableStyleWidget):
         self._moreBtn.clicked.connect(lambda: silence(lambda: self.showMoreButtons(True)))
         self._closeMenuBtn.clicked.connect(lambda: silence(lambda: self.showMoreButtons(False)))
 
-        self._playBtn.clicked.connect(lambda: silence(lambda: self.__playCurrentSong()))
         self._loveBtn.clicked.connect(lambda: silence(lambda: self.__song.updateLoveState(self._loveBtn.isActive())))
-        self._editCoverBtn.clicked.connect(lambda: silence(lambda: self.__changeCover()))
-        self._editSongBtn.clicked.connect(lambda: silence(lambda: self.__changeSongInfo()))
-        self._deleteBtn.clicked.connect(lambda: silence(lambda: self.__confirmToDeleteSong()))
+        self._playBtn.clicked.connect(lambda: self.__playOrPauseCurrentSong())
+        self._editCoverBtn.clicked.connect(lambda: self.__changeCover())
+        self._editSongBtn.clicked.connect(lambda: self.__changeSongInfo())
+        self._deleteBtn.clicked.connect(lambda: self.__confirmToDeleteSong())
 
         self.__song.loved.connect(lambda loved: silence(lambda: self._loveBtn.setActive(loved)))
-        self.__song.coverChanged.connect(lambda cover: silence(lambda: self.__setCover(cover)))
-        self.__song.updated.connect(lambda updatedField: silence(lambda: self.__updateSongField(updatedField)))
+        self.__song.coverChanged.connect(lambda cover: self.__setCover(cover))
+        self.__song.updated.connect(lambda updatedField: self.__updateSongField(updatedField))
 
-        musicPlayer.songChanged.connect(self.__checkEditable)
+        musicPlayer.played.connect(self.__checkEditable)
+        musicPlayer.played.connect(self.__updatePlayBtn)
+        musicPlayer.paused.connect(self.__onMusicPlayerPaused)
 
+    @suppressException
     def applyLightMode(self) -> None:
         super().applyLightMode()
         self.applyThemeToChildren()
 
+    @suppressException
     def applyDarkMode(self) -> None:
         super().applyDarkMode()
         self.applyThemeToChildren()
 
-    def __checkEditable(self, song: Song) -> None:
-        self.setEditable(self.__editable and song != self.__song)
+    @suppressException
+    def __checkEditable(self) -> None:
+        self.setEditable(self.__editable and musicPlayer.getCurrentSong() != self.__song)
+
+    @suppressException
+    def __updatePlayBtn(self) -> None:
+        self._playBtn.setActive(musicPlayer.getCurrentSong() == self.__song)
+
+    @suppressException
+    def __onMusicPlayerPaused(self) -> None:
+        self._playBtn.setActive(False)
+
+    def content(self) -> Song:
+        return self.__song
 
     @suppressException
     def deleteLater(self) -> None:
         musicPlayer.songChanged.disconnect(self.__checkEditable)
         super().deleteLater()
-
-    def content(self) -> Song:
-        return self.__song
 
     @suppressException
     def show(self) -> None:
@@ -194,9 +208,13 @@ class SongRow(ExtendableStyleWidget):
         self._editCoverBtn.setVisible(editable)
         self._deleteBtn.setVisible(editable)
 
-    def __playCurrentSong(self) -> None:
-        musicPlayer.loadPlaylist(appCenter.currentPlaylist.getSongs())
-        musicPlayer.playSong(self.__song)
+    @suppressException
+    def __playOrPauseCurrentSong(self) -> None:
+        if self._playBtn.isActive():
+            musicPlayer.loadPlaylist(appCenter.currentPlaylist.getSongs())
+            musicPlayer.playSong(self.__song)
+        else:
+            musicPlayer.pause()
 
     @suppressException
     def __displaySongInfo(self) -> None:
@@ -208,6 +226,7 @@ class SongRow(ExtendableStyleWidget):
         self._lengthLabel.setText(Times.toString(self.__song.getLength()))
         self._loveBtn.setActive(self.__song.isLoved())
 
+    @suppressException
     def __setCover(self, cover: bytes) -> None:
         self._cover.setCover(CoverProps.fromBytes(cover, width=64, height=64, radius=12))
 

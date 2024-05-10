@@ -186,7 +186,6 @@ class SongsMenu(SmoothVerticalScrollArea):
             self.verticalScrollBar().setValue(currentPosition)
 
     def __showRows(self, rows: list[SongRow]) -> None:
-
         displayer = ChunksConsumer(items=rows, size=MAX_ITEMS_VISIBLE_ON_MENU, parent=self)
         displayer.stopped.connect(lambda: silence(lambda: self.__menuReset.disconnect(displayer.stop)))
         self.__menuReset.connect(displayer.stop)
