@@ -5,7 +5,6 @@ from app.common.exceptions import ResourceException
 from app.common.models import Song
 from app.common.models.song import SongReader
 from app.components.base import Cover, CoverProps, Label, Factory, EllipsisLabel
-from app.components.base.gif import Gif
 from app.components.widgets import ExtendableStyleWidget, Box, FlexBox
 from app.helpers.base import Strings
 from app.helpers.others import Logger, Files
@@ -31,7 +30,7 @@ class ImportSongItem(ExtendableStyleWidget):
 
         self._cover = Cover()
         self._cover.setFixedSize(48, 48)
-        self._cover.setCover(CoverProps.fromBytes(Images.DEFAULT_SONG_COVER, width=48, height=48, radius=8))
+        self._cover.setDefaultCover(CoverProps.fromBytes(Images.DEFAULT_SONG_COVER, width=48, height=48, radius=8))
 
         self._titleLabel = EllipsisLabel()
         self._titleLabel.setFont(Factory.createFont(size=10))
@@ -58,16 +57,11 @@ class ImportSongItem(ExtendableStyleWidget):
         self._failedIcon.setClassName("rounded-full bg-danger")
         self._failedIcon.hide()
 
-        self._importGif = Gif("app/resource/images/defaults/loading-bubble.gif")
-        self._importGif.setFixedSize(48, 48)
-        self._importGif.hide()
-
         self._icons = QWidget()
         self._icons.setFixedWidth(48)
 
         self._iconsLayout = QHBoxLayout(self._icons)
         self._iconsLayout.setAlignment(Qt.AlignRight)
-        self._iconsLayout.addWidget(self._importGif)
         self._iconsLayout.addWidget(self._successIcon)
         self._iconsLayout.addWidget(self._failedIcon)
 
@@ -82,7 +76,8 @@ class ImportSongItem(ExtendableStyleWidget):
 
         self.setLayout(self._mainLayout)
 
-        self.setMaximumHeight(self.sizeHint().height())
+        self.setFixedHeight(self.sizeHint().height())
+        self.setMinimumHeight(self.sizeHint().height())
 
     def show(self) -> None:
         super().show()
@@ -118,12 +113,10 @@ class ImportSongItem(ExtendableStyleWidget):
         thread.start()
 
     def __markSucceed(self) -> None:
-        self._importGif.hide()
         self._successIcon.show()
         self._descriptionLabel.setText("Import Succeed.")
 
     def __markFailed(self, exception: Exception) -> None:
-        self._importGif.hide()
         self._failedIcon.show()
 
         self._descriptionLabel.setClassName("text-danger bg-none")

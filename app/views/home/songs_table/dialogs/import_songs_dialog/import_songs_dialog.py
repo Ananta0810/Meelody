@@ -1,17 +1,15 @@
-from PyQt5.QtCore import Qt
+from PyQt5.QtCore import Qt, pyqtSignal
 from PyQt5.QtWidgets import QWidget, QVBoxLayout
 
-from app.common.models import Song
-from app.common.others import appCenter
 from app.components.base import ActionButton, Factory, Cover, CoverProps, Label
 from app.components.dialogs import BaseDialog
-from app.helpers.base import Strings
 from app.resource.qt import Images
 from app.views.home.songs_table.dialogs.import_songs_dialog.import_song_item import ImportSongItem
 from app.views.home.songs_table.dialogs.import_songs_dialog.import_songs_menu import ImportSongsMenu
 
 
 class ImportSongsDialog(BaseDialog):
+    importDone = pyqtSignal()
 
     def __init__(self, paths: list[str]):
         super().__init__()
@@ -20,7 +18,6 @@ class ImportSongsDialog(BaseDialog):
         self.__paths: list[str] = paths
 
         self._initComponent()
-        self._showImportFiles(paths)
 
     def _createUI(self) -> None:
         super()._createUI()
@@ -48,7 +45,7 @@ class ImportSongsDialog(BaseDialog):
 
         self._mainView = QWidget()
         self._mainView.setFixedWidth(640)
-        self._mainView.setContentsMargins(12, 4, 12, 12)
+        self._mainView.setContentsMargins(12, 4, 12, 8)
 
         self._viewLayout = QVBoxLayout(self._mainView)
         self._viewLayout.setSpacing(0)
@@ -66,7 +63,11 @@ class ImportSongsDialog(BaseDialog):
 
     def _connectSignalSlots(self) -> None:
         super()._connectSignalSlots()
+
         self._closeBtn.clicked.connect(lambda: self.close())
+
+        self.importDone.connect(lambda: self._closeBtn.show())
+        self.importDone.connect(lambda: self.__importSongsToLibrary())
 
     def _assignShortcuts(self) -> None:
         pass
@@ -74,11 +75,16 @@ class ImportSongsDialog(BaseDialog):
     def show(self) -> None:
         super().show()
         self.applyTheme()
+        self._showImportFiles()
 
-    def _showImportFiles(self, paths) -> None:
-        for path in paths:
-            self._menu.addItem(path)
+    def _showImportFiles(self) -> None:
+        self._menu.addItems(self.__paths)
+        #
+        # timer = QTimer(self)
+        # timer.timeout.connect(lambda: self.__startImportAll())
+        # timer.start(10)
 
+    def __startImportAll(self):
         for item in self._menu.items():
             self.startImport(item)
 
@@ -91,9 +97,10 @@ class ImportSongsDialog(BaseDialog):
         path = item.path()
         self.__importedItems.add(path)
 
-        if len(self.__importedItems) >= len(self.__paths):
-            self._closeBtn.show()
+        # if len(self.__importedItems) >= len(self.__paths):
+        #     self.importDone.emit()
 
-    @staticmethod
-    def __addSong(path: str) -> None:
-        appCenter.library.getSongs().insert(Song.fromFile(path, Strings.getFileBasename(path)))
+    def __importSongsToLibrary(self) -> None:
+        pass
+        # songs = [Song.fromFile(songPath, Strings.getFileBasename(songPath)) for songPath in self.__importedItems]
+        # appCenter.library.getSongs().insertAll(songs)
