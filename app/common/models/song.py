@@ -46,14 +46,7 @@ class Song(QObject):
         try:
             data = SongReader(location)
 
-            song = Song(location, title=data.getTitle(), artist=data.getArtist(), length=data.getLength(), sampleRate=data.getSampleRate())
-
-            if song.getTitle() is None:
-                if title is not None:
-                    song.updateInfo(title, song.getArtist())
-                else:
-                    raise ResourceException("No title provided.")
-            return song
+            return Song(location, title=data.getTitle() or title, artist=data.getArtist(), length=data.getLength(), sampleRate=data.getSampleRate())
         except ResourceException:
             return None
 
@@ -205,6 +198,12 @@ class SongReader:
 
     def __init__(self, file: str):
         self.__data: mp3.Mp3AudioFile = load(file)
+
+    def isValid(self) -> bool:
+        try:
+            return int(self.__data.info.time_secs) > 0
+        except AttributeError:
+            return False
 
     def getTitle(self) -> Optional[str]:
         try:

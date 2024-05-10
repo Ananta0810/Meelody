@@ -145,6 +145,11 @@ class ImportSongsToLibraryThread(QThread):
     def run(self) -> None:
         try:
             reader = SongReader(self._path)
+
+            if not reader.isValid():
+                Logger.error("Invalid mp3 file song.")
+                raise ResourceException.brokenFile()
+
             title = Strings.sanitizeFileName(reader.getTitle() or Strings.getFileBasename(self._path))
             songPath = f"library/import/{title}.mp3"
 
@@ -152,6 +157,8 @@ class ImportSongsToLibraryThread(QThread):
             print(f"Import song from '{self._path}' to library successfully.")
 
             self.succeed.emit(songPath)
+        except ResourceException as e:
+            self.failed.emit(e)
         except Exception as e:
             Logger.error(e)
             self.failed.emit(e)
