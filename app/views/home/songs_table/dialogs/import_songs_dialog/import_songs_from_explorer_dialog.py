@@ -5,7 +5,9 @@ from app.common.models import Song
 from app.common.others import appCenter
 from app.components.base import ActionButton, Factory, Cover, CoverProps, Label
 from app.components.dialogs import BaseDialog
+from app.helpers.base import Strings
 from app.resource.qt import Images
+from app.views.home.songs_table.dialogs.import_songs_dialog.import_song_item import ImportSongItem
 from app.views.home.songs_table.dialogs.import_songs_dialog.import_songs_menu import ImportSongsMenu
 
 
@@ -13,7 +15,10 @@ class ImportSongsDialog(BaseDialog):
 
     def __init__(self, paths: list[str]):
         super().__init__()
-        self.__paths = paths
+
+        self.__importedItems: set[str] = set()
+        self.__paths: list[str] = paths
+
         self._initComponent()
         self._showImportFiles(paths)
 
@@ -37,7 +42,7 @@ class ImportSongsDialog(BaseDialog):
 
         self._closeBtn = ActionButton()
         self._closeBtn.setFont(Factory.createFont(family="Segoe UI Semibold", size=10))
-        self._closeBtn.setClassName("text-white rounded-4 bg-danger hover:bg-danger-[w125] py-8")
+        self._closeBtn.setClassName("text-white rounded-4 bg-black-[w80] hover:bg-black py-8")
         self._closeBtn.setText("Close")
         self._closeBtn.hide()
 
@@ -54,10 +59,17 @@ class ImportSongsDialog(BaseDialog):
         self._viewLayout.addWidget(self._header)
         self._viewLayout.addSpacing(12)
         self._viewLayout.addWidget(self._menu)
-        self._viewLayout.addSpacing(8)
+        self._viewLayout.addSpacing(12)
         self._viewLayout.addWidget(self._closeBtn)
 
         self.addWidget(self._mainView)
+
+    def _connectSignalSlots(self) -> None:
+        super()._connectSignalSlots()
+        self._closeBtn.clicked.connect(lambda: self.close())
+
+    def _assignShortcuts(self) -> None:
+        pass
 
     def show(self) -> None:
         super().show()
@@ -68,9 +80,20 @@ class ImportSongsDialog(BaseDialog):
             self._menu.addItem(path)
 
         for item in self._menu.items():
-            # item.songImported.connect(lambda songPath: self.__addSong(songPath))
-            item.startImport()
+            self.startImport(item)
+
+    def startImport(self, item: ImportSongItem) -> None:
+        item.songImportedSucceed.connect(lambda songPath: self.__addSong(songPath))
+        item.songImportedFailed.connect(lambda: self.__markImported(item))
+        item.startImport()
+
+    def __markImported(self, item: ImportSongItem) -> None:
+        path = item.path()
+        self.__importedItems.add(path)
+
+        if len(self.__importedItems) >= len(self.__paths):
+            self._closeBtn.show()
 
     @staticmethod
     def __addSong(path: str) -> None:
-        appCenter.library.getSongs().insert(Song.fromFile(path))
+        appCenter.library.getSongs().insert(Song.fromFile(path, Strings.getFileBasename(path)))

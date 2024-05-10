@@ -14,7 +14,8 @@ from app.resource.qt import Images, Icons
 
 
 class ImportSongItem(ExtendableStyleWidget):
-    songImported = pyqtSignal(str)
+    songImportedSucceed = pyqtSignal(str)
+    songImportedFailed = pyqtSignal()
 
     def __init__(self, path: str):
         super().__init__()
@@ -86,12 +87,8 @@ class ImportSongItem(ExtendableStyleWidget):
     def show(self) -> None:
         super().show()
 
-    def __displaySongInfo(self) -> None:
-        song = Song.fromFile(self._path, Strings.sanitizeFileName(Strings.getFileBasename(self._path)))
-        song.loadCover()
-
-        self._cover.setCover(CoverProps.fromBytes(song.getCover(), width=48, height=48, radius=9))
-        self._titleLabel.setText(Strings.join("   |   ", [song.getTitle(), song.getArtist()]))
+    def path(self) -> str:
+        return self._path
 
     def setDescription(self, value: str) -> None:
         self._descriptionLabel.setText(value)
@@ -104,9 +101,18 @@ class ImportSongItem(ExtendableStyleWidget):
         super().applyDarkMode()
         super().applyThemeToChildren()
 
+    def __displaySongInfo(self) -> None:
+        song = Song.fromFile(self._path, Strings.sanitizeFileName(Strings.getFileBasename(self._path)))
+        song.loadCover()
+
+        self._cover.setCover(CoverProps.fromBytes(song.getCover(), width=48, height=48, radius=9))
+        self._titleLabel.setText(Strings.join("   |   ", [song.getTitle(), song.getArtist()]))
+
     def startImport(self) -> None:
         thread = ImportSongsToLibraryThread(self._path)
-        thread.succeed.connect(lambda destiny: self.songImported.emit(destiny))
+        thread.succeed.connect(lambda destiny: self.songImportedSucceed.emit(destiny))
+        thread.failed.connect(lambda exception: self.songImportedFailed.emit())
+
         thread.succeed.connect(lambda destiny: self.__markSucceed())
         thread.failed.connect(lambda exception: self.__markFailed(exception))
         thread.start()
@@ -151,7 +157,7 @@ class ImportSongsToLibraryThread(QThread):
                 raise ResourceException.brokenFile()
 
             title = Strings.sanitizeFileName(reader.getTitle() or Strings.getFileBasename(self._path))
-            songPath = f"library/import/{title}.mp3"
+            songPath = f"library/{title}.mp3"
 
             Files.copyFile(self._path, songPath)
             print(f"Import song from '{self._path}' to library successfully.")
