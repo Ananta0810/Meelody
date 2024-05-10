@@ -12,7 +12,7 @@ class ImportSongsMenu(StyleScrollArea):
 
     def __init__(self, parent: Optional[QWidget] = None):
         super().__init__(parent)
-        self._widgets: list[QWidget] = []
+        self._widgets: list[ImportSongItem] = []
         self._initComponent()
 
     def _createUI(self) -> None:
@@ -26,7 +26,7 @@ class ImportSongsMenu(StyleScrollArea):
         self._mainLayout = QVBoxLayout(self._menu)
         self._mainLayout.setAlignment(Qt.AlignTop)
         self._mainLayout.setSpacing(12)
-        self._mainLayout.setContentsMargins(12, 0, 12, 12)
+        self._mainLayout.setContentsMargins(12, 0, 12, 0)
 
     def addItem(self, path: str) -> ImportSongItem:
         row = ImportSongItem(path)
@@ -37,7 +37,13 @@ class ImportSongsMenu(StyleScrollArea):
         self._updateHeight(row)
         return row
 
-    def _updateHeight(self, row):
+    def _updateHeight(self, row) -> None:
         totalShown = min(len(self._widgets), 6)
         height_ = totalShown * row.height() + (totalShown - 1) * self._mainLayout.spacing()
         self.setFixedHeight(height_)
+
+        if totalShown <= 6:
+            self.setVerticalScrollBarPolicy(Qt.ScrollBarAlwaysOff)
+
+    def items(self) -> list[ImportSongItem]:
+        return self._widgets

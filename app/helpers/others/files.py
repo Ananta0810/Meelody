@@ -27,6 +27,11 @@ class Files:
             raise FileNotFoundError(f"{file} not found.")
         if os.path.exists(destiny):
             raise FileExistsError(f"{destiny} already existed.")
+
+        directory = Strings.getDirectoryOf(destiny)
+        if not os.path.exists(directory):
+            os.mkdir(directory)
+
         copyfile(file, destiny)
         return destiny
 
@@ -34,6 +39,11 @@ class Files:
     def copyFile(file: str, destiny: str) -> None:
         if not os.path.exists(file):
             raise FileNotFoundError(f"{file} not found.")
+
+        directory = Strings.getDirectoryOf(destiny)
+        if not os.path.exists(directory):
+            os.mkdir(directory)
+
         if os.path.exists(destiny):
             raise FileExistsError(f"{destiny} already existed.")
         copyfile(file, destiny)

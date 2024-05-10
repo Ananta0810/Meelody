@@ -1,6 +1,8 @@
 from PyQt5.QtCore import Qt
 from PyQt5.QtWidgets import QWidget, QVBoxLayout
 
+from app.common.models import Song
+from app.common.others import appCenter
 from app.components.base import ActionButton, Factory, Cover, CoverProps, Label
 from app.components.dialogs import BaseDialog
 from app.resource.qt import Images
@@ -41,7 +43,7 @@ class ImportSongsDialog(BaseDialog):
 
         self._mainView = QWidget()
         self._mainView.setFixedWidth(640)
-        self._mainView.setContentsMargins(12, 4, 12, 0)
+        self._mainView.setContentsMargins(12, 4, 12, 12)
 
         self._viewLayout = QVBoxLayout(self._mainView)
         self._viewLayout.setSpacing(0)
@@ -61,6 +63,14 @@ class ImportSongsDialog(BaseDialog):
         super().show()
         self.applyTheme()
 
-    def _showImportFiles(self, paths):
+    def _showImportFiles(self, paths) -> None:
         for path in paths:
             self._menu.addItem(path)
+
+        for item in self._menu.items():
+            # item.songImported.connect(lambda songPath: self.__addSong(songPath))
+            item.startImport()
+
+    @staticmethod
+    def __addSong(path: str) -> None:
+        appCenter.library.getSongs().insert(Song.fromFile(path))
