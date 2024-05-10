@@ -1,6 +1,7 @@
 from PyQt5.QtCore import Qt, pyqtSignal, QTimer
 from PyQt5.QtWidgets import QWidget, QVBoxLayout
 
+from app.common.asyncs import ChunksConsumer
 from app.common.models import Song
 from app.common.others import appCenter
 from app.components.base import ActionButton, Factory, Cover, CoverProps, Label
@@ -80,15 +81,20 @@ class ImportSongsDialog(BaseDialog):
     def show(self) -> None:
         super().show()
         self.applyTheme()
-        self._showImportFiles()
-
-    def _showImportFiles(self) -> None:
-        self._menu.addItems(self.__paths)
 
         timer = QTimer(self)
-        timer.timeout.connect(lambda: self.__startImportAll())
+        timer.timeout.connect(lambda: self._showImportFiles())
         timer.timeout.connect(lambda: timer.stop())
-        timer.start(1000 // 60)
+        timer.start(1000 // 30)
+
+    def _showImportFiles(self) -> None:
+
+        if len(self.__paths) <= 6:
+            self._menu.setVerticalScrollBarPolicy(Qt.ScrollBarAlwaysOff)
+
+        displayer = ChunksConsumer(items=self.__paths, size=6, parent=self)
+        displayer.forEach(lambda path, index: self._menu.addItem(path), delay=10)
+        displayer.stopped.connect(lambda: self.__startImportAll())
 
     def __startImportAll(self):
         for item in self._menu.items():

@@ -28,11 +28,7 @@ class ImportSongsMenu(StyleScrollArea):
         self._mainLayout.setSpacing(12)
         self._mainLayout.setContentsMargins(12, 0, 12, 0)
 
-    def addItems(self, paths: list[str]) -> None:
-        for path in paths:
-            self._addItem(path)
-
-    def _addItem(self, path: str) -> ImportSongItem:
+    def addItem(self, path: str) -> ImportSongItem:
         row = ImportSongItem(path)
         row.applyTheme()
 
@@ -45,8 +41,6 @@ class ImportSongsMenu(StyleScrollArea):
         totalShown = min(len(self._widgets), 6)
         height_ = totalShown * row.height() + (totalShown - 1) * self._mainLayout.spacing()
         self.setFixedHeight(height_)
-
-        self.setVerticalScrollBarPolicy(Qt.ScrollBarAlwaysOff if totalShown <= 6 else Qt.ScrollBarPolicy)
 
     def items(self) -> list[ImportSongItem]:
         return self._widgets
