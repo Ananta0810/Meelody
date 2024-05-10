@@ -13,6 +13,7 @@ class ImportSongsDialog(BaseDialog):
         super().__init__()
         self.__paths = paths
         self._initComponent()
+        self._showImportFiles(paths)
 
     def _createUI(self) -> None:
         super()._createUI()
@@ -59,3 +60,7 @@ class ImportSongsDialog(BaseDialog):
     def show(self) -> None:
         super().show()
         self.applyTheme()
+
+    def _showImportFiles(self, paths):
+        for path in paths:
+            self._menu.addItem(path)
