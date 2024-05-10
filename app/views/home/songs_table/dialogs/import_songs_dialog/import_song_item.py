@@ -1,4 +1,5 @@
 import os
+from typing import Optional
 
 from PyQt5.QtCore import pyqtSignal, Qt
 from PyQt5.QtGui import QKeySequence
@@ -19,13 +20,14 @@ class ImportSongItem(ExtendableStyleWidget):
     succeed = pyqtSignal(str)
     failed = pyqtSignal(Exception)
     imported = pyqtSignal()
+    reImported = pyqtSignal(str)
 
     def __init__(self, path: str):
         super().__init__()
         self._initComponent()
 
         self._path = path
-        self._dot: float = 0
+        self.__artist: Optional[str] = None
 
         self.__displaySongInfo()
 
@@ -77,14 +79,8 @@ class ImportSongItem(ExtendableStyleWidget):
         self.setFixedHeight(self.sizeHint().height())
         self.setMinimumHeight(self.sizeHint().height())
 
-    def show(self) -> None:
-        super().show()
-
     def path(self) -> str:
         return self._path
-
-    def setDescription(self, value: str) -> None:
-        self._descriptionLabel.setText(value)
 
     def applyLightMode(self) -> None:
         super().applyLightMode()
@@ -103,6 +99,8 @@ class ImportSongItem(ExtendableStyleWidget):
         song = Song.fromFile(self._path, Strings.getFileBasename(self._path))
         song.loadCover()
 
+        self.__artist = song.getArtist()
+
         self._cover.setCover(CoverProps.fromBytes(song.getCover(), width=48, height=48, radius=9))
         self._titleLabel.setText(Strings.join("   |   ", [song.getTitle(), song.getArtist()]))
 
@@ -115,11 +113,7 @@ class ImportSongItem(ExtendableStyleWidget):
                 raise ResourceException.brokenFile()
 
             title = reader.getTitle() or Strings.getFileBasename(self._path)
-            songPath = f"library/{Strings.sanitizeFileName(title)}.mp3"
-
-            Files.copyFile(self._path, songPath)
-            Logger.info(f"Import song from '{self._path}' to library successfully.")
-
+            songPath = self.__moveFileToLibrary(title)
             self.succeed.emit(songPath)
             self.__markSucceed()
         except ResourceException as e:
@@ -130,11 +124,18 @@ class ImportSongItem(ExtendableStyleWidget):
 
         self.imported.emit()
 
+    def __moveFileToLibrary(self, title: str) -> str:
+        songPath = f"library/{Strings.sanitizeFileName(title)}.mp3"
+        Files.copyFile(self._path, songPath)
+        Logger.info(f"Import song from '{self._path}' to library successfully.")
+        return songPath
+
     def __markSucceed(self) -> None:
+        self._descriptionLabel.setClassName("text-black dark:text-white")
+        self._descriptionLabel.applyTheme()
         self._descriptionLabel.setText("Import Succeed.")
 
     def __markFailed(self, exception: Exception) -> None:
-
         self._descriptionLabel.setClassName("text-danger bg-none")
         self._descriptionLabel.applyTheme()
 
@@ -151,10 +152,24 @@ class ImportSongItem(ExtendableStyleWidget):
 
     def __openUpdateDialog(self) -> None:
         dialog = UpdateImportSongDialog(self._path)
+        dialog.accepted.connect(lambda title: self.__importAgain(title))
         dialog.show()
+
+    def __importAgain(self, title: str) -> None:
+        try:
+            self._titleLabel.setText(Strings.join("   |   ", [title, self.__artist]))
+            songPath = self.__moveFileToLibrary(title)
+            self.reImported.emit(songPath)
+            self.__markSucceed()
+        except ResourceException as e:
+            self.failed.emit(e)
+        except Exception as e:
+            Logger.error(e)
+            self.failed.emit(e)
 
 
 class UpdateImportSongDialog(BaseDialog):
+    accepted = pyqtSignal(str)
 
     def __init__(self, path: str) -> None:
         self.__canUpdate = False
@@ -167,7 +182,6 @@ class UpdateImportSongDialog(BaseDialog):
 
         print(reader.getTitle())
         self._titleInput.setText(reader.getTitle() or Strings.getFileBasename(path))
-        self._artistInput.setText(reader.getArtist())
         self.__checkValid()
 
     def _createUI(self) -> None:
@@ -197,20 +211,6 @@ class UpdateImportSongDialog(BaseDialog):
         self._titleInput.setFont(Factory.createFont(size=12))
         self._titleInput.setClassName("px-12 py-8 rounded-4 border border-primary-12 bg-primary-4")
 
-        self._artistLabel = Label()
-        self._artistLabel.setFont(Factory.createFont(size=11))
-        self._artistLabel.setClassName("text-black dark:text-white bg-none")
-        self._artistLabel.setText("Artist")
-
-        self._artistInput = Input()
-        self._artistInput.setFont(Factory.createFont(size=12))
-        self._artistInput.setClassName("px-12 py-8 rounded-4 border border-primary-12 bg-primary-4")
-
-        self._artistErrorLabel = Label()
-        self._artistErrorLabel.setFont(Factory.createFont(size=11))
-        self._artistErrorLabel.setClassName("text-danger bg-none")
-        self._artistErrorLabel.hide()
-
         self._importBtn = ActionButton()
         self._importBtn.setFont(Factory.createFont(family="Segoe UI Semibold", size=11))
         self._importBtn.setClassName("text-white rounded-4 bg-primary-75 bg-primary py-8 disabled:bg-gray-10 disabled:text-gray")
@@ -228,9 +228,6 @@ class UpdateImportSongDialog(BaseDialog):
         self._viewLayout.addWidget(self._titleLabel)
         self._viewLayout.addWidget(self._titleInput)
         self._viewLayout.addWidget(self._titleErrorLabel)
-        self._viewLayout.addWidget(self._artistLabel)
-        self._viewLayout.addWidget(self._artistInput)
-        self._viewLayout.addWidget(self._artistErrorLabel)
         self._viewLayout.addWidget(self._importBtn)
 
         self.addWidget(self._mainView)
@@ -239,7 +236,6 @@ class UpdateImportSongDialog(BaseDialog):
         super()._connectSignalSlots()
 
         self._titleInput.changed.connect(lambda text: self.__checkValid())
-        self._artistInput.changed.connect(lambda text: self.__checkValid())
         self._importBtn.clicked.connect(lambda: self._importAgain())
 
     def _assignShortcuts(self) -> None:
@@ -248,7 +244,7 @@ class UpdateImportSongDialog(BaseDialog):
         acceptShortcut.activated.connect(lambda: self._importBtn.click())
 
     def __checkValid(self) -> None:
-        self.__canUpdate = self.__validateTitle() and self.__validateArtist()
+        self.__canUpdate = self.__validateTitle()
         self._importBtn.setDisabled(not self.__canUpdate)
 
     def __validateTitle(self) -> bool:
@@ -272,15 +268,12 @@ class UpdateImportSongDialog(BaseDialog):
         self._titleErrorLabel.hide()
         return True
 
-    def __validateArtist(self) -> bool:
-        artist = self._artistInput.text().strip()
-        if len(artist) > 64:
-            self._artistErrorLabel.show()
-            self._artistErrorLabel.setText("Artist should be less than 64 characters.")
-            return False
-
-        self._artistErrorLabel.hide()
-        return True
-
     def _importAgain(self) -> None:
-        pass
+        self.__checkValid()
+        if not self.__canUpdate:
+            return
+
+        title = self._titleInput.text().strip()
+
+        self.accepted.emit(title)
+        self.close()

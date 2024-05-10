@@ -103,6 +103,7 @@ class ImportSongsDialog(BaseDialog):
     def startImport(self, item: ImportSongItem) -> None:
         item.succeed.connect(lambda songPath: self.__importSuccess(songPath))
         item.imported.connect(lambda: self.__markImported(item))
+        item.reImported.connect(lambda songPath: self.__importUpdatedSongToLibrary(songPath))
         item.startImport()
 
     def __importSuccess(self, songPath: str) -> None:
@@ -119,3 +120,8 @@ class ImportSongsDialog(BaseDialog):
     def __importSongsToLibrary(self) -> None:
         songs = [Song.fromFile(songPath, Strings.getFileBasename(songPath)) for songPath in self.__succeedSongPaths]
         appCenter.library.getSongs().insertAll(songs)
+
+    @staticmethod
+    def __importUpdatedSongToLibrary(songPath: str) -> None:
+        song = Song.fromFile(songPath, Strings.getFileBasename(songPath))
+        appCenter.library.getSongs().insertAll([song])
