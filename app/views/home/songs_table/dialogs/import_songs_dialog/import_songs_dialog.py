@@ -1,8 +1,11 @@
-from PyQt5.QtCore import Qt, pyqtSignal
+from PyQt5.QtCore import Qt, pyqtSignal, QTimer
 from PyQt5.QtWidgets import QWidget, QVBoxLayout
 
+from app.common.models import Song
+from app.common.others import appCenter
 from app.components.base import ActionButton, Factory, Cover, CoverProps, Label
 from app.components.dialogs import BaseDialog
+from app.helpers.base import Strings
 from app.resource.qt import Images
 from app.views.home.songs_table.dialogs.import_songs_dialog.import_song_item import ImportSongItem
 from app.views.home.songs_table.dialogs.import_songs_dialog.import_songs_menu import ImportSongsMenu
@@ -15,7 +18,9 @@ class ImportSongsDialog(BaseDialog):
         super().__init__()
 
         self.__importedItems: set[str] = set()
+        self.__succeedSongPaths: set[str] = set()
         self.__paths: list[str] = paths
+        self.__done: bool = False
 
         self._initComponent()
 
@@ -79,28 +84,32 @@ class ImportSongsDialog(BaseDialog):
 
     def _showImportFiles(self) -> None:
         self._menu.addItems(self.__paths)
-        #
-        # timer = QTimer(self)
-        # timer.timeout.connect(lambda: self.__startImportAll())
-        # timer.start(10)
+
+        timer = QTimer(self)
+        timer.timeout.connect(lambda: self.__startImportAll())
+        timer.timeout.connect(lambda: timer.stop())
+        timer.start(1000 // 60)
 
     def __startImportAll(self):
         for item in self._menu.items():
             self.startImport(item)
 
     def startImport(self, item: ImportSongItem) -> None:
-        item.songImportedSucceed.connect(lambda songPath: self.__addSong(songPath))
-        item.songImportedFailed.connect(lambda: self.__markImported(item))
+        item.succeed.connect(lambda songPath: self.__importSuccess(songPath))
+        item.imported.connect(lambda: self.__markImported(item))
         item.startImport()
+
+    def __importSuccess(self, songPath: str) -> None:
+        self.__succeedSongPaths.add(songPath)
 
     def __markImported(self, item: ImportSongItem) -> None:
         path = item.path()
         self.__importedItems.add(path)
 
-        # if len(self.__importedItems) >= len(self.__paths):
-        #     self.importDone.emit()
+        if len(self.__importedItems) == len(self.__paths) and not self.__done:
+            self.__done = True
+            self.importDone.emit()
 
     def __importSongsToLibrary(self) -> None:
-        pass
-        # songs = [Song.fromFile(songPath, Strings.getFileBasename(songPath)) for songPath in self.__importedItems]
-        # appCenter.library.getSongs().insertAll(songs)
+        songs = [Song.fromFile(songPath, Strings.getFileBasename(songPath)) for songPath in self.__succeedSongPaths]
+        appCenter.library.getSongs().insertAll(songs)

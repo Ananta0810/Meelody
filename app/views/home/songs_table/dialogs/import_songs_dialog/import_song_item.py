@@ -1,4 +1,4 @@
-from PyQt5.QtCore import pyqtSignal, Qt, QThread
+from PyQt5.QtCore import pyqtSignal, Qt
 from PyQt5.QtWidgets import QWidget, QHBoxLayout
 
 from app.common.exceptions import ResourceException
@@ -13,8 +13,9 @@ from app.resource.qt import Images, Icons
 
 
 class ImportSongItem(ExtendableStyleWidget):
-    songImportedSucceed = pyqtSignal(str)
-    songImportedFailed = pyqtSignal()
+    succeed = pyqtSignal(str)
+    failed = pyqtSignal(Exception)
+    imported = pyqtSignal()
 
     def __init__(self, path: str):
         super().__init__()
@@ -96,6 +97,10 @@ class ImportSongItem(ExtendableStyleWidget):
         super().applyDarkMode()
         super().applyThemeToChildren()
 
+    def _connectSignalSlots(self) -> None:
+        self.succeed.connect(lambda path: self.__markSucceed())
+        self.failed.connect(lambda exception: self.__markFailed(exception))
+
     def __displaySongInfo(self) -> None:
         song = Song.fromFile(self._path, Strings.sanitizeFileName(Strings.getFileBasename(self._path)))
         song.loadCover()
@@ -104,13 +109,28 @@ class ImportSongItem(ExtendableStyleWidget):
         self._titleLabel.setText(Strings.join("   |   ", [song.getTitle(), song.getArtist()]))
 
     def startImport(self) -> None:
-        thread = ImportSongsToLibraryThread(self._path)
-        thread.succeed.connect(lambda destiny: self.songImportedSucceed.emit(destiny))
-        thread.failed.connect(lambda exception: self.songImportedFailed.emit())
+        try:
+            reader = SongReader(self._path)
 
-        thread.succeed.connect(lambda destiny: self.__markSucceed())
-        thread.failed.connect(lambda exception: self.__markFailed(exception))
-        thread.start()
+            if not reader.isValid():
+                Logger.error("Invalid mp3 file song.")
+                raise ResourceException.brokenFile()
+
+            title = Strings.sanitizeFileName(reader.getTitle() or Strings.getFileBasename(self._path))
+            songPath = f"library/{title}.mp3"
+
+            Files.copyFile(self._path, songPath)
+            Logger.info(f"Import song from '{self._path}' to library successfully.")
+
+            self.succeed.emit(songPath)
+            self.__markSucceed()
+        except ResourceException as e:
+            self.failed.emit(e)
+        except Exception as e:
+            Logger.error(e)
+            self.failed.emit(e)
+
+        self.imported.emit()
 
     def __markSucceed(self) -> None:
         self._successIcon.show()
@@ -131,33 +151,3 @@ class ImportSongItem(ExtendableStyleWidget):
             return
 
         self._descriptionLabel.setText("Import failed. Please try again.")
-
-
-class ImportSongsToLibraryThread(QThread):
-    succeed = pyqtSignal(str)
-    failed = pyqtSignal(Exception)
-
-    def __init__(self, path: str) -> None:
-        super().__init__()
-        self._path = path
-
-    def run(self) -> None:
-        try:
-            reader = SongReader(self._path)
-
-            if not reader.isValid():
-                Logger.error("Invalid mp3 file song.")
-                raise ResourceException.brokenFile()
-
-            title = Strings.sanitizeFileName(reader.getTitle() or Strings.getFileBasename(self._path))
-            songPath = f"library/{title}.mp3"
-
-            Files.copyFile(self._path, songPath)
-            print(f"Import song from '{self._path}' to library successfully.")
-
-            self.succeed.emit(songPath)
-        except ResourceException as e:
-            self.failed.emit(e)
-        except Exception as e:
-            Logger.error(e)
-            self.failed.emit(e)

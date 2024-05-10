@@ -30,10 +30,7 @@ class ImportSongsMenu(StyleScrollArea):
 
     def addItems(self, paths: list[str]) -> None:
         for path in paths:
-            self._menu.addItem(path)
-
-        if len(paths) <= 6:
-            self.setVerticalScrollBarPolicy(Qt.ScrollBarAlwaysOff)
+            self._addItem(path)
 
     def _addItem(self, path: str) -> ImportSongItem:
         row = ImportSongItem(path)
@@ -48,6 +45,8 @@ class ImportSongsMenu(StyleScrollArea):
         totalShown = min(len(self._widgets), 6)
         height_ = totalShown * row.height() + (totalShown - 1) * self._mainLayout.spacing()
         self.setFixedHeight(height_)
+
+        self.setVerticalScrollBarPolicy(Qt.ScrollBarAlwaysOff if totalShown <= 6 else Qt.ScrollBarPolicy)
 
     def items(self) -> list[ImportSongItem]:
         return self._widgets
