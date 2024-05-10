@@ -8,7 +8,7 @@ from pytube.exceptions import RegexMatchError
 
 from app.common.models import Song
 from app.common.others import appCenter
-from app.components.base import Cover, LabelWithDefaultText, Factory, Input, ActionButton, CoverProps, Label
+from app.components.base import Cover, Factory, Input, ActionButton, CoverProps, Label
 from app.components.dialogs import BaseDialog, Dialogs
 from app.helpers.base import Strings
 from app.helpers.others import Logger
@@ -30,7 +30,7 @@ class DownloadSongsDialog(BaseDialog):
         self._image.setFixedHeight(156)
         self._image.setCover(CoverProps.fromBytes(Images.DOWNLOAD, width=128))
 
-        self._header = LabelWithDefaultText()
+        self._header = Label()
         self._header.setFont(Factory.createFont(family="Segoe UI Semibold", size=16, bold=True))
         self._header.setAlignment(Qt.AlignCenter)
         self._header.setText("Download Youtube Song")
@@ -49,7 +49,6 @@ class DownloadSongsDialog(BaseDialog):
 
         self._menu = DownloadSongsMenu()
         self._menu.setClassName("scroll/bg-primary-75 scroll/hover:bg-primary scroll/rounded-2")
-        self._menu.applyTheme()
 
         self._mainView = QWidget()
         self._mainView.setFixedWidth(640)
@@ -75,18 +74,10 @@ class DownloadSongsDialog(BaseDialog):
         self._searchBtn.clicked.connect(lambda: self.__searchSong())
 
     def show(self) -> None:
-        self.applyTheme()
         self._input.clear()
         self._searchBtn.setCursor(Cursors.HAND)
         super().show()
-
-    def applyLightMode(self) -> None:
-        super().applyLightMode()
-        super().applyThemeToChildren()
-
-    def applyDarkMode(self) -> None:
-        super().applyDarkMode()
-        super().applyThemeToChildren()
+        self.applyTheme()
 
     def __searchSong(self) -> None:
         self._searchBtn.setCursor(Cursors.WAITING)
@@ -112,7 +103,7 @@ class DownloadSongsDialog(BaseDialog):
     @staticmethod
     def __insertSongToLibrary(path: str) -> None:
         try:
-            appCenter.library.getSongs().insert(Song.fromFile(path))
+            appCenter.library.getSongs().insert(Song.fromFile(path, Strings.getFileBasename(path)))
         except:
             Dialogs.alert(message="Somthing wrong while save song.")
 

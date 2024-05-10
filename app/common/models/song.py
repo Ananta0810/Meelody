@@ -39,14 +39,18 @@ class Song(QObject):
             self.__cover = cover
 
     @staticmethod
-    def fromFile(location: str, title: str = None) -> Optional['Song']:
+    def fromFile(location: str, title: str) -> Optional['Song']:
         """
         Load a song from explorer. Return None if song is load failed.
         """
         try:
             data = SongReader(location)
 
-            return Song(location, title=data.getTitle() or title, artist=data.getArtist(), length=data.getLength(), sampleRate=data.getSampleRate())
+            return Song(location,
+                        title=data.getTitle() or title,
+                        artist=data.getArtist(),
+                        length=data.getLength(),
+                        sampleRate=data.getSampleRate())
         except ResourceException:
             return None
 

@@ -203,7 +203,11 @@ class SongsMenu(SmoothVerticalScrollArea):
 
         self.__titleKeys = {}
         for index, song in enumerate(songs):
-            firstChar = Strings.unaccent(song.getTitle()[0].upper())
-            if firstChar not in self.__titleKeys:
-                self.__titleKeys[firstChar] = []
-            self.__titleKeys[firstChar].append(index)
+            try:
+                firstChar = Strings.unaccent(song.getTitle()[0].upper())
+                if firstChar not in self.__titleKeys:
+                    self.__titleKeys[firstChar] = []
+                self.__titleKeys[firstChar].append(index)
+            except TypeError:
+                pass
+
