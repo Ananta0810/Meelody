@@ -175,12 +175,7 @@ class SongRow(ExtendableStyleWidget):
         super().show()
 
         if not self.__song.isCoverLoaded():
-            timer = LoadCoverThread(self.__song)
-            timer.run()
-
-    @suppressException
-    def loadCover(self) -> None:
-        self.__song.loadCover()
+            self.__song.loadCover()
 
     @suppressException
     def showMoreButtons(self, a0: bool) -> None:

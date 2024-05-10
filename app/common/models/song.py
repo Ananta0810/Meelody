@@ -134,9 +134,9 @@ class Song(QObject):
 
     def isCoverLoaded(self) -> bool:
         try:
-            assert hasattr(self, '__cover'), 'Cover is not loaded.'
+            cover = self.__cover
             return True
-        except AssertionError:
+        except AttributeError:
             return False
 
     def loadCover(self) -> None:
