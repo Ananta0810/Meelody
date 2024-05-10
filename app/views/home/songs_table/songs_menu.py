@@ -103,9 +103,6 @@ class SongsMenu(SmoothVerticalScrollArea):
         addedSongs = Lists.itemsInRightOnly(currentSongs, songs)
         removedSongs = Lists.itemsInLeftOnly(currentSongs, songs)
 
-        maxHeight = sum([row.minimumHeight() for row in self.__songRowDict.values()])
-        self._menu.setMaximumHeight(maxHeight)
-
         currentPosition = self.verticalScrollBar().value()
 
         for song in addedSongs:
@@ -116,6 +113,9 @@ class SongsMenu(SmoothVerticalScrollArea):
             self.__removeRow(row)
 
         self.__moveRows(songs)
+
+        maxHeight = sum([row.sizeHint().height() for row in self.__songRowDict.values()])
+        self._menu.setMaximumHeight(maxHeight)
 
         self.verticalScrollBar().setValue(currentPosition)
 
@@ -210,4 +210,3 @@ class SongsMenu(SmoothVerticalScrollArea):
                 self.__titleKeys[firstChar].append(index)
             except TypeError:
                 pass
-
