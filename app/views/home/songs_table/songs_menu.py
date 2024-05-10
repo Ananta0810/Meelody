@@ -20,12 +20,13 @@ MAX_ITEMS_VISIBLE_ON_MENU = 6
 
 class SongsMenu(SmoothVerticalScrollArea):
     __menuReset = pyqtSignal()
+    __playlistUpdated = pyqtSignal()
 
     def __init__(self, parent: Optional[QWidget] = None) -> None:
         super().__init__(parent)
         self.__songRowDict: dict[str, SongRow] = {}
 
-        self.__currentPlaylist: Optional[Playlist.Songs] = None
+        self.__currentPlaylist: Optional[Playlist] = None
 
         # This map is used to find the index of the playing song in the playlist to navigate to.
         self.__songMap: dict[str, int] = {}
@@ -38,6 +39,8 @@ class SongsMenu(SmoothVerticalScrollArea):
 
     def _connectSignalSlots(self) -> None:
         super()._connectSignalSlots()
+
+        self.__playlistUpdated.connect(lambda: self.__showSongsOfPlaylist(self.__currentPlaylist))
 
         appCenter.library.getSongs().updated.connect(lambda: self.__createSongRows(appCenter.library.getSongs().getSongs()))
         appCenter.currentPlaylistChanged.connect(lambda playlist: self.__showSongsOfPlaylist(playlist))
@@ -140,31 +143,37 @@ class SongsMenu(SmoothVerticalScrollArea):
 
         self.__songRowDict.pop(row.content().getId())
 
+    def __setPlaylist(self, playlist: Playlist) -> None:
+        if self.__currentPlaylist is not None:
+            with suppress(TypeError):
+                self.__currentPlaylist.getSongs().updated.disconnect()
+
+        self.__currentPlaylist = playlist
+        self.__currentPlaylist.getSongs().updated.connect(self.__playlistUpdated.emit)
+
     def __showSongsOfPlaylist(self, playlist: Playlist) -> None:
         if not Widgets.isInView(self):
             VisibleObserver(self).visible.connect(lambda visible: self.__showSongsOfPlaylist(playlist) if visible else None)
             return
 
-        isUpdatedPlaylist = self.__currentPlaylist != playlist
+        isPlaylistChanged = self.__currentPlaylist != playlist
 
-        if isUpdatedPlaylist:
-            with suppress(Exception):
-                self.__currentPlaylist.updated.disconnect(lambda: self.__showSongsOfPlaylist(playlist))
+        if isPlaylistChanged:
+            self.__setPlaylist(playlist)
 
-            playlist.getSongs().updated.connect(lambda: self.__showSongsOfPlaylist(playlist))
-
-        self.__currentPlaylist = playlist
-        self.__updateTitleMaps(playlist.getSongs().getSongs())
-
-        isLibrary = playlist.getInfo().getId() == Library.Info().getId()
         songIdSet = set([song.getId() for song in playlist.getSongs().getSongs()])
         songRows: list[SongRow] = self.widgets()
 
         needUpdateVisible = any([row.isVisible() != (row.content().getId() in songIdSet) for row in songRows])
+
         if not needUpdateVisible:
             return
 
+        self.__updateTitleMaps(playlist.getSongs().getSongs())
+
         currentPosition = self.verticalScrollBar().value()
+
+        isLibrary = playlist.getInfo().getId() == Library.Info().getId()
 
         for songRow in songRows:
             songRow.setEditable(isLibrary)
@@ -173,7 +182,8 @@ class SongsMenu(SmoothVerticalScrollArea):
 
         self.__showRows([row for row in songRows if row.content().getId() in songIdSet])
 
-        self.verticalScrollBar().setValue(currentPosition)
+        if not isPlaylistChanged:
+            self.verticalScrollBar().setValue(currentPosition)
 
     def __showRows(self, rows: list[SongRow]) -> None:
 
