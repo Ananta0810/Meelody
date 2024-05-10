@@ -1,15 +1,18 @@
+import os
+
 from PyQt5.QtCore import pyqtSignal, Qt
-from PyQt5.QtWidgets import QWidget, QHBoxLayout
+from PyQt5.QtGui import QKeySequence
+from PyQt5.QtWidgets import QWidget, QShortcut, QVBoxLayout
 
 from app.common.exceptions import ResourceException
 from app.common.models import Song
 from app.common.models.song import SongReader
-from app.components.base import Cover, CoverProps, Label, Factory, EllipsisLabel
+from app.components.base import Cover, CoverProps, Label, Factory, EllipsisLabel, ActionButton, Input
+from app.components.dialogs import BaseDialog
 from app.components.widgets import ExtendableStyleWidget, Box, FlexBox
 from app.helpers.base import Strings
 from app.helpers.others import Logger, Files
-from app.helpers.stylesheets import Colors, Paddings
-from app.resource.qt import Images, Icons
+from app.resource.qt import Images
 
 
 class ImportSongItem(ExtendableStyleWidget):
@@ -48,23 +51,17 @@ class ImportSongItem(ExtendableStyleWidget):
         self._infoLayout.addWidget(self._descriptionLabel)
         self._infoLayout.addStretch(0)
 
-        self._successIcon = Factory.createIconButton(size=Icons.SMALL, padding=Paddings.RELATIVE_25)
-        self._successIcon.setLightModeIcon(Icons.APPLY.withColor(Colors.WHITE))
-        self._successIcon.setClassName("rounded-full bg-success")
-        self._successIcon.hide()
+        self._updateBtn = ActionButton()
+        self._updateBtn.setFont(Factory.createFont(family="Segoe UI Semibold", size=10))
+        self._updateBtn.setClassName("text-white rounded-4 bg-primary hover:bg-primary-[w120] py-8")
+        self._updateBtn.setText("Change title")
+        self._updateBtn.hide()
 
-        self._failedIcon = Factory.createIconButton(size=Icons.SMALL, padding=Paddings.RELATIVE_25)
-        self._failedIcon.setLightModeIcon(Icons.CLOSE.withColor(Colors.WHITE))
-        self._failedIcon.setClassName("rounded-full bg-danger")
-        self._failedIcon.hide()
+        self._result = QWidget()
+        self._result.setFixedWidth(96)
 
-        self._icons = QWidget()
-        self._icons.setFixedWidth(48)
-
-        self._iconsLayout = QHBoxLayout(self._icons)
-        self._iconsLayout.setAlignment(Qt.AlignRight)
-        self._iconsLayout.addWidget(self._successIcon)
-        self._iconsLayout.addWidget(self._failedIcon)
+        self._resultLayout = FlexBox(self._result)
+        self._resultLayout.addWidget(self._updateBtn)
 
         self._mainLayout = FlexBox()
         self._mainLayout.setSpacing(0)
@@ -73,7 +70,7 @@ class ImportSongItem(ExtendableStyleWidget):
         self._mainLayout.addWidget(self._cover)
         self._mainLayout.addSpacing(12)
         self._mainLayout.addLayout(self._infoLayout, stretch=1)
-        self._mainLayout.addWidget(self._icons)
+        self._mainLayout.addWidget(self._result, alignment=Qt.AlignRight)
 
         self.setLayout(self._mainLayout)
 
@@ -100,9 +97,10 @@ class ImportSongItem(ExtendableStyleWidget):
     def _connectSignalSlots(self) -> None:
         self.succeed.connect(lambda path: self.__markSucceed())
         self.failed.connect(lambda exception: self.__markFailed(exception))
+        self._updateBtn.clicked.connect(lambda: self.__openUpdateDialog())
 
     def __displaySongInfo(self) -> None:
-        song = Song.fromFile(self._path, Strings.sanitizeFileName(Strings.getFileBasename(self._path)))
+        song = Song.fromFile(self._path, Strings.getFileBasename(self._path))
         song.loadCover()
 
         self._cover.setCover(CoverProps.fromBytes(song.getCover(), width=48, height=48, radius=9))
@@ -116,8 +114,8 @@ class ImportSongItem(ExtendableStyleWidget):
                 Logger.error("Invalid mp3 file song.")
                 raise ResourceException.brokenFile()
 
-            title = Strings.sanitizeFileName(reader.getTitle() or Strings.getFileBasename(self._path))
-            songPath = f"library/{title}.mp3"
+            title = reader.getTitle() or Strings.getFileBasename(self._path)
+            songPath = f"library/{Strings.sanitizeFileName(title)}.mp3"
 
             Files.copyFile(self._path, songPath)
             Logger.info(f"Import song from '{self._path}' to library successfully.")
@@ -133,17 +131,16 @@ class ImportSongItem(ExtendableStyleWidget):
         self.imported.emit()
 
     def __markSucceed(self) -> None:
-        self._successIcon.show()
         self._descriptionLabel.setText("Import Succeed.")
 
     def __markFailed(self, exception: Exception) -> None:
-        self._failedIcon.show()
 
         self._descriptionLabel.setClassName("text-danger bg-none")
         self._descriptionLabel.applyTheme()
 
         if isinstance(exception, FileExistsError):
             self._descriptionLabel.setText("Import failed. Song is already existed.")
+            self._updateBtn.show()
             return
 
         if isinstance(exception, ResourceException):
@@ -151,3 +148,139 @@ class ImportSongItem(ExtendableStyleWidget):
             return
 
         self._descriptionLabel.setText("Import failed. Please try again.")
+
+    def __openUpdateDialog(self) -> None:
+        dialog = UpdateImportSongDialog(self._path)
+        dialog.show()
+
+
+class UpdateImportSongDialog(BaseDialog):
+
+    def __init__(self, path: str) -> None:
+        self.__canUpdate = False
+        self.__path = path
+
+        super().__init__()
+        super()._initComponent()
+
+        reader = SongReader(path)
+
+        print(reader.getTitle())
+        self._titleInput.setText(reader.getTitle() or Strings.getFileBasename(path))
+        self._artistInput.setText(reader.getArtist())
+        self.__checkValid()
+
+    def _createUI(self) -> None:
+        super()._createUI()
+
+        self._image = Cover()
+        self._image.setAlignment(Qt.AlignHCenter)
+        self._image.setCover(CoverProps.fromBytes(Images.IMPORT_SONGS, width=128))
+
+        self._header = Label()
+        self._header.setFont(Factory.createFont(family="Segoe UI Semibold", size=16, bold=True))
+        self._header.setClassName("text-black dark:text-white bg-none")
+        self._header.setAlignment(Qt.AlignCenter)
+        self._header.setText("Import Song")
+
+        self._titleLabel = Label()
+        self._titleLabel.setFont(Factory.createFont(size=11))
+        self._titleLabel.setClassName("text-black dark:text-white bg-none")
+        self._titleLabel.setText("Title")
+
+        self._titleErrorLabel = Label()
+        self._titleErrorLabel.setFont(Factory.createFont(size=11))
+        self._titleErrorLabel.setClassName("text-danger bg-none")
+        self._titleErrorLabel.hide()
+
+        self._titleInput = Input()
+        self._titleInput.setFont(Factory.createFont(size=12))
+        self._titleInput.setClassName("px-12 py-8 rounded-4 border border-primary-12 bg-primary-4")
+
+        self._artistLabel = Label()
+        self._artistLabel.setFont(Factory.createFont(size=11))
+        self._artistLabel.setClassName("text-black dark:text-white bg-none")
+        self._artistLabel.setText("Artist")
+
+        self._artistInput = Input()
+        self._artistInput.setFont(Factory.createFont(size=12))
+        self._artistInput.setClassName("px-12 py-8 rounded-4 border border-primary-12 bg-primary-4")
+
+        self._artistErrorLabel = Label()
+        self._artistErrorLabel.setFont(Factory.createFont(size=11))
+        self._artistErrorLabel.setClassName("text-danger bg-none")
+        self._artistErrorLabel.hide()
+
+        self._importBtn = ActionButton()
+        self._importBtn.setFont(Factory.createFont(family="Segoe UI Semibold", size=11))
+        self._importBtn.setClassName("text-white rounded-4 bg-primary-75 bg-primary py-8 disabled:bg-gray-10 disabled:text-gray")
+        self._importBtn.setText("Import again")
+
+        self._mainView = QWidget()
+        self._mainView.setFixedWidth(480)
+        self._mainView.setContentsMargins(12, 4, 12, 12)
+
+        self._viewLayout = QVBoxLayout(self._mainView)
+        self._viewLayout.setSpacing(8)
+        self._viewLayout.setContentsMargins(0, 0, 0, 0)
+        self._viewLayout.addWidget(self._image)
+        self._viewLayout.addWidget(self._header)
+        self._viewLayout.addWidget(self._titleLabel)
+        self._viewLayout.addWidget(self._titleInput)
+        self._viewLayout.addWidget(self._titleErrorLabel)
+        self._viewLayout.addWidget(self._artistLabel)
+        self._viewLayout.addWidget(self._artistInput)
+        self._viewLayout.addWidget(self._artistErrorLabel)
+        self._viewLayout.addWidget(self._importBtn)
+
+        self.addWidget(self._mainView)
+
+    def _connectSignalSlots(self) -> None:
+        super()._connectSignalSlots()
+
+        self._titleInput.changed.connect(lambda text: self.__checkValid())
+        self._artistInput.changed.connect(lambda text: self.__checkValid())
+        self._importBtn.clicked.connect(lambda: self._importAgain())
+
+    def _assignShortcuts(self) -> None:
+        super()._assignShortcuts()
+        acceptShortcut = QShortcut(QKeySequence(Qt.Key_Return), self._importBtn)
+        acceptShortcut.activated.connect(lambda: self._importBtn.click())
+
+    def __checkValid(self) -> None:
+        self.__canUpdate = self.__validateTitle() and self.__validateArtist()
+        self._importBtn.setDisabled(not self.__canUpdate)
+
+    def __validateTitle(self) -> bool:
+        title = self._titleInput.text().strip()
+
+        if Strings.isBlank(title):
+            self._titleErrorLabel.show()
+            self._titleErrorLabel.setText("Title should not be blank.")
+            return False
+
+        if len(title) > 128:
+            self._titleErrorLabel.show()
+            self._titleErrorLabel.setText("Title should be less than 128 characters.")
+            return False
+
+        if os.path.exists(f"library/{Strings.sanitizeFileName(title)}.mp3"):
+            self._titleErrorLabel.show()
+            self._titleErrorLabel.setText("Title has already taken. Please try other title.")
+            return False
+
+        self._titleErrorLabel.hide()
+        return True
+
+    def __validateArtist(self) -> bool:
+        artist = self._artistInput.text().strip()
+        if len(artist) > 64:
+            self._artistErrorLabel.show()
+            self._artistErrorLabel.setText("Artist should be less than 64 characters.")
+            return False
+
+        self._artistErrorLabel.hide()
+        return True
+
+    def _importAgain(self) -> None:
+        pass

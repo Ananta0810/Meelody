@@ -9,7 +9,6 @@ from app.components.base.base_component import Component
 from app.components.base.gif import Gif
 from app.components.widgets import ExtendableStyleWidget
 from app.helpers.base import Strings, suppressException
-from app.helpers.stylesheets import Padding
 from app.helpers.stylesheets.translators import ClassNameTranslator
 from app.helpers.stylesheets.translators.classname_translator import ClassNameTheme
 from app.resource.qt import Cursors
@@ -18,29 +17,11 @@ from app.resource.qt import Cursors
 class ActionButton(QPushButton, Component):
 
     def __init__(self, parent: Optional[QWidget] = None):
-        self.__padding: Optional[Padding] = None
-
         super().__init__(parent)
         super()._initComponent()
 
     def _createUI(self) -> None:
         self.setCursor(Cursors.HAND)
-
-    def setPadding(self, padding: Padding) -> None:
-        self.__padding = padding
-
-    def setText(self, text: str) -> None:
-        super().setText(text)
-        self.__paddingText()
-
-    def __paddingText(self) -> None:
-        if self.__padding is None:
-            return
-        textSize = self.sizeHint()
-        self.setFixedSize(
-            textSize.width() + self.__padding.getWidth(textSize.width()),
-            textSize.height() + self.__padding.getHeight(textSize.height()),
-        )
 
 
 class StateIcon:

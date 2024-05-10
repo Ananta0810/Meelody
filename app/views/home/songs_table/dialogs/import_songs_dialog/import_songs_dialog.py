@@ -50,7 +50,7 @@ class ImportSongsDialog(BaseDialog):
         self._closeBtn.hide()
 
         self._mainView = QWidget()
-        self._mainView.setFixedWidth(640)
+        self._mainView.setFixedWidth(720)
         self._mainView.setContentsMargins(12, 4, 12, 8)
 
         self._viewLayout = QVBoxLayout(self._mainView)
