@@ -1,3 +1,5 @@
+from contextlib import suppress
+
 from PyQt5.QtCore import Qt, QThread
 from PyQt5.QtWidgets import QWidget, QHBoxLayout, QFileDialog
 
@@ -180,7 +182,10 @@ class SongRow(ExtendableStyleWidget):
 
     @suppressException
     def deleteLater(self) -> None:
-        musicPlayer.songChanged.disconnect(self.__checkEditable)
+        with suppress(TypeError):
+            musicPlayer.played.disconnect(self.__checkEditable)
+            musicPlayer.played.disconnect(self.__updatePlayBtn)
+            musicPlayer.paused.disconnect(self.__onMusicPlayerPaused)
         super().deleteLater()
 
     @suppressException

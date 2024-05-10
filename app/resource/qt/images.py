@@ -5,6 +5,7 @@ class Images:
     ERROR_PLAYLIST: bytes = Bytes.fromFile("app/resource/images/defaults/oops.png")
     TIMER: bytes = Bytes.fromFile("app/resource/images/defaults/timer.png")
     DOWNLOAD: bytes = Bytes.fromFile("app/resource/images/defaults/download.png")
+    IMPORT_SONGS: bytes = Bytes.fromFile("app/resource/images/defaults/import-songs.png")
     SUCCESS: bytes = Bytes.fromFile("app/resource/images/defaults/succeed.png")
     EDIT: bytes = Bytes.fromFile("app/resource/images/defaults/edit.png")
     DELETE: bytes = Bytes.fromFile("app/resource/images/defaults/delete.png")

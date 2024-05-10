@@ -25,16 +25,18 @@ class BaseDialog(FramelessWindow):
         self._btnClose.setLightModeIcon(Icons.CLOSE.withColor(Colors.GRAY))
         self._btnClose.setClassName("bg-gray-12 hover:bg-gray-25 rounded-8")
 
-        self._titleBar = QHBoxLayout()
-        self._titleBar.addStretch(1)
-        self._titleBar.addWidget(self._btnClose)
-        self._titleBar.setContentsMargins(12, 12, 12, 0)
+        self._titleBar = QWidget()
+
+        self._titleBarLayout = QHBoxLayout(self._titleBar)
+        self._titleBarLayout.addStretch(1)
+        self._titleBarLayout.addWidget(self._btnClose)
+        self._titleBarLayout.setContentsMargins(12, 12, 12, 0)
 
         self._body = Box()
         self._body.setContentsMargins(4, 4, 4, 4)
         self._body.setAlignment(Qt.AlignVCenter)
 
-        super().addLayout(self._titleBar)
+        super().addWidget(self._titleBar)
         super().addLayout(self._body)
 
     def _connectSignalSlots(self) -> None:
