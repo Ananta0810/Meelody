@@ -13,6 +13,7 @@ from pytube import YouTube, Stream
 
 from app.common.exceptions import ResourceException
 from app.common.models import Song
+from app.common.others import translator
 from app.components.base import Cover, LabelWithDefaultText, Factory, CoverProps
 from app.components.base.gif import Gif
 from app.components.sliders import ProgressBar
@@ -175,11 +176,11 @@ class DownloadSongItem(ExtendableStyleWidget):
             self._convertingLabel.movie().jumpToNextFrame()
 
     def __onLoading(self) -> None:
-        self._descriptionLabel.setText(f"Loading{int(self._dot) * '.'}")
+        self._descriptionLabel.setText(f"{translator.translate('DOWNLOAD_DIALOG.LOADING')}{int(self._dot) * '.'}")
         self._dot = (self._dot + 1) % 4
 
     def __onConverting(self) -> None:
-        self._descriptionLabel.setText(f"Converting{int(self._dot) * '.'}")
+        self._descriptionLabel.setText(f"{translator.translate('DOWNLOAD_DIALOG.CONVERTING')}{int(self._dot) * '.'}")
         self._dot = (self._dot + 1) % 4
 
     def __onDownloading(self, bytesDownloaded: int, totalSize: int, estimateTime: int) -> None:
@@ -187,7 +188,8 @@ class DownloadSongItem(ExtendableStyleWidget):
         downloadedStr = Strings.convertBytes(bytesDownloaded)
         totalStr = Strings.convertBytes(totalSize)
 
-        description = f"{int(percentage)}%  |  {downloadedStr}/{totalStr}  |  estimate: {Times.toString(estimateTime)}"
+        estimateText = translator.translate('DOWNLOAD_DIALOG.ESTIMATE')
+        description = f"{int(percentage)}%  |  {downloadedStr}/{totalStr}  |  {estimateText}: {Times.toString(estimateTime)}"
         self.setProgress(percentage)
         self.setDescription(description)
 
@@ -195,16 +197,18 @@ class DownloadSongItem(ExtendableStyleWidget):
         self._downloadLabel.hide()
         self._convertingLabel.hide()
         self._successIcon.show()
-        self._descriptionLabel.setText("Download Succeed.")
+
+        # TODO: Auto translate this when language changed.
+        self._descriptionLabel.setText(translator.translate("DOWNLOAD_DIALOG.DOWNLOAD_SUCCEED"))
 
     def __markDownloadFailed(self, exception: Exception) -> None:
         self._downloadLabel.hide()
         self._convertingLabel.hide()
         self._failedIcon.show()
         if isinstance(exception, FileExistsError):
-            self._descriptionLabel.setText("Download failed. Song is already existed.")
+            self._descriptionLabel.setText(translator.translate("DOWNLOAD_DIALOG.DOWNLOAD_FAILED_EXISTED"))
         else:
-            self._descriptionLabel.setText("Download failed.")
+            self._descriptionLabel.setText(translator.translate("DOWNLOAD_DIALOG.DOWNLOAD_FAILED"))
 
     def __markConvertFailed(self, exception: Exception) -> None:
         self._downloadLabel.hide()
@@ -212,19 +216,19 @@ class DownloadSongItem(ExtendableStyleWidget):
         self._failedIcon.show()
 
         if isinstance(exception, FileExistsError):
-            self._descriptionLabel.setText("Convert failed. Song is already existed.")
+            self._descriptionLabel.setText(translator.translate("DOWNLOAD_DIALOG.CONVERT_FAILED_EXISTED"))
             return
 
         if isinstance(exception, ResourceException):
             if exception.isExisted():
-                self._descriptionLabel.setText("Convert failed. Song is already existed.")
+                self._descriptionLabel.setText(translator.translate("DOWNLOAD_DIALOG.CONVERT_FAILED_EXISTED"))
                 return
 
             if exception.isBroken():
-                self._descriptionLabel.setText("Convert failed. Song is broken.")
+                self._descriptionLabel.setText(translator.translate("DOWNLOAD_DIALOG.CONVERT_FAILED_BROKEN"))
                 return
 
-        self._descriptionLabel.setText("Convert failed. Please try again.")
+        self._descriptionLabel.setText(translator.translate("DOWNLOAD_DIALOG.CONVERT_FAILED"))
 
 
 pytube.request.default_range_size = 128000

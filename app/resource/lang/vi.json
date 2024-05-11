@@ -68,6 +68,15 @@
     "VALIDATE.TITLE_BLANK": "Tiêu đề không được để trống.",
     "VALIDATE.TITLE_LENGTH": "Tiêu đề cần có độ dài tối đa 128 kí tự",
     "VALIDATE.TITLE_EXISTED": "Tiêu đề đã tồn tại. Xin hãy thử tiêu đề khác.",
-    "VALIDATE.ARTIST_LENGTH": "Tác giả cần có độ dài tối đa 64 kí tự"
+    "VALIDATE.ARTIST_LENGTH": "Tác giả cần có độ dài tối đa 64 kí tự",
+    "LOADING": "Đang tải dữ liệu bài hát",
+    "CONVERTING": "Đang chuyển đổi thành nhạc",
+    "ESTIMATE": "Ước tính còn khoảng",
+    "DOWNLOAD_SUCCEED": "Tải thành công.",
+    "DOWNLOAD_FAILED": "Tải thất bại.",
+    "DOWNLOAD_FAILED_EXISTED": "Tải thất bại. Bài hát đã tồn tại.",
+    "CONVERT_FAILED_EXISTED": "Chuyển đổi thất bại. Bài hát đã tồn tại.",
+    "CONVERT_FAILED_BROKEN": "Chuyển đổi thất bại. Bài hát bị lỗi.",
+    "CONVERT_FAILED": "Chuyển đổi thất bại. Xin hãy thử lại."
   }
 }

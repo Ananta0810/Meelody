@@ -68,6 +68,15 @@
     "VALIDATE.TITLE_BLANK": "Title should not be blank.",
     "VALIDATE.TITLE_LENGTH": "Title should be less than 128 characters.",
     "VALIDATE.TITLE_EXISTED": "Title has already taken. Please try other title.",
-    "VALIDATE.ARTIST_LENGTH": "Artist should be less than 64 characters."
+    "LOADING": "Loading",
+    "CONVERTING": "Converting",
+    "ESTIMATE": "Estimate remaining",
+    "VALIDATE.ARTIST_LENGTH": "Artist should be less than 64 characters.",
+    "DOWNLOAD_SUCCEED": "Download Succeed.",
+    "DOWNLOAD_FAILED": "Download failed.",
+    "DOWNLOAD_FAILED_EXISTED": "Download failed. Song is already existed.",
+    "CONVERT_FAILED_EXISTED": "Convert failed. Song is already existed.",
+    "CONVERT_FAILED_BROKEN": "Convert failed. Song is broken.",
+    "CONVERT_FAILED": "Convert failed. Please try again."
   }
 }
