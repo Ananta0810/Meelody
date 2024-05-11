@@ -91,9 +91,10 @@ class LabelWithDefaultText(QLabel, Component):
         return QFontMetrics(self.font()).elidedText(self.__displayingText, Qt.ElideRight, self.width())
 
     def setDefaultText(self, text: str) -> None:
-        self.__defaultText = text
-        if Strings.isBlank(self.text()):
+        if Strings.isBlank(self.text()) or self.__defaultText == self.text():
             self.setText(text)
+
+        self.__defaultText = text
 
 
 class Input(QLineEdit, Component):

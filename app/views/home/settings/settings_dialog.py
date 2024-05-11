@@ -5,7 +5,7 @@ from PyQt5.QtGui import QResizeEvent
 from PyQt5.QtWidgets import QHBoxLayout, QVBoxLayout, QWidget
 
 from app.common.models import ThemeMode
-from app.common.others import appCenter
+from app.common.others import appCenter, translator
 from app.components.base import Label, Factory, ActionButton, DropDown, Cover, CoverProps
 from app.components.events import ClickObserver
 from app.components.widgets import StyleWidget
@@ -18,10 +18,15 @@ from app.resource.qt import Icons, Images, Cursors
 class SettingsDialog(FramelessWindow):
 
     def __init__(self):
+        self.__languages: dict = {
+            "English": "en",
+            "Tiếng Việt": "vi"
+        }
+        self.__theme: ThemeMode = appCenter.settings.theme
+
         super().__init__()
         super()._initComponent()
 
-        self.__theme: ThemeMode = appCenter.settings.theme
         self.__selectTheme(self.__theme)
 
     def _createUI(self) -> None:
@@ -81,7 +86,7 @@ class SettingsDialog(FramelessWindow):
 
         self._languageDropdown = DropDown()
         self._languageDropdown.setMinimumWidth(200)
-        self._languageDropdown.addItems(["English", "Vietnamese"])
+        self._languageDropdown.addItems(self.__languages.keys())
 
         self._languageLayout.addLayout(self._languageLeftLayout)
         self._languageLayout.addWidget(self._languageDropdown, alignment=Qt.AlignRight | Qt.AlignCenter)
@@ -239,7 +244,13 @@ class SettingsDialog(FramelessWindow):
 
     def __saveChanges(self) -> None:
         self._saveBtn.setCursor(Cursors.WAITING)
+
         appCenter.setTheme(self.__theme)
+
+        lang = self.__languages[self._languageDropdown.currentText()]
+        appCenter.settings.setLanguage(lang)
+        translator.setLanguage(lang)
+
         self._saveBtn.setCursor(Cursors.HAND)
         self.close()
 

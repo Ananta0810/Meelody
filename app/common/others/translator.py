@@ -1,10 +1,11 @@
 import json
 import os.path
 
-from PyQt5.QtCore import QObject
+from PyQt5.QtCore import QObject, pyqtSignal
 
 
 class Translator(QObject):
+    changed = pyqtSignal()
 
     def __init__(self):
         super().__init__(None)
@@ -17,6 +18,8 @@ class Translator(QObject):
 
         with open(fileName, 'r', encoding='utf-8') as file:
             self.__dictionary = json.load(file)
+
+        self.changed.emit()
 
     def translate(self, key: str) -> str:
         section, key = key.split(".", maxsplit=1)

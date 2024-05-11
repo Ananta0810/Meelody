@@ -1,7 +1,7 @@
 from msilib.schema import Component
 from typing import final, Optional
 
-from app.common.others import appCenter
+from app.common.others import appCenter, translator
 from app.helpers.base import Strings
 from app.helpers.base.decorators import suppressException
 from app.helpers.stylesheets.translators import ClassNameTranslator
@@ -18,6 +18,9 @@ class Component:
         self._createThreads()
         self._connectSignalSlots()
         self._assignShortcuts()
+
+        translator.changed.connect(lambda: self._translateUI())
+        
         if autoChangeTheme:
             appCenter.themeChanged.connect(lambda light: self.applyLightMode() if light else self.applyDarkMode())
 
@@ -31,6 +34,9 @@ class Component:
         pass
 
     def _assignShortcuts(self) -> None:
+        pass
+
+    def _translateUI(self) -> None:
         pass
 
     @suppressException
