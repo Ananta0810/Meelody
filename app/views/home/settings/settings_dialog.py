@@ -21,8 +21,8 @@ class SettingsDialog(FramelessWindow):
         super().__init__()
         super()._initComponent()
 
-        self.__theme: ThemeMode = ThemeMode.SYSTEM
-        self.__selectTheme(ThemeMode.SYSTEM)
+        self.__theme: ThemeMode = appCenter.settings.theme
+        self.__selectTheme(self.__theme)
 
     def _createUI(self) -> None:
         super()._createUI()
@@ -86,9 +86,8 @@ class SettingsDialog(FramelessWindow):
         self._languageLayout.addLayout(self._languageLeftLayout)
         self._languageLayout.addWidget(self._languageDropdown, alignment=Qt.AlignRight | Qt.AlignCenter)
 
-        self._themeSection = StyleWidget()
-        self._themeSection.setClassName("border-b border-gray-25")
-        self._themeSection.setContentsMargins(0, 16, 0, 16)
+        self._themeSection = QWidget()
+        self._themeSection.setContentsMargins(0, 16, 0, 0)
 
         self._themeLayout = QVBoxLayout(self._themeSection)
         self._themeLayout.setSpacing(8)
@@ -176,9 +175,12 @@ class SettingsDialog(FramelessWindow):
         self._body.addWidget(self._themeSection)
 
         # ==================================== FOOTER ====================================
-        self._footer = QHBoxLayout()
-        self._footer.setSpacing(12)
-        self._footer.setContentsMargins(24, 0, 24, 12)
+        self._footer = StyleWidget()
+        self._footer.setClassName("border-t border-gray-25")
+
+        self._footerLayout = QHBoxLayout(self._footer)
+        self._footerLayout.setSpacing(12)
+        self._footerLayout.setContentsMargins(24, 12, 24, 12)
 
         self._cancelBtn = ActionButton()
         self._cancelBtn.setFont(Factory.createFont(family="Segoe UI Semibold", size=10))
@@ -190,15 +192,15 @@ class SettingsDialog(FramelessWindow):
         self._saveBtn.setClassName("rounded-4 text-white bg-primary-75 bg-primary py-8 px-24")
         self._saveBtn.setText("Save")
 
-        self._footer.addStretch(1)
-        self._footer.addWidget(self._cancelBtn)
-        self._footer.addWidget(self._saveBtn)
+        self._footerLayout.addStretch(1)
+        self._footerLayout.addWidget(self._cancelBtn)
+        self._footerLayout.addWidget(self._saveBtn)
 
         super().addLayout(self._titleBar)
         super().addSpacing(12)
         super().addLayout(self._body)
         super().addSpacing(8)
-        super().addLayout(self._footer)
+        super().addWidget(self._footer)
 
     def _connectSignalSlots(self) -> None:
         super()._connectSignalSlots()
@@ -239,6 +241,7 @@ class SettingsDialog(FramelessWindow):
         self._saveBtn.setCursor(Cursors.WAITING)
         appCenter.setTheme(self.__theme)
         self._saveBtn.setCursor(Cursors.HAND)
+        self.close()
 
 
 class ThemeButton(Cover):
