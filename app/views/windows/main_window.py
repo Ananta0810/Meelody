@@ -72,12 +72,6 @@ class MainWindow(TitleBarWindow, Component):
 
         self._minimizeBtn.clicked.connect(lambda: self.showMinimized())
 
-    def applyLightMode(self) -> None:
-        super().applyLightMode()
-
-    def applyDarkMode(self) -> None:
-        super().applyDarkMode()
-
     def show(self) -> None:
         super().show()
         self.moveToCenter()

@@ -28,9 +28,10 @@ class BaseDialog(FramelessWindow):
         self._titleBar = QWidget()
 
         self._titleBarLayout = QHBoxLayout(self._titleBar)
+        self._titleBarLayout.setContentsMargins(12, 12, 12, 0)
+
         self._titleBarLayout.addStretch(1)
         self._titleBarLayout.addWidget(self._btnClose)
-        self._titleBarLayout.setContentsMargins(12, 12, 12, 0)
 
         self._body = Box()
         self._body.setContentsMargins(4, 4, 4, 4)
