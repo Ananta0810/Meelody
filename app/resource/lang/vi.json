@@ -1,5 +1,6 @@
 {
   "DIALOG": {
+    "SUCCESS": "Thành công",
     "WARNING": "Cảnh báo",
     "CONTINUE": "Tiếp tục",
     "CLOSE": "Đóng",
@@ -52,5 +53,21 @@
     "HEADER.DOWNLOAD_BTN": "Tải nhạc",
     "HEADER.IMPORT_BTN": "Thêm nhạc",
     "HEADER.UPDATE_PLAYLIST_BTN": "Sửa danh sách"
+  },
+  "DOWNLOAD_DIALOG": {
+    "LABEL": "Tải nhạc Youtube",
+    "PLACE_HOLDER": "Nhập liên kết Youtube...",
+    "SEARCH_BTN": "Tìm kiếm",
+    "INVALID_URL": "Liên kết không hợp lệ.",
+    "NO_INTERNET": "Không có kết nối maạng",
+    "VIDEO_NOT_FOUND": "Không tìm thấy video.",
+    "INSERT_FAILED": "Có lỗi xảy ra trong quá trình lưu nhạc.",
+    "TITLE_LABEL": "Tiêu đề",
+    "ARTIST_LABEL": "Tác giả",
+    "DOWNLOAD_BTN": "Tải nhạc",
+    "VALIDATE.TITLE_BLANK": "Tiêu đề không được để trống.",
+    "VALIDATE.TITLE_LENGTH": "Tiêu đề cần có độ dài tối đa 128 kí tự",
+    "VALIDATE.TITLE_EXISTED": "Tiêu đề đã tồn tại. Xin hãy thử tiêu đề khác.",
+    "VALIDATE.ARTIST_LENGTH": "Tác giả cần có độ dài tối đa 64 kí tự"
   }
 }

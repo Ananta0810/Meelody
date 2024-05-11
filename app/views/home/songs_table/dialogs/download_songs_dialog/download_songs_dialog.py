@@ -8,7 +8,7 @@ from pytube import YouTube
 from pytube.exceptions import RegexMatchError
 
 from app.common.models import Song
-from app.common.others import appCenter
+from app.common.others import appCenter, translator
 from app.components.base import Cover, Factory, Input, ActionButton, CoverProps, Label
 from app.components.dialogs import BaseDialog, Dialogs
 from app.helpers.base import Strings
@@ -34,19 +34,19 @@ class DownloadSongsDialog(BaseDialog):
         self._header = Label()
         self._header.setFont(Factory.createFont(family="Segoe UI Semibold", size=16, bold=True))
         self._header.setAlignment(Qt.AlignCenter)
-        self._header.setText("Download Youtube Song")
         self._header.setClassName("text-black dark:text-white")
 
         self._input = Input()
         self._input.setFont(Factory.createFont(size=12))
         self._input.setFixedHeight(48)
-        self._input.setPlaceholderText("Enter youtube url...")
-        self._input.setClassName("px-12 rounded-4 border border-primary-12 bg-primary-4")
+        self._input.setClassName(
+            "px-12 rounded-4 border border-primary-12 bg-primary-4 disabled:bg-none disabled:border-none disabled:text-black",
+            "dark:border-white-[b33] dark:bg-white-12 dark:text-white dark:disabled:text-white",
+        )
 
         self._searchBtn = ActionButton()
         self._searchBtn.setFont(Factory.createFont(family="Segoe UI Semibold", size=10))
         self._searchBtn.setClassName("text-white rounded-4 bg-primary hover:bg-primary-[w125] py-8")
-        self._searchBtn.setText("Search")
 
         self._menu = DownloadSongsMenu()
         self._menu.setClassName("scroll/bg-primary-75 scroll/hover:bg-primary scroll/rounded-2")
@@ -69,6 +69,11 @@ class DownloadSongsDialog(BaseDialog):
         self._viewLayout.addWidget(self._menu)
 
         self.addWidget(self._mainView)
+
+    def _translateUI(self) -> None:
+        self._header.setText(translator.translate("DOWNLOAD_DIALOG.LABEL"))
+        self._input.setPlaceholderText(translator.translate("DOWNLOAD_DIALOG.PLACE_HOLDER"))
+        self._searchBtn.setText(translator.translate("DOWNLOAD_DIALOG.SEARCH_BTN"))
 
     def _connectSignalSlots(self) -> None:
         super()._connectSignalSlots()
@@ -94,12 +99,12 @@ class DownloadSongsDialog(BaseDialog):
             dialog.acceptDownload.connect(lambda yt, title, artist: self.__downloadSong(yt, title, artist))
             dialog.show()
         except RegexMatchError:
-            Dialogs.alert(header="Warning", message="Invalid youtube video url.")
+            Dialogs.alert(message=translator.translate("INVALID_URL"))
         except URLError:
-            Dialogs.alert(header="Warning", message="No internet connection available.")
+            Dialogs.alert(message=translator.translate("NO_INTERNET"))
         except Exception as e:
             Logger.error(e)
-            Dialogs.alert(header="Warning", message="Youtube video is not found.")
+            Dialogs.alert(message=translator.translate("VIDEO_NOT_FOUND"))
 
         self._searchBtn.setCursor(Cursors.HAND)
 
@@ -113,7 +118,7 @@ class DownloadSongsDialog(BaseDialog):
         try:
             appCenter.library.getSongs().insert(Song.fromFile(path, Strings.getFileBasename(path)))
         except:
-            Dialogs.alert(message="Somthing wrong while save song.")
+            Dialogs.alert(message=translator.translate("INSERT_FAILED"))
 
 
 class _SongInfoDialog(BaseDialog):
@@ -141,12 +146,10 @@ class _SongInfoDialog(BaseDialog):
         self._header.setFont(Factory.createFont(family="Segoe UI Semibold", size=16, bold=True))
         self._header.setClassName("text-black dark:text-white bg-none")
         self._header.setAlignment(Qt.AlignCenter)
-        self._header.setText("Download Song")
 
         self._titleLabel = Label()
         self._titleLabel.setFont(Factory.createFont(size=11))
         self._titleLabel.setClassName("text-black dark:text-white bg-none")
-        self._titleLabel.setText("Title")
 
         self._titleErrorLabel = Label()
         self._titleErrorLabel.setFont(Factory.createFont(size=11))
@@ -155,16 +158,21 @@ class _SongInfoDialog(BaseDialog):
 
         self._titleInput = Input()
         self._titleInput.setFont(Factory.createFont(size=12))
-        self._titleInput.setClassName("px-12 py-8 rounded-4 border border-primary-12 bg-primary-4")
+        self._titleInput.setClassName(
+            "px-12 py-4 rounded-4 border border-primary-12 bg-primary-4 disabled:bg-none disabled:border-none disabled:text-black",
+            "dark:border-white-[b33] dark:bg-white-12 dark:text-white dark:disabled:text-white",
+        )
 
         self._artistLabel = Label()
         self._artistLabel.setFont(Factory.createFont(size=11))
         self._artistLabel.setClassName("text-black dark:text-white bg-none")
-        self._artistLabel.setText("Artist")
 
         self._artistInput = Input()
         self._artistInput.setFont(Factory.createFont(size=12))
-        self._artistInput.setClassName("px-12 py-8 rounded-4 border border-primary-12 bg-primary-4")
+        self._artistInput.setClassName(
+            "px-12 py-4 rounded-4 border border-primary-12 bg-primary-4 disabled:bg-none disabled:border-none disabled:text-black",
+            "dark:border-white-[b33] dark:bg-white-12 dark:text-white dark:disabled:text-white",
+        )
 
         self._artistErrorLabel = Label()
         self._artistErrorLabel.setFont(Factory.createFont(size=11))
@@ -174,7 +182,6 @@ class _SongInfoDialog(BaseDialog):
         self._acceptBtn = ActionButton()
         self._acceptBtn.setFont(Factory.createFont(family="Segoe UI Semibold", size=11))
         self._acceptBtn.setClassName("text-white rounded-4 bg-primary-75 bg-primary py-8 disabled:bg-gray-10 disabled:text-gray")
-        self._acceptBtn.setText("Download")
 
         self._mainView = QWidget()
         self._mainView.setFixedWidth(480)
@@ -194,6 +201,12 @@ class _SongInfoDialog(BaseDialog):
         self._viewLayout.addWidget(self._acceptBtn)
 
         self.addWidget(self._mainView)
+
+    def _translateUI(self) -> None:
+        self._header.setText(translator.translate("DOWNLOAD_DIALOG.LABEL"))
+        self._artistLabel.setText(translator.translate("DOWNLOAD_DIALOG.TITLE_LABEL"))
+        self._titleLabel.setText(translator.translate("DOWNLOAD_DIALOG.ARTIST_LABEL"))
+        self._acceptBtn.setText(translator.translate("DOWNLOAD_DIALOG.DOWNLOAD_BTN"))
 
     def _connectSignalSlots(self) -> None:
         super()._connectSignalSlots()
@@ -216,17 +229,17 @@ class _SongInfoDialog(BaseDialog):
 
         if Strings.isBlank(title):
             self._titleErrorLabel.show()
-            self._titleErrorLabel.setText("Title should not be blank.")
+            self._titleErrorLabel.setText(translator.translate("DOWNLOAD_DIALOG.VALIDATE.TITLE_BLANK"))
             return False
 
         if len(title) > 128:
             self._titleErrorLabel.show()
-            self._titleErrorLabel.setText("Title should be less than 128 characters.")
+            self._titleErrorLabel.setText(translator.translate("DOWNLOAD_DIALOG.VALIDATE.TITLE_LENGTH"))
             return False
 
         if os.path.exists(f"library/{Strings.sanitizeFileName(title)}.mp3"):
             self._titleErrorLabel.show()
-            self._titleErrorLabel.setText("Title has already taken. Please try other title.")
+            self._titleErrorLabel.setText(translator.translate("DOWNLOAD_DIALOG.VALIDATE.TITLE_EXISTED"))
             return False
 
         self._titleErrorLabel.hide()
@@ -236,7 +249,7 @@ class _SongInfoDialog(BaseDialog):
         artist = self._artistInput.text().strip()
         if len(artist) > 64:
             self._artistErrorLabel.show()
-            self._artistErrorLabel.setText("Artist should be less than 64 characters.")
+            self._artistErrorLabel.setText(translator.translate("DOWNLOAD_DIALOG.VALIDATE.ARTIST_LENGTH"))
             return False
 
         self._artistErrorLabel.hide()

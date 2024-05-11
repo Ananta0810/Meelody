@@ -53,5 +53,21 @@
     "HEADER.DOWNLOAD_BTN": "Download songs",
     "HEADER.IMPORT_BTN": "Import songs",
     "HEADER.UPDATE_PLAYLIST_BTN": "Change playlist songs"
+  },
+  "DOWNLOAD_DIALOG": {
+    "LABEL": "Download Youtube Song",
+    "PLACE_HOLDER": "Enter Youtube url...",
+    "SEARCH_BTN": "Search",
+    "INVALID_URL": "Invalid youtube video url.",
+    "NO_INTERNET": "No internet connection available.",
+    "VIDEO_NOT_FOUND": "Youtube video is not found.",
+    "INSERT_FAILED": "Somthing wrong while save song.",
+    "TITLE_LABEL": "Title",
+    "ARTIST_LABEL": "Artist",
+    "DOWNLOAD_BTN": "Download Now",
+    "VALIDATE.TITLE_BLANK": "Title should not be blank.",
+    "VALIDATE.TITLE_LENGTH": "Title should be less than 128 characters.",
+    "VALIDATE.TITLE_EXISTED": "Title has already taken. Please try other title.",
+    "VALIDATE.ARTIST_LENGTH": "Artist should be less than 64 characters."
   }
 }
