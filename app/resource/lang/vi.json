@@ -32,5 +32,13 @@
   },
   "CURRENT_PLAYLIST": {
     "TRACKS": "Bản nhạc"
+  },
+  "SONGS_MENU": {
+    "HEADER.TRACK": "Bài hát",
+    "HEADER.ARTIST": "Tác giả",
+    "HEADER.LENGTH": "Thời lượng",
+    "HEADER.DOWNLOAD_BTN": "Tải nhạc",
+    "HEADER.IMPORT_BTN": "Thêm nhạc",
+    "HEADER.UPDATE_PLAYLIST_BTN": "Sửa danh sách"
   }
 }

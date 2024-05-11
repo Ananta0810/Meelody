@@ -32,5 +32,13 @@
   },
   "CURRENT_PLAYLIST": {
     "TRACKS": "TRACKS"
+  },
+  "SONGS_MENU": {
+    "HEADER.TRACK": "TRACK",
+    "HEADER.ARTIST": "ARTIST",
+    "HEADER.LENGTH": "LENGTH",
+    "HEADER.DOWNLOAD_BTN": "Download songs",
+    "HEADER.IMPORT_BTN": "Import songs",
+    "HEADER.UPDATE_PLAYLIST_BTN": "Edit playlist songs"
   }
 }

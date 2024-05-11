@@ -5,7 +5,7 @@ from PyQt5.QtWidgets import QWidget, QHBoxLayout, QFileDialog
 
 from app.common.models import Playlist
 from app.common.models.playlists import FavouritesPlaylist, Library
-from app.common.others import appCenter
+from app.common.others import appCenter, translator
 from app.components.base import Factory, EllipsisLabel, Component
 from app.components.dialogs import Dialogs
 from app.helpers.stylesheets import Paddings, Colors
@@ -22,10 +22,6 @@ class SongsTableHeader(QWidget, Component):
         super().__init__(parent)
         self._scrollBarWidth = 4
         self._initComponent()
-
-        self._trackLabel.setText("TRACK")
-        self._artistLabel.setText("ARTIST")
-        self._lengthLabel.setText("LENGTH")
 
     def _createUI(self) -> None:
         self.setAttribute(Qt.WA_StyledBackground, True)
@@ -87,6 +83,14 @@ class SongsTableHeader(QWidget, Component):
         self._mainLayout.addWidget(self._buttons)
 
         self._downloadDialog = None
+
+    def _translateUI(self) -> None:
+        self._trackLabel.setText(translator.translate("SONGS_MENU.HEADER.TRACK"))
+        self._artistLabel.setText(translator.translate("SONGS_MENU.HEADER.ARTIST"))
+        self._lengthLabel.setText(translator.translate("SONGS_MENU.HEADER.LENGTH"))
+        self._downloadSongsToLibraryBtn.setToolTip(translator.translate("SONGS_MENU.HEADER.DOWNLOAD_BTN"))
+        self._importSongsToLibraryBtn.setToolTip(translator.translate("SONGS_MENU.HEADER.IMPORT_BTN"))
+        self._selectSongsToPlaylistBtn.setToolTip(translator.translate("SONGS_MENU.HEADER.UPDATE_PLAYLIST_BTN"))
 
     def _connectSignalSlots(self) -> None:
         appCenter.currentPlaylistChanged.connect(lambda playlist: self.__showActionsToPlaylist(playlist))
