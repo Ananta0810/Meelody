@@ -22,6 +22,11 @@
     "FAVOURITES": "Nhạc yêu thích",
     "NEW_PLAYLIST_BTN": "Thêm danh sách nhạc",
     "NEW_PLAYLIST.ACCEPT_BTN": "Thêm",
-    "NEW_PLAYLIST.CHOOSE_COVER_BTN": "Chọn ảnh bìa"
+    "NEW_PLAYLIST.CHOOSE_COVER_BTN": "Chọn ảnh bìa",
+    "UPDATE_PLAYLIST.ACCEPT_BTN": "Sửa đổi",
+    "UPDATE_PLAYLIST.CHOOSE_COVER_BTN": "Chọn ảnh bìa",
+    "UPDATE_PLAYLIST.SAVE_FAILED_HEADER": "Sửa đổi thất bại",
+    "UPDATE_PLAYLIST.SAVE_FAILED_MSG": "Có lỗi xảy ra trong quá trình lưu danh sách. Xin hãy thử lại sau.",
+    "UPDATE_PLAYLIST.SAVE_FAILED_OK": "Đóng"
   }
 }
