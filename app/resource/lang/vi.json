@@ -13,6 +13,8 @@
     "TOOLTIP_LOVE_BTN": "Yêu thích",
     "TOOLTIP_UN_LOVE_BTN": "Bỏ yêu thích",
     "TOOLTIP_VOLUME_BTN": "Đổi âm lượng",
-    "TOOLTIP_TIMER_BTN": "Hẹn giờ dừng phát nhạc"
+    "TOOLTIP_TIMER_BTN": "Hẹn giờ dừng phát nhạc",
+    "TIMER_START_BTN": "Hẹn giờ",
+    "TIMER_STOP_BTN": "Ngưng hẹn giờ"
   }
 }

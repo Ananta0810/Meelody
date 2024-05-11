@@ -13,6 +13,8 @@
     "TOOLTIP_LOVE_BTN": "Love song",
     "TOOLTIP_UN_LOVE_BTN": "Unlove song",
     "TOOLTIP_VOLUME_BTN": "Change volume",
-    "TOOLTIP_TIMER_BTN": "Set timer"
+    "TOOLTIP_TIMER_BTN": "Set timer",
+    "TIMER_START_BTN": "Start Now",
+    "TIMER_STOP_BTN": "Cancel"
   }
 }

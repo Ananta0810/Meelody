@@ -5,7 +5,7 @@ from PyQt5.QtCore import Qt, QRegExp, QThread, QObject, pyqtSignal
 from PyQt5.QtGui import QRegExpValidator, QWheelEvent, QResizeEvent
 from PyQt5.QtWidgets import QWidget
 
-from app.common.others import musicPlayer
+from app.common.others import musicPlayer, translator
 from app.components.base import Cover, CoverProps, Input, Factory, ActionButton, Label
 from app.components.dialogs import BaseDialog
 from app.components.widgets import Box, FlexBox
@@ -65,13 +65,11 @@ class TimerDialog(BaseDialog):
         self._startBtn = ActionButton()
         self._startBtn.setFont(Factory.createFont(family="Segoe UI Semibold", size=10))
         self._startBtn.setClassName("text-white rounded-4 bg-primary-75 bg-primary py-8 disabled:bg-gray-10 disabled:text-gray")
-        self._startBtn.setText("Start Now")
         self._startBtn.setFixedWidth(320)
 
         self._stopBtn = ActionButton()
         self._stopBtn.setFont(Factory.createFont(family="Segoe UI Semibold", size=10))
         self._stopBtn.setClassName("text-white rounded-4 bg-danger-75 bg-danger py-8 ")
-        self._stopBtn.setText("Cancel")
         self._stopBtn.setFixedWidth(320)
 
         self._setupTimer = QWidget()
@@ -97,6 +95,10 @@ class TimerDialog(BaseDialog):
         self._titleBarLayout.setContentsMargins(12, 12, 12, 0)
         self._body.setContentsMargins(4, 4, 4, 12)
         self.addWidget(self._mainView)
+
+    def _translateUI(self) -> None:
+        self._startBtn.setText(translator.translate("MUSIC_PLAYER.TIMER_START_BTN"))
+        self._stopBtn.setText(translator.translate("MUSIC_PLAYER.TIMER_STOP_BTN"))
 
     def _createThreads(self) -> None:
         self._countDownThread = CountDownThread()
