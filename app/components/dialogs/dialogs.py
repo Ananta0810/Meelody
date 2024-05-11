@@ -2,11 +2,11 @@ from typing import Optional, final
 
 from PyQt5.QtCore import Qt, pyqtSignal
 from PyQt5.QtGui import QKeySequence, QResizeEvent
-from PyQt5.QtWidgets import QShortcut, QSizePolicy, QVBoxLayout
+from PyQt5.QtWidgets import QShortcut, QVBoxLayout, QHBoxLayout
 
+from app.common.others import translator
 from app.components.base import CoverProps, Cover, Factory, ActionButton, Label
 from app.components.dialogs import BaseDialog
-from app.components.widgets import FlexBox
 from app.components.windows import FramelessWindow
 from app.helpers.base import Numbers
 from app.resource.qt import Images
@@ -33,21 +33,20 @@ class _ConfirmDialog(FramelessWindow):
         self._message = Label()
         self._message.setFont(Factory.createFont(size=10))
         self._message.setClassName("text-black dark:text-white")
-        self._message.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Expanding)
 
         self._acceptBtn = ActionButton()
         self._acceptBtn.setFont(Factory.createFont(family="Segoe UI Semibold", size=10))
-        self._acceptBtn.setClassName("text-white rounded-4 bg-danger hover:bg-danger-[w120] py-8 px-24")
-        self._acceptBtn.setMinimumWidth(64)
+        self._acceptBtn.setClassName("text-white rounded-4 bg-danger hover:bg-danger-[w120] px-24")
+        self._acceptBtn.setFixedHeight(32)
 
         self._cancelBtn = ActionButton()
         self._cancelBtn.setFont(Factory.createFont(family="Segoe UI Semibold", size=10))
-        self._cancelBtn.setClassName("rounded-4 text-black border border-gray-40 hover:bg-black-8 py-8 px-24")
-        self._cancelBtn.setMinimumWidth(64)
+        self._cancelBtn.setClassName("rounded-4 text-black border border-gray-40 hover:bg-black-12 px-24")
+        self._cancelBtn.setFixedHeight(32)
 
-        self._buttonBox = FlexBox()
+        self._buttonBox = QHBoxLayout()
         self._buttonBox.setSpacing(12)
-        self._buttonBox.setAlignment(Qt.AlignRight)
+        self._buttonBox.addStretch(1)
         self._buttonBox.addWidget(self._acceptBtn)
         self._buttonBox.addWidget(self._cancelBtn)
 
@@ -55,6 +54,7 @@ class _ConfirmDialog(FramelessWindow):
         self._body.setAlignment(Qt.AlignLeft)
 
         self._body.addWidget(self._header)
+        self._body.addSpacing(8)
         self._body.addWidget(self._message)
         self._body.addSpacing(8)
         self._body.addLayout(self._buttonBox)
@@ -81,7 +81,8 @@ class _ConfirmDialog(FramelessWindow):
         self._cancelBtn.setText(cancelText)
 
         width = Numbers.clamp(self.sizeHint().width(), 480, 640)
-        self.setFixedSize(width, self.sizeHint().height())
+        self.setFixedWidth(width)
+        self._message.setMinimumHeight(self._message.sizeHint().height())
 
     def resizeEvent(self, event: QResizeEvent) -> None:
         super().resizeEvent(event)
@@ -165,37 +166,54 @@ class _AlertDialog(BaseDialog):
 class Dialogs:
 
     @staticmethod
-    def info(header: str, message: str, image: bytes = Images.SUCCESS, acceptText: str = "OK", onAccept: Optional[callable] = None):
+    def info(header: str,
+             message: str,
+             acceptText: Optional[str] = None,
+             image: bytes = Images.SUCCESS,
+             onAccept: Optional[callable] = None) -> None:
         dialog = _AlertDialog()
-        dialog.setInfo(image, header, message, acceptText, onAccept)
+        dialog.setInfo(image, header, message, acceptText or translator.translate("DIALOG.CLOSE"), onAccept)
         dialog.setState("info")
         dialog.show()
 
     @staticmethod
-    def success(message: str, header: str = "Succeed", image: bytes = Images.SUCCESS, acceptText: str = "OK", onAccept: Optional[callable] = None):
+    def success(message: str,
+                header: Optional[str] = None,
+                acceptText: Optional[str] = None,
+                image: bytes = Images.SUCCESS,
+                onAccept: Optional[callable] = None) -> None:
         dialog = _AlertDialog()
-        dialog.setInfo(image, header, message, acceptText, onAccept)
+        dialog.setInfo(image, header or translator.translate("DIALOG.SUCCESS"), message, acceptText or translator.translate("DIALOG.CLOSE"), onAccept)
         dialog.setState("success")
         dialog.show()
 
     @staticmethod
-    def alert(message: str, header: str = "Warning", image: bytes = Images.WARNING, acceptText: str = "OK", onAccept: Optional[callable] = None):
+    def alert(message: str,
+              header: Optional[str] = None,
+              acceptText: Optional[str] = None,
+              image: bytes = Images.WARNING,
+              onAccept: Optional[callable] = None) -> None:
         dialog = _AlertDialog()
-        dialog.setInfo(image, header, message, acceptText, onAccept)
+        dialog.setInfo(image, header or translator.translate("DIALOG.WARNING"), message, acceptText or translator.translate("DIALOG.CLOSE"), onAccept)
         dialog.setState("danger")
         dialog.show()
 
     @staticmethod
     def confirm(
         message: str,
-        header: str = "Warning",
-        acceptText: str = "OK",
-        cancelText: str = "Cancel",
+        header: Optional[str] = None,
+        acceptText: Optional[str] = None,
+        cancelText: Optional[str] = None,
         onAccept: Optional[callable] = None,
         onCancel: Optional[callable] = None,
-    ):
+    ) -> None:
         dialog = _ConfirmDialog()
-        dialog.setInfo(header, message, acceptText, cancelText)
+        dialog.setInfo(
+            header or translator.translate("DIALOG.WARNING"),
+            message,
+            acceptText or translator.translate("DIALOG.CONTINUE"),
+            cancelText or translator.translate("DIALOG.CANCEL")
+        )
 
         if onAccept is not None:
             dialog.confirmed.connect(lambda: onAccept())

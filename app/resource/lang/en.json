@@ -1,4 +1,11 @@
 {
+  "DIALOG": {
+    "SUCCESS": "Success",
+    "WARNING": "Warning",
+    "CONTINUE": "Continue",
+    "CLOSE": "Close",
+    "CANCEL": "Cancel"
+  },
   "MUSIC_PLAYER": {
     "SONG_TITLE": "Song Title",
     "SONG_ARTIST": "Song Artist",
@@ -20,6 +27,12 @@
   "PLAYLIST_CAROUSEL": {
     "LIBRARY": "Library",
     "FAVOURITES": "Favourites",
+    "FAVOURITES.EDIT_COVER_BTN": "Change cover",
+    "PLAYLIST.EDIT_BTN": "Edit playlist",
+    "PLAYLIST.DELETE_BTN": "Delete playlist",
+    "PLAYLIST.DELETE_CURRENT_PLAYLIST": "You can not delete current selecting playlist.",
+    "PLAYLIST.DELETE_CONFIRM_MESSAGE": "Are you sure want to delete this playlist? This action can not be reverted.",
+    "PLAYLIST.DELETE_CONFIRM_OK": "Delete",
     "TITLE_PLACEHOLDER": "Title...",
     "NEW_PLAYLIST_BTN": "New playlist",
     "NEW_PLAYLIST.ACCEPT_BTN": "Add playlist",
@@ -39,6 +52,6 @@
     "HEADER.LENGTH": "LENGTH",
     "HEADER.DOWNLOAD_BTN": "Download songs",
     "HEADER.IMPORT_BTN": "Import songs",
-    "HEADER.UPDATE_PLAYLIST_BTN": "Edit playlist songs"
+    "HEADER.UPDATE_PLAYLIST_BTN": "Change playlist songs"
   }
 }

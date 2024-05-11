@@ -1,4 +1,10 @@
 {
+  "DIALOG": {
+    "WARNING": "Cảnh báo",
+    "CONTINUE": "Tiếp tục",
+    "CLOSE": "Đóng",
+    "CANCEL": "Huỷ"
+  },
   "MUSIC_PLAYER": {
     "SONG_TITLE": "Tiêu đề",
     "SONG_ARTIST": "Tác giả",
@@ -20,6 +26,12 @@
   "PLAYLIST_CAROUSEL": {
     "LIBRARY": "Thư viện nhạc",
     "FAVOURITES": "Nhạc yêu thích",
+    "FAVOURITES.EDIT_COVER_BTN": "Đổi ảnh bỉa",
+    "PLAYLIST.EDIT_BTN": "Sửa đổi thông tin danh sách",
+    "PLAYLIST.DELETE_BTN": "Xoá danh sách",
+    "PLAYLIST.DELETE_CURRENT_PLAYLIST": "Bạn không thể xoá danh sách đang truy cập.",
+    "PLAYLIST.DELETE_CONFIRM_MESSAGE": "Bạn có muốn tiếp tục xoá danh sách này không? Tác vụ này sẽ không hoàn tác được.",
+    "PLAYLIST.DELETE_CONFIRM_OK": "Tiếp tục xoá",
     "TITLE_PLACEHOLDER": "Tiêu đề...",
     "NEW_PLAYLIST_BTN": "Thêm danh sách nhạc",
     "NEW_PLAYLIST.ACCEPT_BTN": "Thêm",

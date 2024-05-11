@@ -152,6 +152,7 @@ class FavouritePlaylistCard(PlaylistCard):
 
     def _translateUI(self) -> None:
         self._title.setText(translator.translate("PLAYLIST_CAROUSEL.FAVOURITES"))
+        self._editCoverBtn.setToolTip(translator.translate("PLAYLIST_CAROUSEL.FAVOURITES.EDIT_COVER_BTN"))
 
     def _connectSignalSlots(self) -> None:
         super()._connectSignalSlots()
@@ -197,6 +198,7 @@ class UserPlaylistCard(PlaylistCard):
         self.__playlist = playlist
         self.setInfo(playlist.getInfo())
         self.applyLightMode()
+        self._translateUI()
 
     def _createUI(self) -> None:
         super()._createUI()
@@ -221,6 +223,10 @@ class UserPlaylistCard(PlaylistCard):
         self._topLayout.addLayout(self._buttonsLayout)
         self._mainLayout.insertLayout(0, self._topLayout)
 
+    def _translateUI(self) -> None:
+        self._editBtn.setToolTip(translator.translate("PLAYLIST_CAROUSEL.PLAYLIST.EDIT_BTN"))
+        self._deleteBtn.setToolTip(translator.translate("PLAYLIST_CAROUSEL.PLAYLIST.DELETE_BTN"))
+
     def _connectSignalSlots(self) -> None:
         self.clicked.connect(lambda: self.__selectCurrentPlaylist())
         self._editBtn.clicked.connect(lambda: UpdatePlaylistDialog(self.__playlist).show())
@@ -240,11 +246,12 @@ class UserPlaylistCard(PlaylistCard):
 
     def __openDeletePlaylistConfirm(self) -> None:
         if appCenter.currentPlaylist.getInfo().getId() == self.__playlist.getInfo().getId():
-            Dialogs.alert("You can not delete current selecting playlist.")
+            Dialogs.alert(message=translator.translate("PLAYLIST_CAROUSEL.PLAYLIST.DELETE_CURRENT_PLAYLIST"))
             return
 
         Dialogs.confirm(
-            message="Are you sure want to delete this playlist. This action can not be reverted.",
+            message=translator.translate("PLAYLIST_CAROUSEL.PLAYLIST.DELETE_CONFIRM_MESSAGE"),
+            acceptText=translator.translate("PLAYLIST_CAROUSEL.PLAYLIST.DELETE_CONFIRM_OK"),
             onAccept=self.__deletePlaylist
         )
 
