@@ -1,3 +1,4 @@
+from enum import Enum
 from typing import Optional
 
 from PyQt5.QtCore import Qt, pyqtSignal
@@ -13,12 +14,20 @@ from app.helpers.stylesheets.translators import ClassNameTranslator
 from app.resource.qt import Icons, Images, Cursors
 
 
+class ThemeMode(Enum):
+    SYSTEM = "system"
+    LIGHT = "light"
+    DARK = "dark"
+
+
 class SettingsDialog(FramelessWindow):
 
     def __init__(self):
         super().__init__()
         super()._initComponent()
-        self.__selectTheme(self._systemModeBtn)
+
+        self.__theme: ThemeMode = ThemeMode.SYSTEM
+        self.__selectTheme(ThemeMode.SYSTEM)
 
     def _createUI(self) -> None:
         super()._createUI()
@@ -49,7 +58,7 @@ class SettingsDialog(FramelessWindow):
         self._body.setAlignment(Qt.AlignVCenter)
 
         self._languageSection = StyleWidget()
-        self._languageSection.setClassName("py-8 border-b border-gray-25")
+        self._languageSection.setClassName("border-b border-gray-25")
         self._languageSection.setContentsMargins(0, 16, 0, 16)
 
         self._languageLayout = QHBoxLayout(self._languageSection)
@@ -83,7 +92,7 @@ class SettingsDialog(FramelessWindow):
         self._languageLayout.addWidget(self._languageDropdown, alignment=Qt.AlignRight | Qt.AlignCenter)
 
         self._themeSection = StyleWidget()
-        self._themeSection.setClassName("py-8 border-b border-gray-25")
+        self._themeSection.setClassName("border-b border-gray-25")
         self._themeSection.setContentsMargins(0, 16, 0, 16)
 
         self._themeLayout = QVBoxLayout(self._themeSection)
@@ -106,28 +115,67 @@ class SettingsDialog(FramelessWindow):
         self._themeTypesLayout.setSpacing(12)
         self._themeTypesLayout.setContentsMargins(0, 0, 0, 0)
 
+        # System Mode
+        self._systemModeLayout = QVBoxLayout()
+        self._systemModeLayout.setSpacing(4)
+        self._systemModeLayout.setContentsMargins(0, 0, 0, 0)
+
         self._systemModeBtn = ThemeButton()
         self._systemModeBtn.setFixedWidth(160)
         self._systemModeBtn.setDefaultCover(CoverProps.fromBytes(Images.SYSTEM_MODE, width=156, height=90, radius=6))
         self._systemModeBtn.setClassName("rounded-8 border-2 border-white active:rounded-8 active:border-2 active:border-primary")
+
+        self._systemModeLabel = Label()
+        self._systemModeLabel.setFont(Factory.createFont(family="Segoe UI Semibold", size=10, bold=True))
+        self._systemModeLabel.setClassName("text-black dark:text-white")
+        self._systemModeLabel.setText("System")
+
+        self._systemModeLayout.addWidget(self._systemModeBtn)
+        self._systemModeLayout.addWidget(self._systemModeLabel)
+
+        # Light Mode
+        self._lightModeLayout = QVBoxLayout()
+        self._lightModeLayout.setSpacing(4)
+        self._lightModeLayout.setContentsMargins(0, 0, 0, 0)
 
         self._lightModeBtn = ThemeButton()
         self._lightModeBtn.setFixedWidth(160)
         self._lightModeBtn.setDefaultCover(CoverProps.fromBytes(Images.LIGHT_MODE, width=156, height=90, radius=6))
         self._lightModeBtn.setClassName("rounded-8 border-2 border-white active:rounded-8 active:border-2 active:border-primary")
 
+        self._lightModeLabel = Label()
+        self._lightModeLabel.setFont(Factory.createFont(family="Segoe UI Semibold", size=10, bold=True))
+        self._lightModeLabel.setClassName("text-black dark:text-white")
+        self._lightModeLabel.setText("Light Mode")
+
+        self._lightModeLayout.addWidget(self._lightModeBtn)
+        self._lightModeLayout.addWidget(self._lightModeLabel)
+
+        # Dark Mode
+        self._darkModeLayout = QVBoxLayout()
+        self._darkModeLayout.setSpacing(4)
+        self._darkModeLayout.setContentsMargins(0, 0, 0, 0)
+
         self._darkModeBtn = ThemeButton()
         self._darkModeBtn.setFixedWidth(160)
         self._darkModeBtn.setDefaultCover(CoverProps.fromBytes(Images.DARK_MODE, width=156, height=90, radius=6))
         self._darkModeBtn.setClassName("rounded-8 border-2 border-white active:rounded-8 active:border-2 active:border-primary")
 
+        self._darkModeLabel = Label()
+        self._darkModeLabel.setFont(Factory.createFont(family="Segoe UI Semibold", size=10, bold=True))
+        self._darkModeLabel.setClassName("text-black dark:text-white")
+        self._darkModeLabel.setText("Dark Mode")
+
+        self._darkModeLayout.addWidget(self._darkModeBtn)
+        self._darkModeLayout.addWidget(self._darkModeLabel)
+
         self._themeLayout.addWidget(self._themeTitleLabel)
         self._themeLayout.addWidget(self._themeDescriptionLabel)
         self._themeLayout.addLayout(self._themeTypesLayout)
 
-        self._themeTypesLayout.addWidget(self._systemModeBtn)
-        self._themeTypesLayout.addWidget(self._lightModeBtn)
-        self._themeTypesLayout.addWidget(self._darkModeBtn)
+        self._themeTypesLayout.addLayout(self._systemModeLayout)
+        self._themeTypesLayout.addLayout(self._lightModeLayout)
+        self._themeTypesLayout.addLayout(self._darkModeLayout)
 
         self._body.addWidget(self._languageSection)
         self._body.addWidget(self._themeSection)
@@ -159,14 +207,16 @@ class SettingsDialog(FramelessWindow):
 
     def _connectSignalSlots(self) -> None:
         super()._connectSignalSlots()
-        self._systemModeBtn.selected.connect(lambda: self.__selectTheme(self._systemModeBtn))
-        self._lightModeBtn.selected.connect(lambda: self.__selectTheme(self._lightModeBtn))
-        self._darkModeBtn.selected.connect(lambda: self.__selectTheme(self._darkModeBtn))
+        self._systemModeBtn.selected.connect(lambda: self.__selectTheme(ThemeMode.SYSTEM))
+        self._lightModeBtn.selected.connect(lambda: self.__selectTheme(ThemeMode.LIGHT))
+        self._darkModeBtn.selected.connect(lambda: self.__selectTheme(ThemeMode.DARK))
 
-    def __selectTheme(self, btn: 'ThemeButton') -> None:
-        self._systemModeBtn.setActive(btn == self._systemModeBtn)
-        self._lightModeBtn.setActive(btn == self._lightModeBtn)
-        self._darkModeBtn.setActive(btn == self._darkModeBtn)
+    def __selectTheme(self, theme: ThemeMode) -> None:
+        self.__theme = theme
+
+        self._systemModeBtn.setActive(theme == ThemeMode.SYSTEM)
+        self._lightModeBtn.setActive(theme == ThemeMode.LIGHT)
+        self._darkModeBtn.setActive(theme == ThemeMode.DARK)
 
     def resizeEvent(self, event: QResizeEvent) -> None:
         super().resizeEvent(event)
