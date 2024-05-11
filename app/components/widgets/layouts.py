@@ -53,6 +53,9 @@ class Box(QVBoxLayout):
         else:
             super().addStretch(stretch)
 
+    def addSpacing(self, size: int) -> None:
+        super().addSpacing(size)
+
     def clear(self) -> None:
         for i in reversed(range(self.count())):
             widgetToRemove = self.itemAt(i).widget()

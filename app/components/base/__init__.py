@@ -4,4 +4,5 @@ from .buttons import StateIcon, ActionButton, MultiStatesIconButton, ToggleIconB
 from .checkbox import CheckBox
 from .component_factory import Factory
 from .cover import Cover, CoverProps
+from .dropdown import DropDown
 from .labels import LabelWithDefaultText, EllipsisLabel, Input, Label
