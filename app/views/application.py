@@ -18,7 +18,7 @@ class Application:
         try:
             appCenter.exited.connect(lambda: musicPlayer.stop())
             appCenter.exited.connect(lambda: self._mainWindow.close())
-            appCenter.setLightMode(True)
+            appCenter.setTheme(appCenter.settings.theme)
         except:
             traceback.print_exc()
 

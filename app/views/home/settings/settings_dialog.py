@@ -1,10 +1,11 @@
-from enum import Enum
 from typing import Optional
 
 from PyQt5.QtCore import Qt, pyqtSignal
 from PyQt5.QtGui import QResizeEvent
 from PyQt5.QtWidgets import QHBoxLayout, QVBoxLayout, QWidget
 
+from app.common.models import ThemeMode
+from app.common.others import appCenter
 from app.components.base import Label, Factory, ActionButton, DropDown, Cover, CoverProps
 from app.components.events import ClickObserver
 from app.components.widgets import StyleWidget
@@ -12,12 +13,6 @@ from app.components.windows import FramelessWindow
 from app.helpers.stylesheets import Colors, Paddings
 from app.helpers.stylesheets.translators import ClassNameTranslator
 from app.resource.qt import Icons, Images, Cursors
-
-
-class ThemeMode(Enum):
-    SYSTEM = "system"
-    LIGHT = "light"
-    DARK = "dark"
 
 
 class SettingsDialog(FramelessWindow):
@@ -36,9 +31,9 @@ class SettingsDialog(FramelessWindow):
         self.setClassName("rounded-12 bg-white dark:bg-dark")
 
         # ==================================== TITLE BAR ====================================
-        self._btnClose = Factory.createIconButton(Icons.MEDIUM, Paddings.RELATIVE_50)
-        self._btnClose.setLightModeIcon(Icons.CLOSE.withColor(Colors.GRAY))
-        self._btnClose.setClassName("bg-none hover:bg-gray-12 rounded-8")
+        self._closeBtn = Factory.createIconButton(Icons.MEDIUM, Paddings.RELATIVE_50)
+        self._closeBtn.setLightModeIcon(Icons.CLOSE.withColor(Colors.GRAY))
+        self._closeBtn.setClassName("bg-none hover:bg-gray-12 rounded-8")
 
         self._dialogTitle = Label()
         self._dialogTitle.setFont(Factory.createFont(family="Segoe UI Semibold", size=14, bold=True))
@@ -50,7 +45,7 @@ class SettingsDialog(FramelessWindow):
 
         self._titleBar.addWidget(self._dialogTitle)
         self._titleBar.addStretch(1)
-        self._titleBar.addWidget(self._btnClose)
+        self._titleBar.addWidget(self._closeBtn)
 
         # ==================================== BODY ====================================
         self._body = QVBoxLayout()
@@ -123,7 +118,7 @@ class SettingsDialog(FramelessWindow):
         self._systemModeBtn = ThemeButton()
         self._systemModeBtn.setFixedWidth(160)
         self._systemModeBtn.setDefaultCover(CoverProps.fromBytes(Images.SYSTEM_MODE, width=156, height=90, radius=6))
-        self._systemModeBtn.setClassName("rounded-8 border-2 border-white active:rounded-8 active:border-2 active:border-primary")
+        self._systemModeBtn.setClassName("rounded-8 border-2 border-transparent active:rounded-8 active:border-2 active:border-primary")
 
         self._systemModeLabel = Label()
         self._systemModeLabel.setFont(Factory.createFont(family="Segoe UI Semibold", size=10, bold=True))
@@ -141,7 +136,7 @@ class SettingsDialog(FramelessWindow):
         self._lightModeBtn = ThemeButton()
         self._lightModeBtn.setFixedWidth(160)
         self._lightModeBtn.setDefaultCover(CoverProps.fromBytes(Images.LIGHT_MODE, width=156, height=90, radius=6))
-        self._lightModeBtn.setClassName("rounded-8 border-2 border-white active:rounded-8 active:border-2 active:border-primary")
+        self._lightModeBtn.setClassName("rounded-8 border-2 border-transparent active:rounded-8 active:border-2 active:border-primary")
 
         self._lightModeLabel = Label()
         self._lightModeLabel.setFont(Factory.createFont(family="Segoe UI Semibold", size=10, bold=True))
@@ -159,7 +154,7 @@ class SettingsDialog(FramelessWindow):
         self._darkModeBtn = ThemeButton()
         self._darkModeBtn.setFixedWidth(160)
         self._darkModeBtn.setDefaultCover(CoverProps.fromBytes(Images.DARK_MODE, width=156, height=90, radius=6))
-        self._darkModeBtn.setClassName("rounded-8 border-2 border-white active:rounded-8 active:border-2 active:border-primary")
+        self._darkModeBtn.setClassName("rounded-8 border-2 border-transparent active:rounded-8 active:border-2 active:border-primary")
 
         self._darkModeLabel = Label()
         self._darkModeLabel.setFont(Factory.createFont(family="Segoe UI Semibold", size=10, bold=True))
@@ -207,9 +202,14 @@ class SettingsDialog(FramelessWindow):
 
     def _connectSignalSlots(self) -> None:
         super()._connectSignalSlots()
+
         self._systemModeBtn.selected.connect(lambda: self.__selectTheme(ThemeMode.SYSTEM))
         self._lightModeBtn.selected.connect(lambda: self.__selectTheme(ThemeMode.LIGHT))
         self._darkModeBtn.selected.connect(lambda: self.__selectTheme(ThemeMode.DARK))
+
+        self._closeBtn.clicked.connect(lambda: self.close())
+        self._cancelBtn.clicked.connect(lambda: self.close())
+        self._saveBtn.clicked.connect(lambda: self.__saveChanges())
 
     def __selectTheme(self, theme: ThemeMode) -> None:
         self.__theme = theme
@@ -234,6 +234,11 @@ class SettingsDialog(FramelessWindow):
         self.applyTheme()
         self.moveToCenter()
         super().show()
+
+    def __saveChanges(self) -> None:
+        self._saveBtn.setCursor(Cursors.WAITING)
+        appCenter.setTheme(self.__theme)
+        self._saveBtn.setCursor(Cursors.HAND)
 
 
 class ThemeButton(Cover):

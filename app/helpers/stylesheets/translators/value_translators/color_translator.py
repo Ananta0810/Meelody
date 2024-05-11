@@ -15,6 +15,7 @@ _VARIANTS: dict[str, Color] = {
     "black": Colors.BLACK,
     "gray": Colors.GRAY,
     "none": Colors.NONE,
+    "transparent": Colors.NONE,
 }
 
 _CONTRAST_BACKGROUNDS: dict[str, Color] = {
