@@ -16,5 +16,12 @@
     "TOOLTIP_TIMER_BTN": "Set timer",
     "TIMER_START_BTN": "Start Now",
     "TIMER_STOP_BTN": "Cancel"
+  },
+  "PLAYLIST_CAROUSEL": {
+    "LIBRARY": "Library",
+    "FAVOURITES": "Favourites",
+    "NEW_PLAYLIST_BTN": "New playlist",
+    "NEW_PLAYLIST.ACCEPT_BTN": "Add playlist",
+    "NEW_PLAYLIST.CHOOSE_COVER_BTN": "Choose cover"
   }
 }

@@ -8,8 +8,8 @@ from PyQt5.QtWidgets import QWidget, QVBoxLayout, QHBoxLayout, QFileDialog
 
 from app.common.models import Playlist
 from app.common.models.playlists import FavouritesPlaylist, Library
-from app.common.others import appCenter
-from app.components.base import Cover, LabelWithDefaultText, Factory, CoverProps
+from app.common.others import appCenter, translator
+from app.components.base import Cover, Factory, CoverProps, EllipsisLabel
 from app.components.dialogs import Dialogs
 from app.components.widgets import ExtendableStyleWidget
 from app.helpers.base import Bytes, Lists
@@ -39,8 +39,7 @@ class PlaylistCard(ExtendableStyleWidget):
         self._cover.setDefaultCover(self._toCoverProps(Images.DEFAULT_PLAYLIST_COVER))
         self._cover.setAnimation(duration=250, start=1.0, end=1.1, onValueChanged=self._cover.zoom)
 
-        self._title = LabelWithDefaultText(autoChangeTheme=False)
-        self._title.enableEllipsis()
+        self._title = EllipsisLabel(autoChangeTheme=False)
         self._title.setFont(Factory.createFont(size=16, bold=True))
         self._title.setFixedWidth(self.width() - self._mainLayout.contentsMargins().left() - self._mainLayout.contentsMargins().right())
         self._title.setClassName("text-black dark:text-white")
@@ -114,8 +113,11 @@ class LibraryPlaylistCard(PlaylistCard):
     def __init__(self, parent: Optional[QWidget] = None):
         super().__init__(parent)
         super()._initComponent()
-        self._title.setText("Library")
         super().setCover(Images.DEFAULT_PLAYLIST_COVER)
+
+    def _translateUI(self) -> None:
+        self._title.setText(translator.translate("PLAYLIST_CAROUSEL.LIBRARY"))
+        super()._translateUI()
 
     def _connectSignalSlots(self) -> None:
         super()._connectSignalSlots()
@@ -139,8 +141,6 @@ class FavouritePlaylistCard(PlaylistCard):
     def _createUI(self) -> None:
         super()._createUI()
 
-        self._title.setText("Favourite")
-
         self._editCoverBtn = Factory.createIconButton(size=Icons.MEDIUM, padding=Paddings.RELATIVE_50)
         self._editCoverBtn.setLightModeIcon(Icons.IMAGE.withColor(Colors.WHITE))
         self._editCoverBtn.setClassName("rounded-full bg-primary hover:bg-primary-[w120]")
@@ -151,6 +151,9 @@ class FavouritePlaylistCard(PlaylistCard):
         self._topLayout.addWidget(self._editCoverBtn)
 
         self._mainLayout.insertLayout(0, self._topLayout)
+
+    def _translateUI(self) -> None:
+        self._title.setText(translator.translate("PLAYLIST_CAROUSEL.FAVOURITES"))
 
     def _connectSignalSlots(self) -> None:
         super()._connectSignalSlots()
@@ -199,8 +202,6 @@ class UserPlaylistCard(PlaylistCard):
 
     def _createUI(self) -> None:
         super()._createUI()
-        self._title.setDefaultText("New Playlist")
-
         self._editBtn = Factory.createIconButton(size=Icons.MEDIUM, padding=Paddings.RELATIVE_50)
         self._editBtn.setLightModeIcon(Icons.EDIT.withColor(Colors.WHITE))
         self._editBtn.setClassName("rounded-full bg-primary hover:bg-primary-[w120]")

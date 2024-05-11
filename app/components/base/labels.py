@@ -10,14 +10,14 @@ from app.helpers.base import Strings
 
 class EllipsisLabel(QLabel, Component):
 
-    def __init__(self, parent: Optional[QWidget] = None):
+    def __init__(self, parent: Optional[QWidget] = None, autoChangeTheme: bool = True):
         super().__init__(parent)
 
         self.__text: str = ""
         self.__ellipsis: bool = True
         self.enableEllipsis(True)
 
-        super()._initComponent()
+        super()._initComponent(autoChangeTheme)
 
     def enableEllipsis(self, a0: bool = True) -> None:
         self.__ellipsis = a0
@@ -43,6 +43,9 @@ class EllipsisLabel(QLabel, Component):
     def text(self) -> str:
         return self.__text
 
+    def ellipsisText(self) -> str:
+        return QFontMetrics(self.font()).elidedText(self.__text, Qt.ElideRight, self.width())
+
 
 class Label(QLabel, Component):
 
@@ -57,7 +60,7 @@ class LabelWithDefaultText(QLabel, Component):
     def __init__(self, parent: Optional[QWidget] = None, autoChangeTheme: bool = True):
         super().__init__(parent)
 
-        self.__defaultText: str = ""
+        self.__defaultText: Optional[str] = None
         self.__displayingText: str = ""
         self.__ellipsis: bool = True
 
@@ -76,7 +79,12 @@ class LabelWithDefaultText(QLabel, Component):
         self.setText(self.__displayingText)
 
     def setText(self, text: str) -> None:
-        self.__displayingText = text or self.__defaultText
+        if Strings.isBlank(text):
+            super().setText("")
+            self.__displayingText = ""
+            return
+
+        self.__displayingText = text or self.__defaultText or ""
         if self.__ellipsis:
             metrics = QFontMetrics(self.font())
             displayTextWithDot = metrics.elidedText(text, Qt.ElideRight, self.width())
@@ -91,7 +99,7 @@ class LabelWithDefaultText(QLabel, Component):
         return QFontMetrics(self.font()).elidedText(self.__displayingText, Qt.ElideRight, self.width())
 
     def setDefaultText(self, text: str) -> None:
-        if Strings.isBlank(self.text()) or self.__defaultText == self.text():
+        if self.__defaultText is None or self.__defaultText == self.text():
             self.setText(text)
 
         self.__defaultText = text

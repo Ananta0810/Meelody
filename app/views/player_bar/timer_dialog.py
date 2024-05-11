@@ -35,7 +35,7 @@ class TimerDialog(BaseDialog):
         self._minuteInput.setFont(Factory.createFont(size=16, bold=True))
         self._minuteInput.setClassName(
             "px-12 rounded-4 border border-primary-12 bg-primary-4 disabled:bg-none disabled:border-none disabled:text-black",
-            "dark:border-white-12 dark:bg-white-4 dark:text-white dark:disabled:text-white",
+            "dark:border-white-[b33] dark:bg-white-12 dark:text-white dark:disabled:text-white",
         )
         self._minuteInput.setText("01")
 
@@ -45,7 +45,7 @@ class TimerDialog(BaseDialog):
         self._secondInput.setFont(Factory.createFont(size=16, bold=True))
         self._secondInput.setClassName(
             "px-12 rounded-4 border border-primary-12 bg-primary-4 disabled:bg-none disabled:border-none disabled:text-black",
-            "dark:border-white-12 dark:bg-white-4 dark:text-white dark:disabled:text-white",
+            "dark:border-white-[b33] dark:bg-white-12 dark:text-white dark:disabled:text-white",
         )
         self._secondInput.setText("00")
 

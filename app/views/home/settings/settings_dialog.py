@@ -29,6 +29,13 @@ class SettingsDialog(FramelessWindow):
 
         self.__selectTheme(self.__theme)
 
+        currentLanguageIndex = 0
+        for index, language in enumerate(self.__languages.values()):
+            if language == appCenter.settings.language:
+                currentLanguageIndex = index
+
+        self._languageDropdown.setCurrentIndex(currentLanguageIndex)
+
     def _createUI(self) -> None:
         super()._createUI()
 

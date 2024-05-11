@@ -16,5 +16,12 @@
     "TOOLTIP_TIMER_BTN": "Hẹn giờ dừng phát nhạc",
     "TIMER_START_BTN": "Hẹn giờ",
     "TIMER_STOP_BTN": "Ngưng hẹn giờ"
+  },
+  "PLAYLIST_CAROUSEL": {
+    "LIBRARY": "Thư viện nhạc",
+    "FAVOURITES": "Nhạc yêu thích",
+    "NEW_PLAYLIST_BTN": "Thêm danh sách nhạc",
+    "NEW_PLAYLIST.ACCEPT_BTN": "Thêm",
+    "NEW_PLAYLIST.CHOOSE_COVER_BTN": "Chọn ảnh bìa"
   }
 }

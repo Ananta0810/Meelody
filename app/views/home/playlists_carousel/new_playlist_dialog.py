@@ -9,7 +9,7 @@ from PyQt5.QtWidgets import QWidget, QShortcut, QFileDialog
 
 from app.common.exceptions import StorageException
 from app.common.models.playlists import UserPlaylist
-from app.common.others import appCenter
+from app.common.others import appCenter, translator
 from app.components.base import Cover, CoverProps, Factory, Input, ActionButton
 from app.components.dialogs import BaseDialog, Dialogs
 from app.components.widgets import Box
@@ -39,13 +39,15 @@ class NewPlaylistDialog(BaseDialog):
         self._titleInput = Input()
         self._titleInput.setFont(Factory.createFont(size=12))
         self._titleInput.setFixedSize(320, 48)
-        self._titleInput.setClassName("px-12 rounded-4 border border-primary-12 bg-primary-4")
+        self._titleInput.setClassName(
+            "px-12 rounded-4 border border-primary-12 bg-primary-4 text-black",
+            "dark:border dark:border-white-[b33] dark:bg-white-12 dark:text-white"
+        )
         self._titleInput.setPlaceholderText("Name...")
 
         self._acceptBtn = ActionButton()
         self._acceptBtn.setFont(Factory.createFont(family="Segoe UI Semibold", size=10))
         self._acceptBtn.setClassName("text-white rounded-4 bg-primary-75 bg-primary py-8 disabled:bg-gray-10 disabled:text-gray")
-        self._acceptBtn.setText("Add Playlist")
         self._acceptBtn.setDisabled(True)
 
         self._mainView = QWidget()
@@ -64,15 +66,10 @@ class NewPlaylistDialog(BaseDialog):
         self._editCoverBtn = ActionButton(self._mainView)
         self._editCoverBtn.setFont(Factory.createFont(family="Segoe UI Semibold", size=9))
         self._editCoverBtn.setClassName("text-white rounded-4 bg-primary-75 bg-primary py-8")
-        self._editCoverBtn.setText("Choose cover")
 
-    def resizeEvent(self, event: QResizeEvent) -> None:
-        super().resizeEvent(event)
-        margin = self._mainView.contentsMargins()
-        self._editCoverBtn.move(
-            self._cover.x() + self._cover.width() - self._editCoverBtn.width() - 8 + margin.right(),
-            self._cover.y() + 8 + margin.top(),
-        )
+    def _translateUI(self) -> None:
+        self._acceptBtn.setText(translator.translate("PLAYLIST_CAROUSEL.NEW_PLAYLIST.ACCEPT_BTN"))
+        self._editCoverBtn.setText(translator.translate("PLAYLIST_CAROUSEL.NEW_PLAYLIST.CHOOSE_COVER_BTN"))
 
     def _connectSignalSlots(self) -> None:
         super()._connectSignalSlots()
@@ -84,6 +81,14 @@ class NewPlaylistDialog(BaseDialog):
         super()._assignShortcuts()
         acceptShortcut = QShortcut(QKeySequence(Qt.Key_Return), self._acceptBtn)
         acceptShortcut.activated.connect(self._acceptBtn.click)
+
+    def resizeEvent(self, event: QResizeEvent) -> None:
+        super().resizeEvent(event)
+        margin = self._mainView.contentsMargins()
+        self._editCoverBtn.move(
+            self._cover.x() + self._cover.width() - self._editCoverBtn.width() - 8 + margin.right(),
+            self._cover.y() + 8 + margin.top(),
+        )
 
     def __checkValid(self) -> None:
         titleValid = 3 <= len(self._titleInput.text().strip()) <= 64
