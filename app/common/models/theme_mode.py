@@ -17,7 +17,3 @@ class ThemeMode(Enum):
             return ThemeMode.DARK
 
         return ThemeMode.SYSTEM
-
-    @staticmethod
-    def systemTheme() -> bool:
-        return True
