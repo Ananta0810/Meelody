@@ -3,73 +3,62 @@ from typing import Optional
 from PyQt5.QtCore import Qt
 from PyQt5.QtWidgets import QComboBox, QWidget, QStyledItemDelegate
 
-from app.components.base import Component
+from app.resource.qt import Cursors
 
 
-class DropDown(QComboBox, Component):
+class DropDown(QComboBox):
 
     def __init__(self, parent: Optional[QWidget] = None) -> None:
         super().__init__(parent)
+
         self.setItemDelegate(QStyledItemDelegate())
         self.view().window().setWindowFlags(Qt.Popup | Qt.FramelessWindowHint | Qt.NoDropShadowWindowHint)
         self.view().window().setAttribute(Qt.WA_TranslucentBackground)
+        self.setCursor(Cursors.HAND)
+        self.view().setCursor(Cursors.HAND)
 
         styleSheet = (
-            "QComboBox {"
-            + f"    padding: 2px;"
-            + f"    color: black;"
-            + f"    border: none;"
-            + f"    border-radius: 4px;"
-            + f"    background-color: rgb(255, 255, 255);"
-            + "}"
-            + "QComboBox:hover, QPushButton:hover{"
-            + f"    border-color: #4032ff"
-            + "}"
-            + "QComboBox QAbstractItemView"
-            + "{"
-            + "    margin-top: 4px;"
-            + f"    padding:  2px;"
-            + f"    border: none;"
-            + f"    border-radius: 4px;;"
-            + f"    background-color: rgb(255, 255, 255);"
-            + "}"
-            + "QComboBox::drop-down {"
-            + "    border:none;"
-            + "    background-color:TRANSPARENT;"
-            + f"    min-width: 4px;"
-            + " }"
-            + "QComboBox::down-arrow{"
-            + f"    right: 4px;"
-            + f"    width: 4px;"
-            + f"    height: 4px;"
-            # + f"    image: url('{dropDownArrowImage}');"
-            + "}"
-            + " /* Menu */"
-            + "QComboBox QAbstractItemView::item{"
-            + "    min-height: 32px;"
-            + f"    padding: 4px;"
-            + f"    border-radius: 4px;"
-            + f"    border: none;"
-            + f"    background-color: rgb(255, 255, 255);"
-            + f"    color: black;"
-              "}"
-            + "QComboBox QAbstractItemView::item:hover,QComboBox QAbstractItemView::item:focus{"
-            + f"    border: none;"
-            + f"    border-radius: 4px;"
-            + f"    background-color: rgb(255, 255, 255);"
-            + f"    color: black;"
-              "}"
-            + "QComboBox:editable {"
-            + "    background-color:TRANSPARENT;"
-            + "    border:none;"
-            + "}"
-            + "QComboBox QAbstractItemView{outline:0px;}"
-            + "QComboBox::indicator{"
-            + "    background-color:TRANSPARENT;"
-            + "    selection-background-color:TRANSPARENT;"
-            + "    color:TRANSPARENT;"
-            + "    selection-color:TRANSPARENT;"
-            + "}"
+            """
+            QComboBox {
+                padding: 8px 16px;
+                color: black;
+                border: 1px solid rgb(222, 222, 222);
+                border-radius: 4px;
+                background-color: rgb(255, 255, 255);
+            }
+            QComboBox:hover, QPushButton:hover {
+                border-color: rgb(192, 192, 192)
+            }
+            QComboBox::drop-down {
+                border: none;
+                background-color: transparent;
+                min-width: 4px;
+            }
+            QComboBox::down-arrow {
+                right: 8px;
+                width: 8px;
+                height: 8px;
+                image: url('app/resource/images/icons/chevron-down.png');
+            }
+            QComboBox QAbstractItemView {
+                margin-top: 4px;
+                padding: 4px;
+                border: 1px solid rgb(222, 222, 222);
+                border-radius: 4px;
+                background-color: rgb(255, 255, 255);
+                outline: 0px;
+            }
+            QComboBox QAbstractItemView::item {
+                padding: 4px 8px;
+                border-radius: 4px;
+                border: none;
+                background-color: rgb(255, 255, 255);
+                color: black;
+            }
+            QComboBox QAbstractItemView::item:hover,QComboBox QAbstractItemView::item:focus {
+                background-color: rgb(240, 240, 240);
+            }
+             """
         )
 
         self.setStyleSheet(styleSheet)

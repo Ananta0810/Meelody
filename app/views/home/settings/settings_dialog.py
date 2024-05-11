@@ -68,6 +68,7 @@ class SettingsDialog(FramelessWindow):
         self._languageLeftLayout.addWidget(self._languageDescriptionLabel)
 
         self._languageDropdown = DropDown()
+        self._languageDropdown.setMinimumWidth(200)
         self._languageDropdown.addItems(["English", "Vietnamese"])
 
         self._languageLayout.addLayout(self._languageLeftLayout)
