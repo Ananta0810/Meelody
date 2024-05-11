@@ -5,8 +5,8 @@ from app.views.windows import MainWindow
 class Application:
     def __init__(self):
         self.__createUI()
-        self.__configureDatabase()
         self.__configureInternational()
+        self.__configureDatabase()
         self.__configureMusicPlayer()
         self.__configureApplication()
 

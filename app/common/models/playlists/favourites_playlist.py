@@ -2,6 +2,7 @@ from contextlib import suppress
 
 from app.common.models.playlist import Playlist
 from app.common.models.song import Song
+from app.common.others.translator import translator
 from app.helpers.base import Bytes, Lists, SingletonMeta
 from .common_playlist import CommonPlaylist
 
@@ -9,7 +10,20 @@ from .common_playlist import CommonPlaylist
 class FavouritesPlaylist(Playlist, metaclass=SingletonMeta):
     class Info(CommonPlaylist.Info, metaclass=SingletonMeta):
         def __init__(self):
-            super().__init__(id="Favourites", name="Favourites", cover=Bytes.fromFile("configuration/playlists/favourite-cover.png"))
+            super().__init__(id="Favourites",
+                             name=translator.translate("PLAYLIST_CAROUSEL.FAVOURITES"),
+                             cover=Bytes.fromFile("configuration/playlists/favourite-cover.png"))
+
+            translator.changed.connect(lambda: self.__setName(translator.translate("PLAYLIST_CAROUSEL.FAVOURITES")))
+
+        def setName(self, name: str) -> None:
+            pass
+
+        def __setName(self, name: str) -> None:
+            self._name = name
+
+        def setCover(self, cover: bytes) -> None:
+            pass
 
     class Songs(CommonPlaylist.Songs):
 
@@ -24,7 +38,7 @@ class FavouritesPlaylist(Playlist, metaclass=SingletonMeta):
                 self.__disconnectToSong(song)
 
             self._songs = [song for song in self.__library.getSongs().getSongs() if song.isLoved()]
-            
+
             for song in self._songs:
                 self.__connectToSong(song)
 

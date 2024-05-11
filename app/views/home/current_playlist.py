@@ -4,7 +4,7 @@ from PyQt5.QtCore import Qt
 from PyQt5.QtWidgets import QWidget, QVBoxLayout, QHBoxLayout
 
 from app.common.models import Playlist
-from app.common.others import appCenter
+from app.common.others import appCenter, translator
 from app.components.base import LabelWithDefaultText, Factory, CoverProps, Component, CoverWithPlaceHolder
 from app.resource.qt import Images
 from app.views.home.songs_table import SongsTable
@@ -28,13 +28,11 @@ class _Info(QVBoxLayout, Component):
         self._titleLabel.setFixedWidth(320)
         self._titleLabel.setFont(Factory.createFont(size=20, bold=True))
         self._titleLabel.setClassName("text-black dark:text-white")
-        self._titleLabel.setText("Library")
 
         self._totalSongsLabel = LabelWithDefaultText()
         self._totalSongsLabel.setFixedWidth(320)
         self._totalSongsLabel.setFont(Factory.createFont(size=10))
         self._totalSongsLabel.setClassName("text-black dark:text-white")
-        self._totalSongsLabel.setText("0 TRACKS")
 
         self._labelsLayout = QVBoxLayout()
         self._labelsLayout.setSpacing(0)
@@ -44,13 +42,18 @@ class _Info(QVBoxLayout, Component):
         self.addWidget(self._cover)
         self.addLayout(self._labelsLayout)
 
+    def _translateUI(self) -> None:
+        playlist = appCenter.currentPlaylist
+        self._titleLabel.setText(playlist.getInfo().getName())
+        self._totalSongsLabel.setText(f"{playlist.getSongs().size()} {translator.translate('CURRENT_PLAYLIST.TRACKS')}")
+
     def _connectSignalSlots(self) -> None:
         appCenter.currentPlaylistChanged.connect(lambda playlist: self.__setPlaylist(playlist))
 
-    def __setPlaylist(self, playlist: Playlist.Songs) -> None:
-        self._cover.setCover(self.__createCover(playlist.getInfo().__cover))
-        self._titleLabel.setText(playlist.getInfo().__name)
-        self._totalSongsLabel.setText(f"{playlist.getSongs().size()} TRACKS")
+    def __setPlaylist(self, playlist: Playlist) -> None:
+        self._cover.setCover(self.__createCover(playlist.getInfo().getCover()))
+        self._titleLabel.setText(playlist.getInfo().getName())
+        self._totalSongsLabel.setText(f"{playlist.getSongs().size()} {translator.translate('CURRENT_PLAYLIST.TRACKS')}")
 
     @staticmethod
     def __createCover(data: bytes) -> Optional[CoverProps]:

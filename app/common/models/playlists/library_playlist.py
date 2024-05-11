@@ -2,14 +2,26 @@ from contextlib import suppress
 
 from app.common.models.playlist import Playlist
 from app.common.models.song import Song
+from app.common.others.translator import translator
 from app.helpers.base import returnOnFailed, SingletonMeta
 from .common_playlist import CommonPlaylist
 
 
 class Library(Playlist, metaclass=SingletonMeta):
     class Info(CommonPlaylist.Info, metaclass=SingletonMeta):
+
         def __init__(self):
             super().__init__(id="Library", name="Library")
+            translator.changed.connect(lambda: self.__setName(translator.translate("PLAYLIST_CAROUSEL.LIBRARY")))
+
+        def setName(self, name: str) -> None:
+            pass
+
+        def __setName(self, name: str) -> None:
+            self._name = name
+
+        def setCover(self, cover: bytes) -> None:
+            pass
 
     class Songs(CommonPlaylist.Songs):
 

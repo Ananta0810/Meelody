@@ -45,7 +45,6 @@ class UpdatePlaylistDialog(BaseDialog):
             "px-12 rounded-4 border border-primary-12 bg-primary-4 text-black",
             "dark:border dark:border-white-[b33] dark:bg-white-12 dark:text-white"
         )
-        self._titleInput.setPlaceholderText("Name...")
 
         self._acceptBtn = ActionButton()
         self._acceptBtn.setFont(Factory.createFont(family="Segoe UI Semibold", size=10))
@@ -70,6 +69,7 @@ class UpdatePlaylistDialog(BaseDialog):
         self._editCoverBtn.setClassName("text-white rounded-4 bg-primary-75 bg-primary py-8")
 
     def _translateUI(self) -> None:
+        self._titleInput.setPlaceholderText(translator.translate("PLAYLIST_CAROUSEL.TITLE_PLACEHOLDER"))
         self._acceptBtn.setText(translator.translate("PLAYLIST_CAROUSEL.UPDATE_PLAYLIST.ACCEPT_BTN"))
         self._editCoverBtn.setText(translator.translate("PLAYLIST_CAROUSEL.UPDATE_PLAYLIST.CHOOSE_COVER_BTN"))
 

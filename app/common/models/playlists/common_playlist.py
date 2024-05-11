@@ -8,34 +8,34 @@ from app.helpers.base import Lists, Strings
 class CommonPlaylist:
     class Info(Playlist.Info):
         def __init__(self, name: str = None, cover: bytes = None, coverPath: str = None, id: str | None = None):
-            self.__name: str = name
-            self.__cover: bytes = cover
-            self.__coverPath: str = coverPath
-            self.__id: str = id or str(Strings.randomId())
+            self._name: str = name
+            self._cover: bytes = cover
+            self._coverPath: str = coverPath
+            self._id: str = id or str(Strings.randomId())
 
         def __eq__(self, other: Playlist.Info) -> bool:
             return Strings.equals(self.getName(), other.getName()) and self.getCoverPath() == other.getCoverPath()
 
         def getId(self) -> str:
-            return self.__id
+            return self._id
 
         def getName(self) -> str:
-            return self.__name
+            return self._name
 
         def setName(self, name: str) -> None:
-            self.__name = name
+            self._name = name
 
         def setCover(self, cover: bytes) -> None:
-            self.__cover = cover
+            self._cover = cover
 
         def getCover(self) -> bytes:
-            return self.__cover
+            return self._cover
 
         def getCoverPath(self) -> str:
-            return self.__coverPath
+            return self._coverPath
 
         def clone(self) -> Playlist.Info:
-            return CommonPlaylist.Info(self.__name, self.__cover, self.__coverPath, self.__id)
+            return CommonPlaylist.Info(self._name, self._cover, self._coverPath, self._id)
 
     class Songs(Playlist.Songs):
 

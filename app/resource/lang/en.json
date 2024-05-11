@@ -20,6 +20,7 @@
   "PLAYLIST_CAROUSEL": {
     "LIBRARY": "Library",
     "FAVOURITES": "Favourites",
+    "TITLE_PLACEHOLDER": "Title...",
     "NEW_PLAYLIST_BTN": "New playlist",
     "NEW_PLAYLIST.ACCEPT_BTN": "Add playlist",
     "NEW_PLAYLIST.CHOOSE_COVER_BTN": "Choose cover",
@@ -28,5 +29,8 @@
     "UPDATE_PLAYLIST.SAVE_FAILED_HEADER": "Save playlist failed",
     "UPDATE_PLAYLIST.SAVE_FAILED_MSG": "Something wrong while updating your playlist. Please try to update playlist again.",
     "UPDATE_PLAYLIST.SAVE_FAILED_OK": "Close"
+  },
+  "CURRENT_PLAYLIST": {
+    "TRACKS": "TRACKS"
   }
 }
