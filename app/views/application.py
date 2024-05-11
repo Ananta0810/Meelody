@@ -24,8 +24,7 @@ class Application:
 
     @staticmethod
     def __configureDatabase():
-        # librarySongs = database.songs.load("library", withExtension="mp3")
-        librarySongs = []
+        librarySongs = database.songs.load("library", withExtension="mp3")
         playlists = database.playlists.load(librarySongs)
 
         appCenter.library.getSongs().setSongs(librarySongs)
