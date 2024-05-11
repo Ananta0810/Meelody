@@ -7,7 +7,7 @@ from PyQt5.QtGui import QKeySequence
 from PyQt5.QtWidgets import QHBoxLayout, QVBoxLayout, QWidget, QShortcut
 
 from app.common.models import Song
-from app.common.others import musicPlayer
+from app.common.others import musicPlayer, translator
 from app.components.base import Component, Cover, LabelWithDefaultText, Factory, StateIcon, CoverProps
 from app.components.dialogs import Dialogs
 from app.components.sliders import HorizontalSlider
@@ -27,8 +27,6 @@ class MusicPlayerBar(QWidget, Component):
 
         super()._initComponent()
 
-        self._titleLabel.setText("Song Title")
-        self._artistLabel.setText("Song Artist")
         self.setDefaultCover(Images.DEFAULT_SONG_COVER)
         self.setPlayingTime(0)
         self.setTotalTime(0)
@@ -214,6 +212,38 @@ class MusicPlayerBar(QWidget, Component):
 
     def _createThreads(self):
         self._playerTrackingThread = PlayerTrackingThread(self)
+
+    def _translateUI(self) -> None:
+        self._titleLabel.setDefaultText(translator.translate("MUSIC_PLAYER.SONG_TITLE"))
+        self._artistLabel.setDefaultText(translator.translate("MUSIC_PLAYER.SONG_ARTIST"))
+
+        self._prevSongBtn.setToolTip(translator.translate("MUSIC_PLAYER.TOOLTIP_PREV_BTN"))
+        self._nextSongBtn.setToolTip(translator.translate("MUSIC_PLAYER.TOOLTIP_NEXT_BTN"))
+        self._pauseSongBtn.setToolTip(translator.translate("MUSIC_PLAYER.TOOLTIP_PAUSE_BTN"))
+        self._playSongBtn.setToolTip(translator.translate("MUSIC_PLAYER.TOOLTIP_PLAY_BTN"))
+
+        self._loopBtn.setToolTips([
+            translator.translate("MUSIC_PLAYER.TOOLTIP_UN_LOOP_BTN"),
+            translator.translate("MUSIC_PLAYER.TOOLTIP_LOOP_BTN")
+        ])
+
+        self._shuffleBtn.setToolTips([
+            translator.translate("MUSIC_PLAYER.TOOLTIP_UN_SHUFFLE_BTN"),
+            translator.translate("MUSIC_PLAYER.TOOLTIP_SHUFFLE_BTN")
+        ])
+
+        self._loveBtn.setToolTips([
+            translator.translate("MUSIC_PLAYER.TOOLTIP_UN_LOVE_BTN"),
+            translator.translate("MUSIC_PLAYER.TOOLTIP_LOVE_BTN")
+        ])
+
+        self._volumeBtn.setToolTips([
+            translator.translate("MUSIC_PLAYER.TOOLTIP_VOLUME_BTN"),
+            translator.translate("MUSIC_PLAYER.TOOLTIP_VOLUME_BTN"),
+            translator.translate("MUSIC_PLAYER.TOOLTIP_VOLUME_BTN"),
+        ])
+
+        self._timerBtn.setToolTip(translator.translate("MUSIC_PLAYER.TOOLTIP_TIMER_BTN"))
 
     def _connectSignalSlots(self) -> None:
         self._volumeBtn.clicked.connect(lambda: self._volumeSlider.setVisible(not self._volumeSlider.isVisible()))

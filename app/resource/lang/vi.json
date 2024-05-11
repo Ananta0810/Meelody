@@ -1,6 +1,18 @@
 {
   "MUSIC_PLAYER": {
     "SONG_TITLE": "Tiêu đề",
-    "SONG_ARTIST": "Tác giả"
+    "SONG_ARTIST": "Tác giả",
+    "TOOLTIP_PREV_BTN": "Chơi bài nhạc phía trước",
+    "TOOLTIP_NEXT_BTN": "Chơi bài nhạc tiếp theo",
+    "TOOLTIP_PLAY_BTN": "Chơi bài hiện tại",
+    "TOOLTIP_PAUSE_BTN": "Dừng phát nhạc",
+    "TOOLTIP_LOOP_BTN": "Lặp bài hiện tại",
+    "TOOLTIP_UN_LOOP_BTN": "Bỏ lặp",
+    "TOOLTIP_SHUFFLE_BTN": "Trộn danh sách",
+    "TOOLTIP_UN_SHUFFLE_BTN": "Bỏ trộn danh sách",
+    "TOOLTIP_LOVE_BTN": "Yêu thích",
+    "TOOLTIP_UN_LOVE_BTN": "Bỏ yêu thích",
+    "TOOLTIP_VOLUME_BTN": "Đổi âm lượng",
+    "TOOLTIP_TIMER_BTN": "Hẹn giờ dừng phát nhạc"
   }
 }

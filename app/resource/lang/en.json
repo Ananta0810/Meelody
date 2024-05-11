@@ -1,6 +1,18 @@
 {
   "MUSIC_PLAYER": {
     "SONG_TITLE": "Song Title",
-    "SONG_ARTIST": "Song Artist"
+    "SONG_ARTIST": "Song Artist",
+    "TOOLTIP_PREV_BTN": "Previous song",
+    "TOOLTIP_NEXT_BTN": "Next song",
+    "TOOLTIP_PLAY_BTN": "Play song",
+    "TOOLTIP_PAUSE_BTN": "Pause song",
+    "TOOLTIP_LOOP_BTN": "Loop current song",
+    "TOOLTIP_UN_LOOP_BTN": "Remove loop",
+    "TOOLTIP_SHUFFLE_BTN": "Shuffle playlist",
+    "TOOLTIP_UN_SHUFFLE_BTN": "Shuffle playlist",
+    "TOOLTIP_LOVE_BTN": "Love song",
+    "TOOLTIP_UN_LOVE_BTN": "Unlove song",
+    "TOOLTIP_VOLUME_BTN": "Change volume",
+    "TOOLTIP_TIMER_BTN": "Set timer"
   }
 }

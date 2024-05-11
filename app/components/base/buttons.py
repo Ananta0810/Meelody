@@ -27,10 +27,12 @@ class ActionButton(QPushButton, Component):
 class StateIcon:
     lightModeIcon: AppIcon
     darkModeIcon: AppIcon
+    toolTip: str
 
-    def __init__(self, lightModeIcon: AppIcon, darkModeIcon: AppIcon = None) -> None:
+    def __init__(self, lightModeIcon: AppIcon, darkModeIcon: AppIcon = None, toolTip: str = None) -> None:
         self.lightModeIcon = lightModeIcon
         self.darkModeIcon = darkModeIcon or lightModeIcon
+        self.toolTip = toolTip
 
 
 class MultiStatesIconButton(QPushButton, Component):
@@ -51,6 +53,11 @@ class MultiStatesIconButton(QPushButton, Component):
     def setIcons(self, icons: list[StateIcon]) -> None:
         self._icons = icons
 
+    def setToolTips(self, toolTips: list[str]) -> None:
+        for index, icon in enumerate(self._icons):
+            self._icons[index].toolTip = toolTips[index]
+        self._changeButtonBasedOnState()
+
     def addChild(self, child: StateIcon) -> None:
         self._icons.append(child)
 
@@ -70,6 +77,7 @@ class MultiStatesIconButton(QPushButton, Component):
         button = self._icons[self._currentIndex]
         self.setClassName(self._currentClassName)
 
+        self.setToolTip(button.toolTip)
         if appCenter.isLightMode:
             self.setIcon(button.lightModeIcon)
             super().applyLightMode()
