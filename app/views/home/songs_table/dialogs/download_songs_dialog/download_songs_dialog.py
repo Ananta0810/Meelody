@@ -1,4 +1,5 @@
 import os
+from urllib.error import URLError
 
 from PyQt5.QtCore import Qt, pyqtSignal
 from PyQt5.QtGui import QKeySequence
@@ -73,6 +74,11 @@ class DownloadSongsDialog(BaseDialog):
         super()._connectSignalSlots()
         self._searchBtn.clicked.connect(lambda: self.__searchSong())
 
+    def _assignShortcuts(self) -> None:
+        super()._assignShortcuts()
+        acceptShortcut = QShortcut(QKeySequence(Qt.Key_Return), self._searchBtn)
+        acceptShortcut.activated.connect(lambda: self._searchBtn.click())
+
     def show(self) -> None:
         self._input.clear()
         self._searchBtn.setCursor(Cursors.HAND)
@@ -87,8 +93,10 @@ class DownloadSongsDialog(BaseDialog):
             dialog = _SongInfoDialog(ytb)
             dialog.acceptDownload.connect(lambda yt, title, artist: self.__downloadSong(yt, title, artist))
             dialog.show()
-        except RegexMatchError as e:
+        except RegexMatchError:
             Dialogs.alert(header="Warning", message="Invalid youtube video url.")
+        except URLError:
+            Dialogs.alert(header="Warning", message="No internet connection available.")
         except Exception as e:
             Logger.error(e)
             Dialogs.alert(header="Warning", message="Youtube video is not found.")

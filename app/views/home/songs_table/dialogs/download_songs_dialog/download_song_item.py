@@ -216,8 +216,13 @@ class DownloadSongItem(ExtendableStyleWidget):
             return
 
         if isinstance(exception, ResourceException):
-            self._descriptionLabel.setText("Convert failed. Song is broken.")
-            return
+            if exception.isExisted():
+                self._descriptionLabel.setText("Convert failed. Song is already existed.")
+                return
+
+            if exception.isBroken():
+                self._descriptionLabel.setText("Convert failed. Song is broken.")
+                return
 
         self._descriptionLabel.setText("Convert failed. Please try again.")
 
