@@ -33,11 +33,12 @@ class DownloadSongsMenu(StyleScrollArea):
         row = DownloadSongItem()
         row.setFixedHeight(64)
         row.applyTheme()
+
         self._widgets.append(row)
         self._mainLayout.addWidget(row)
         self._updateHeight(row)
         return row
 
-    def _updateHeight(self, row):
+    def _updateHeight(self, row) -> None:
         height_ = min(len(self._widgets), 3) * row.height()
         self.setFixedHeight(height_)

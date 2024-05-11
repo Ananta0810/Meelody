@@ -180,7 +180,6 @@ class UpdateImportSongDialog(BaseDialog):
 
         reader = SongReader(path)
 
-        print(reader.getTitle())
         self._titleInput.setText(reader.getTitle() or Strings.getFileBasename(path))
         self.__checkValid()
 

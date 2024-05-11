@@ -21,7 +21,7 @@ from app.helpers.base import Strings
 from app.helpers.builders import AudioEditor
 from app.helpers.others import Times, Files, Logger
 from app.helpers.stylesheets import Paddings, Colors
-from app.resource.qt import Images, Icons
+from app.resource.qt import Images, Icons, Cursors
 from app.views.threads import UpdateUIThread
 
 
@@ -70,11 +70,13 @@ class DownloadSongItem(ExtendableStyleWidget):
         self._failedIcon = Factory.createIconButton(size=Icons.SMALL, padding=Paddings.RELATIVE_25)
         self._failedIcon.setLightModeIcon(Icons.CLOSE.withColor(Colors.WHITE))
         self._failedIcon.setClassName("rounded-full bg-danger")
+        self._failedIcon.setCursor(Cursors.DEFAULT)
         self._failedIcon.hide()
 
         self._downloadLabel = Gif("app/resource/images/defaults/downloading.gif")
         self._downloadLabel.setFixedSize(48, 48)
         self._downloadLabel.setGifSize(32)
+        self._downloadLabel.setCursor(Cursors.DEFAULT)
         self._downloadLabel.hide()
 
         self._convertingLabel = Gif("app/resource/images/defaults/loading-bubble.gif")
