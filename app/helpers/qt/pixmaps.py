@@ -46,8 +46,8 @@ class Pixmaps:
     def scaleKeepingRatio(pixmap: QPixmap, smallerEdgeSize: int) -> QPixmap:
         temp: QPixmap = pixmap.copy()
         if pixmap.height() <= pixmap.width():
-            return temp.scaledToHeight(smallerEdgeSize, Qt.SmoothTransformation)
-        return temp.scaledToWidth(smallerEdgeSize, Qt.SmoothTransformation)
+            return temp.scaledToWidth(smallerEdgeSize, Qt.SmoothTransformation)
+        return temp.scaledToHeight(smallerEdgeSize, Qt.SmoothTransformation)
 
     @staticmethod
     def square(pixmap: QPixmap) -> QPixmap:

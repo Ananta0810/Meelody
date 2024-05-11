@@ -2,10 +2,11 @@ from PyQt5.QtCore import Qt
 from PyQt5.QtGui import QResizeEvent
 from PyQt5.QtWidgets import QHBoxLayout, QVBoxLayout
 
-from app.components.base import Label, Factory, ActionButton, DropDown
+from app.components.base import Label, Factory, ActionButton, DropDown, Cover, CoverProps
+from app.components.widgets import StyleWidget
 from app.components.windows import FramelessWindow
 from app.helpers.stylesheets import Colors, Paddings
-from app.resource.qt import Icons
+from app.resource.qt import Icons, Images
 
 
 class SettingsDialog(FramelessWindow):
@@ -16,8 +17,6 @@ class SettingsDialog(FramelessWindow):
 
     def _createUI(self) -> None:
         super()._createUI()
-
-        self.setFixedWidth(480)
 
         self.setWindowModality(Qt.ApplicationModal)
         self.setClassName("rounded-12 bg-white dark:bg-dark")
@@ -44,7 +43,11 @@ class SettingsDialog(FramelessWindow):
         self._body.setContentsMargins(24, 4, 24, 4)
         self._body.setAlignment(Qt.AlignVCenter)
 
-        self._languageLayout = QHBoxLayout()
+        self._languageSection = StyleWidget()
+        self._languageSection.setClassName("py-8 border-b border-gray-25")
+        self._languageSection.setContentsMargins(0, 16, 0, 16)
+
+        self._languageLayout = QHBoxLayout(self._languageSection)
         self._languageLayout.setSpacing(8)
         self._languageLayout.setContentsMargins(0, 0, 0, 0)
 
@@ -74,7 +77,52 @@ class SettingsDialog(FramelessWindow):
         self._languageLayout.addLayout(self._languageLeftLayout)
         self._languageLayout.addWidget(self._languageDropdown, alignment=Qt.AlignRight | Qt.AlignCenter)
 
-        self._body.addLayout(self._languageLayout)
+        self._themeSection = StyleWidget()
+        self._themeSection.setClassName("py-8 border-b border-gray-25")
+        self._themeSection.setContentsMargins(0, 16, 0, 16)
+
+        self._themeLayout = QVBoxLayout(self._themeSection)
+        self._themeLayout.setSpacing(8)
+        self._themeLayout.setContentsMargins(0, 0, 0, 0)
+
+        self._themeTitleLabel = Label()
+        self._themeTitleLabel.setFont(Factory.createFont(family="Segoe UI Semibold", size=11, bold=True))
+        self._themeTitleLabel.setClassName("text-black dark:text-white")
+        self._themeTitleLabel.setText("Theme")
+
+        self._themeDescriptionLabel = Label()
+        self._themeDescriptionLabel.setFont(Factory.createFont(size=10))
+        self._themeDescriptionLabel.setClassName("text-gray")
+        self._themeDescriptionLabel.setText("Select your application theme")
+        self._themeDescriptionLabel.setWordWrap(True)
+        self._themeDescriptionLabel.setMinimumWidth(self._themeDescriptionLabel.sizeHint().width())
+
+        self._themeTypesLayout = QHBoxLayout()
+        self._themeTypesLayout.setSpacing(12)
+        self._themeTypesLayout.setContentsMargins(0, 0, 0, 0)
+
+        self._systemModeBtn = Cover()
+        self._systemModeBtn.setFixedWidth(160)
+        self._systemModeBtn.setDefaultCover(CoverProps.fromBytes(Images.SYSTEM_MODE, width=160, height=90, radius=8, cropCenter=True))
+
+        self._lightModeBtn = Cover()
+        self._lightModeBtn.setFixedWidth(160)
+        self._lightModeBtn.setDefaultCover(CoverProps.fromBytes(Images.LIGHT_MODE, width=160, height=90, radius=8, cropCenter=True))
+
+        self._darkModeBtn = Cover()
+        self._darkModeBtn.setFixedWidth(160)
+        self._darkModeBtn.setDefaultCover(CoverProps.fromBytes(Images.DARK_MODE, width=160, height=90, radius=8, cropCenter=True))
+
+        self._themeLayout.addWidget(self._themeTitleLabel)
+        self._themeLayout.addWidget(self._themeDescriptionLabel)
+        self._themeLayout.addLayout(self._themeTypesLayout)
+
+        self._themeTypesLayout.addWidget(self._systemModeBtn)
+        self._themeTypesLayout.addWidget(self._lightModeBtn)
+        self._themeTypesLayout.addWidget(self._darkModeBtn)
+
+        self._body.addWidget(self._languageSection)
+        self._body.addWidget(self._themeSection)
 
         # ==================================== FOOTER ====================================
         self._footer = QHBoxLayout()

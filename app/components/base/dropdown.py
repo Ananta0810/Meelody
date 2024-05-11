@@ -22,12 +22,12 @@ class DropDown(QComboBox):
             QComboBox {
                 padding: 8px 16px;
                 color: black;
-                border: 1px solid rgb(222, 222, 222);
+                border: 1px solid rgb(230, 230, 230);
                 border-radius: 4px;
                 background-color: rgb(255, 255, 255);
             }
             QComboBox:hover, QPushButton:hover {
-                border-color: rgb(192, 192, 192)
+                background-color: rgb(248, 248, 248)
             }
             QComboBox::drop-down {
                 border: none;
@@ -43,7 +43,7 @@ class DropDown(QComboBox):
             QComboBox QAbstractItemView {
                 margin-top: 4px;
                 padding: 4px;
-                border: 1px solid rgb(222, 222, 222);
+                border: 1px solid rgb(230, 230, 230);
                 border-radius: 4px;
                 background-color: rgb(255, 255, 255);
                 outline: 0px;

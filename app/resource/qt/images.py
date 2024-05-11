@@ -14,3 +14,6 @@ class Images:
     DEFAULT_PLAYLIST_COVER: bytes = Bytes.fromFile("app/resource/images/defaults/playlist_cover.jpg")
     FAVOURITES_PLAYLIST_COVER: bytes = Bytes.fromFile("app/resource/images/defaults/playlist_favourite_cover.jpg")
     NULL_IMAGE: bytes = Bytes.fromFile("app/resource/images/defaults/playlist_cover.jpg")
+    SYSTEM_MODE: bytes = Bytes.fromFile("app/resource/images/defaults/light-dark-mode.png")
+    LIGHT_MODE: bytes = Bytes.fromFile("app/resource/images/defaults/light-mode.png")
+    DARK_MODE: bytes = Bytes.fromFile("app/resource/images/defaults/dark-mode.png")
