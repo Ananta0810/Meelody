@@ -2,7 +2,7 @@ import time
 from typing import Optional
 
 from PyQt5.QtCore import Qt, QRegExp, QThread, QObject, pyqtSignal
-from PyQt5.QtGui import QRegExpValidator, QWheelEvent
+from PyQt5.QtGui import QRegExpValidator, QWheelEvent, QResizeEvent
 from PyQt5.QtWidgets import QWidget
 
 from app.common.others import musicPlayer
@@ -34,7 +34,9 @@ class TimerDialog(BaseDialog):
         self._minuteInput.setAlignment(Qt.AlignCenter)
         self._minuteInput.setFont(Factory.createFont(size=16, bold=True))
         self._minuteInput.setClassName(
-            "px-12 rounded-4 border border-primary-12 bg-primary-4 disabled:bg-none disabled:border-none disabled:text-black")
+            "px-12 rounded-4 border border-primary-12 bg-primary-4 disabled:bg-none disabled:border-none disabled:text-black",
+            "dark:border-white-12 dark:bg-white-4 dark:text-white dark:disabled:text-white",
+        )
         self._minuteInput.setText("01")
 
         self._secondInput = TimerInput(59)
@@ -42,12 +44,14 @@ class TimerDialog(BaseDialog):
         self._secondInput.setAlignment(Qt.AlignCenter)
         self._secondInput.setFont(Factory.createFont(size=16, bold=True))
         self._secondInput.setClassName(
-            "px-12 rounded-4 border border-primary-12 bg-primary-4 disabled:bg-none disabled:border-none disabled:text-black")
+            "px-12 rounded-4 border border-primary-12 bg-primary-4 disabled:bg-none disabled:border-none disabled:text-black",
+            "dark:border-white-12 dark:bg-white-4 dark:text-white dark:disabled:text-white",
+        )
         self._secondInput.setText("00")
 
         self._separator = Label()
         self._separator.setFont(Factory.createFont(size=14, bold=True))
-        self._separator.setClassName("text-black bg-none")
+        self._separator.setClassName("text-black bg-none dark:text-white")
         self._separator.setText(":")
         self._separator.setFixedWidth(self._separator.sizeHint().width())
 
@@ -90,10 +94,9 @@ class TimerDialog(BaseDialog):
         self._viewLayout.addSpacing(8)
         self._viewLayout.addWidget(self._setupTimer, alignment=Qt.AlignHCenter)
 
-        self._body.setContentsMargins(4, 4, 4, 0)
+        self._titleBarLayout.setContentsMargins(12, 12, 12, 0)
+        self._body.setContentsMargins(4, 4, 4, 12)
         self.addWidget(self._mainView)
-
-        self.setFixedHeight(self.sizeHint().height())
 
     def _createThreads(self) -> None:
         self._countDownThread = CountDownThread()
@@ -113,8 +116,9 @@ class TimerDialog(BaseDialog):
         musicPlayer.played.connect(lambda: self.__continueCountDown())
         musicPlayer.paused.connect(lambda: self.__pauseCountDown())
 
-    def _assignShortcuts(self) -> None:
-        super()._assignShortcuts()
+    def resizeEvent(self, event: QResizeEvent) -> None:
+        super().resizeEvent(event)
+        self.setFixedHeight(self.sizeHint().height())
 
     def __checkValidTime(self) -> None:
         isInvalid = self.__getCountDownTime() < 60

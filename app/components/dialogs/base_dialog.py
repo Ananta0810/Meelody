@@ -23,7 +23,8 @@ class BaseDialog(FramelessWindow):
 
         self._btnClose = Factory.createIconButton(Icons.MEDIUM, Paddings.RELATIVE_50)
         self._btnClose.setLightModeIcon(Icons.CLOSE.withColor(Colors.GRAY))
-        self._btnClose.setClassName("bg-gray-12 hover:bg-gray-25 rounded-8")
+        self._btnClose.setDarkModeIcon(Icons.CLOSE.withColor(Colors.WHITE))
+        self._btnClose.setClassName("bg-gray-12 hover:bg-gray-25 rounded-8 dark:bg-gray-20 dark:hover:bg-gray-33")
 
         self._titleBar = QWidget()
 

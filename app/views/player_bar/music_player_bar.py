@@ -149,7 +149,7 @@ class MusicPlayerBar(QWidget, Component):
         self._loopBtn.setInactiveIcon(Icons.LOOP.withColor(Colors.GRAY), Icons.LOOP.withColor(Colors.GRAY))
         self._loopBtn.setClassName(
             "rounded-full bg-none active/hover:bg-primary-12 inactive/hover:bg-gray-12",
-            "dark:inactive/hover:bg-white-20"
+            "dark:inactive/hover:bg-white-20 dark:active/hover:bg-white-20"
         )
         self._loopBtn.setActive(False)
 
@@ -158,7 +158,7 @@ class MusicPlayerBar(QWidget, Component):
         self._shuffleBtn.setInactiveIcon(Icons.SHUFFLE.withColor(Colors.GRAY), Icons.SHUFFLE.withColor(Colors.GRAY))
         self._shuffleBtn.setClassName(
             "rounded-full bg-none active/hover:bg-primary-12 inactive/hover:bg-gray-12",
-            "dark:inactive/hover:bg-white-20"
+            "dark:inactive/hover:bg-white-20 dark:active/hover:bg-white-20"
         )
         self._shuffleBtn.setActive(False)
 

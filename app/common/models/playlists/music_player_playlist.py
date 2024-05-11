@@ -27,6 +27,9 @@ class MusicPlayerPlaylistSongs(Playlist.Songs):
             self.__shufflePlaylist = None
 
     def __updateShufflePlaylistSongs(self):
+        if self.__shufflePlaylist is None:
+            return
+        
         addedSongs = Lists.itemsInLeftOnly(self.__playlist.getSongs(), self.__shufflePlaylist.getSongs())
         removedSongs = set(Lists.itemsInLeftOnly(self.__playlist.getSongs(), self.__shufflePlaylist.getSongs()))
 
