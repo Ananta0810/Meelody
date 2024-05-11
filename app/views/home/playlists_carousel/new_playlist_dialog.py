@@ -78,15 +78,17 @@ class NewPlaylistDialog(BaseDialog):
         super()._connectSignalSlots()
         self._acceptBtn.clicked.connect(lambda: self._addPlaylist())
         self._editCoverBtn.clicked.connect(lambda: self.__onclickSelectCover())
-        self._titleInput.changed.connect(lambda title: self.__checkTitle(title))
+        self._titleInput.changed.connect(lambda title: self.__checkValid())
 
     def _assignShortcuts(self) -> None:
         super()._assignShortcuts()
         acceptShortcut = QShortcut(QKeySequence(Qt.Key_Return), self._acceptBtn)
         acceptShortcut.activated.connect(self._acceptBtn.click)
 
-    def __checkTitle(self, title: str) -> None:
-        self._acceptBtn.setDisabled(len(title.strip()) < 3)
+    def __checkValid(self) -> None:
+        titleValid = 3 <= len(self._titleInput.text().strip()) <= 64
+
+        self._acceptBtn.setDisabled(not titleValid)
 
     def __onclickSelectCover(self) -> None:
         path = QFileDialog.getOpenFileName(self, filter=FileType.IMAGE)[0]

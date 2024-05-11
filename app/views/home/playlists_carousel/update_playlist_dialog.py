@@ -92,10 +92,13 @@ class UpdatePlaylistDialog(BaseDialog):
 
     def __canUpdate(self):
         title = self._titleInput.text().strip()
-        if self.__coverData is None:
-            return len(title) >= 3 and title != self.__playlist.getInfo().getName()
+        coverUpdated = self.__coverData is not None
+        titleLengthValid = 3 <= len(title) <= 64
+
+        if coverUpdated:
+            return titleLengthValid
         else:
-            return len(title) >= 3
+            return titleLengthValid and title != self.__playlist.getInfo().getName()
 
     def __selectCover(self) -> None:
         path = QFileDialog.getOpenFileName(self, filter=FileType.IMAGE)[0]
