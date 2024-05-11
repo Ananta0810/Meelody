@@ -1,12 +1,16 @@
-from PyQt5.QtCore import Qt
+from typing import Optional
+
+from PyQt5.QtCore import Qt, pyqtSignal
 from PyQt5.QtGui import QResizeEvent
-from PyQt5.QtWidgets import QHBoxLayout, QVBoxLayout
+from PyQt5.QtWidgets import QHBoxLayout, QVBoxLayout, QWidget
 
 from app.components.base import Label, Factory, ActionButton, DropDown, Cover, CoverProps
+from app.components.events import ClickObserver
 from app.components.widgets import StyleWidget
 from app.components.windows import FramelessWindow
 from app.helpers.stylesheets import Colors, Paddings
-from app.resource.qt import Icons, Images
+from app.helpers.stylesheets.translators import ClassNameTranslator
+from app.resource.qt import Icons, Images, Cursors
 
 
 class SettingsDialog(FramelessWindow):
@@ -14,6 +18,7 @@ class SettingsDialog(FramelessWindow):
     def __init__(self):
         super().__init__()
         super()._initComponent()
+        self.__selectTheme(self._systemModeBtn)
 
     def _createUI(self) -> None:
         super()._createUI()
@@ -101,17 +106,20 @@ class SettingsDialog(FramelessWindow):
         self._themeTypesLayout.setSpacing(12)
         self._themeTypesLayout.setContentsMargins(0, 0, 0, 0)
 
-        self._systemModeBtn = Cover()
+        self._systemModeBtn = ThemeButton()
         self._systemModeBtn.setFixedWidth(160)
-        self._systemModeBtn.setDefaultCover(CoverProps.fromBytes(Images.SYSTEM_MODE, width=160, height=90, radius=8, cropCenter=True))
+        self._systemModeBtn.setDefaultCover(CoverProps.fromBytes(Images.SYSTEM_MODE, width=156, height=90, radius=6))
+        self._systemModeBtn.setClassName("rounded-8 border-2 border-white active:rounded-8 active:border-2 active:border-primary")
 
-        self._lightModeBtn = Cover()
+        self._lightModeBtn = ThemeButton()
         self._lightModeBtn.setFixedWidth(160)
-        self._lightModeBtn.setDefaultCover(CoverProps.fromBytes(Images.LIGHT_MODE, width=160, height=90, radius=8, cropCenter=True))
+        self._lightModeBtn.setDefaultCover(CoverProps.fromBytes(Images.LIGHT_MODE, width=156, height=90, radius=6))
+        self._lightModeBtn.setClassName("rounded-8 border-2 border-white active:rounded-8 active:border-2 active:border-primary")
 
-        self._darkModeBtn = Cover()
+        self._darkModeBtn = ThemeButton()
         self._darkModeBtn.setFixedWidth(160)
-        self._darkModeBtn.setDefaultCover(CoverProps.fromBytes(Images.DARK_MODE, width=160, height=90, radius=8, cropCenter=True))
+        self._darkModeBtn.setDefaultCover(CoverProps.fromBytes(Images.DARK_MODE, width=156, height=90, radius=6))
+        self._darkModeBtn.setClassName("rounded-8 border-2 border-white active:rounded-8 active:border-2 active:border-primary")
 
         self._themeLayout.addWidget(self._themeTitleLabel)
         self._themeLayout.addWidget(self._themeDescriptionLabel)
@@ -149,6 +157,17 @@ class SettingsDialog(FramelessWindow):
         super().addSpacing(8)
         super().addLayout(self._footer)
 
+    def _connectSignalSlots(self) -> None:
+        super()._connectSignalSlots()
+        self._systemModeBtn.selected.connect(lambda: self.__selectTheme(self._systemModeBtn))
+        self._lightModeBtn.selected.connect(lambda: self.__selectTheme(self._lightModeBtn))
+        self._darkModeBtn.selected.connect(lambda: self.__selectTheme(self._darkModeBtn))
+
+    def __selectTheme(self, btn: 'ThemeButton') -> None:
+        self._systemModeBtn.setActive(btn == self._systemModeBtn)
+        self._lightModeBtn.setActive(btn == self._lightModeBtn)
+        self._darkModeBtn.setActive(btn == self._darkModeBtn)
+
     def resizeEvent(self, event: QResizeEvent) -> None:
         super().resizeEvent(event)
         self.moveToCenter()
@@ -165,3 +184,26 @@ class SettingsDialog(FramelessWindow):
         self.applyTheme()
         self.moveToCenter()
         super().show()
+
+
+class ThemeButton(Cover):
+    selected = pyqtSignal()
+
+    def __init__(self, parent: Optional[QWidget] = None):
+        super().__init__(parent)
+        self.setCursor(Cursors.HAND)
+        self.__normalState = None
+        self.__activeState = None
+
+        ClickObserver(self).clicked.connect(lambda: self.selected.emit())
+
+    def setActive(self, active: bool) -> None:
+        if active:
+            self.setStyleSheet(self.__activeState)
+        else:
+            self.setStyleSheet(self.__normalState)
+
+    def setClassName(self, className: str) -> None:
+        theme, _ = ClassNameTranslator.translateElements(className, self)
+        self.__normalState = theme.getElement().state().toProps()
+        self.__activeState = theme.getElement().state("active").toProps()

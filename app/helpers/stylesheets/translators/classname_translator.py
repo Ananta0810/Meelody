@@ -36,7 +36,7 @@ class ClassNameElement:
     def addState(self, name: str, state: ElementStateStyles) -> None:
         self.__states['none' if name is None else name] = state
 
-    def state(self, name: str = None) -> ElementStateStyles:
+    def state(self, name: Optional[str] = None) -> ElementStateStyles:
         name = 'none' if name is None else name
         if name in self.__states:
             return self.__states[name]
@@ -55,7 +55,7 @@ class ClassNameTheme:
     def addElement(self, name: str, states: ClassNameElement) -> None:
         self.__elements['none' if name is None else name] = states
 
-    def getElement(self, name: str) -> ClassNameElement:
+    def getElement(self, name: Optional[str] = None) -> ClassNameElement:
         name = 'none' if name is None else name
         if name in self.__elements:
             return self.__elements[name]
