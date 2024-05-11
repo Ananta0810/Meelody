@@ -8,7 +8,7 @@ from PyQt5.QtWidgets import QHBoxLayout, QVBoxLayout, QWidget, QShortcut
 
 from app.common.models import Song
 from app.common.others import musicPlayer, translator
-from app.components.base import Component, Cover, LabelWithDefaultText, Factory, StateIcon, CoverProps
+from app.components.base import Component, LabelWithDefaultText, Factory, StateIcon, CoverProps, CoverWithPlaceHolder
 from app.components.dialogs import Dialogs
 from app.components.sliders import HorizontalSlider
 from app.helpers.others import Times
@@ -59,7 +59,7 @@ class MusicPlayerBar(QWidget, Component):
         self._mainLayout.addLayout(self._right)
 
         # ======================================== LEFT ========================================
-        self._songCover = Cover()
+        self._songCover = CoverWithPlaceHolder()
         self._songCover.setFixedSize(64, 64)
 
         self._titleLabel = LabelWithDefaultText()
@@ -325,7 +325,7 @@ class MusicPlayerBar(QWidget, Component):
             self._timeSlider.setValue(0)
 
     def setDefaultCover(self, cover: bytes) -> None:
-        self._songCover.setDefaultCover(self.__createCover(cover))
+        self._songCover.setPlaceHolderCover(self.__createCover(cover))
 
     def __setPLaying(self, isPlaying: bool) -> None:
         self._playSongBtn.setVisible(not isPlaying)

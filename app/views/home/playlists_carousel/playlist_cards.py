@@ -9,7 +9,8 @@ from PyQt5.QtWidgets import QWidget, QVBoxLayout, QHBoxLayout, QFileDialog
 from app.common.models import Playlist
 from app.common.models.playlists import FavouritesPlaylist, Library
 from app.common.others import appCenter, translator
-from app.components.base import Cover, Factory, CoverProps, EllipsisLabel
+from app.components.base import Factory, CoverProps, EllipsisLabel
+from app.components.base import ZoomCover
 from app.components.dialogs import Dialogs
 from app.components.widgets import ExtendableStyleWidget
 from app.helpers.base import Bytes, Lists
@@ -26,7 +27,6 @@ class PlaylistCard(ExtendableStyleWidget):
     clicked = pyqtSignal()
 
     def __init__(self, parent: Optional[QWidget] = None):
-        self.__coverAsByte: Optional[bytes] = None
         super().__init__(parent)
 
     def _createUI(self) -> None:
@@ -35,9 +35,10 @@ class PlaylistCard(ExtendableStyleWidget):
 
         self._mainLayout = QVBoxLayout(self)
         self._mainLayout.setContentsMargins(20, 20, 20, 20)
-        self._cover = Cover(self)
-        self._cover.setDefaultCover(self._toCoverProps(Images.DEFAULT_PLAYLIST_COVER))
-        self._cover.setAnimation(duration=250, start=1.0, end=1.1, onValueChanged=self._cover.zoom)
+
+        self._cover = ZoomCover(self)
+        self._cover.setCover(self._toCoverProps(Images.DEFAULT_PLAYLIST_COVER))
+        self._cover.setAnimation(duration=250, start=1.0, end=1.1)
 
         self._title = EllipsisLabel(autoChangeTheme=False)
         self._title.setFont(Factory.createFont(size=16, bold=True))
@@ -52,7 +53,7 @@ class PlaylistCard(ExtendableStyleWidget):
         self.setCover(info.getCover())
 
     def setCover(self, data: bytes) -> None:
-        self.__coverAsByte = data
+        data = data or Images.DEFAULT_PLAYLIST_COVER
 
         cover = self._toCoverProps(data)
         self._cover.setCover(self._toCoverProps(data))
@@ -78,9 +79,6 @@ class PlaylistCard(ExtendableStyleWidget):
             self._title.applyDarkMode()
         else:
             self._title.applyLightMode()
-
-    def getCoverAsByte(self) -> Optional[bytes]:
-        return self.__coverAsByte
 
     def resizeEvent(self, event: QResizeEvent) -> None:
         self._cover.setFixedSize(self.size())

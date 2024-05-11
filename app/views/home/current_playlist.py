@@ -5,7 +5,7 @@ from PyQt5.QtWidgets import QWidget, QVBoxLayout, QHBoxLayout
 
 from app.common.models import Playlist
 from app.common.others import appCenter
-from app.components.base import Cover, LabelWithDefaultText, Factory, CoverProps, Component
+from app.components.base import LabelWithDefaultText, Factory, CoverProps, Component, CoverWithPlaceHolder
 from app.resource.qt import Images
 from app.views.home.songs_table import SongsTable
 
@@ -19,9 +19,9 @@ class _Info(QVBoxLayout, Component):
         self.setSpacing(12)
         self.setAlignment(Qt.AlignTop | Qt.AlignLeft)
 
-        self._cover = Cover()
+        self._cover = CoverWithPlaceHolder()
         self._cover.setFixedSize(320, 320)
-        self.setDefaultCover(Images.DEFAULT_PLAYLIST_COVER)
+        self._cover.setPlaceHolderCover(self.__createCover(Images.DEFAULT_PLAYLIST_COVER))
 
         self._titleLabel = LabelWithDefaultText()
         self._titleLabel.enableEllipsis()
@@ -51,9 +51,6 @@ class _Info(QVBoxLayout, Component):
         self._cover.setCover(self.__createCover(playlist.getInfo().__cover))
         self._titleLabel.setText(playlist.getInfo().__name)
         self._totalSongsLabel.setText(f"{playlist.getSongs().size()} TRACKS")
-
-    def setDefaultCover(self, cover: bytes) -> None:
-        self._cover.setDefaultCover(self.__createCover(cover))
 
     @staticmethod
     def __createCover(data: bytes) -> Optional[CoverProps]:

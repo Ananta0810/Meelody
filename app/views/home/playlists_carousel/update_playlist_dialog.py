@@ -9,7 +9,7 @@ from PyQt5.QtWidgets import QWidget, QShortcut, QFileDialog
 from app.common.exceptions import StorageException
 from app.common.models import Playlist
 from app.common.others import appCenter
-from app.components.base import Cover, CoverProps, Factory, Input, ActionButton
+from app.components.base import CoverProps, Factory, Input, ActionButton, CoverWithPlaceHolder
 from app.components.dialogs import BaseDialog, Dialogs
 from app.components.widgets import Box
 from app.helpers.base import Strings
@@ -34,9 +34,9 @@ class UpdatePlaylistDialog(BaseDialog):
     def _createUI(self) -> None:
         super()._createUI()
 
-        self._cover = Cover()
+        self._cover = CoverWithPlaceHolder()
         self._cover.setFixedSize(320, 320)
-        self._cover.setDefaultCover(CoverProps.fromBytes(Images.DEFAULT_PLAYLIST_COVER, 320, 320, radius=16))
+        self._cover.setPlaceHolderCover(CoverProps.fromBytes(Images.DEFAULT_PLAYLIST_COVER, 320, 320, radius=16))
 
         self._titleInput = Input()
         self._titleInput.setFont(Factory.createFont(size=12))

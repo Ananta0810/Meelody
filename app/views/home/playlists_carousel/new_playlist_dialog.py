@@ -34,7 +34,7 @@ class NewPlaylistDialog(BaseDialog):
 
         self._cover = Cover()
         self._cover.setFixedSize(320, 320)
-        self._cover.setDefaultCover(CoverProps.fromBytes(Images.DEFAULT_PLAYLIST_COVER, 320, 320, radius=16))
+        self._cover.setCover(CoverProps.fromBytes(Images.DEFAULT_PLAYLIST_COVER, 320, 320, radius=16))
 
         self._titleInput = Input()
         self._titleInput.setFont(Factory.createFont(size=12))

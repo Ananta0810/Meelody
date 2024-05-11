@@ -6,7 +6,7 @@ from PyQt5.QtWidgets import QWidget, QHBoxLayout, QFileDialog
 from app.common.exceptions import ResourceException
 from app.common.models import Song
 from app.common.others import musicPlayer, appCenter
-from app.components.base import Cover, Factory, LabelWithDefaultText, CoverProps
+from app.components.base import Factory, LabelWithDefaultText, CoverProps, CoverWithPlaceHolder
 from app.components.dialogs import Dialogs
 from app.components.widgets import ExtendableStyleWidget, StyleWidget, FlexBox
 from app.helpers.base import silence, suppressException
@@ -40,9 +40,9 @@ class SongRow(ExtendableStyleWidget):
 
         # ================================================= INFO  =================================================
 
-        self._cover = Cover(self)
+        self._cover = CoverWithPlaceHolder(self)
         self._cover.setFixedSize(64, 64)
-        self._cover.setDefaultCover(CoverProps.fromBytes(Images.DEFAULT_SONG_COVER, width=64, height=64, radius=12))
+        self._cover.setPlaceHolderCover(CoverProps.fromBytes(Images.DEFAULT_SONG_COVER, width=64, height=64, radius=12))
 
         self._titleLabel = LabelWithDefaultText()
         self._titleLabel.enableEllipsis()

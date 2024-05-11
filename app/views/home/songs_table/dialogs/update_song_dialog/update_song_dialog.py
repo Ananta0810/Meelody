@@ -6,7 +6,7 @@ from PyQt5.QtWidgets import QWidget, QShortcut
 
 from app.common.exceptions import ResourceException
 from app.common.models import Song
-from app.components.base import Cover, CoverProps, Factory, ActionButton, Label, Input
+from app.components.base import CoverProps, Factory, ActionButton, Label, Input, CoverWithPlaceHolder
 from app.components.dialogs import BaseDialog, Dialogs
 from app.components.widgets import Box
 from app.helpers.base import Strings
@@ -29,9 +29,9 @@ class UpdateSongDialog(BaseDialog):
     def _createUI(self) -> None:
         super()._createUI()
 
-        self._image = Cover()
+        self._image = CoverWithPlaceHolder()
         self._image.setAlignment(Qt.AlignHCenter)
-        self._image.setDefaultCover(CoverProps.fromBytes(Images.EDIT, width=128))
+        self._image.setPlaceHolderCover(CoverProps.fromBytes(Images.EDIT, width=128))
 
         self._header = Label()
         self._header.setFont(Factory.createFont(family="Segoe UI Semibold", size=16, bold=True))

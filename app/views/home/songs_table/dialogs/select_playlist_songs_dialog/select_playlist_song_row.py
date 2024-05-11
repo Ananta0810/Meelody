@@ -4,7 +4,7 @@ from PyQt5 import QtGui
 from PyQt5.QtCore import pyqtSignal, Qt
 
 from app.common.models import Song
-from app.components.base import Cover, Factory, LabelWithDefaultText, CoverProps, CheckBox
+from app.components.base import Factory, LabelWithDefaultText, CoverProps, CheckBox, CoverWithPlaceHolder
 from app.components.widgets import ExtendableStyleWidget, FlexBox
 from app.helpers.others import Times
 from app.resource.qt import Images, Cursors
@@ -37,9 +37,9 @@ class SongRow(ExtendableStyleWidget):
         self._checkBox = CheckBox()
         self._checkBox.setFixedWidth(16)
 
-        self._cover = Cover(self)
+        self._cover = CoverWithPlaceHolder(self)
         self._cover.setFixedSize(64, 64)
-        self._cover.setDefaultCover(CoverProps.fromBytes(Images.DEFAULT_SONG_COVER, width=64, height=64, radius=12))
+        self._cover.setPlaceHolderCover(CoverProps.fromBytes(Images.DEFAULT_SONG_COVER, width=64, height=64, radius=12))
 
         self._titleLabel = LabelWithDefaultText()
         self._titleLabel.enableEllipsis()

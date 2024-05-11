@@ -1,4 +1,4 @@
-from typing import Optional, Callable
+from typing import Optional
 
 from PyQt5.QtCore import QVariantAnimation, QEasingCurve, Qt
 from PyQt5.QtGui import QPixmap
@@ -60,50 +60,59 @@ class CoverProps:
 
 
 class Cover(QLabel):
-    __defaultCover: CoverProps
-    __currentCover: CoverProps
-    __value: float = 0
-    __start: float = 0
-    __end: float = 0
-    __radius: int = 0
-    __animation: QVariantAnimation
 
     def __init__(self, parent: Optional[QWidget] = None):
+        self._currentCover: Optional[CoverProps] = None
         QLabel.__init__(self, parent)
 
-    def setDefaultCover(self, cover: CoverProps) -> None:
-        self.__defaultCover = cover
-        self.setCover(cover)
-
     def currentCover(self) -> CoverProps:
-        return self.__currentCover
-
-    def setRadius(self, radius: int) -> None:
-        self.__radius = radius
+        return self._currentCover
 
     @suppressException
     def setCover(self, cover: CoverProps) -> None:
-        if cover is None:
-            cover = self.__defaultCover
-
-        self.__currentCover = cover
-        self.setRadius(cover.radius())
+        self._currentCover = cover
         super().setPixmap(cover.content())
 
-    def setAnimation(self, duration: float, start: float, end: float, onValueChanged: Callable) -> None:
-        self.__start = start
-        self.__end = end
-        self.__animation = QVariantAnimation(self, valueChanged=onValueChanged, duration=duration)
+
+class CoverWithPlaceHolder(Cover):
+
+    def __init__(self, parent: Optional[QWidget] = None):
+        Cover.__init__(self, parent)
+        self.__defaultCover: Optional[CoverProps] = None
+
+    def setPlaceHolderCover(self, cover: CoverProps) -> None:
+        self.__defaultCover = cover
+        self.setCover(cover)
+
+    @suppressException
+    def setCover(self, cover: CoverProps) -> None:
+        super().setCover(cover or self.__defaultCover)
+
+
+class ZoomCover(Cover):
+
+    def __init__(self, parent: Optional[QWidget] = None):
+        Cover.__init__(self, parent)
+        self.__value: float = 0
+        self.__start: float = 0
+        self.__end: float = 0
+        self.__animation = QVariantAnimation(self, valueChanged=self.__zoom)
         self.__animation.setEasingCurve(QEasingCurve.OutCubic)
 
-    def zoom(self, value: float) -> None:
+    def setAnimation(self, duration: float, start: float, end: float) -> None:
+        self.__start = start
+        self.__end = end
+        self.__animation.setDuration(duration)
+
+    def __zoom(self, value: float) -> None:
         self.__value = value
-        if self.__currentCover is None:
+        if self._currentCover is None or self.__animation is None:
             return
-        pixmap = self.__currentCover.content().copy()
+
+        pixmap = self._currentCover.content().copy()
         pixmap = pixmap.scaledToHeight(int(self.height() * value), Qt.SmoothTransformation)
         pixmap = Pixmaps.crop(pixmap, self.width(), self.height())
-        pixmap = Pixmaps.round(pixmap, radius=self.__radius)
+        pixmap = Pixmaps.round(pixmap, radius=self._currentCover.radius())
         self.__setHoverPixmap(pixmap)
 
     def animationOnEnteredHover(self) -> None:

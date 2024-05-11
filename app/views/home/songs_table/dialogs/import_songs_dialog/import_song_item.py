@@ -8,7 +8,7 @@ from PyQt5.QtWidgets import QWidget, QShortcut, QVBoxLayout
 from app.common.exceptions import ResourceException
 from app.common.models import Song
 from app.common.models.song import SongReader
-from app.components.base import Cover, CoverProps, Label, Factory, EllipsisLabel, ActionButton, Input
+from app.components.base import Cover, CoverProps, Label, Factory, EllipsisLabel, ActionButton, Input, CoverWithPlaceHolder
 from app.components.dialogs import BaseDialog
 from app.components.widgets import ExtendableStyleWidget, Box, FlexBox
 from app.helpers.base import Strings
@@ -34,9 +34,9 @@ class ImportSongItem(ExtendableStyleWidget):
     def _createUI(self) -> None:
         self.setContentsMargins(0, 0, 0, 0)
 
-        self._cover = Cover()
+        self._cover = CoverWithPlaceHolder()
         self._cover.setFixedSize(48, 48)
-        self._cover.setDefaultCover(CoverProps.fromBytes(Images.DEFAULT_SONG_COVER, width=48, height=48, radius=8))
+        self._cover.setPlaceHolderCover(CoverProps.fromBytes(Images.DEFAULT_SONG_COVER, width=48, height=48, radius=8))
 
         self._titleLabel = EllipsisLabel()
         self._titleLabel.setFont(Factory.createFont(size=10))

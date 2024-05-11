@@ -128,7 +128,7 @@ class SettingsDialog(FramelessWindow):
 
         self._systemModeBtn = ThemeButton()
         self._systemModeBtn.setFixedWidth(160)
-        self._systemModeBtn.setDefaultCover(CoverProps.fromBytes(Images.SYSTEM_MODE, width=156, height=90, radius=6))
+        self._systemModeBtn.setCover(CoverProps.fromBytes(Images.SYSTEM_MODE, width=156, height=90, radius=6))
         self._systemModeBtn.setClassName("rounded-8 border-2 border-transparent active:rounded-8 active:border-2 active:border-primary")
 
         self._systemModeLabel = Label()
@@ -146,7 +146,7 @@ class SettingsDialog(FramelessWindow):
 
         self._lightModeBtn = ThemeButton()
         self._lightModeBtn.setFixedWidth(160)
-        self._lightModeBtn.setDefaultCover(CoverProps.fromBytes(Images.LIGHT_MODE, width=156, height=90, radius=6))
+        self._lightModeBtn.setCover(CoverProps.fromBytes(Images.LIGHT_MODE, width=156, height=90, radius=6))
         self._lightModeBtn.setClassName("rounded-8 border-2 border-transparent active:rounded-8 active:border-2 active:border-primary")
 
         self._lightModeLabel = Label()
@@ -164,7 +164,7 @@ class SettingsDialog(FramelessWindow):
 
         self._darkModeBtn = ThemeButton()
         self._darkModeBtn.setFixedWidth(160)
-        self._darkModeBtn.setDefaultCover(CoverProps.fromBytes(Images.DARK_MODE, width=156, height=90, radius=6))
+        self._darkModeBtn.setCover(CoverProps.fromBytes(Images.DARK_MODE, width=156, height=90, radius=6))
         self._darkModeBtn.setClassName("rounded-8 border-2 border-transparent active:rounded-8 active:border-2 active:border-primary")
 
         self._darkModeLabel = Label()
