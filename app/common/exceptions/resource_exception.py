@@ -21,6 +21,9 @@ class ResourceException(Exception):
     def isExisted(self) -> bool:
         return self.__reason == ResourceException.__Reason.EXISTED
 
+    def isBroken(self) -> bool:
+        return self.__reason == ResourceException.__Reason.BROKEN
+
     @staticmethod
     def notFound() -> 'ResourceException':
         return ResourceException(ResourceException.__Reason.NOT_FOUND)

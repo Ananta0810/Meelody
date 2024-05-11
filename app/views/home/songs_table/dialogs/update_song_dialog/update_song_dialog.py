@@ -1,3 +1,5 @@
+import os
+
 from PyQt5.QtCore import Qt
 from PyQt5.QtGui import QKeySequence
 from PyQt5.QtWidgets import QWidget, QShortcut
@@ -42,6 +44,11 @@ class UpdateSongDialog(BaseDialog):
         self._titleLabel.setClassName("text-black dark:text-white bg-none")
         self._titleLabel.setText("Title")
 
+        self._titleErrorLabel = Label()
+        self._titleErrorLabel.setFont(Factory.createFont(size=11))
+        self._titleErrorLabel.setClassName("text-danger bg-none")
+        self._titleErrorLabel.hide()
+
         self._titleInput = Input()
         self._titleInput.setFont(Factory.createFont(size=12))
         self._titleInput.setClassName("px-12 py-8 rounded-4 border border-primary-12 bg-primary-4")
@@ -54,6 +61,11 @@ class UpdateSongDialog(BaseDialog):
         self._artistInput = Input()
         self._artistInput.setFont(Factory.createFont(size=12))
         self._artistInput.setClassName("px-12 py-8 rounded-4 border border-primary-12 bg-primary-4")
+
+        self._artistErrorLabel = Label()
+        self._artistErrorLabel.setFont(Factory.createFont(size=11))
+        self._artistErrorLabel.setClassName("text-danger bg-none")
+        self._artistErrorLabel.hide()
 
         self._acceptBtn = ActionButton()
         self._acceptBtn.setFont(Factory.createFont(family="Segoe UI Semibold", size=10))
@@ -71,8 +83,10 @@ class UpdateSongDialog(BaseDialog):
         self._viewLayout.addWidget(self._header)
         self._viewLayout.addWidget(self._titleLabel)
         self._viewLayout.addWidget(self._titleInput)
+        self._viewLayout.addWidget(self._titleErrorLabel)
         self._viewLayout.addWidget(self._artistLabel)
         self._viewLayout.addWidget(self._artistInput)
+        self._viewLayout.addWidget(self._artistErrorLabel)
         self._viewLayout.addWidget(self._acceptBtn)
 
         self.addWidget(self._mainView)
@@ -94,18 +108,42 @@ class UpdateSongDialog(BaseDialog):
         title = self._titleInput.text().strip()
         artist = self._artistInput.text().strip()
 
-        if Strings.isBlank(title) or len(title) > 128 or len(artist) > 64:
-            self.__canUpdate = False
-            self._acceptBtn.setDisabled(True)
-            return
+        self.__canUpdate = self.__validateTitle() and \
+                           self.__validateArtist() and \
+                           not (Strings.equals(self.__song.getTitle(), title) and Strings.equals(self.__song.getArtist(), artist))
 
-        if Strings.equals(self.__song.getTitle(), title) and Strings.equals(self.__song.getArtist(), artist):
-            self.__canUpdate = False
-            self._acceptBtn.setDisabled(True)
-            return
+        self._acceptBtn.setDisabled(not self.__canUpdate)
 
-        self.__canUpdate = True
-        self._acceptBtn.setDisabled(False)
+    def __validateTitle(self) -> bool:
+        title = self._titleInput.text().strip()
+
+        if Strings.isBlank(title):
+            self._titleErrorLabel.show()
+            self._titleErrorLabel.setText("Title should not be blank.")
+            return False
+
+        if len(title) > 128:
+            self._titleErrorLabel.show()
+            self._titleErrorLabel.setText("Title should be less than 128 characters.")
+            return False
+
+        if not Strings.equals(self.__song.getTitle(), title) and os.path.exists(f"library/{Strings.sanitizeFileName(title)}.mp3"):
+            self._titleErrorLabel.show()
+            self._titleErrorLabel.setText("Title has already taken. Please try other title.")
+            return False
+
+        self._titleErrorLabel.hide()
+        return True
+
+    def __validateArtist(self) -> bool:
+        artist = self._artistInput.text().strip()
+        if len(artist) > 64:
+            self._artistErrorLabel.show()
+            self._artistErrorLabel.setText("Artist should be less than 64 characters.")
+            return False
+
+        self._artistErrorLabel.hide()
+        return True
 
     def _updateSong(self) -> None:
         self.__checkValid()

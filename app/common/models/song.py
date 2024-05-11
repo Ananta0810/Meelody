@@ -153,8 +153,15 @@ class Song(QObject):
         writer = SongWriter(self.__location)
 
         if not Strings.equals(self.__title, title):
-            writer.writeTitle(title)
+            newLocation = f"library/{Strings.sanitizeFileName(title)}.mp3"
+            if os.path.exists(newLocation):
+                raise ResourceException("File existed.")
+
+            os.rename(self.__location, newLocation)
+
+            self.__location = newLocation
             self.__title = title
+
             self.updated.emit("title")
 
         if not Strings.equals(self.__artist, artist):
