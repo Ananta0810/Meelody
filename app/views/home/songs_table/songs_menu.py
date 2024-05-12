@@ -162,6 +162,8 @@ class SongsMenu(SmoothVerticalScrollArea):
         if isPlaylistChanged:
             self.__setPlaylist(playlist)
 
+        self.__updateTitleMaps(playlist.getSongs().toList())
+
         songIdSet = set([song.getId() for song in playlist.getSongs().toList()])
         songRows: list[SongRow] = self.widgets()
 
@@ -169,8 +171,6 @@ class SongsMenu(SmoothVerticalScrollArea):
 
         if not needUpdateVisible:
             return
-
-        self.__updateTitleMaps(playlist.getSongs().toList())
 
         currentPosition = self.verticalScrollBar().value()
 
