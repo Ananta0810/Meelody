@@ -41,6 +41,9 @@ class MusicPlayerBar(QWidget, Component):
         else:
             self.__selectSong(song)
 
+        if musicPlayer.isPlaying():
+            self._playerTrackingThread.start()
+
     def _createUI(self) -> None:
         self.setAttribute(Qt.WA_StyledBackground, True)
 
@@ -52,6 +55,7 @@ class MusicPlayerBar(QWidget, Component):
         self._lowerLayout = FlexBox(self)
 
         self._mainLayout.addLayout(self._upperLayout)
+        self._mainLayout.addSpacing(8)
         self._mainLayout.addLayout(self._lowerLayout)
 
         self._left = QWidget()

@@ -1,6 +1,6 @@
 import contextlib
 from time import sleep
-from typing import Optional, Union
+from typing import Optional
 
 from PyQt5.QtCore import Qt, QThread
 from PyQt5.QtGui import QKeySequence
@@ -349,7 +349,7 @@ class MusicPlayerBar(QWidget, Component):
     def __selectSong(self, song: Song) -> None:
         if self.__currentSong is not None:
             self.__currentSong.loved.disconnect(self.__updateLoveState)
-            self.__currentSong.coverChanged.disconnect(self.__updateCover)
+            self.__currentSong.coverChanged.disconnect(self.__setCover)
             with contextlib.suppress(RuntimeError):
                 self._loveBtn.clicked.disconnect()
 
@@ -357,7 +357,7 @@ class MusicPlayerBar(QWidget, Component):
 
         # Connect signals
         song.loved.connect(self.__updateLoveState)
-        song.coverChanged.connect(self.__updateCover)
+        song.coverChanged.connect(self.__setCover)
         self._loveBtn.clicked.connect(lambda: self.__currentSong.updateLoveState(self._loveBtn.isActive()))
 
         # Display song information
@@ -366,12 +366,12 @@ class MusicPlayerBar(QWidget, Component):
         self._artistLabel.setText(song.getArtist())
         self.__updateLoveState(song.isLoved())
         if song.isCoverLoaded():
-            self.__updateCover(song.getCover())
+            self.__setCover(song.getCover())
         else:
-            self.__updateCover(None)
+            self.__setCover(None)
             song.loadCover()
 
-    def __updateCover(self, cover: Optional[bytes]) -> None:
+    def __setCover(self, cover: Optional[bytes]) -> None:
         self._songCover.setCover(self.__createCover(cover))
 
     def __updateLoveState(self, state: bool) -> None:
@@ -399,7 +399,7 @@ class MusicPlayerBar(QWidget, Component):
         return Dialogs.alert(translator.translate("MUSIC_PLAYER.PLAYING_DELETED_SONG"))
 
     @staticmethod
-    def __createCover(data: bytes) -> Union[Cover.Props, None]:
+    def __createCover(data: bytes) -> Optional[Cover.Props]:
         if data is None:
             return None
         return Cover.Props.fromBytes(data, width=64, height=64, radius=12)

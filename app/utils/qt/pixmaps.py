@@ -1,5 +1,5 @@
 from io import BytesIO
-from typing import Union, final, Optional
+from typing import final, Optional
 
 from PIL import Image
 from PyQt5.QtCore import QByteArray, QBuffer, QIODevice, QRect, Qt
@@ -13,7 +13,7 @@ from app.helpers.stylesheets import Color
 class Pixmaps:
 
     @staticmethod
-    def toQPixmap(imageByte: bytes) -> Union[QPixmap, None]:
+    def toQPixmap(imageByte: bytes) -> Optional[QPixmap]:
         if imageByte is None:
             return None
         pixmap = QPixmap()

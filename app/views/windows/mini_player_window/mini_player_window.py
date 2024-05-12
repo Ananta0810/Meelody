@@ -7,6 +7,7 @@ from app.common.statics.qt import Icons
 from app.common.statics.styles import Colors
 from app.components.base import Component
 from app.components.windows.windows import TitleBarWindow
+from app.views.windows.mini_player_window.current_song_info import CurrentSongInfo
 from app.views.windows.mini_player_window.music_player_bar import MusicPlayerBar
 
 
@@ -23,10 +24,14 @@ class MiniPlayerWindow(TitleBarWindow, Component):
     def _createUI(self) -> None:
         self._inner.setClassName("rounded-24 bg-white dark:bg-dark")
 
+        self._songInfo = CurrentSongInfo()
+        self._songInfo.setContentsMargins(16, 32, 16, 16)
+
         self._musicPlayerBar = MusicPlayerBar()
         self._musicPlayerBar.setClassName("bg-none border-t border-gray-20 rounded-none")
         self._musicPlayerBar.setContentsMargins(16, 24, 16, 8)
 
+        self.addWidget(self._songInfo, stretch=1)
         self.addWidget(self._musicPlayerBar, alignment=Qt.AlignBottom)
 
         # Prev, Play/Pause, Next
