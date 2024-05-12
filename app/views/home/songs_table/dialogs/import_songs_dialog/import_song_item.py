@@ -289,4 +289,4 @@ class UpdateImportSongDialog(BaseDialog):
         title = self._titleInput.text().strip()
 
         self.accepted.emit(title)
-        self.close()
+        self.closeWithAnimation()

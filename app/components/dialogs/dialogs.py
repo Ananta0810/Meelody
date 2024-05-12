@@ -6,6 +6,7 @@ from PyQt5.QtWidgets import QShortcut, QVBoxLayout, QHBoxLayout
 
 from app.common.others import translator
 from app.common.statics.qt import Images
+from app.components.animations import Fade
 from app.components.base import FontFactory
 from app.components.buttons import ActionButton
 from app.components.dialogs import BaseDialog
@@ -66,12 +67,14 @@ class _ConfirmDialog(FramelessWindow):
         self._body.addLayout(self._buttonBox)
 
         super().addLayout(self._body)
+        self._animation = Fade(self)
 
     def _connectSignalSlots(self) -> None:
         self._acceptBtn.clicked.connect(lambda: self.confirmed.emit())
         self._cancelBtn.clicked.connect(lambda: self.canceled.emit())
-        self.confirmed.connect(lambda: self.close())
-        self.canceled.connect(lambda: self.close())
+
+        self.confirmed.connect(lambda: self.closeWithAnimation())
+        self.canceled.connect(lambda: self.closeWithAnimation())
 
     def _assignShortcuts(self) -> None:
         acceptShortcut = QShortcut(QKeySequence(Qt.Key_Return), self._acceptBtn)
@@ -105,7 +108,12 @@ class _ConfirmDialog(FramelessWindow):
     def show(self) -> None:
         self.applyTheme()
         self.moveToCenter()
+        self.setWindowOpacity(0)
         super().show()
+        self._animation.fadeIn()
+
+    def closeWithAnimation(self) -> None:
+        self._animation.fadeOut(onFinished=lambda: self.close())
 
 
 class _AlertDialog(BaseDialog):

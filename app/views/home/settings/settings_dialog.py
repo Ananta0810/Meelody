@@ -9,6 +9,7 @@ from app.common.statics.enums import ThemeMode
 from app.common.statics.qt import Icons, Images, Cursors
 from app.common.statics.styles import Colors
 from app.common.statics.styles import Paddings
+from app.components.animations import Fade
 from app.components.base import FontFactory
 from app.components.buttons import ButtonFactory, ActionButton
 from app.components.dropdowns import DropDown
@@ -218,6 +219,8 @@ class SettingsDialog(FramelessWindow):
         super().addSpacing(8)
         super().addWidget(self._footer)
 
+        self._animation = Fade(self)
+
     def _translateUI(self) -> None:
         self._dialogTitle.setText(translator.translate("SETTINGS.LABEL"))
         self._languageTitleLabel.setText(translator.translate("SETTINGS.LANGUAGE_LABEL"))
@@ -237,8 +240,8 @@ class SettingsDialog(FramelessWindow):
         self._lightModeBtn.selected.connect(lambda: self.__selectTheme(ThemeMode.LIGHT))
         self._darkModeBtn.selected.connect(lambda: self.__selectTheme(ThemeMode.DARK))
 
-        self._closeBtn.clicked.connect(lambda: self.close())
-        self._cancelBtn.clicked.connect(lambda: self.close())
+        self._closeBtn.clicked.connect(lambda: self.closeWithAnimation())
+        self._cancelBtn.clicked.connect(lambda: self.closeWithAnimation())
         self._saveBtn.clicked.connect(lambda: self.__saveChanges())
 
     def __selectTheme(self, theme: ThemeMode) -> None:
@@ -250,7 +253,6 @@ class SettingsDialog(FramelessWindow):
 
     def resizeEvent(self, event: QResizeEvent) -> None:
         super().resizeEvent(event)
-        self.moveToCenter()
 
     def applyLightMode(self) -> None:
         super().applyLightMode()
@@ -261,10 +263,15 @@ class SettingsDialog(FramelessWindow):
         super().applyThemeToChildren()
 
     def show(self) -> None:
-        self.applyTheme()
         self._translateUI()
+        self.applyTheme()
         self.moveToCenter()
+        self.setWindowOpacity(0)
         super().show()
+        self._animation.fadeIn()
+
+    def closeWithAnimation(self) -> None:
+        self._animation.fadeOut(onFinished=lambda: self.close())
 
     def __saveChanges(self) -> None:
         self._saveBtn.setCursor(Cursors.waiting)
@@ -276,7 +283,7 @@ class SettingsDialog(FramelessWindow):
         translator.setLanguage(lang)
 
         self._saveBtn.setCursor(Cursors.pointer)
-        self.close()
+        self.closeWithAnimation()
 
 
 class ThemeButton(Cover):

@@ -141,11 +141,11 @@ class UpdatePlaylistDialog(BaseDialog):
                 tempPlaylist.getInfo().setName(name)
 
             appCenter.playlists.replace(tempPlaylist)
-            self.close()
+            self.closeWithAnimation()
         except StorageException:
             Dialogs.alert(
                 header=translator.translate("PLAYLIST_CAROUSEL.UPDATE_PLAYLIST.SAVE_FAILED_HEADER"),
                 message=translator.translate("PLAYLIST_CAROUSEL.UPDATE_PLAYLIST.SAVE_FAILED_MSG"),
                 acceptText=translator.translate("PLAYLIST_CAROUSEL.UPDATE_PLAYLIST.SAVE_FAILED_OK"),
-                onAccept=lambda: self.close()
+                onAccept=lambda: self.closeWithAnimation()
             )

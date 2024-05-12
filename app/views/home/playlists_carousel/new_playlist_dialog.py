@@ -124,7 +124,7 @@ class NewPlaylistDialog(BaseDialog):
 
             playlist = UserPlaylist(UserPlaylist.Info(name=name, cover=cover, id=id, coverPath=path), UserPlaylist.Songs())
             appCenter.playlists.append(playlist)
-            self.close()
+            self.closeWithAnimation()
         except StorageException:
             if cover is not None:
                 Files.removeFile(path)

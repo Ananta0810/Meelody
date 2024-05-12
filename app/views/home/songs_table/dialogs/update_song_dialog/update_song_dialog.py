@@ -175,21 +175,21 @@ class UpdateSongDialog(BaseDialog):
             self.__song.updateInfo(title, artist)
             Dialogs.success(message=translator.translate("UPDATE_SONG.SUCCESS"))
             Logger.info("Update song info succeed.")
-            self.close()
+            self.closeWithAnimation()
         except ResourceException as e:
             if e.isNotFound():
                 Dialogs.alert(message=translator.translate("UPDATE_SONG.NOT_FOUND"))
-                self.close()
+                self.closeWithAnimation()
             if e.isBeingUsed():
                 Dialogs.alert(message=translator.translate("UPDATE_SONG.USED"))
-                self.close()
+                self.closeWithAnimation()
             if e.isExisted():
                 Dialogs.alert(message=translator.translate("UPDATE_SONG.EXISTED"))
         except PermissionError as e:
             Dialogs.alert(message=translator.translate("UPDATE_SONG.USED"))
-            self.close()
+            self.closeWithAnimation()
         except Exception as e:
             Logger.error(e)
             Logger.error("Update song infor failed.")
             Dialogs.alert(message=translator.translate("UPDATE_SONG.FAILED"))
-            self.close()
+            self.closeWithAnimation()

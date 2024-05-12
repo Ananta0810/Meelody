@@ -103,12 +103,12 @@ class DownloadSongsDialog(BaseDialog):
             dialog.acceptDownload.connect(lambda yt, title, artist: self.__downloadSong(yt, title, artist))
             dialog.show()
         except RegexMatchError:
-            Dialogs.alert(message=translator.translate("INVALID_URL"))
+            Dialogs.alert(message=translator.translate("DOWNLOAD_DIALOG.INVALID_URL"))
         except URLError:
-            Dialogs.alert(message=translator.translate("NO_INTERNET"))
+            Dialogs.alert(message=translator.translate("DOWNLOAD_DIALOG.NO_INTERNET"))
         except Exception as e:
             Logger.error(e)
-            Dialogs.alert(message=translator.translate("VIDEO_NOT_FOUND"))
+            Dialogs.alert(message=translator.translate("DOWNLOAD_DIALOG.VIDEO_NOT_FOUND"))
 
         self._searchBtn.setCursor(Cursors.pointer)
 
@@ -125,7 +125,7 @@ class DownloadSongsDialog(BaseDialog):
         try:
             appCenter.library.getSongs().insert(Song.fromFile(path, Strings.getFileBasename(path)))
         except:
-            Dialogs.alert(message=translator.translate("INSERT_FAILED"))
+            Dialogs.alert(message=translator.translate("DOWNLOAD_DIALOG.INSERT_FAILED"))
 
 
 class _SongInfoDialog(BaseDialog):
@@ -271,7 +271,7 @@ class _SongInfoDialog(BaseDialog):
         artist = self._artistInput.text().strip()
 
         self.acceptDownload.emit(self.__ytb, title, artist)
-        self.close()
+        self.closeWithAnimation()
 
     def show(self) -> None:
         self.moveToCenter()

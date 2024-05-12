@@ -75,7 +75,7 @@ class ImportSongsDialog(BaseDialog):
     def _connectSignalSlots(self) -> None:
         super()._connectSignalSlots()
 
-        self._closeBtn.clicked.connect(lambda: self.close())
+        self._closeBtn.clicked.connect(lambda: self.closeWithAnimation())
 
         self.importDone.connect(lambda: self._closeBtn.show())
         self.importDone.connect(lambda: self.__importSongsToLibrary())

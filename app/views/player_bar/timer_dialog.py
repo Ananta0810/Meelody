@@ -142,7 +142,7 @@ class TimerDialog(BaseDialog):
         self.__setCountDownTime(self.__getCountDownTime())
         self._countDownThread.setTime(self.__getCountDownTime())
         self._countDownThread.start()
-        self.close()
+        self.closeWithAnimation()
         Logger.info("Starting timer")
 
     def __stopCountDown(self) -> None:

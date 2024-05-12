@@ -7,6 +7,7 @@ from PyQt5.QtWidgets import QHBoxLayout, QShortcut, QWidget, QLayout
 from app.common.statics.qt import Icons
 from app.common.statics.styles import Colors
 from app.common.statics.styles import Paddings
+from app.components.animations import Fade
 from app.components.buttons import ButtonFactory
 from app.components.widgets import Box
 from app.components.windows import FramelessWindow
@@ -41,10 +42,11 @@ class BaseDialog(FramelessWindow):
 
         super().addWidget(self._titleBar)
         super().addLayout(self._body)
+        self._animation = Fade(self)
 
     def _connectSignalSlots(self) -> None:
         self._btnClose.clicked.connect(lambda: self.closed.emit())
-        self.closed.connect(lambda: self.close())
+        self.closed.connect(lambda: self.closeWithAnimation())
 
     def _assignShortcuts(self) -> None:
         cancelShortcut = QShortcut(QKeySequence(Qt.Key_Escape), self._btnClose)
@@ -85,4 +87,9 @@ class BaseDialog(FramelessWindow):
         self.applyTheme()
         self._translateUI()
         self.moveToCenter()
+        self.setWindowOpacity(0)
         super().show()
+        self._animation.fadeIn()
+
+    def closeWithAnimation(self) -> None:
+        self._animation.fadeOut(onFinished=lambda: self.close())
