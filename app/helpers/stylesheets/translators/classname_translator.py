@@ -10,19 +10,26 @@ from app.helpers.stylesheets.translators.props_translators import PaddingTransla
 class ElementStateStyles:
 
     def __init__(self, eName: Optional[str], state: Optional[str], value: Optional[list[str]]) -> None:
-        self.id = f"{eName} {'' if state is None else f':{state}'}" if eName is not None else None
-        self.value = value
+        self.__id = f"{eName} {'' if state is None else f':{state}'}" if eName is not None else None
+        self.__value = value
 
-    def toProps(self) -> Optional[str]:
-        if self.value is None:
-            return None
-        return Strings.joinStyles(self.value)
+    def toProps(self, defaultProps: Optional[list[str]] = None) -> Optional[str]:
+        if self.__value is None:
+            return Strings.joinStyles(defaultProps)
 
-    def toStyleSheet(self) -> str:
-        return f"{self.id} {{{self.toProps()}}}\n"
+        if defaultProps is None:
+            return Strings.joinStyles(self.__value)
+
+        existedKeys = {value.split(":", maxsplit=1)[0] for value in self.__value}
+        defaultPropsToUse = [prop for prop in defaultProps if prop.split(":", maxsplit=1)[0] not in existedKeys]
+
+        return Strings.joinStyles(self.__value + defaultPropsToUse)
+
+    def toStyleSheet(self, defaultProps: Optional[list[str]] = None) -> str:
+        return f"{self.__id} {{{self.toProps(defaultProps)}}}\n"
 
     def id(self) -> str:
-        return self.id
+        return self.__id
 
 
 _NULL_STATE = ElementStateStyles(None, None, None)

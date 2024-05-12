@@ -34,6 +34,7 @@ class SettingsDialog(FramelessWindow):
             if language == appCenter.settings.language:
                 currentLanguageIndex = index
 
+        self._languageDropdown.addItems(self.__languages.keys())
         self._languageDropdown.setCurrentIndex(currentLanguageIndex)
 
     def _createUI(self) -> None:
@@ -91,7 +92,11 @@ class SettingsDialog(FramelessWindow):
 
         self._languageDropdown = DropDown()
         self._languageDropdown.setMinimumWidth(200)
-        self._languageDropdown.addItems(self.__languages.keys())
+        self._languageDropdown.setClassName(
+            "dark:bg-black dark:hover:bg-white-[b12] dark:text-white dark:border dark:border-white-[b33]",
+            "dark:dropdown/bg-white-[b12] dark:dropdown/border dark:dropdown/border-white-[b33]",
+            "dark:item/hover:bg-white-8 dark:item/text-white"
+        )
 
         self._languageLayout.addLayout(self._languageLeftLayout)
         self._languageLayout.addWidget(self._languageDropdown, alignment=Qt.AlignRight | Qt.AlignCenter)
@@ -210,8 +215,8 @@ class SettingsDialog(FramelessWindow):
 
     def _translateUI(self) -> None:
         self._dialogTitle.setText(translator.translate("SETTINGS.LABEL"))
-        self._languageTitleLabel.setText(translator.translate("SETTINGS.LABEL"))
-        self._languageDescriptionLabel.setText(translator.translate("SETTINGS.LABEL"))
+        self._languageTitleLabel.setText(translator.translate("SETTINGS.LANGUAGE_LABEL"))
+        self._languageDescriptionLabel.setText(translator.translate("SETTINGS.LANGUAGE_DESCRIPTION"))
         self._themeTitleLabel.setText(translator.translate("SETTINGS.THEME_LABEL"))
         self._themeDescriptionLabel.setText(translator.translate("SETTINGS.THEME_DESCRIPTION"))
         self._systemModeLabel.setText(translator.translate("SETTINGS.SYSTEM_MODE"))
