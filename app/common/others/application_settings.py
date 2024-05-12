@@ -2,7 +2,7 @@ import os
 from contextlib import suppress
 from typing import Optional
 
-from app.common.models import ThemeMode
+from app.common.statics.enums import ThemeMode
 from app.helpers.base import SingletonMeta
 from app.helpers.others import Jsons
 

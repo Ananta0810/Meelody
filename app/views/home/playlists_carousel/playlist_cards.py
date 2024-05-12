@@ -10,6 +10,7 @@ from app.common.models import Playlist
 from app.common.models.playlists import FavouritesPlaylist, Library
 from app.common.others import appCenter, translator
 from app.common.statics.colors import Colors
+from app.common.statics.enums import FileType
 from app.common.statics.paddings import Paddings
 from app.components.base import Factory, CoverProps, EllipsisLabel
 from app.components.base import ZoomCover
@@ -19,7 +20,6 @@ from app.helpers.base import Bytes, Lists
 from app.helpers.builders import ImageEditor
 from app.helpers.others import Files, Logger
 from app.helpers.qt import Pixmaps, Widgets
-from app.resource.others import FileType
 from app.resource.qt import Cursors, Images, Icons
 from app.views.home.playlists_carousel.update_playlist_dialog import UpdatePlaylistDialog
 

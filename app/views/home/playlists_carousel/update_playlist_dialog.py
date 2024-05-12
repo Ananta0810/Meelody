@@ -9,13 +9,13 @@ from PyQt5.QtWidgets import QWidget, QShortcut, QFileDialog
 from app.common.exceptions import StorageException
 from app.common.models import Playlist
 from app.common.others import appCenter, translator
+from app.common.statics.enums import FileType
 from app.components.base import CoverProps, Factory, Input, ActionButton, CoverWithPlaceHolder
 from app.components.dialogs import BaseDialog, Dialogs
 from app.components.widgets import Box
 from app.helpers.base import Strings
 from app.helpers.builders import ImageEditor
 from app.helpers.others import Files
-from app.resource.others import FileType
 from app.resource.qt import Images
 
 

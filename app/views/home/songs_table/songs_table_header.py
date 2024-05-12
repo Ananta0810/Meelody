@@ -7,9 +7,9 @@ from app.common.models import Playlist
 from app.common.models.playlists import FavouritesPlaylist, Library
 from app.common.others import appCenter, translator
 from app.common.statics.colors import Colors
+from app.common.statics.enums import FileType
 from app.common.statics.paddings import Paddings
 from app.components.base import Factory, Component, Label
-from app.resource.others import FileType
 from app.resource.qt import Icons, Cursors
 from app.views.home.songs_table.dialogs.download_songs_dialog import DownloadSongsDialog
 from app.views.home.songs_table.dialogs.import_songs_dialog import ImportSongsDialog

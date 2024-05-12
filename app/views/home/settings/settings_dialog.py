@@ -4,9 +4,9 @@ from PyQt5.QtCore import Qt, pyqtSignal
 from PyQt5.QtGui import QResizeEvent
 from PyQt5.QtWidgets import QHBoxLayout, QVBoxLayout, QWidget
 
-from app.common.models import ThemeMode
 from app.common.others import appCenter, translator
 from app.common.statics.colors import Colors
+from app.common.statics.enums import ThemeMode
 from app.common.statics.paddings import Paddings
 from app.components.base import Label, Factory, ActionButton, DropDown, Cover, CoverProps
 from app.components.events import ClickObserver
