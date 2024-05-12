@@ -1,7 +1,7 @@
 from PyQt5.QtCore import Qt
 from PyQt5.QtWinExtras import QWinThumbnailToolBar, QWinThumbnailToolButton
 
-from app.common.others import appCenter, musicPlayer
+from app.common.others import appCenter, musicPlayer, translator
 from app.components.base import Component
 from app.components.windows.windows import TitleBarWindow
 from app.helpers.base import Strings
@@ -40,22 +40,26 @@ class MainWindow(TitleBarWindow, Component):
 
         # Prev, Play/Pause, Next
         self._toolbarPrevBtn = QWinThumbnailToolButton()
-        self._toolbarPrevBtn.setToolTip('Previous')
         self._toolbarPrevBtn.setIcon(Icons.PREVIOUS.withColor(Colors.PRIMARY))
 
         self._toolbarPlayBtn = QWinThumbnailToolButton()
-        self._toolbarPlayBtn.setToolTip('Play')
         self._toolbarPlayBtn.setProperty('status', 0)
         self._toolbarPlayBtn.setIcon(Icons.PLAY.withColor(Colors.PRIMARY))
 
         self._toolbarNextBtn = QWinThumbnailToolButton()
-        self._toolbarNextBtn.setToolTip('Next')
         self._toolbarNextBtn.setIcon(Icons.NEXT.withColor(Colors.PRIMARY))
 
         self._toolbar = QWinThumbnailToolBar()
         self._toolbar.addButton(self._toolbarPrevBtn)
         self._toolbar.addButton(self._toolbarPlayBtn)
         self._toolbar.addButton(self._toolbarNextBtn)
+
+    def _translateUI(self) -> None:
+        playTooltip = "MUSIC_PLAYER.TOOLTIP_PAUSE_BTN" if musicPlayer.isPlaying() else "MUSIC_PLAYER.TOOLTIP_PLAY_BTN"
+
+        self._toolbarPrevBtn.setToolTip(translator.translate("MUSIC_PLAYER.TOOLTIP_PREV_BTN"))
+        self._toolbarPlayBtn.setToolTip(translator.translate(playTooltip))
+        self._toolbarNextBtn.setToolTip(translator.translate("MUSIC_PLAYER.TOOLTIP_NEXT_BTN"))
 
     def _connectSignalSlots(self) -> None:
         self._closeBtn.clicked.connect(lambda: appCenter.exited.emit())
@@ -64,10 +68,10 @@ class MainWindow(TitleBarWindow, Component):
         self._toolbarPlayBtn.clicked.connect(lambda: musicPlayer.pause() if musicPlayer.isPlaying() else musicPlayer.play())
         self._toolbarNextBtn.clicked.connect(lambda: musicPlayer.playNextSong())
 
-        musicPlayer.played.connect(lambda: self._toolbarPlayBtn.setToolTip("Pause"))
+        musicPlayer.played.connect(lambda: self._toolbarPlayBtn.setToolTip(translator.translate("MUSIC_PLAYER.TOOLTIP_PAUSE_BTN")))
         musicPlayer.played.connect(lambda: self._toolbarPlayBtn.setIcon(Icons.PAUSE.withColor(Colors.PRIMARY)))
 
-        musicPlayer.paused.connect(lambda: self._toolbarPlayBtn.setToolTip("Play"))
+        musicPlayer.paused.connect(lambda: self._toolbarPlayBtn.setToolTip(translator.translate("MUSIC_PLAYER.TOOLTIP_PLAY_BTN")))
         musicPlayer.paused.connect(lambda: self._toolbarPlayBtn.setIcon(Icons.PLAY.withColor(Colors.PRIMARY)))
 
         self._minimizeBtn.clicked.connect(lambda: self.showMinimized())

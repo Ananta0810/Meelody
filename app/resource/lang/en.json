@@ -127,5 +127,17 @@
     "DELETE_SONG_BTN": "Delete",
     "DELETE_FAILED_PLAYING": "You can not delete the playing song. Please try again after you played other song.",
     "DELETE_FAILED": "Something is wrong when delete the song. Please try again."
+  },
+  "SETTINGS": {
+    "LABEL": "Settings",
+    "LANGUAGE_LABEL": "Language",
+    "LANGUAGE_DESCRIPTION": "Select language of the application",
+    "THEME_LABEL": "Theme",
+    "THEME_DESCRIPTION": "Select your application theme",
+    "SYSTEM_MODE": "System",
+    "LIGHT_MODE": "Light Mode",
+    "DARK_MODE": "Dark Mode",
+    "CANCEL_BTN": "Cancel",
+    "SAVE_BTN": "Save changes"
   }
 }

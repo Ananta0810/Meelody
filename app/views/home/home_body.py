@@ -4,6 +4,7 @@ from PyQt5.QtCore import Qt, QSize
 from PyQt5.QtGui import QShowEvent, QWheelEvent
 from PyQt5.QtWidgets import QWidget, QVBoxLayout, QScrollArea, QHBoxLayout
 
+from app.common.others import translator
 from app.components.base import Component, Factory
 from app.components.widgets import StyleWidget
 from app.helpers.stylesheets import Colors, Paddings
@@ -39,7 +40,7 @@ class HomeBody(QScrollArea, Component):
         self._settingsBtn = Factory.createIconButton(QSize(40, 40), padding=Paddings.RELATIVE_33)
         self._settingsBtn.setLightModeIcon(Icons.SETTINGS.withColor(Colors.PRIMARY))
         self._settingsBtn.setDarkModeIcon(Icons.SETTINGS.withColor(Colors.WHITE))
-        self._settingsBtn.setClassName("bg-none border-none hover:bg-primary-10 rounded-full")
+        self._settingsBtn.setClassName("bg-none border-none hover:bg-primary-10 rounded-full dark:hover:bg-white-12")
 
         self._settingsAreaLayout.addWidget(self._settingsBtn)
 
@@ -51,6 +52,9 @@ class HomeBody(QScrollArea, Component):
         self._mainLayout.addWidget(self._playlistsCarousel)
         self._mainLayout.addSpacing(50)
         self._mainLayout.addWidget(self._currentPlaylist)
+
+    def _translateUI(self) -> None:
+        self._settingsBtn.setToolTip(translator.translate("SETTINGS.LABEL"))
 
     def wheelEvent(self, event: QWheelEvent) -> None:
         carouselTop = self._playlistsCarousel.mapToParent(self._inner.pos()).y()

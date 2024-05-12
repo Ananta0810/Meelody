@@ -44,13 +44,13 @@ class SettingsDialog(FramelessWindow):
 
         # ==================================== TITLE BAR ====================================
         self._closeBtn = Factory.createIconButton(Icons.MEDIUM, Paddings.RELATIVE_50)
-        self._closeBtn.setLightModeIcon(Icons.CLOSE.withColor(Colors.GRAY))
-        self._closeBtn.setClassName("bg-none hover:bg-gray-12 rounded-8")
+        self._closeBtn.setLightModeIcon(Icons.CLOSE.withColor(Colors.BLACK))
+        self._closeBtn.setDarkModeIcon(Icons.CLOSE.withColor(Colors.WHITE))
+        self._closeBtn.setClassName("rounded-8 bg-none hover:bg-gray-25 dark:hover:bg-white-20")
 
         self._dialogTitle = Label()
         self._dialogTitle.setFont(Factory.createFont(family="Segoe UI Semibold", size=14, bold=True))
         self._dialogTitle.setClassName("text-black dark:text-white bg-none")
-        self._dialogTitle.setText("Settings")
 
         self._titleBar = QHBoxLayout()
         self._titleBar.setContentsMargins(24, 12, 12, 0)
@@ -79,12 +79,10 @@ class SettingsDialog(FramelessWindow):
         self._languageTitleLabel = Label()
         self._languageTitleLabel.setFont(Factory.createFont(family="Segoe UI Semibold", size=11, bold=True))
         self._languageTitleLabel.setClassName("text-black dark:text-white")
-        self._languageTitleLabel.setText("Language")
 
         self._languageDescriptionLabel = Label()
         self._languageDescriptionLabel.setFont(Factory.createFont(size=10))
         self._languageDescriptionLabel.setClassName("text-gray")
-        self._languageDescriptionLabel.setText("Select language of the application")
         self._languageDescriptionLabel.setWordWrap(True)
         self._languageDescriptionLabel.setMinimumWidth(self._languageDescriptionLabel.sizeHint().width())
 
@@ -108,12 +106,10 @@ class SettingsDialog(FramelessWindow):
         self._themeTitleLabel = Label()
         self._themeTitleLabel.setFont(Factory.createFont(family="Segoe UI Semibold", size=11, bold=True))
         self._themeTitleLabel.setClassName("text-black dark:text-white")
-        self._themeTitleLabel.setText("Theme")
 
         self._themeDescriptionLabel = Label()
         self._themeDescriptionLabel.setFont(Factory.createFont(size=10))
         self._themeDescriptionLabel.setClassName("text-gray")
-        self._themeDescriptionLabel.setText("Select your application theme")
         self._themeDescriptionLabel.setWordWrap(True)
         self._themeDescriptionLabel.setMinimumWidth(self._themeDescriptionLabel.sizeHint().width())
 
@@ -134,7 +130,6 @@ class SettingsDialog(FramelessWindow):
         self._systemModeLabel = Label()
         self._systemModeLabel.setFont(Factory.createFont(family="Segoe UI Semibold", size=10, bold=True))
         self._systemModeLabel.setClassName("text-black dark:text-white")
-        self._systemModeLabel.setText("System")
 
         self._systemModeLayout.addWidget(self._systemModeBtn)
         self._systemModeLayout.addWidget(self._systemModeLabel)
@@ -152,7 +147,6 @@ class SettingsDialog(FramelessWindow):
         self._lightModeLabel = Label()
         self._lightModeLabel.setFont(Factory.createFont(family="Segoe UI Semibold", size=10, bold=True))
         self._lightModeLabel.setClassName("text-black dark:text-white")
-        self._lightModeLabel.setText("Light Mode")
 
         self._lightModeLayout.addWidget(self._lightModeBtn)
         self._lightModeLayout.addWidget(self._lightModeLabel)
@@ -170,7 +164,6 @@ class SettingsDialog(FramelessWindow):
         self._darkModeLabel = Label()
         self._darkModeLabel.setFont(Factory.createFont(family="Segoe UI Semibold", size=10, bold=True))
         self._darkModeLabel.setClassName("text-black dark:text-white")
-        self._darkModeLabel.setText("Dark Mode")
 
         self._darkModeLayout.addWidget(self._darkModeBtn)
         self._darkModeLayout.addWidget(self._darkModeLabel)
@@ -196,13 +189,14 @@ class SettingsDialog(FramelessWindow):
 
         self._cancelBtn = ActionButton()
         self._cancelBtn.setFont(Factory.createFont(family="Segoe UI Semibold", size=10))
-        self._cancelBtn.setClassName("rounded-4 text-black bg-gray-12 hover:bg-gray-25 py-8 px-24")
-        self._cancelBtn.setText("Cancel")
+        self._cancelBtn.setClassName(
+            "rounded-4 text-black bg-gray-12 hover:bg-gray-25 py-8 px-24",
+            "dark:text-white dark:bg-white-20 dark:hover:bg-white-33"
+        )
 
         self._saveBtn = ActionButton()
         self._saveBtn.setFont(Factory.createFont(family="Segoe UI Semibold", size=10))
         self._saveBtn.setClassName("rounded-4 text-white bg-primary-75 bg-primary py-8 px-24")
-        self._saveBtn.setText("Save")
 
         self._footerLayout.addStretch(1)
         self._footerLayout.addWidget(self._cancelBtn)
@@ -213,6 +207,18 @@ class SettingsDialog(FramelessWindow):
         super().addLayout(self._body)
         super().addSpacing(8)
         super().addWidget(self._footer)
+
+    def _translateUI(self) -> None:
+        self._dialogTitle.setText(translator.translate("SETTINGS.LABEL"))
+        self._languageTitleLabel.setText(translator.translate("SETTINGS.LABEL"))
+        self._languageDescriptionLabel.setText(translator.translate("SETTINGS.LABEL"))
+        self._themeTitleLabel.setText(translator.translate("SETTINGS.THEME_LABEL"))
+        self._themeDescriptionLabel.setText(translator.translate("SETTINGS.THEME_DESCRIPTION"))
+        self._systemModeLabel.setText(translator.translate("SETTINGS.SYSTEM_MODE"))
+        self._lightModeLabel.setText(translator.translate("SETTINGS.LIGHT_MODE"))
+        self._darkModeLabel.setText(translator.translate("SETTINGS.DARK_MODE"))
+        self._cancelBtn.setText(translator.translate("SETTINGS.CANCEL_BTN"))
+        self._saveBtn.setText(translator.translate("SETTINGS.SAVE_BTN"))
 
     def _connectSignalSlots(self) -> None:
         super()._connectSignalSlots()
@@ -246,6 +252,7 @@ class SettingsDialog(FramelessWindow):
 
     def show(self) -> None:
         self.applyTheme()
+        self._translateUI()
         self.moveToCenter()
         super().show()
 

@@ -127,5 +127,17 @@
     "DELETE_SONG_BTN": "Xoá",
     "DELETE_FAILED_PLAYING": "Bạn không thể xoá bài hát đang phát. Xin hãy thử lại sau khi phát bài khác.",
     "DELETE_FAILED": "Có lỗi xảy ra trong quá trình xoá bài hát. Xin hãy thử lại."
+  },
+  "SETTINGS": {
+    "LABEL": "Cài đặt",
+    "LANGUAGE_LABEL": "Ngôn ngữ",
+    "LANGUAGE_DESCRIPTION": "Thiết lập ngôn ngữ của ứng dụng",
+    "THEME_LABEL": "Giao diện",
+    "THEME_DESCRIPTION": "Thiết lập giao diện của ứng dụng",
+    "SYSTEM_MODE": "Theo giao diện thiết bị",
+    "LIGHT_MODE": "Ban ngày",
+    "DARK_MODE": "Ban đêm",
+    "CANCEL_BTN": "Huỷ",
+    "SAVE_BTN": "Lưu thay đổi"
   }
 }
