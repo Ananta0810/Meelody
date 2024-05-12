@@ -19,7 +19,7 @@ from app.common.statics.styles import Colors
 from app.common.statics.styles import Paddings
 from app.components.base import FontFactory
 from app.components.buttons import ButtonFactory
-from app.components.images import Cover, CoverProps
+from app.components.images import Cover
 from app.components.images.gif import Gif
 from app.components.labels import AutoTranslateLabel
 from app.components.labels.ellipsis_label import EllipsisLabel
@@ -46,7 +46,7 @@ class DownloadSongItem(ExtendableStyleWidget):
 
         self._cover = Cover()
         self._cover.setFixedSize(48, 48)
-        self._cover.setCover(CoverProps.fromBytes(Images.defaultSongCover, width=48, height=48, radius=8))
+        self._cover.setCover(Cover.Props.fromBytes(Images.defaultSongCover, width=48, height=48, radius=8))
 
         self._titleLabel = EllipsisLabel()
         self._titleLabel.setFont(FontFactory.create(size=10, bold=True))

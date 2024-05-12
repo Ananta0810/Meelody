@@ -9,7 +9,7 @@ from app.common.statics.qt import Images
 from app.components.base import FontFactory
 from app.components.buttons import ActionButton
 from app.components.dialogs import BaseDialog
-from app.components.images import Cover, CoverProps
+from app.components.images import Cover
 from app.components.labels import Label
 from app.components.windows import FramelessWindow
 from app.helpers.base import Numbers
@@ -151,7 +151,7 @@ class _AlertDialog(BaseDialog):
         QShortcut(QKeySequence(Qt.Key_Return), self._acceptBtn).activated.connect(lambda: self.closed.emit())
 
     def setInfo(self, image: bytes, header: str, message: str, acceptText: str, onClose: Optional[callable]) -> None:
-        self._image.setCover(CoverProps.fromBytes(image, width=128))
+        self._image.setCover(Cover.Props.fromBytes(image, width=128))
         self._header.setText(header)
         self._message.setText(message)
         self._acceptBtn.setText(acceptText)

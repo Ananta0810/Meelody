@@ -13,7 +13,7 @@ from app.components.base import FontFactory
 from app.components.buttons import ButtonFactory, ActionButton
 from app.components.dropdowns import DropDown
 from app.components.events import ClickObserver
-from app.components.images import CoverProps, Cover
+from app.components.images import Cover
 from app.components.labels import Label
 from app.components.widgets import StyleWidget
 from app.components.windows import FramelessWindow
@@ -134,7 +134,7 @@ class SettingsDialog(FramelessWindow):
 
         self._systemModeBtn = ThemeButton()
         self._systemModeBtn.setFixedWidth(160)
-        self._systemModeBtn.setCover(CoverProps.fromBytes(Images.systemMode, width=156, height=90, radius=6))
+        self._systemModeBtn.setCover(Cover.Props.fromBytes(Images.systemMode, width=156, height=90, radius=6))
         self._systemModeBtn.setClassName("rounded-8 border-2 border-transparent active:rounded-8 active:border-2 active:border-primary")
 
         self._systemModeLabel = Label()
@@ -151,7 +151,7 @@ class SettingsDialog(FramelessWindow):
 
         self._lightModeBtn = ThemeButton()
         self._lightModeBtn.setFixedWidth(160)
-        self._lightModeBtn.setCover(CoverProps.fromBytes(Images.lightMode, width=156, height=90, radius=6))
+        self._lightModeBtn.setCover(Cover.Props.fromBytes(Images.lightMode, width=156, height=90, radius=6))
         self._lightModeBtn.setClassName("rounded-8 border-2 border-transparent active:rounded-8 active:border-2 active:border-primary")
 
         self._lightModeLabel = Label()
@@ -168,7 +168,7 @@ class SettingsDialog(FramelessWindow):
 
         self._darkModeBtn = ThemeButton()
         self._darkModeBtn.setFixedWidth(160)
-        self._darkModeBtn.setCover(CoverProps.fromBytes(Images.darkMode, width=156, height=90, radius=6))
+        self._darkModeBtn.setCover(Cover.Props.fromBytes(Images.darkMode, width=156, height=90, radius=6))
         self._darkModeBtn.setClassName("rounded-8 border-2 border-transparent active:rounded-8 active:border-2 active:border-primary")
 
         self._darkModeLabel = Label()

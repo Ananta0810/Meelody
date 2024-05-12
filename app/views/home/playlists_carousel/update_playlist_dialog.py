@@ -14,7 +14,7 @@ from app.common.statics.qt import Images
 from app.components.base import FontFactory
 from app.components.buttons import ActionButton
 from app.components.dialogs import BaseDialog, Dialogs
-from app.components.images.cover import CoverWithPlaceHolder, CoverProps
+from app.components.images.cover import CoverWithPlaceHolder, Cover
 from app.components.inputs import Input
 from app.components.widgets import Box
 from app.helpers.base import Strings
@@ -39,7 +39,7 @@ class UpdatePlaylistDialog(BaseDialog):
 
         self._cover = CoverWithPlaceHolder()
         self._cover.setFixedSize(320, 320)
-        self._cover.setPlaceHolderCover(CoverProps.fromBytes(Images.defaultPlaylistCover, 320, 320, radius=16))
+        self._cover.setPlaceHolderCover(Cover.Props.fromBytes(Images.defaultPlaylistCover, 320, 320, radius=16))
 
         self._titleInput = Input()
         self._titleInput.setFont(FontFactory.create(size=12))
@@ -117,12 +117,12 @@ class UpdatePlaylistDialog(BaseDialog):
         cover = imageEditor.square().resize(320, 320).toBytes()
 
         self.__coverData = cover
-        self._cover.setCover(CoverProps.fromBytes(cover, 320, 320, radius=16))
+        self._cover.setCover(Cover.Props.fromBytes(cover, 320, 320, radius=16))
         self.__checkValid()
 
     def _setInfo(self, info: Playlist.Info) -> None:
         self._titleInput.setText(info.getName())
-        self._cover.setCover(CoverProps.fromBytes(info.getCover(), 320, 320, radius=16))
+        self._cover.setCover(Cover.Props.fromBytes(info.getCover(), 320, 320, radius=16))
 
     def _savePlaylist(self) -> None:
         name = self._titleInput.text().strip()

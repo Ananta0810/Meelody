@@ -1,2 +1,2 @@
-from .cover import Cover, CoverProps
+from .cover import Cover
 from .gif import Gif

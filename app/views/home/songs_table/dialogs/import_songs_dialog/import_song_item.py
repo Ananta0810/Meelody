@@ -13,7 +13,6 @@ from app.common.statics.qt import Images
 from app.components.base import FontFactory
 from app.components.buttons import ActionButton
 from app.components.dialogs import BaseDialog
-from app.components.images import CoverProps
 from app.components.images.cover import CoverWithPlaceHolder, Cover
 from app.components.inputs import Input
 from app.components.labels import AutoTranslateLabel, Label
@@ -44,7 +43,7 @@ class ImportSongItem(ExtendableStyleWidget):
 
         self._cover = CoverWithPlaceHolder()
         self._cover.setFixedSize(48, 48)
-        self._cover.setPlaceHolderCover(CoverProps.fromBytes(Images.defaultSongCover, width=48, height=48, radius=8))
+        self._cover.setPlaceHolderCover(Cover.Props.fromBytes(Images.defaultSongCover, width=48, height=48, radius=8))
 
         self._titleLabel = EllipsisLabel()
         self._titleLabel.setFont(FontFactory.create(size=10))
@@ -111,7 +110,7 @@ class ImportSongItem(ExtendableStyleWidget):
 
         self.__artist = song.getArtist()
 
-        self._cover.setCover(CoverProps.fromBytes(song.getCover(), width=48, height=48, radius=9))
+        self._cover.setCover(Cover.Props.fromBytes(song.getCover(), width=48, height=48, radius=9))
         self._titleLabel.setText(Strings.join("   |   ", [song.getTitle(), song.getArtist()]))
 
     def startImport(self) -> None:
@@ -198,7 +197,7 @@ class UpdateImportSongDialog(BaseDialog):
 
         self._image = Cover()
         self._image.setAlignment(Qt.AlignHCenter)
-        self._image.setCover(CoverProps.fromBytes(Images.importSongs, width=128))
+        self._image.setCover(Cover.Props.fromBytes(Images.importSongs, width=128))
 
         self._header = Label()
         self._header.setFont(FontFactory.create(family="Segoe UI Semibold", size=16, bold=True))

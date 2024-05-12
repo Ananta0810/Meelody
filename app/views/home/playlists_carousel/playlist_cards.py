@@ -16,7 +16,7 @@ from app.common.statics.styles import Paddings
 from app.components.base import FontFactory
 from app.components.buttons import ButtonFactory
 from app.components.dialogs import Dialogs
-from app.components.images.cover import ZoomCover, CoverProps
+from app.components.images.cover import ZoomCover, Cover
 from app.components.labels.ellipsis_label import EllipsisLabel
 from app.components.widgets import ExtendableStyleWidget
 from app.helpers.base import Bytes, Lists
@@ -105,8 +105,8 @@ class PlaylistCard(ExtendableStyleWidget):
             self.clicked.emit()
 
     @staticmethod
-    def _toCoverProps(cover: bytes) -> CoverProps:
-        return CoverProps.fromBytes(cover, width=256, height=320, radius=24)
+    def _toCoverProps(cover: bytes) -> Cover.Props:
+        return Cover.Props.fromBytes(cover, width=256, height=320, radius=24)
 
 
 class LibraryPlaylistCard(PlaylistCard):

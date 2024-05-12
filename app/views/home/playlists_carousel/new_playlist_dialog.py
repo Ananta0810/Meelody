@@ -15,7 +15,7 @@ from app.common.statics.qt import Images
 from app.components.base import FontFactory
 from app.components.buttons import ActionButton
 from app.components.dialogs import BaseDialog, Dialogs
-from app.components.images import Cover, CoverProps
+from app.components.images import Cover
 from app.components.inputs import Input
 from app.components.widgets import Box
 from app.helpers.base import Strings
@@ -37,7 +37,7 @@ class NewPlaylistDialog(BaseDialog):
 
         self._cover = Cover()
         self._cover.setFixedSize(320, 320)
-        self._cover.setCover(CoverProps.fromBytes(Images.defaultPlaylistCover, 320, 320, radius=16))
+        self._cover.setCover(Cover.Props.fromBytes(Images.defaultPlaylistCover, 320, 320, radius=16))
 
         self._titleInput = Input()
         self._titleInput.setFont(FontFactory.create(size=12))
@@ -108,7 +108,7 @@ class NewPlaylistDialog(BaseDialog):
         cover = imageEditor.square().resize(320, 320).toBytes()
 
         self.__coverData = cover
-        self._cover.setCover(CoverProps.fromBytes(cover, 320, 320, radius=16))
+        self._cover.setCover(Cover.Props.fromBytes(cover, 320, 320, radius=16))
 
     def _addPlaylist(self) -> None:
         id = str(uuid.uuid4())

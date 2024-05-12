@@ -4,72 +4,71 @@ from PyQt5.QtCore import QVariantAnimation, QEasingCurve, Qt
 from PyQt5.QtGui import QPixmap
 from PyQt5.QtWidgets import QLabel, QWidget
 
-from app.helpers.base import Bytes, suppressException
+from app.helpers.base import Bytes, suppressException, memoizeResult
 from app.helpers.qt.pixmaps import Pixmaps
 
 
-class CoverProps:
+class Cover(QLabel):
+    class Props:
 
-    def __init__(self, data: bytes, width: int, height: int, radius: int, ):
-        self.__data: bytes = data
-        self.__pixmap: QPixmap | None = None
-        self.__width: int = width
-        self.__height: int = height
-        self.__radius: int = radius
+        def __init__(self, data: bytes, width: int, height: int, radius: int, ):
+            self.__data: bytes = data
+            self.__pixmap: QPixmap | None = None
+            self.__width: int = width
+            self.__height: int = height
+            self.__radius: int = radius
 
-    def __eq__(self, o: 'CoverProps') -> bool:
-        return (
-            self.__data == o.__data and
-            self.__width == o.__width and
-            self.__height == o.__height and
-            self.__radius == o.__radius
-        )
+        def __eq__(self, o: 'Cover.Props') -> bool:
+            return (
+                self.__data == o.__data and
+                self.__width == o.__width and
+                self.__height == o.__height and
+                self.__radius == o.__radius
+            )
 
-    def __hash__(self) -> int:
-        return hash((Bytes.decode(self.__data), self.__width, self.__height, self.__radius))
+        def __hash__(self) -> int:
+            return hash((Bytes.decode(self.__data), self.__width, self.__height, self.__radius))
 
-    def data(self) -> bytes:
-        return self.__data
+        def data(self) -> bytes:
+            return self.__data
 
-    def radius(self) -> int:
-        return self.__radius
+        def radius(self) -> int:
+            return self.__radius
 
-    def content(self) -> QPixmap:
-        return self.__pixmap
+        def content(self) -> QPixmap:
+            return self.__pixmap
 
-    @staticmethod
-    def fromBytes(imageByte: bytes, width: int = 0, height: int = 0, radius: int = 0, cropCenter: bool = True) -> Optional['CoverProps']:
-        if imageByte is None:
-            return None
+        @staticmethod
+        @memoizeResult
+        def fromBytes(imageByte: bytes, width: int = 0, height: int = 0, radius: int = 0, cropCenter: bool = True) -> Optional['Cover.Props']:
+            if imageByte is None:
+                return None
 
-        props = CoverProps(imageByte, width, height, radius)
+            props = Cover.Props(imageByte, width, height, radius)
 
-        pixmap = Pixmaps.toQPixmap(imageByte)
-        if pixmap.isNull():
+            pixmap = Pixmaps.toQPixmap(imageByte)
+            if pixmap.isNull():
+                return props
+
+            if width > 0 or height > 0:
+                pixmap = Pixmaps.scaleKeepingRatio(pixmap, max(width, height))
+                pixmap = Pixmaps.crop(pixmap, width, height, cropCenter)
+
+            if radius > 0:
+                pixmap = Pixmaps.round(pixmap, radius)
+
+            props.__pixmap = pixmap
             return props
 
-        if width > 0 or height > 0:
-            pixmap = Pixmaps.scaleKeepingRatio(pixmap, max(width, height))
-            pixmap = Pixmaps.crop(pixmap, width, height, cropCenter)
-
-        if radius > 0:
-            pixmap = Pixmaps.round(pixmap, radius)
-
-        props.__pixmap = pixmap
-        return props
-
-
-class Cover(QLabel):
-
     def __init__(self, parent: Optional[QWidget] = None):
-        self._currentCover: Optional[CoverProps] = None
+        self._currentCover: Optional[Cover.Props] = None
         QLabel.__init__(self, parent)
 
-    def currentCover(self) -> CoverProps:
+    def currentCover(self) -> 'Cover.Props':
         return self._currentCover
 
     @suppressException
-    def setCover(self, cover: CoverProps) -> None:
+    def setCover(self, cover: 'Cover.Props') -> None:
         self._currentCover = cover
         super().setPixmap(cover.content())
 
@@ -78,14 +77,14 @@ class CoverWithPlaceHolder(Cover):
 
     def __init__(self, parent: Optional[QWidget] = None):
         Cover.__init__(self, parent)
-        self.__defaultCover: Optional[CoverProps] = None
+        self.__defaultCover: Optional[Cover.Props] = None
 
-    def setPlaceHolderCover(self, cover: CoverProps) -> None:
+    def setPlaceHolderCover(self, cover: Cover.Props) -> None:
         self.__defaultCover = cover
         self.setCover(cover)
 
     @suppressException
-    def setCover(self, cover: CoverProps) -> None:
+    def setCover(self, cover: Cover.Props) -> None:
         super().setCover(cover or self.__defaultCover)
 
 

@@ -13,7 +13,7 @@ from app.common.statics.styles import Paddings
 from app.components.base import FontFactory
 from app.components.buttons import ButtonFactory
 from app.components.dialogs import Dialogs
-from app.components.images.cover import CoverWithPlaceHolder, CoverProps
+from app.components.images.cover import CoverWithPlaceHolder, Cover
 from app.components.labels import LabelWithPlaceHolder
 from app.components.widgets import ExtendableStyleWidget, StyleWidget, FlexBox
 from app.helpers.base import silence, suppressException
@@ -47,7 +47,7 @@ class SongRow(ExtendableStyleWidget):
 
         self._cover = CoverWithPlaceHolder(self)
         self._cover.setFixedSize(64, 64)
-        self._cover.setPlaceHolderCover(CoverProps.fromBytes(Images.defaultSongCover, width=64, height=64, radius=12))
+        self._cover.setPlaceHolderCover(Cover.Props.fromBytes(Images.defaultSongCover, width=64, height=64, radius=12))
 
         self._titleLabel = LabelWithPlaceHolder()
         self._titleLabel.enableEllipsis()
@@ -252,7 +252,7 @@ class SongRow(ExtendableStyleWidget):
 
     @suppressException
     def __setCover(self, cover: bytes) -> None:
-        self._cover.setCover(CoverProps.fromBytes(cover, width=64, height=64, radius=12))
+        self._cover.setCover(Cover.Props.fromBytes(cover, width=64, height=64, radius=12))
 
     @suppressException
     def __updateSongField(self, field: str) -> None:

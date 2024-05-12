@@ -8,7 +8,7 @@ from app.components.asyncs import ChunksConsumer
 from app.components.base import FontFactory
 from app.components.buttons import ActionButton
 from app.components.dialogs import BaseDialog
-from app.components.images import Cover, CoverProps
+from app.components.images import Cover
 from app.components.labels import Label
 from app.helpers.base import Strings
 from app.views.home.songs_table.dialogs.import_songs_dialog.import_song_item import ImportSongItem
@@ -35,7 +35,7 @@ class ImportSongsDialog(BaseDialog):
         self._image = Cover()
         self._image.setAlignment(Qt.AlignHCenter)
         self._image.setFixedHeight(156)
-        self._image.setCover(CoverProps.fromBytes(Images.importSongs, width=128))
+        self._image.setCover(Cover.Props.fromBytes(Images.importSongs, width=128))
 
         self._header = Label()
         self._header.setFont(FontFactory.create(family="Segoe UI Semibold", size=16, bold=True))

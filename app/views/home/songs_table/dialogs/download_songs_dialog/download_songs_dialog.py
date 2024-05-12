@@ -13,7 +13,7 @@ from app.common.statics.qt import Images, Cursors
 from app.components.base import FontFactory
 from app.components.buttons import ActionButton
 from app.components.dialogs import BaseDialog, Dialogs
-from app.components.images import Cover, CoverProps
+from app.components.images import Cover
 from app.components.inputs import Input
 from app.components.labels import Label
 from app.helpers.base import Strings
@@ -33,7 +33,7 @@ class DownloadSongsDialog(BaseDialog):
         self._image = Cover()
         self._image.setAlignment(Qt.AlignHCenter)
         self._image.setFixedHeight(156)
-        self._image.setCover(CoverProps.fromBytes(Images.download, width=128))
+        self._image.setCover(Cover.Props.fromBytes(Images.download, width=128))
 
         self._header = Label()
         self._header.setFont(FontFactory.create(family="Segoe UI Semibold", size=16, bold=True))
@@ -147,7 +147,7 @@ class _SongInfoDialog(BaseDialog):
 
         self._image = Cover()
         self._image.setAlignment(Qt.AlignHCenter)
-        self._image.setCover(CoverProps.fromBytes(Images.download, width=128))
+        self._image.setCover(Cover.Props.fromBytes(Images.download, width=128))
 
         self._header = Label()
         self._header.setFont(FontFactory.create(family="Segoe UI Semibold", size=16, bold=True))

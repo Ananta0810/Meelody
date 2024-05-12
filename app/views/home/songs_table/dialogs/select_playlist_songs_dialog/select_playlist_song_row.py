@@ -7,7 +7,7 @@ from app.common.models import Song
 from app.common.statics.qt import Images, Cursors
 from app.components.base import FontFactory
 from app.components.checkboxes import CheckBox
-from app.components.images.cover import CoverWithPlaceHolder, CoverProps
+from app.components.images.cover import CoverWithPlaceHolder, Cover
 from app.components.labels import Label
 from app.components.labels.ellipsis_label import EllipsisLabel
 from app.components.widgets import ExtendableStyleWidget, FlexBox
@@ -43,7 +43,7 @@ class SongRow(ExtendableStyleWidget):
 
         self._cover = CoverWithPlaceHolder(self)
         self._cover.setFixedSize(64, 64)
-        self._cover.setPlaceHolderCover(CoverProps.fromBytes(Images.defaultSongCover, width=64, height=64, radius=12))
+        self._cover.setPlaceHolderCover(Cover.Props.fromBytes(Images.defaultSongCover, width=64, height=64, radius=12))
 
         self._titleLabel = EllipsisLabel()
         self._titleLabel.setFixedWidth(200)
@@ -76,7 +76,7 @@ class SongRow(ExtendableStyleWidget):
         self._checkBox.unchecked.connect(lambda: self.unchecked.emit(self.__song))
 
     def __displaySongInfo(self) -> None:
-        self._cover.setCover(CoverProps.fromBytes(self.__song.getCover(), width=64, height=64, radius=12))
+        self._cover.setCover(Cover.Props.fromBytes(self.__song.getCover(), width=64, height=64, radius=12))
         self._titleLabel.setText(self.__song.getTitle())
         self._artistLabel.setText(self.__song.getArtist())
         self._lengthLabel.setText(Times.toString(self.__song.getLength()))

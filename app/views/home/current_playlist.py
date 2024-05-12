@@ -7,7 +7,7 @@ from app.common.models import Playlist
 from app.common.others import appCenter, translator
 from app.common.statics.qt import Images
 from app.components.base import Component, FontFactory
-from app.components.images.cover import CoverWithPlaceHolder, CoverProps
+from app.components.images.cover import CoverWithPlaceHolder, Cover
 from app.components.labels import LabelWithPlaceHolder
 from app.views.home.songs_table import SongsTable
 
@@ -58,8 +58,8 @@ class _Info(QVBoxLayout, Component):
         self._totalSongsLabel.setText(f"{playlist.getSongs().size()} {translator.translate('CURRENT_PLAYLIST.TRACKS')}")
 
     @staticmethod
-    def __createCover(data: bytes) -> Optional[CoverProps]:
-        return CoverProps.fromBytes(data, width=320, height=320, radius=24)
+    def __createCover(data: bytes) -> Optional[Cover.Props]:
+        return Cover.Props.fromBytes(data, width=320, height=320, radius=24)
 
 
 class CurrentPlaylist(QWidget):

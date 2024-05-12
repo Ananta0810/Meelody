@@ -10,7 +10,7 @@ from app.common.statics.qt import Images
 from app.components.base import FontFactory
 from app.components.buttons import ActionButton
 from app.components.dialogs import BaseDialog
-from app.components.images import Cover, CoverProps
+from app.components.images import Cover
 from app.components.inputs import Input
 from app.components.labels import Label
 from app.components.widgets import Box, FlexBox
@@ -30,7 +30,7 @@ class TimerDialog(BaseDialog):
         super()._createUI()
 
         self._cover = Cover()
-        self._cover.setCover(CoverProps.fromBytes(Images.timer, width=184))
+        self._cover.setCover(Cover.Props.fromBytes(Images.timer, width=184))
 
         # ================================= Setup Timer =================================
         self._minuteInput = TimerInput(99)

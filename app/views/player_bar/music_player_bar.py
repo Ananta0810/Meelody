@@ -14,7 +14,7 @@ from app.common.statics.styles import Paddings
 from app.components.base import Component, FontFactory
 from app.components.buttons import ButtonFactory, StateIcon
 from app.components.dialogs import Dialogs
-from app.components.images.cover import CoverWithPlaceHolder, CoverProps
+from app.components.images.cover import CoverWithPlaceHolder, Cover
 from app.components.labels import LabelWithPlaceHolder
 from app.components.sliders import HorizontalSlider
 from app.helpers.others import Times
@@ -31,7 +31,7 @@ class MusicPlayerBar(QWidget, Component):
 
         super()._initComponent()
 
-        self.setDefaultCover(Images.defaultSongCover)
+        self._songCover.setPlaceHolderCover(self.__createCover(Images.defaultSongCover))
         self.setPlayingTime(0)
         self.setTotalTime(0)
         self._loopBtn.setActive(musicPlayer.isLooping())
@@ -328,9 +328,6 @@ class MusicPlayerBar(QWidget, Component):
         except AttributeError:
             self._timeSlider.setValue(0)
 
-    def setDefaultCover(self, cover: bytes) -> None:
-        self._songCover.setPlaceHolderCover(self.__createCover(cover))
-
     def __setPLaying(self, isPlaying: bool) -> None:
         self._playSongBtn.setVisible(not isPlaying)
         self._pauseSongBtn.setVisible(isPlaying)
@@ -402,10 +399,10 @@ class MusicPlayerBar(QWidget, Component):
         return Dialogs.alert(translator.translate("MUSIC_PLAYER.PLAYING_DELETED_SONG"))
 
     @staticmethod
-    def __createCover(data: bytes) -> Union[CoverProps, None]:
+    def __createCover(data: bytes) -> Union[Cover.Props, None]:
         if data is None:
             return None
-        return CoverProps.fromBytes(data, width=64, height=64, radius=12)
+        return Cover.Props.fromBytes(data, width=64, height=64, radius=12)
 
 
 class PlayerTrackingThread(QThread):
