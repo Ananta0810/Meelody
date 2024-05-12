@@ -161,7 +161,7 @@ class SongRow(ExtendableStyleWidget):
         self.__song.coverChanged.connect(lambda cover: self.__setCover(cover))
         self.__song.updated.connect(lambda updatedField: self.__updateSongField(updatedField))
 
-        musicPlayer.played.connect(self.__checkEditable)
+        musicPlayer.songChanged.connect(lambda song: self.__checkEditable(song))
         musicPlayer.played.connect(self.__updatePlayBtn)
         musicPlayer.paused.connect(self.__onMusicPlayerPaused)
 
@@ -176,8 +176,20 @@ class SongRow(ExtendableStyleWidget):
         self.applyThemeToChildren()
 
     @suppressException
-    def __checkEditable(self) -> None:
-        self.setEditable(self.__editable and musicPlayer.getCurrentSong() != self.__song)
+    def setEditable(self, editable: bool) -> None:
+        self.__editable = editable
+        self.__setEditable(editable and musicPlayer.getCurrentSong() != self.__song)
+
+    @suppressException
+    def __checkEditable(self, currentPlayingSong: Song) -> None:
+        if self.__editable:
+            editable = currentPlayingSong != self.__song
+            self.__setEditable(editable)
+
+    def __setEditable(self, editable):
+        self._editSongBtn.setVisible(editable)
+        self._editCoverBtn.setVisible(editable)
+        self._deleteBtn.setVisible(editable)
 
     @suppressException
     def __updatePlayBtn(self) -> None:
@@ -215,13 +227,6 @@ class SongRow(ExtendableStyleWidget):
             menuCorner = self._moreButtons.geometry().topRight()
             self._closeMenuBtn.move(menuCorner.x() - self._closeMenuBtn.width() - 4, menuCorner.y() + 4)
             self._closeMenuBtn.raise_()
-
-    @suppressException
-    def setEditable(self, editable: bool) -> None:
-        self.__editable = editable
-        self._editSongBtn.setVisible(editable)
-        self._editCoverBtn.setVisible(editable)
-        self._deleteBtn.setVisible(editable)
 
     @suppressException
     def __playOrPauseCurrentSong(self) -> None:
