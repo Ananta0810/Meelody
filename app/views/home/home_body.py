@@ -8,7 +8,8 @@ from app.common.others import translator
 from app.common.statics.qt import Icons
 from app.common.statics.styles import Colors
 from app.common.statics.styles import Paddings
-from app.components.base import Component, Factory
+from app.components.base import Component
+from app.components.buttons import ButtonFactory
 from app.components.widgets import StyleWidget
 from app.views.home.current_playlist import CurrentPlaylist
 from app.views.home.playlists_carousel import PlaylistsCarousel
@@ -38,7 +39,7 @@ class HomeBody(QScrollArea, Component):
         self._settingsAreaLayout.setContentsMargins(0, 0, 0, 0)
         self._settingsAreaLayout.setAlignment(Qt.AlignLeft | Qt.AlignTop)
 
-        self._settingsBtn = Factory.createIconButton(QSize(40, 40), padding=Paddings.RELATIVE_33)
+        self._settingsBtn = ButtonFactory.createIconButton(QSize(40, 40), padding=Paddings.RELATIVE_33)
         self._settingsBtn.setLightModeIcon(Icons.settings.withColor(Colors.primary))
         self._settingsBtn.setDarkModeIcon(Icons.settings.withColor(Colors.white))
         self._settingsBtn.setClassName("bg-none border-none hover:bg-primary-10 rounded-full dark:hover:bg-white-12")

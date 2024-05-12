@@ -9,8 +9,12 @@ from app.common.statics.enums import ThemeMode
 from app.common.statics.qt import Icons, Images, Cursors
 from app.common.statics.styles import Colors
 from app.common.statics.styles import Paddings
-from app.components.base import Label, Factory, ActionButton, DropDown, Cover, CoverProps
+from app.components.base import FontFactory
+from app.components.buttons import ButtonFactory, ActionButton
+from app.components.dropdowns import DropDown
 from app.components.events import ClickObserver
+from app.components.images import CoverProps, Cover
+from app.components.labels import Label
 from app.components.widgets import StyleWidget
 from app.components.windows import FramelessWindow
 from app.helpers.stylesheets.translators import ClassNameTranslator
@@ -45,13 +49,13 @@ class SettingsDialog(FramelessWindow):
         self.setClassName("rounded-12 bg-white dark:bg-dark")
 
         # ==================================== TITLE BAR ====================================
-        self._closeBtn = Factory.createIconButton(Icons.medium, Paddings.RELATIVE_50)
+        self._closeBtn = ButtonFactory.createIconButton(Icons.medium, Paddings.RELATIVE_50)
         self._closeBtn.setLightModeIcon(Icons.close.withColor(Colors.black))
         self._closeBtn.setDarkModeIcon(Icons.close.withColor(Colors.white))
         self._closeBtn.setClassName("rounded-8 bg-none hover:bg-gray-25 dark:hover:bg-white-20")
 
         self._dialogTitle = Label()
-        self._dialogTitle.setFont(Factory.createFont(family="Segoe UI Semibold", size=14, bold=True))
+        self._dialogTitle.setFont(FontFactory.create(family="Segoe UI Semibold", size=14, bold=True))
         self._dialogTitle.setClassName("text-black dark:text-white bg-none")
 
         self._titleBar = QHBoxLayout()
@@ -79,11 +83,11 @@ class SettingsDialog(FramelessWindow):
         self._languageLeftLayout.setContentsMargins(0, 0, 0, 0)
 
         self._languageTitleLabel = Label()
-        self._languageTitleLabel.setFont(Factory.createFont(family="Segoe UI Semibold", size=11, bold=True))
+        self._languageTitleLabel.setFont(FontFactory.create(family="Segoe UI Semibold", size=11, bold=True))
         self._languageTitleLabel.setClassName("text-black dark:text-white")
 
         self._languageDescriptionLabel = Label()
-        self._languageDescriptionLabel.setFont(Factory.createFont(size=10))
+        self._languageDescriptionLabel.setFont(FontFactory.create(size=10))
         self._languageDescriptionLabel.setClassName("text-gray")
         self._languageDescriptionLabel.setWordWrap(True)
         self._languageDescriptionLabel.setMinimumWidth(self._languageDescriptionLabel.sizeHint().width())
@@ -110,11 +114,11 @@ class SettingsDialog(FramelessWindow):
         self._themeLayout.setContentsMargins(0, 0, 0, 0)
 
         self._themeTitleLabel = Label()
-        self._themeTitleLabel.setFont(Factory.createFont(family="Segoe UI Semibold", size=11, bold=True))
+        self._themeTitleLabel.setFont(FontFactory.create(family="Segoe UI Semibold", size=11, bold=True))
         self._themeTitleLabel.setClassName("text-black dark:text-white")
 
         self._themeDescriptionLabel = Label()
-        self._themeDescriptionLabel.setFont(Factory.createFont(size=10))
+        self._themeDescriptionLabel.setFont(FontFactory.create(size=10))
         self._themeDescriptionLabel.setClassName("text-gray")
         self._themeDescriptionLabel.setWordWrap(True)
         self._themeDescriptionLabel.setMinimumWidth(self._themeDescriptionLabel.sizeHint().width())
@@ -134,7 +138,7 @@ class SettingsDialog(FramelessWindow):
         self._systemModeBtn.setClassName("rounded-8 border-2 border-transparent active:rounded-8 active:border-2 active:border-primary")
 
         self._systemModeLabel = Label()
-        self._systemModeLabel.setFont(Factory.createFont(family="Segoe UI Semibold", size=10, bold=True))
+        self._systemModeLabel.setFont(FontFactory.create(family="Segoe UI Semibold", size=10, bold=True))
         self._systemModeLabel.setClassName("text-black dark:text-white")
 
         self._systemModeLayout.addWidget(self._systemModeBtn)
@@ -151,7 +155,7 @@ class SettingsDialog(FramelessWindow):
         self._lightModeBtn.setClassName("rounded-8 border-2 border-transparent active:rounded-8 active:border-2 active:border-primary")
 
         self._lightModeLabel = Label()
-        self._lightModeLabel.setFont(Factory.createFont(family="Segoe UI Semibold", size=10, bold=True))
+        self._lightModeLabel.setFont(FontFactory.create(family="Segoe UI Semibold", size=10, bold=True))
         self._lightModeLabel.setClassName("text-black dark:text-white")
 
         self._lightModeLayout.addWidget(self._lightModeBtn)
@@ -168,7 +172,7 @@ class SettingsDialog(FramelessWindow):
         self._darkModeBtn.setClassName("rounded-8 border-2 border-transparent active:rounded-8 active:border-2 active:border-primary")
 
         self._darkModeLabel = Label()
-        self._darkModeLabel.setFont(Factory.createFont(family="Segoe UI Semibold", size=10, bold=True))
+        self._darkModeLabel.setFont(FontFactory.create(family="Segoe UI Semibold", size=10, bold=True))
         self._darkModeLabel.setClassName("text-black dark:text-white")
 
         self._darkModeLayout.addWidget(self._darkModeBtn)
@@ -194,14 +198,14 @@ class SettingsDialog(FramelessWindow):
         self._footerLayout.setContentsMargins(24, 12, 24, 12)
 
         self._cancelBtn = ActionButton()
-        self._cancelBtn.setFont(Factory.createFont(family="Segoe UI Semibold", size=10))
+        self._cancelBtn.setFont(FontFactory.create(family="Segoe UI Semibold", size=10))
         self._cancelBtn.setClassName(
             "rounded-4 text-black bg-gray-12 hover:bg-gray-25 py-8 px-24",
             "dark:text-white dark:bg-white-20 dark:hover:bg-white-33"
         )
 
         self._saveBtn = ActionButton()
-        self._saveBtn.setFont(Factory.createFont(family="Segoe UI Semibold", size=10))
+        self._saveBtn.setFont(FontFactory.create(family="Segoe UI Semibold", size=10))
         self._saveBtn.setClassName("rounded-4 text-white bg-primary-75 bg-primary py-8 px-24")
 
         self._footerLayout.addStretch(1)

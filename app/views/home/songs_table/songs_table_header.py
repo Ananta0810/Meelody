@@ -10,7 +10,9 @@ from app.common.statics.enums import FileType
 from app.common.statics.qt import Icons, Cursors
 from app.common.statics.styles import Colors
 from app.common.statics.styles import Paddings
-from app.components.base import Factory, Component, Label
+from app.components.base import Component, FontFactory
+from app.components.buttons import ButtonFactory
+from app.components.labels import Label
 from app.views.home.songs_table.dialogs.download_songs_dialog import DownloadSongsDialog
 from app.views.home.songs_table.dialogs.import_songs_dialog import ImportSongsDialog
 from app.views.home.songs_table.dialogs.select_playlist_songs_dialog import SelectPlaylistSongsDialog
@@ -31,18 +33,18 @@ class SongsTableHeader(QWidget, Component):
         self._mainLayout.setSpacing(0)
 
         self._trackLabel = Label()
-        self._trackLabel.setFont(Factory.createFont(size=9))
+        self._trackLabel.setFont(FontFactory.create(size=9))
         self._trackLabel.setFixedWidth(64)
         self._trackLabel.setAlignment(Qt.AlignCenter)
         self._trackLabel.setClassName("text-black dark:text-white")
 
         self._artistLabel = Label()
-        self._artistLabel.setFont(Factory.createFont(size=9))
+        self._artistLabel.setFont(FontFactory.create(size=9))
         self._artistLabel.setClassName("text-black dark:text-white")
 
         self._lengthLabel = Label()
         self._lengthLabel.setAlignment(Qt.AlignCenter)
-        self._lengthLabel.setFont(Factory.createFont(size=9))
+        self._lengthLabel.setFont(FontFactory.create(size=9))
         self._lengthLabel.setClassName("text-black dark:text-white")
 
         self._buttons = QWidget()
@@ -51,19 +53,19 @@ class SongsTableHeader(QWidget, Component):
         self._buttonsLayout.setSpacing(8)
         self._buttonsLayout.setContentsMargins(8, 0, 8, 0)
 
-        self._downloadSongsToLibraryBtn = Factory.createIconButton(Icons.large, Paddings.RELATIVE_50)
+        self._downloadSongsToLibraryBtn = ButtonFactory.createIconButton(Icons.large, Paddings.RELATIVE_50)
         self._downloadSongsToLibraryBtn.setLightModeIcon(Icons.download.withColor(Colors.primary))
         self._downloadSongsToLibraryBtn.setDarkModeIcon(Icons.download.withColor(Colors.white))
         self._downloadSongsToLibraryBtn.setToolTip("Download songs from Youtube.")
         self._downloadSongsToLibraryBtn.setClassName("rounded-full bg-primary-12 hover:bg-primary-25 dark:bg-white-20 dark:hover:bg-white-33")
 
-        self._importSongsToLibraryBtn = Factory.createIconButton(Icons.large, Paddings.RELATIVE_67)
+        self._importSongsToLibraryBtn = ButtonFactory.createIconButton(Icons.large, Paddings.RELATIVE_67)
         self._importSongsToLibraryBtn.setLightModeIcon(Icons.add.withColor(Colors.primary))
         self._importSongsToLibraryBtn.setDarkModeIcon(Icons.add.withColor(Colors.white))
         self._importSongsToLibraryBtn.setToolTip("Import songs from computer.")
         self._importSongsToLibraryBtn.setClassName("rounded-full bg-primary-12 hover:bg-primary-25 dark:bg-white-20 dark:hover:bg-white-33")
 
-        self._selectSongsToPlaylistBtn = Factory.createIconButton(Icons.large, Paddings.RELATIVE_67)
+        self._selectSongsToPlaylistBtn = ButtonFactory.createIconButton(Icons.large, Paddings.RELATIVE_67)
         self._selectSongsToPlaylistBtn.setLightModeIcon(Icons.edit.withColor(Colors.primary))
         self._selectSongsToPlaylistBtn.setDarkModeIcon(Icons.edit.withColor(Colors.white))
         self._selectSongsToPlaylistBtn.setToolTip("Select playlist songs.")

@@ -7,7 +7,7 @@ from PyQt5.QtWidgets import QHBoxLayout, QShortcut, QWidget, QLayout
 from app.common.statics.qt import Icons
 from app.common.statics.styles import Colors
 from app.common.statics.styles import Paddings
-from app.components.base import Factory
+from app.components.buttons import ButtonFactory
 from app.components.widgets import Box
 from app.components.windows import FramelessWindow
 
@@ -22,7 +22,7 @@ class BaseDialog(FramelessWindow):
         self.setWindowModality(Qt.ApplicationModal)
         self.setClassName("rounded-12 bg-white dark:bg-dark")
 
-        self._btnClose = Factory.createIconButton(Icons.medium, Paddings.RELATIVE_50)
+        self._btnClose = ButtonFactory.createIconButton(Icons.medium, Paddings.RELATIVE_50)
         self._btnClose.setLightModeIcon(Icons.close.withColor(Colors.gray))
         self._btnClose.setDarkModeIcon(Icons.close.withColor(Colors.white))
         self._btnClose.setClassName("bg-gray-12 hover:bg-gray-25 rounded-8 dark:bg-gray-20 dark:hover:bg-gray-33")

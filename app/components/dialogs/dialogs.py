@@ -6,8 +6,11 @@ from PyQt5.QtWidgets import QShortcut, QVBoxLayout, QHBoxLayout
 
 from app.common.others import translator
 from app.common.statics.qt import Images
-from app.components.base import CoverProps, Cover, Factory, ActionButton, Label
+from app.components.base import FontFactory
+from app.components.buttons import ActionButton
 from app.components.dialogs import BaseDialog
+from app.components.images import Cover, CoverProps
+from app.components.labels import Label
 from app.components.windows import FramelessWindow
 from app.helpers.base import Numbers
 
@@ -26,21 +29,21 @@ class _ConfirmDialog(FramelessWindow):
         self.setClassName("rounded-12 bg-white dark:bg-dark")
 
         self._header = Label()
-        self._header.setFont(Factory.createFont(family="Segoe UI Semibold", size=16, bold=True))
+        self._header.setFont(FontFactory.create(family="Segoe UI Semibold", size=16, bold=True))
         self._header.setClassName("text-black dark:text-white")
         self._header.setAlignment(Qt.AlignLeft)
 
         self._message = Label()
-        self._message.setFont(Factory.createFont(size=10))
+        self._message.setFont(FontFactory.create(size=10))
         self._message.setClassName("text-black dark:text-white")
 
         self._acceptBtn = ActionButton()
-        self._acceptBtn.setFont(Factory.createFont(family="Segoe UI Semibold", size=10))
+        self._acceptBtn.setFont(FontFactory.create(family="Segoe UI Semibold", size=10))
         self._acceptBtn.setClassName("text-white rounded-4 bg-danger hover:bg-danger-[w120] px-24")
         self._acceptBtn.setFixedHeight(32)
 
         self._cancelBtn = ActionButton()
-        self._cancelBtn.setFont(Factory.createFont(family="Segoe UI Semibold", size=10))
+        self._cancelBtn.setFont(FontFactory.create(family="Segoe UI Semibold", size=10))
         self._cancelBtn.setClassName(
             "rounded-4 text-black border border-gray-40 hover:bg-black-12 px-24",
             "dark:text-white dark:border-gray-[b40] dark:hover:bg-white-12"
@@ -121,17 +124,17 @@ class _AlertDialog(BaseDialog):
         self._image.setAlignment(Qt.AlignCenter)
 
         self._header = Label()
-        self._header.setFont(Factory.createFont(family="Segoe UI Semibold", size=16, bold=True))
+        self._header.setFont(FontFactory.create(family="Segoe UI Semibold", size=16, bold=True))
         self._header.setClassName("text-black dark:text-white")
         self._header.setAlignment(Qt.AlignCenter)
 
         self._message = Label()
-        self._message.setFont(Factory.createFont(size=11))
+        self._message.setFont(FontFactory.create(size=11))
         self._message.setClassName("text-black dark:text-white")
         self._message.setAlignment(Qt.AlignCenter)
 
         self._acceptBtn = ActionButton()
-        self._acceptBtn.setFont(Factory.createFont(family="Segoe UI Semibold", size=10))
+        self._acceptBtn.setFont(FontFactory.create(family="Segoe UI Semibold", size=10))
 
         self.addWidget(self._image)
         self.addWidget(self._header)

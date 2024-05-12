@@ -13,9 +13,11 @@ from app.common.statics.enums import FileType
 from app.common.statics.qt import Cursors, Images, Icons
 from app.common.statics.styles import Colors
 from app.common.statics.styles import Paddings
-from app.components.base import Factory, CoverProps, EllipsisLabel
-from app.components.base import ZoomCover
+from app.components.base import FontFactory
+from app.components.buttons import ButtonFactory
 from app.components.dialogs import Dialogs
+from app.components.images.cover import ZoomCover, CoverProps
+from app.components.labels.ellipsis_label import EllipsisLabel
 from app.components.widgets import ExtendableStyleWidget
 from app.helpers.base import Bytes, Lists
 from app.helpers.builders import ImageEditor
@@ -42,7 +44,7 @@ class PlaylistCard(ExtendableStyleWidget):
         self._cover.setAnimation(duration=250, start=1.0, end=1.1)
 
         self._title = EllipsisLabel(autoChangeTheme=False)
-        self._title.setFont(Factory.createFont(size=16, bold=True))
+        self._title.setFont(FontFactory.create(size=16, bold=True))
         self._title.setFixedWidth(self.width() - self._mainLayout.contentsMargins().left() - self._mainLayout.contentsMargins().right())
         self._title.setClassName("text-black dark:text-white")
 
@@ -140,7 +142,7 @@ class FavouritePlaylistCard(PlaylistCard):
     def _createUI(self) -> None:
         super()._createUI()
 
-        self._editCoverBtn = Factory.createIconButton(size=Icons.medium, padding=Paddings.RELATIVE_50)
+        self._editCoverBtn = ButtonFactory.createIconButton(size=Icons.medium, padding=Paddings.RELATIVE_50)
         self._editCoverBtn.setLightModeIcon(Icons.image.withColor(Colors.white))
         self._editCoverBtn.setClassName("rounded-full bg-primary hover:bg-primary-[w120]")
 
@@ -202,12 +204,12 @@ class UserPlaylistCard(PlaylistCard):
 
     def _createUI(self) -> None:
         super()._createUI()
-        self._editBtn = Factory.createIconButton(size=Icons.medium, padding=Paddings.RELATIVE_50)
+        self._editBtn = ButtonFactory.createIconButton(size=Icons.medium, padding=Paddings.RELATIVE_50)
         self._editBtn.setLightModeIcon(Icons.edit.withColor(Colors.white))
         self._editBtn.setClassName("rounded-full bg-primary hover:bg-primary-[w120]")
         self._editBtn.applyLightMode()
 
-        self._deleteBtn = Factory.createIconButton(size=Icons.medium, padding=Paddings.RELATIVE_50)
+        self._deleteBtn = ButtonFactory.createIconButton(size=Icons.medium, padding=Paddings.RELATIVE_50)
         self._deleteBtn.setLightModeIcon(Icons.delete.withColor(Colors.white))
         self._deleteBtn.setClassName("rounded-full bg-danger hover:bg-danger-[w120]")
         self._deleteBtn.applyLightMode()

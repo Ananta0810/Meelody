@@ -2,7 +2,8 @@ from PyQt5.QtCore import Qt
 
 from app.common.models import Playlist, Song
 from app.common.others import translator
-from app.components.base import ActionButton, Factory
+from app.components.base import FontFactory
+from app.components.buttons import ActionButton
 from app.components.dialogs import BaseDialog
 from app.components.widgets import StyleWidget, FlexBox, Box
 from app.views.home.songs_table.dialogs.select_playlist_songs_dialog.select_playlist_songs_menu_body import MenuBody
@@ -53,7 +54,7 @@ class SelectPlaylistSongsDialog(BaseDialog):
 
         self._applyBtn = ActionButton()
         self._applyBtn.setMinimumWidth(64)
-        self._applyBtn.setFont(Factory.createFont(family="Segoe UI Semibold", size=10))
+        self._applyBtn.setFont(FontFactory.create(family="Segoe UI Semibold", size=10))
         self._applyBtn.setClassName(
             "text-white rounded-4 bg-black-90 hover:bg-black py-8 px-24 disabled:bg-gray-10 disabled:text-gray",
             "dark:bg-primary dark:bg-primary-[w120]"

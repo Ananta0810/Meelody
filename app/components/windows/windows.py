@@ -8,7 +8,8 @@ from PyQt5.QtWidgets import QMainWindow, QWidget, QLayout, QHBoxLayout, QGraphic
 from app.common.statics.qt import Icons
 from app.common.statics.styles import Colors
 from app.common.statics.styles import Paddings
-from app.components.base import Factory, Component
+from app.components.base import Component
+from app.components.buttons import ButtonFactory
 from app.components.widgets import Box, StyleWidget
 from app.helpers.base import Strings
 from app.helpers.stylesheets import Color
@@ -106,12 +107,12 @@ class TitleBarWindow(FramelessWindow):
         self._titleBarLayout.setSpacing(8)
         self._titleBar.setLayout(self._titleBarLayout)
 
-        self._minimizeBtn = Factory.createIconButton(size=Icons.medium, padding=Paddings.RELATIVE_50)
+        self._minimizeBtn = ButtonFactory.createIconButton(size=Icons.medium, padding=Paddings.RELATIVE_50)
         self._minimizeBtn.setLightModeIcon(Icons.minimize.withColor(Colors.primary))
         self._minimizeBtn.setDarkModeIcon(Icons.minimize.withColor(Colors.white))
         self._minimizeBtn.setClassName("rounded-8 hover:bg-black-12 bg-none dark:hover:bg-white-20")
 
-        self._closeBtn = Factory.createIconButton(size=Icons.medium, padding=Paddings.RELATIVE_50)
+        self._closeBtn = ButtonFactory.createIconButton(size=Icons.medium, padding=Paddings.RELATIVE_50)
         self._closeBtn.setLightModeIcon(Icons.close.withColor(Colors.danger))
         self._closeBtn.setDarkModeIcon(Icons.close.withColor(Colors.white))
         self._closeBtn.setClassName("rounded-8 bg-danger-25 hover:bg-danger-33 dark:bg-danger-[b75] dark:hover:bg-danger")

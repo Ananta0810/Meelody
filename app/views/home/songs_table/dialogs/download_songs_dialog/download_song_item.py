@@ -17,8 +17,12 @@ from app.common.others import translator
 from app.common.statics.qt import Images, Icons, Cursors
 from app.common.statics.styles import Colors
 from app.common.statics.styles import Paddings
-from app.components.base import Cover, Factory, CoverProps, AutoTranslateLabel, EllipsisLabel
-from app.components.base.gif import Gif
+from app.components.base import FontFactory
+from app.components.buttons import ButtonFactory
+from app.components.images import Cover, CoverProps
+from app.components.images.gif import Gif
+from app.components.labels import AutoTranslateLabel
+from app.components.labels.ellipsis_label import EllipsisLabel
 from app.components.sliders import ProgressBar
 from app.components.widgets import ExtendableStyleWidget, Box, FlexBox
 from app.helpers.base import Strings
@@ -45,11 +49,11 @@ class DownloadSongItem(ExtendableStyleWidget):
         self._cover.setCover(CoverProps.fromBytes(Images.defaultSongCover, width=48, height=48, radius=8))
 
         self._titleLabel = EllipsisLabel()
-        self._titleLabel.setFont(Factory.createFont(size=10, bold=True))
+        self._titleLabel.setFont(FontFactory.create(size=10, bold=True))
         self._titleLabel.setClassName("text-black dark:text-white")
 
         self._descriptionLabel = AutoTranslateLabel()
-        self._descriptionLabel.setFont(Factory.createFont(size=9))
+        self._descriptionLabel.setFont(FontFactory.create(size=9))
         self._descriptionLabel.setClassName("text-black dark:text-white")
 
         self._progressBar = ProgressBar()
@@ -64,13 +68,13 @@ class DownloadSongItem(ExtendableStyleWidget):
         self._infoLayout.addWidget(self._progressBar)
         self._infoLayout.addStretch(0)
 
-        self._successIcon = Factory.createIconButton(size=Icons.small, padding=Paddings.RELATIVE_25)
+        self._successIcon = ButtonFactory.createIconButton(size=Icons.small, padding=Paddings.RELATIVE_25)
         self._successIcon.setLightModeIcon(Icons.apply.withColor(Colors.white))
         self._successIcon.setClassName("rounded-full bg-success")
         self._successIcon.setCursor(Cursors.base)
         self._successIcon.hide()
 
-        self._failedIcon = Factory.createIconButton(size=Icons.small, padding=Paddings.RELATIVE_25)
+        self._failedIcon = ButtonFactory.createIconButton(size=Icons.small, padding=Paddings.RELATIVE_25)
         self._failedIcon.setLightModeIcon(Icons.close.withColor(Colors.white))
         self._failedIcon.setClassName("rounded-full bg-danger")
         self._failedIcon.setCursor(Cursors.base)

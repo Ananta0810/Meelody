@@ -10,8 +10,12 @@ from pytube.exceptions import RegexMatchError
 from app.common.models import Song
 from app.common.others import appCenter, translator
 from app.common.statics.qt import Images, Cursors
-from app.components.base import Cover, Factory, Input, ActionButton, CoverProps, Label
+from app.components.base import FontFactory
+from app.components.buttons import ActionButton
 from app.components.dialogs import BaseDialog, Dialogs
+from app.components.images import Cover, CoverProps
+from app.components.inputs import Input
+from app.components.labels import Label
 from app.helpers.base import Strings
 from app.helpers.others import Logger
 from app.views.home.songs_table.dialogs.download_songs_dialog.download_songs_menu import DownloadSongsMenu
@@ -32,12 +36,12 @@ class DownloadSongsDialog(BaseDialog):
         self._image.setCover(CoverProps.fromBytes(Images.download, width=128))
 
         self._header = Label()
-        self._header.setFont(Factory.createFont(family="Segoe UI Semibold", size=16, bold=True))
+        self._header.setFont(FontFactory.create(family="Segoe UI Semibold", size=16, bold=True))
         self._header.setAlignment(Qt.AlignCenter)
         self._header.setClassName("text-black dark:text-white")
 
         self._input = Input()
-        self._input.setFont(Factory.createFont(size=12))
+        self._input.setFont(FontFactory.create(size=12))
         self._input.setFixedHeight(48)
         self._input.setClassName(
             "px-12 rounded-4 border border-primary-12 bg-primary-4 disabled:bg-none disabled:border-none disabled:text-black",
@@ -45,7 +49,7 @@ class DownloadSongsDialog(BaseDialog):
         )
 
         self._searchBtn = ActionButton()
-        self._searchBtn.setFont(Factory.createFont(family="Segoe UI Semibold", size=10))
+        self._searchBtn.setFont(FontFactory.create(family="Segoe UI Semibold", size=10))
         self._searchBtn.setClassName("text-white rounded-4 bg-primary hover:bg-primary-[w125] py-8")
 
         self._menu = DownloadSongsMenu()
@@ -146,44 +150,44 @@ class _SongInfoDialog(BaseDialog):
         self._image.setCover(CoverProps.fromBytes(Images.download, width=128))
 
         self._header = Label()
-        self._header.setFont(Factory.createFont(family="Segoe UI Semibold", size=16, bold=True))
+        self._header.setFont(FontFactory.create(family="Segoe UI Semibold", size=16, bold=True))
         self._header.setClassName("text-black dark:text-white bg-none")
         self._header.setAlignment(Qt.AlignCenter)
 
         self._titleLabel = Label()
-        self._titleLabel.setFont(Factory.createFont(size=11))
+        self._titleLabel.setFont(FontFactory.create(size=11))
         self._titleLabel.setClassName("text-black dark:text-white bg-none")
 
         self._titleErrorLabel = Label()
-        self._titleErrorLabel.setFont(Factory.createFont(size=11))
+        self._titleErrorLabel.setFont(FontFactory.create(size=11))
         self._titleErrorLabel.setClassName("text-danger bg-none")
         self._titleErrorLabel.hide()
 
         self._titleInput = Input()
-        self._titleInput.setFont(Factory.createFont(size=12))
+        self._titleInput.setFont(FontFactory.create(size=12))
         self._titleInput.setClassName(
             "px-12 py-8 rounded-4 border border-primary-12 bg-primary-4 disabled:bg-none disabled:border-none disabled:text-black",
             "dark:border-white-[b33] dark:bg-white-12 dark:text-white dark:disabled:text-white",
         )
 
         self._artistLabel = Label()
-        self._artistLabel.setFont(Factory.createFont(size=11))
+        self._artistLabel.setFont(FontFactory.create(size=11))
         self._artistLabel.setClassName("text-black dark:text-white bg-none")
 
         self._artistInput = Input()
-        self._artistInput.setFont(Factory.createFont(size=12))
+        self._artistInput.setFont(FontFactory.create(size=12))
         self._artistInput.setClassName(
             "px-12 py-8 rounded-4 border border-primary-12 bg-primary-4 disabled:bg-none disabled:border-none disabled:text-black",
             "dark:border-white-[b33] dark:bg-white-12 dark:text-white dark:disabled:text-white",
         )
 
         self._artistErrorLabel = Label()
-        self._artistErrorLabel.setFont(Factory.createFont(size=11))
+        self._artistErrorLabel.setFont(FontFactory.create(size=11))
         self._artistErrorLabel.setClassName("text-danger bg-none")
         self._artistErrorLabel.hide()
 
         self._acceptBtn = ActionButton()
-        self._acceptBtn.setFont(Factory.createFont(family="Segoe UI Semibold", size=11))
+        self._acceptBtn.setFont(FontFactory.create(family="Segoe UI Semibold", size=11))
         self._acceptBtn.setClassName("text-white rounded-4 bg-primary-75 bg-primary py-8 disabled:bg-gray-10 disabled:text-gray")
 
         self._mainView = QWidget()

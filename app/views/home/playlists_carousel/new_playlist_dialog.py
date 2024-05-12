@@ -12,8 +12,11 @@ from app.common.models.playlists import UserPlaylist
 from app.common.others import appCenter, translator
 from app.common.statics.enums import FileType
 from app.common.statics.qt import Images
-from app.components.base import Cover, CoverProps, Factory, Input, ActionButton
+from app.components.base import FontFactory
+from app.components.buttons import ActionButton
 from app.components.dialogs import BaseDialog, Dialogs
+from app.components.images import Cover, CoverProps
+from app.components.inputs import Input
 from app.components.widgets import Box
 from app.helpers.base import Strings
 from app.helpers.builders import ImageEditor
@@ -37,7 +40,7 @@ class NewPlaylistDialog(BaseDialog):
         self._cover.setCover(CoverProps.fromBytes(Images.defaultPlaylistCover, 320, 320, radius=16))
 
         self._titleInput = Input()
-        self._titleInput.setFont(Factory.createFont(size=12))
+        self._titleInput.setFont(FontFactory.create(size=12))
         self._titleInput.setFixedSize(320, 48)
         self._titleInput.setClassName(
             "px-12 rounded-4 border border-primary-12 bg-primary-4 text-black",
@@ -45,7 +48,7 @@ class NewPlaylistDialog(BaseDialog):
         )
 
         self._acceptBtn = ActionButton()
-        self._acceptBtn.setFont(Factory.createFont(family="Segoe UI Semibold", size=10))
+        self._acceptBtn.setFont(FontFactory.create(family="Segoe UI Semibold", size=10))
         self._acceptBtn.setClassName("text-white rounded-4 bg-primary-75 bg-primary py-8 disabled:bg-gray-10 disabled:text-gray")
         self._acceptBtn.setDisabled(True)
 
@@ -63,7 +66,7 @@ class NewPlaylistDialog(BaseDialog):
         self.addWidget(self._mainView)
 
         self._editCoverBtn = ActionButton(self._mainView)
-        self._editCoverBtn.setFont(Factory.createFont(family="Segoe UI Semibold", size=9))
+        self._editCoverBtn.setFont(FontFactory.create(family="Segoe UI Semibold", size=9))
         self._editCoverBtn.setClassName("text-white rounded-4 bg-primary-75 bg-primary py-8")
 
     def _translateUI(self) -> None:

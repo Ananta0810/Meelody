@@ -1,23 +1,15 @@
 from typing import final
 
 from PyQt5.QtCore import QSize, QObject
-from PyQt5.QtGui import QFont
 
 from app.common.statics.qt import Cursors
 from app.common.statics.styles import Paddings
-from app.components.base.buttons import IconButton, ToggleIconButton, MultiStatesIconButton
 from app.helpers.stylesheets import Padding
+from .icons_button import MultiStatesIconButton, IconButton, ToggleIconButton
 
 
 @final
-class Factory:
-    @staticmethod
-    def createFont(family: str = "Segoe UI", size: int = 9, italic: bool = False, bold: bool = False) -> QFont:
-        font = QFont(family)
-        font.setPointSize(size)
-        font.setItalic(italic)
-        font.setBold(bold)
-        return font
+class ButtonFactory:
 
     @staticmethod
     def createIconButton(size: QSize, padding: Padding = Paddings.DEFAULT, parent: QObject = None) -> IconButton:

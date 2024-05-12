@@ -7,8 +7,12 @@ from PyQt5.QtWidgets import QWidget
 
 from app.common.others import musicPlayer, translator
 from app.common.statics.qt import Images
-from app.components.base import Cover, CoverProps, Input, Factory, ActionButton, Label
+from app.components.base import FontFactory
+from app.components.buttons import ActionButton
 from app.components.dialogs import BaseDialog
+from app.components.images import Cover, CoverProps
+from app.components.inputs import Input
+from app.components.labels import Label
 from app.components.widgets import Box, FlexBox
 from app.helpers.others import Logger
 
@@ -32,7 +36,7 @@ class TimerDialog(BaseDialog):
         self._minuteInput = TimerInput(99)
         self._minuteInput.setFixedSize(64, 48)
         self._minuteInput.setAlignment(Qt.AlignCenter)
-        self._minuteInput.setFont(Factory.createFont(size=16, bold=True))
+        self._minuteInput.setFont(FontFactory.create(size=16, bold=True))
         self._minuteInput.setClassName(
             "px-12 rounded-4 border border-primary-12 bg-primary-4 disabled:bg-none disabled:border-none disabled:text-black",
             "dark:border-white-[b33] dark:bg-white-12 dark:text-white dark:disabled:text-white",
@@ -42,7 +46,7 @@ class TimerDialog(BaseDialog):
         self._secondInput = TimerInput(59)
         self._secondInput.setFixedSize(64, 48)
         self._secondInput.setAlignment(Qt.AlignCenter)
-        self._secondInput.setFont(Factory.createFont(size=16, bold=True))
+        self._secondInput.setFont(FontFactory.create(size=16, bold=True))
         self._secondInput.setClassName(
             "px-12 rounded-4 border border-primary-12 bg-primary-4 disabled:bg-none disabled:border-none disabled:text-black",
             "dark:border-white-[b33] dark:bg-white-12 dark:text-white dark:disabled:text-white",
@@ -50,7 +54,7 @@ class TimerDialog(BaseDialog):
         self._secondInput.setText("00")
 
         self._separator = Label()
-        self._separator.setFont(Factory.createFont(size=14, bold=True))
+        self._separator.setFont(FontFactory.create(size=14, bold=True))
         self._separator.setClassName("text-black bg-none dark:text-white")
         self._separator.setText(":")
         self._separator.setFixedWidth(self._separator.sizeHint().width())
@@ -63,12 +67,12 @@ class TimerDialog(BaseDialog):
         self._inputLayout.addWidget(self._secondInput)
 
         self._startBtn = ActionButton()
-        self._startBtn.setFont(Factory.createFont(family="Segoe UI Semibold", size=10))
+        self._startBtn.setFont(FontFactory.create(family="Segoe UI Semibold", size=10))
         self._startBtn.setClassName("text-white rounded-4 bg-primary-75 bg-primary py-8 disabled:bg-gray-10 disabled:text-gray")
         self._startBtn.setFixedWidth(320)
 
         self._stopBtn = ActionButton()
-        self._stopBtn.setFont(Factory.createFont(family="Segoe UI Semibold", size=10))
+        self._stopBtn.setFont(FontFactory.create(family="Segoe UI Semibold", size=10))
         self._stopBtn.setClassName("text-white rounded-4 bg-danger-75 bg-danger py-8 ")
         self._stopBtn.setFixedWidth(320)
 

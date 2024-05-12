@@ -10,8 +10,11 @@ from app.common.statics.enums import FileType
 from app.common.statics.qt import Icons, Images
 from app.common.statics.styles import Colors
 from app.common.statics.styles import Paddings
-from app.components.base import Factory, LabelWithDefaultText, CoverProps, CoverWithPlaceHolder
+from app.components.base import FontFactory
+from app.components.buttons import ButtonFactory
 from app.components.dialogs import Dialogs
+from app.components.images.cover import CoverWithPlaceHolder, CoverProps
+from app.components.labels import LabelWithPlaceHolder
 from app.components.widgets import ExtendableStyleWidget, StyleWidget, FlexBox
 from app.helpers.base import silence, suppressException
 from app.helpers.builders import ImageEditor
@@ -46,22 +49,22 @@ class SongRow(ExtendableStyleWidget):
         self._cover.setFixedSize(64, 64)
         self._cover.setPlaceHolderCover(CoverProps.fromBytes(Images.defaultSongCover, width=64, height=64, radius=12))
 
-        self._titleLabel = LabelWithDefaultText()
+        self._titleLabel = LabelWithPlaceHolder()
         self._titleLabel.enableEllipsis()
         self._titleLabel.setFixedWidth(188)
-        self._titleLabel.setFont(Factory.createFont(size=10))
+        self._titleLabel.setFont(FontFactory.create(size=10))
         self._titleLabel.setClassName("text-black dark:text-white")
 
-        self._artistLabel = LabelWithDefaultText()
+        self._artistLabel = LabelWithPlaceHolder()
         self._artistLabel.enableEllipsis()
         self._artistLabel.setFixedWidth(128)
-        self._artistLabel.setFont(Factory.createFont(size=10))
+        self._artistLabel.setFont(FontFactory.create(size=10))
         self._artistLabel.setClassName("text-gray")
 
-        self._lengthLabel = LabelWithDefaultText()
+        self._lengthLabel = LabelWithPlaceHolder()
         self._lengthLabel.enableEllipsis()
         self._lengthLabel.setFixedWidth(64)
-        self._lengthLabel.setFont(Factory.createFont(size=10))
+        self._lengthLabel.setFont(FontFactory.create(size=10))
         self._lengthLabel.setClassName("text-gray")
 
         self._info = QHBoxLayout()
@@ -74,12 +77,12 @@ class SongRow(ExtendableStyleWidget):
         self._mainLayout.addLayout(self._info)
 
         # ============================================ REACT BUTTONS # ============================================
-        self._moreBtn = Factory.createIconButton(size=Icons.large, padding=Paddings.RELATIVE_50)
+        self._moreBtn = ButtonFactory.createIconButton(size=Icons.large, padding=Paddings.RELATIVE_50)
         self._moreBtn.setLightModeIcon(Icons.more.withColor(Colors.gray))
         self._moreBtn.setDarkModeIcon(Icons.more.withColor(Colors.white))
         self._moreBtn.setClassName("hover:bg-black-10 rounded-full", "dark:hover:bg-white-20")
 
-        self._loveBtn = Factory.createToggleButton(Icons.large, Paddings.RELATIVE_50)
+        self._loveBtn = ButtonFactory.createToggleButton(Icons.large, Paddings.RELATIVE_50)
         self._loveBtn.setActiveIcon(Icons.love.withColor(Colors.danger))
         self._loveBtn.setInactiveIcon(Icons.love.withColor(Colors.gray))
         self._loveBtn.setClassName(
@@ -87,7 +90,7 @@ class SongRow(ExtendableStyleWidget):
             "dark:active/hover:bg-danger-20 dark:inactive/hover:bg-white-20"
         )
 
-        self._playBtn = Factory.createToggleButton(size=Icons.large, padding=Paddings.RELATIVE_50)
+        self._playBtn = ButtonFactory.createToggleButton(size=Icons.large, padding=Paddings.RELATIVE_50)
         self._playBtn.setActiveIcon(Icons.pause.withColor(Colors.primary), Icons.pause.withColor(Colors.white))
         self._playBtn.setInactiveIcon(Icons.play.withColor(Colors.primary), Icons.play.withColor(Colors.white))
         self._playBtn.setClassName("hover:bg-primary-25 bg-primary-10 rounded-full", "dark:bg-white-20 dark:hover:bg-primary")
@@ -102,25 +105,25 @@ class SongRow(ExtendableStyleWidget):
         self._mainButtonsLayout.addWidget(self._playBtn)
 
         # ============================================ MORE BUTTONS # ============================================
-        self._editSongBtn = Factory.createIconButton(size=Icons.large, padding=Paddings.RELATIVE_50)
+        self._editSongBtn = ButtonFactory.createIconButton(size=Icons.large, padding=Paddings.RELATIVE_50)
         self._editSongBtn.setLightModeIcon(Icons.edit.withColor(Colors.primary))
         self._editSongBtn.setDarkModeIcon(Icons.edit.withColor(Colors.white))
         self._editSongBtn.setClassName("hover:bg-primary-12 rounded-full", "dark:hover:bg-white-20")
         self._editSongBtn.keepSpaceWhenHiding()
 
-        self._editCoverBtn = Factory.createIconButton(size=Icons.large, padding=Paddings.RELATIVE_50)
+        self._editCoverBtn = ButtonFactory.createIconButton(size=Icons.large, padding=Paddings.RELATIVE_50)
         self._editCoverBtn.setLightModeIcon(Icons.image.withColor(Colors.primary))
         self._editCoverBtn.setDarkModeIcon(Icons.image.withColor(Colors.white))
         self._editCoverBtn.setClassName("hover:bg-primary-12 rounded-full", "dark:hover:bg-white-20")
         self._editCoverBtn.keepSpaceWhenHiding()
 
-        self._deleteBtn = Factory.createIconButton(size=Icons.large, padding=Paddings.RELATIVE_50)
+        self._deleteBtn = ButtonFactory.createIconButton(size=Icons.large, padding=Paddings.RELATIVE_50)
         self._deleteBtn.setLightModeIcon(Icons.delete.withColor(Colors.primary))
         self._deleteBtn.setDarkModeIcon(Icons.delete.withColor(Colors.white))
         self._deleteBtn.setClassName("hover:bg-primary-12 rounded-full", "dark:hover:bg-white-20")
         self._deleteBtn.keepSpaceWhenHiding()
 
-        self._closeMenuBtn = Factory.createIconButton(size=Icons.medium, padding=Paddings.RELATIVE_50, parent=self)
+        self._closeMenuBtn = ButtonFactory.createIconButton(size=Icons.medium, padding=Paddings.RELATIVE_50, parent=self)
         self._closeMenuBtn.setLightModeIcon(Icons.close.withColor(Colors.white))
         self._closeMenuBtn.setClassName("rounded-full bg-danger hover:bg-danger-[w120]")
         self._closeMenuBtn.hide()

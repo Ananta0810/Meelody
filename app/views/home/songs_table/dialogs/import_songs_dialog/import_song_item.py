@@ -10,8 +10,14 @@ from app.common.models import Song
 from app.common.models.song import SongReader
 from app.common.others import translator
 from app.common.statics.qt import Images
-from app.components.base import Cover, CoverProps, Label, Factory, EllipsisLabel, ActionButton, Input, CoverWithPlaceHolder, AutoTranslateLabel
+from app.components.base import FontFactory
+from app.components.buttons import ActionButton
 from app.components.dialogs import BaseDialog
+from app.components.images import CoverProps
+from app.components.images.cover import CoverWithPlaceHolder, Cover
+from app.components.inputs import Input
+from app.components.labels import AutoTranslateLabel, Label
+from app.components.labels.ellipsis_label import EllipsisLabel
 from app.components.widgets import ExtendableStyleWidget, Box, FlexBox
 from app.helpers.base import Strings
 from app.helpers.others import Logger, Files
@@ -41,11 +47,11 @@ class ImportSongItem(ExtendableStyleWidget):
         self._cover.setPlaceHolderCover(CoverProps.fromBytes(Images.defaultSongCover, width=48, height=48, radius=8))
 
         self._titleLabel = EllipsisLabel()
-        self._titleLabel.setFont(Factory.createFont(size=10))
+        self._titleLabel.setFont(FontFactory.create(size=10))
         self._titleLabel.setClassName("text-black dark:text-white")
 
         self._descriptionLabel = AutoTranslateLabel()
-        self._descriptionLabel.setFont(Factory.createFont(size=9))
+        self._descriptionLabel.setFont(FontFactory.create(size=9))
         self._descriptionLabel.setClassName("text-black dark:text-white")
 
         self._infoLayout = Box()
@@ -56,7 +62,7 @@ class ImportSongItem(ExtendableStyleWidget):
         self._infoLayout.addStretch(0)
 
         self._updateBtn = ActionButton()
-        self._updateBtn.setFont(Factory.createFont(family="Segoe UI Semibold", size=10))
+        self._updateBtn.setFont(FontFactory.create(family="Segoe UI Semibold", size=10))
         self._updateBtn.setClassName("text-white rounded-4 bg-primary hover:bg-primary-[w120] py-8")
         self._updateBtn.hide()
 
@@ -195,28 +201,28 @@ class UpdateImportSongDialog(BaseDialog):
         self._image.setCover(CoverProps.fromBytes(Images.importSongs, width=128))
 
         self._header = Label()
-        self._header.setFont(Factory.createFont(family="Segoe UI Semibold", size=16, bold=True))
+        self._header.setFont(FontFactory.create(family="Segoe UI Semibold", size=16, bold=True))
         self._header.setClassName("text-black dark:text-white bg-none")
         self._header.setAlignment(Qt.AlignCenter)
 
         self._titleLabel = Label()
-        self._titleLabel.setFont(Factory.createFont(size=11))
+        self._titleLabel.setFont(FontFactory.create(size=11))
         self._titleLabel.setClassName("text-black dark:text-white bg-none")
 
         self._titleErrorLabel = Label()
-        self._titleErrorLabel.setFont(Factory.createFont(size=11))
+        self._titleErrorLabel.setFont(FontFactory.create(size=11))
         self._titleErrorLabel.setClassName("text-danger bg-none")
         self._titleErrorLabel.hide()
 
         self._titleInput = Input()
-        self._titleInput.setFont(Factory.createFont(size=12))
+        self._titleInput.setFont(FontFactory.create(size=12))
         self._titleInput.setClassName(
             "px-12 py-8 rounded-4 border border-primary-12 bg-primary-4 disabled:bg-none disabled:border-none disabled:text-black",
             "dark:border-white-[b33] dark:bg-white-12 dark:text-white dark:disabled:text-white",
         )
 
         self._importBtn = ActionButton()
-        self._importBtn.setFont(Factory.createFont(family="Segoe UI Semibold", size=11))
+        self._importBtn.setFont(FontFactory.create(family="Segoe UI Semibold", size=11))
         self._importBtn.setClassName("text-white rounded-4 bg-primary-75 bg-primary py-8 disabled:bg-gray-10 disabled:text-gray")
 
         self._mainView = QWidget()

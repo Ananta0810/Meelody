@@ -6,7 +6,9 @@ from PyQt5.QtWidgets import QWidget, QVBoxLayout, QHBoxLayout
 from app.common.models import Playlist
 from app.common.others import appCenter, translator
 from app.common.statics.qt import Images
-from app.components.base import LabelWithDefaultText, Factory, CoverProps, Component, CoverWithPlaceHolder
+from app.components.base import Component, FontFactory
+from app.components.images.cover import CoverWithPlaceHolder, CoverProps
+from app.components.labels import LabelWithPlaceHolder
 from app.views.home.songs_table import SongsTable
 
 
@@ -23,15 +25,15 @@ class _Info(QVBoxLayout, Component):
         self._cover.setFixedSize(320, 320)
         self._cover.setPlaceHolderCover(self.__createCover(Images.defaultPlaylistCover))
 
-        self._titleLabel = LabelWithDefaultText()
+        self._titleLabel = LabelWithPlaceHolder()
         self._titleLabel.enableEllipsis()
         self._titleLabel.setFixedWidth(320)
-        self._titleLabel.setFont(Factory.createFont(size=20, bold=True))
+        self._titleLabel.setFont(FontFactory.create(size=20, bold=True))
         self._titleLabel.setClassName("text-black dark:text-white")
 
-        self._totalSongsLabel = LabelWithDefaultText()
+        self._totalSongsLabel = LabelWithPlaceHolder()
         self._totalSongsLabel.setFixedWidth(320)
-        self._totalSongsLabel.setFont(Factory.createFont(size=10))
+        self._totalSongsLabel.setFont(FontFactory.create(size=10))
         self._totalSongsLabel.setClassName("text-black dark:text-white")
 
         self._labelsLayout = QVBoxLayout()

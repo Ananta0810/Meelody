@@ -5,8 +5,11 @@ from app.common.asyncs import ChunksConsumer
 from app.common.models import Song
 from app.common.others import appCenter, translator
 from app.common.statics.qt import Images
-from app.components.base import ActionButton, Factory, Cover, CoverProps, Label
+from app.components.base import FontFactory
+from app.components.buttons import ActionButton
 from app.components.dialogs import BaseDialog
+from app.components.images import Cover, CoverProps
+from app.components.labels import Label
 from app.helpers.base import Strings
 from app.views.home.songs_table.dialogs.import_songs_dialog.import_song_item import ImportSongItem
 from app.views.home.songs_table.dialogs.import_songs_dialog.import_songs_menu import ImportSongsMenu
@@ -35,7 +38,7 @@ class ImportSongsDialog(BaseDialog):
         self._image.setCover(CoverProps.fromBytes(Images.importSongs, width=128))
 
         self._header = Label()
-        self._header.setFont(Factory.createFont(family="Segoe UI Semibold", size=16, bold=True))
+        self._header.setFont(FontFactory.create(family="Segoe UI Semibold", size=16, bold=True))
         self._header.setAlignment(Qt.AlignCenter)
         self._header.setClassName("text-black dark:text-white")
 
@@ -43,7 +46,7 @@ class ImportSongsDialog(BaseDialog):
         self._menu.setClassName("scroll/bg-primary-75 scroll/hover:bg-primary scroll/rounded-2")
 
         self._closeBtn = ActionButton()
-        self._closeBtn.setFont(Factory.createFont(family="Segoe UI Semibold", size=10))
+        self._closeBtn.setFont(FontFactory.create(family="Segoe UI Semibold", size=10))
         self._closeBtn.setClassName("text-white rounded-4 bg-black-[w80] hover:bg-black py-8 dark:bg-primary dark:hover:bg-primary-[w120]")
         self._closeBtn.hide()
 
