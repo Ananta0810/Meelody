@@ -1,3 +1,4 @@
+from contextlib import suppress
 from typing import Optional
 
 from PyQt5.QtCore import Qt
@@ -15,6 +16,7 @@ from app.views.home.songs_table import SongsTable
 class _Info(QVBoxLayout, Component):
     def __init__(self, parent: Optional[QWidget] = None) -> None:
         super().__init__(parent)
+        self.__playlist: Optional[Playlist] = None
         self._initComponent()
 
     def _createUI(self) -> None:
@@ -47,14 +49,25 @@ class _Info(QVBoxLayout, Component):
     def _translateUI(self) -> None:
         playlist = appCenter.currentPlaylist
         self._titleLabel.setText(playlist.getInfo().getName())
-        self._totalSongsLabel.setText(f"{playlist.getSongs().size()} {translator.translate('CURRENT_PLAYLIST.TRACKS')}")
+        self.__setTotalSongs(playlist)
 
     def _connectSignalSlots(self) -> None:
         appCenter.currentPlaylistChanged.connect(lambda playlist: self.__setPlaylist(playlist))
 
     def __setPlaylist(self, playlist: Playlist) -> None:
+        if self.__playlist is not None:
+            with suppress(TypeError, AttributeError):
+                self.__playlist.getSongs().updated.disconnect(lambda: self.__setTotalSongs(self.__playlist))
+
+        self.__playlist = playlist
+
         self._cover.setCover(self.__createCover(playlist.getInfo().getCover()))
         self._titleLabel.setText(playlist.getInfo().getName())
+        self.__setTotalSongs(playlist)
+
+        self.__playlist.getSongs().updated.connect(lambda: self.__setTotalSongs(self.__playlist))
+
+    def __setTotalSongs(self, playlist: Playlist) -> None:
         self._totalSongsLabel.setText(f"{playlist.getSongs().size()} {translator.translate('CURRENT_PLAYLIST.TRACKS')}")
 
     @staticmethod
