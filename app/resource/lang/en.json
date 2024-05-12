@@ -78,5 +78,19 @@
     "CONVERT_FAILED_EXISTED": "Convert failed. Song is already existed.",
     "CONVERT_FAILED_BROKEN": "Convert failed. Song is broken.",
     "CONVERT_FAILED": "Convert failed. Please try again."
+  },
+  "IMPORT_SONGS_DIALOG": {
+    "LABEL": "Import Songs",
+    "CLOSE_BTN": "Close",
+    "CHANGE_TITLE_BTN": "Change title",
+    "IMPORT_SUCCESS": "Import Succeed.",
+    "IMPORT_FAILED_EXISTED": "Import failed. Song is already existed.",
+    "IMPORT_FAILED_BROKEN": "Import failed. Song is broken.",
+    "IMPORT_FAILED": "Import failed. Please try again.",
+    "TITLE_LABEL": "Title",
+    "IMPORT_AGAIN_BTN": "Import again",
+    "VALIDATE.TITLE_BLANK": "Title should not be blank.",
+    "VALIDATE.TITLE_LENGTH": "Title should be less than 128 characters.",
+    "VALIDATE.TITLE_EXISTED": "Title has already taken. Please try other title."
   }
 }

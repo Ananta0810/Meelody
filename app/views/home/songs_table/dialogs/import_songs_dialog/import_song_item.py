@@ -8,7 +8,8 @@ from PyQt5.QtWidgets import QWidget, QShortcut, QVBoxLayout
 from app.common.exceptions import ResourceException
 from app.common.models import Song
 from app.common.models.song import SongReader
-from app.components.base import Cover, CoverProps, Label, Factory, EllipsisLabel, ActionButton, Input, CoverWithPlaceHolder
+from app.common.others import translator
+from app.components.base import Cover, CoverProps, Label, Factory, EllipsisLabel, ActionButton, Input, CoverWithPlaceHolder, AutoTranslateLabel
 from app.components.dialogs import BaseDialog
 from app.components.widgets import ExtendableStyleWidget, Box, FlexBox
 from app.helpers.base import Strings
@@ -25,6 +26,7 @@ class ImportSongItem(ExtendableStyleWidget):
     def __init__(self, path: str):
         super().__init__()
         self._initComponent()
+        self._translateUI()
 
         self._path = path
         self.__artist: Optional[str] = None
@@ -42,7 +44,7 @@ class ImportSongItem(ExtendableStyleWidget):
         self._titleLabel.setFont(Factory.createFont(size=10))
         self._titleLabel.setClassName("text-black dark:text-white")
 
-        self._descriptionLabel = Label()
+        self._descriptionLabel = AutoTranslateLabel()
         self._descriptionLabel.setFont(Factory.createFont(size=9))
         self._descriptionLabel.setClassName("text-black dark:text-white")
 
@@ -56,7 +58,6 @@ class ImportSongItem(ExtendableStyleWidget):
         self._updateBtn = ActionButton()
         self._updateBtn.setFont(Factory.createFont(family="Segoe UI Semibold", size=10))
         self._updateBtn.setClassName("text-white rounded-4 bg-primary hover:bg-primary-[w120] py-8")
-        self._updateBtn.setText("Change title")
         self._updateBtn.hide()
 
         self._result = QWidget()
@@ -78,6 +79,9 @@ class ImportSongItem(ExtendableStyleWidget):
 
         self.setFixedHeight(self.sizeHint().height())
         self.setMinimumHeight(self.sizeHint().height())
+
+    def _translateUI(self) -> None:
+        self._updateBtn.setText(translator.translate("IMPORT_SONGS_DIALOG.CHANGE_TITLE_BTN"))
 
     def path(self) -> str:
         return self._path
@@ -133,22 +137,22 @@ class ImportSongItem(ExtendableStyleWidget):
     def __markSucceed(self) -> None:
         self._descriptionLabel.setClassName("text-black dark:text-white")
         self._descriptionLabel.applyTheme()
-        self._descriptionLabel.setText("Import Succeed.")
+        self._descriptionLabel.setTranslateText("IMPORT_SONGS_DIALOG.IMPORT_SUCCESS")
 
     def __markFailed(self, exception: Exception) -> None:
         self._descriptionLabel.setClassName("text-danger bg-none")
         self._descriptionLabel.applyTheme()
 
         if isinstance(exception, FileExistsError):
-            self._descriptionLabel.setText("Import failed. Song is already existed.")
+            self._descriptionLabel.setTranslateText("IMPORT_SONGS_DIALOG.IMPORT_FAILED_EXISTED")
             self._updateBtn.show()
             return
 
         if isinstance(exception, ResourceException):
-            self._descriptionLabel.setText("Import failed. Song is broken.")
+            self._descriptionLabel.setTranslateText("IMPORT_SONGS_DIALOG.IMPORT_FAILED_BROKEN")
             return
 
-        self._descriptionLabel.setText("Import failed. Please try again.")
+        self._descriptionLabel.setTranslateText("IMPORT_SONGS_DIALOG.IMPORT_FAILED")
 
     def __openUpdateDialog(self) -> None:
         dialog = UpdateImportSongDialog(self._path)
@@ -194,12 +198,10 @@ class UpdateImportSongDialog(BaseDialog):
         self._header.setFont(Factory.createFont(family="Segoe UI Semibold", size=16, bold=True))
         self._header.setClassName("text-black dark:text-white bg-none")
         self._header.setAlignment(Qt.AlignCenter)
-        self._header.setText("Import Song")
 
         self._titleLabel = Label()
         self._titleLabel.setFont(Factory.createFont(size=11))
         self._titleLabel.setClassName("text-black dark:text-white bg-none")
-        self._titleLabel.setText("Title")
 
         self._titleErrorLabel = Label()
         self._titleErrorLabel.setFont(Factory.createFont(size=11))
@@ -208,12 +210,14 @@ class UpdateImportSongDialog(BaseDialog):
 
         self._titleInput = Input()
         self._titleInput.setFont(Factory.createFont(size=12))
-        self._titleInput.setClassName("px-12 py-8 rounded-4 border border-primary-12 bg-primary-4")
+        self._titleInput.setClassName(
+            "px-12 py-8 rounded-4 border border-primary-12 bg-primary-4 disabled:bg-none disabled:border-none disabled:text-black",
+            "dark:border-white-[b33] dark:bg-white-12 dark:text-white dark:disabled:text-white",
+        )
 
         self._importBtn = ActionButton()
         self._importBtn.setFont(Factory.createFont(family="Segoe UI Semibold", size=11))
         self._importBtn.setClassName("text-white rounded-4 bg-primary-75 bg-primary py-8 disabled:bg-gray-10 disabled:text-gray")
-        self._importBtn.setText("Import again")
 
         self._mainView = QWidget()
         self._mainView.setFixedWidth(480)
@@ -230,6 +234,11 @@ class UpdateImportSongDialog(BaseDialog):
         self._viewLayout.addWidget(self._importBtn)
 
         self.addWidget(self._mainView)
+
+    def _translateUI(self) -> None:
+        self._header.setText(translator.translate("IMPORT_SONGS_DIALOG.LABEL"))
+        self._titleLabel.setText(translator.translate("IMPORT_SONGS_DIALOG.TITLE_LABEL"))
+        self._importBtn.setText(translator.translate("IMPORT_SONGS_DIALOG.IMPORT_AGAIN_BTN"))
 
     def _connectSignalSlots(self) -> None:
         super()._connectSignalSlots()
@@ -251,17 +260,17 @@ class UpdateImportSongDialog(BaseDialog):
 
         if Strings.isBlank(title):
             self._titleErrorLabel.show()
-            self._titleErrorLabel.setText("Title should not be blank.")
+            self._titleErrorLabel.setText(translator.translate("IMPORT_SONGS_DIALOG.VALIDATE.TITLE_BLANK"))
             return False
 
         if len(title) > 128:
             self._titleErrorLabel.show()
-            self._titleErrorLabel.setText("Title should be less than 128 characters.")
+            self._titleErrorLabel.setText(translator.translate("IMPORT_SONGS_DIALOG.VALIDATE.TITLE_LENGTH"))
             return False
 
         if os.path.exists(f"library/{Strings.sanitizeFileName(title)}.mp3"):
             self._titleErrorLabel.show()
-            self._titleErrorLabel.setText("Title has already taken. Please try other title.")
+            self._titleErrorLabel.setText(translator.translate("IMPORT_SONGS_DIALOG.VALIDATE.TITLE_EXISTED"))
             return False
 
         self._titleErrorLabel.hide()

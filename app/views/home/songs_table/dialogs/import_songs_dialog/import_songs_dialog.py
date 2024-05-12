@@ -3,7 +3,7 @@ from PyQt5.QtWidgets import QWidget, QVBoxLayout
 
 from app.common.asyncs import ChunksConsumer
 from app.common.models import Song
-from app.common.others import appCenter
+from app.common.others import appCenter, translator
 from app.components.base import ActionButton, Factory, Cover, CoverProps, Label
 from app.components.dialogs import BaseDialog
 from app.helpers.base import Strings
@@ -37,7 +37,6 @@ class ImportSongsDialog(BaseDialog):
         self._header = Label()
         self._header.setFont(Factory.createFont(family="Segoe UI Semibold", size=16, bold=True))
         self._header.setAlignment(Qt.AlignCenter)
-        self._header.setText("Import Songs")
         self._header.setClassName("text-black dark:text-white")
 
         self._menu = ImportSongsMenu()
@@ -45,8 +44,7 @@ class ImportSongsDialog(BaseDialog):
 
         self._closeBtn = ActionButton()
         self._closeBtn.setFont(Factory.createFont(family="Segoe UI Semibold", size=10))
-        self._closeBtn.setClassName("text-white rounded-4 bg-black-[w80] hover:bg-black py-8")
-        self._closeBtn.setText("Close")
+        self._closeBtn.setClassName("text-white rounded-4 bg-black-[w80] hover:bg-black py-8 dark:bg-primary dark:hover:bg-primary-[w120]")
         self._closeBtn.hide()
 
         self._mainView = QWidget()
@@ -66,6 +64,10 @@ class ImportSongsDialog(BaseDialog):
         self._viewLayout.addWidget(self._closeBtn)
 
         self.addWidget(self._mainView)
+
+    def _translateUI(self) -> None:
+        self._header.setText(translator.translate("IMPORT_SONGS_DIALOG.LABEL"))
+        self._closeBtn.setText(translator.translate("IMPORT_SONGS_DIALOG.CLOSE_BTN"))
 
     def _connectSignalSlots(self) -> None:
         super()._connectSignalSlots()

@@ -159,7 +159,7 @@ class _SongInfoDialog(BaseDialog):
         self._titleInput = Input()
         self._titleInput.setFont(Factory.createFont(size=12))
         self._titleInput.setClassName(
-            "px-12 py-4 rounded-4 border border-primary-12 bg-primary-4 disabled:bg-none disabled:border-none disabled:text-black",
+            "px-12 py-8 rounded-4 border border-primary-12 bg-primary-4 disabled:bg-none disabled:border-none disabled:text-black",
             "dark:border-white-[b33] dark:bg-white-12 dark:text-white dark:disabled:text-white",
         )
 
@@ -170,7 +170,7 @@ class _SongInfoDialog(BaseDialog):
         self._artistInput = Input()
         self._artistInput.setFont(Factory.createFont(size=12))
         self._artistInput.setClassName(
-            "px-12 py-4 rounded-4 border border-primary-12 bg-primary-4 disabled:bg-none disabled:border-none disabled:text-black",
+            "px-12 py-8 rounded-4 border border-primary-12 bg-primary-4 disabled:bg-none disabled:border-none disabled:text-black",
             "dark:border-white-[b33] dark:bg-white-12 dark:text-white dark:disabled:text-white",
         )
 

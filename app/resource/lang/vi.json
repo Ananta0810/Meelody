@@ -78,5 +78,19 @@
     "CONVERT_FAILED_EXISTED": "Chuyển đổi thất bại. Bài hát đã tồn tại.",
     "CONVERT_FAILED_BROKEN": "Chuyển đổi thất bại. Bài hát bị lỗi.",
     "CONVERT_FAILED": "Chuyển đổi thất bại. Xin hãy thử lại."
+  },
+  "IMPORT_SONGS_DIALOG": {
+    "LABEL": "Thêm Nhạc",
+    "CLOSE_BTN": "Đóng",
+    "CHANGE_TITLE_BTN": "Sửa tiêu đề",
+    "IMPORT_SUCCESS": "Thêm thành công.",
+    "IMPORT_FAILED_EXISTED": "Thêm thất bại. Bài hát đã tồn tại.",
+    "IMPORT_FAILED_BROKEN": "Thêm thất bại. File nhạc không hợp lệ.",
+    "IMPORT_FAILED": "Thêm thất bại. Xin hãy thử lại.",
+    "TITLE_LABEL": "Tiêu đề",
+    "IMPORT_AGAIN_BTN": "Thêm lại",
+    "VALIDATE.TITLE_BLANK": "Tiêu đề không được để trống.",
+    "VALIDATE.TITLE_LENGTH": "Tiêu đề cần có độ dài tối đa 128 kí tự",
+    "VALIDATE.TITLE_EXISTED": "Tiêu đề đã tồn tại. Xin hãy thử tiêu đề khác."
   }
 }
