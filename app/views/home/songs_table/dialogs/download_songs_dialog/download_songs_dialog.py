@@ -9,11 +9,11 @@ from pytube.exceptions import RegexMatchError
 
 from app.common.models import Song
 from app.common.others import appCenter, translator
+from app.common.statics.qt import Images, Cursors
 from app.components.base import Cover, Factory, Input, ActionButton, CoverProps, Label
 from app.components.dialogs import BaseDialog, Dialogs
 from app.helpers.base import Strings
 from app.helpers.others import Logger
-from app.resource.qt import Images, Cursors
 from app.views.home.songs_table.dialogs.download_songs_dialog.download_songs_menu import DownloadSongsMenu
 
 

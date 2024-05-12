@@ -5,8 +5,8 @@ from PyQt5.QtWidgets import QWidget, QVBoxLayout, QHBoxLayout
 
 from app.common.models import Playlist
 from app.common.others import appCenter, translator
+from app.common.statics.qt import Images
 from app.components.base import LabelWithDefaultText, Factory, CoverProps, Component, CoverWithPlaceHolder
-from app.resource.qt import Images
 from app.views.home.songs_table import SongsTable
 
 

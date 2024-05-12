@@ -3,8 +3,8 @@ from typing import Optional
 from PyQt5.QtCore import Qt
 from PyQt5.QtWidgets import QWidget, QVBoxLayout
 
+from app.common.statics.qt import Cursors
 from app.components.scroll_areas import StyleScrollArea
-from app.resource.qt import Cursors
 from app.views.home.songs_table.dialogs.download_songs_dialog.download_song_item import DownloadSongItem
 
 

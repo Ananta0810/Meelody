@@ -4,10 +4,10 @@ from PyQt5.QtWidgets import QWidget, QVBoxLayout
 from app.common.asyncs import ChunksConsumer
 from app.common.models import Song
 from app.common.others import appCenter, translator
+from app.common.statics.qt import Images
 from app.components.base import ActionButton, Factory, Cover, CoverProps, Label
 from app.components.dialogs import BaseDialog
 from app.helpers.base import Strings
-from app.resource.qt import Images
 from app.views.home.songs_table.dialogs.import_songs_dialog.import_song_item import ImportSongItem
 from app.views.home.songs_table.dialogs.import_songs_dialog.import_songs_menu import ImportSongsMenu
 

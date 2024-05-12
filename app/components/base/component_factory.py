@@ -3,10 +3,10 @@ from typing import final
 from PyQt5.QtCore import QSize, QObject
 from PyQt5.QtGui import QFont
 
-from app.common.statics.paddings import Paddings
+from app.common.statics.qt import Cursors
+from app.common.statics.styles import Paddings
 from app.components.base.buttons import IconButton, ToggleIconButton, MultiStatesIconButton
 from app.helpers.stylesheets import Padding
-from app.resource.qt import Cursors
 
 
 @final

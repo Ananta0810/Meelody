@@ -2,11 +2,11 @@ from PyQt5.QtCore import Qt
 from PyQt5.QtWinExtras import QWinThumbnailToolBar, QWinThumbnailToolButton
 
 from app.common.others import appCenter, musicPlayer, translator
-from app.common.statics.colors import Colors
+from app.common.statics.qt import Icons
+from app.common.statics.styles import Colors
 from app.components.base import Component
 from app.components.windows.windows import TitleBarWindow
 from app.helpers.base import Strings
-from app.resource.qt import Icons
 from app.views.home import HomeBody
 from app.views.player_bar import MusicPlayerBar
 

@@ -4,6 +4,7 @@ from PyQt5.QtCore import Qt
 from PyQt5.QtWidgets import QWidget, QPushButton, QVBoxLayout
 
 from app.common.others import appCenter
+from app.common.statics.qt import Cursors
 from app.components.base.app_icon import AppIcon
 from app.components.base.base_component import Component
 from app.components.base.gif import Gif
@@ -11,7 +12,6 @@ from app.components.widgets import ExtendableStyleWidget
 from app.helpers.base import Strings, suppressException
 from app.helpers.stylesheets.translators import ClassNameTranslator
 from app.helpers.stylesheets.translators.classname_translator import ClassNameTheme
-from app.resource.qt import Cursors
 
 
 class ActionButton(QPushButton, Component):

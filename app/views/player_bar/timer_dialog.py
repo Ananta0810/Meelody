@@ -6,11 +6,11 @@ from PyQt5.QtGui import QRegExpValidator, QWheelEvent, QResizeEvent
 from PyQt5.QtWidgets import QWidget
 
 from app.common.others import musicPlayer, translator
+from app.common.statics.qt import Images
 from app.components.base import Cover, CoverProps, Input, Factory, ActionButton, Label
 from app.components.dialogs import BaseDialog
 from app.components.widgets import Box, FlexBox
 from app.helpers.others import Logger
-from app.resource.qt import Images
 
 
 class TimerDialog(BaseDialog):

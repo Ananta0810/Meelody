@@ -5,11 +5,11 @@ from PyQt5.QtGui import QKeySequence, QResizeEvent
 from PyQt5.QtWidgets import QShortcut, QVBoxLayout, QHBoxLayout
 
 from app.common.others import translator
+from app.common.statics.qt import Images
 from app.components.base import CoverProps, Cover, Factory, ActionButton, Label
 from app.components.dialogs import BaseDialog
 from app.components.windows import FramelessWindow
 from app.helpers.base import Numbers
-from app.resource.qt import Images
 
 
 class _ConfirmDialog(FramelessWindow):

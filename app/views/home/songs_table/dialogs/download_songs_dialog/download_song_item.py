@@ -14,8 +14,9 @@ from pytube import YouTube, Stream
 from app.common.exceptions import ResourceException
 from app.common.models import Song
 from app.common.others import translator
-from app.common.statics.colors import Colors
-from app.common.statics.paddings import Paddings
+from app.common.statics.qt import Images, Icons, Cursors
+from app.common.statics.styles import Colors
+from app.common.statics.styles import Paddings
 from app.components.base import Cover, Factory, CoverProps, AutoTranslateLabel, EllipsisLabel
 from app.components.base.gif import Gif
 from app.components.sliders import ProgressBar
@@ -23,7 +24,6 @@ from app.components.widgets import ExtendableStyleWidget, Box, FlexBox
 from app.helpers.base import Strings
 from app.helpers.builders import AudioEditor
 from app.helpers.others import Times, Files, Logger
-from app.resource.qt import Images, Icons, Cursors
 from app.views.threads import UpdateUIThread
 
 

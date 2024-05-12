@@ -5,15 +5,15 @@ from PyQt5.QtGui import QResizeEvent
 from PyQt5.QtWidgets import QHBoxLayout, QVBoxLayout, QWidget
 
 from app.common.others import appCenter, translator
-from app.common.statics.colors import Colors
 from app.common.statics.enums import ThemeMode
-from app.common.statics.paddings import Paddings
+from app.common.statics.qt import Icons, Images, Cursors
+from app.common.statics.styles import Colors
+from app.common.statics.styles import Paddings
 from app.components.base import Label, Factory, ActionButton, DropDown, Cover, CoverProps
 from app.components.events import ClickObserver
 from app.components.widgets import StyleWidget
 from app.components.windows import FramelessWindow
 from app.helpers.stylesheets.translators import ClassNameTranslator
-from app.resource.qt import Icons, Images, Cursors
 
 
 class SettingsDialog(FramelessWindow):

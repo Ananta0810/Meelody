@@ -3,7 +3,7 @@ from typing import Optional
 from PyQt5.QtCore import Qt
 from PyQt5.QtWidgets import QWidget, QVBoxLayout
 
-from app.resource.qt import Cursors
+from app.common.statics.qt import Cursors
 from app.views.home.songs_table.songs_menu import SongsMenu
 from app.views.home.songs_table.songs_table_header import SongsTableHeader
 

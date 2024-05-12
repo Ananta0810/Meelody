@@ -11,13 +11,13 @@ from app.common.exceptions import StorageException
 from app.common.models.playlists import UserPlaylist
 from app.common.others import appCenter, translator
 from app.common.statics.enums import FileType
+from app.common.statics.qt import Images
 from app.components.base import Cover, CoverProps, Factory, Input, ActionButton
 from app.components.dialogs import BaseDialog, Dialogs
 from app.components.widgets import Box
 from app.helpers.base import Strings
 from app.helpers.builders import ImageEditor
 from app.helpers.others import Files
-from app.resource.qt import Images
 
 
 class NewPlaylistDialog(BaseDialog):

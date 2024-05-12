@@ -6,10 +6,10 @@ from PyQt5.QtWidgets import QWidget, QFrame
 
 from app.common.models import Song
 from app.common.others import appCenter
-from app.common.statics.colors import Colors
+from app.common.statics.qt import Cursors
+from app.common.statics.styles import Colors
 from app.components.scroll_areas import SmoothVerticalScrollArea
 from app.helpers.base import Lists, Dicts
-from app.resource.qt import Cursors
 from app.views.home.songs_table.dialogs.select_playlist_songs_dialog.select_playlist_song_row import SongRow
 
 

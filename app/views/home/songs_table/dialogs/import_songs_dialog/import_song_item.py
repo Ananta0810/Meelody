@@ -9,12 +9,12 @@ from app.common.exceptions import ResourceException
 from app.common.models import Song
 from app.common.models.song import SongReader
 from app.common.others import translator
+from app.common.statics.qt import Images
 from app.components.base import Cover, CoverProps, Label, Factory, EllipsisLabel, ActionButton, Input, CoverWithPlaceHolder, AutoTranslateLabel
 from app.components.dialogs import BaseDialog
 from app.components.widgets import ExtendableStyleWidget, Box, FlexBox
 from app.helpers.base import Strings
 from app.helpers.others import Logger, Files
-from app.resource.qt import Images
 
 
 class ImportSongItem(ExtendableStyleWidget):

@@ -1,6 +1,6 @@
 from PyQt5.QtGui import QIcon, QPainter, QPixmap
 
-from app.helpers.stylesheets import Color
+from app.helpers.stylesheets.color import Color
 
 
 class AppIcon(QIcon):

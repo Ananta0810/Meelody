@@ -7,12 +7,12 @@ from PyQt5.QtWidgets import QWidget, QShortcut
 from app.common.exceptions import ResourceException
 from app.common.models import Song
 from app.common.others import translator
+from app.common.statics.qt import Images
 from app.components.base import CoverProps, Factory, ActionButton, Label, Input, CoverWithPlaceHolder
 from app.components.dialogs import BaseDialog, Dialogs
 from app.components.widgets import Box
 from app.helpers.base import Strings
 from app.helpers.others import Logger
-from app.resource.qt import Images
 
 
 class UpdateSongDialog(BaseDialog):

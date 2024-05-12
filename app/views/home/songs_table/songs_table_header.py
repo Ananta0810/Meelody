@@ -6,11 +6,11 @@ from PyQt5.QtWidgets import QWidget, QHBoxLayout, QFileDialog
 from app.common.models import Playlist
 from app.common.models.playlists import FavouritesPlaylist, Library
 from app.common.others import appCenter, translator
-from app.common.statics.colors import Colors
 from app.common.statics.enums import FileType
-from app.common.statics.paddings import Paddings
+from app.common.statics.qt import Icons, Cursors
+from app.common.statics.styles import Colors
+from app.common.statics.styles import Paddings
 from app.components.base import Factory, Component, Label
-from app.resource.qt import Icons, Cursors
 from app.views.home.songs_table.dialogs.download_songs_dialog import DownloadSongsDialog
 from app.views.home.songs_table.dialogs.import_songs_dialog import ImportSongsDialog
 from app.views.home.songs_table.dialogs.select_playlist_songs_dialog import SelectPlaylistSongsDialog

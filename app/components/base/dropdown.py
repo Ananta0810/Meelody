@@ -4,10 +4,10 @@ from PyQt5.QtCore import Qt
 from PyQt5.QtGui import QShowEvent
 from PyQt5.QtWidgets import QComboBox, QWidget, QStyledItemDelegate
 
+from app.common.statics.qt import Cursors
 from app.components.base import Component
 from app.helpers.base import Strings
 from app.helpers.stylesheets.translators.classname_translator import ClassNameTheme, ClassNameTranslator
-from app.resource.qt import Cursors
 
 
 class DropDown(QComboBox, Component):

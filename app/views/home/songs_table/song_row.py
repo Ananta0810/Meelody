@@ -6,9 +6,10 @@ from PyQt5.QtWidgets import QWidget, QHBoxLayout, QFileDialog
 from app.common.exceptions import ResourceException
 from app.common.models import Song
 from app.common.others import musicPlayer, appCenter, translator
-from app.common.statics.colors import Colors
 from app.common.statics.enums import FileType
-from app.common.statics.paddings import Paddings
+from app.common.statics.qt import Icons, Images
+from app.common.statics.styles import Colors
+from app.common.statics.styles import Paddings
 from app.components.base import Factory, LabelWithDefaultText, CoverProps, CoverWithPlaceHolder
 from app.components.dialogs import Dialogs
 from app.components.widgets import ExtendableStyleWidget, StyleWidget, FlexBox
@@ -16,7 +17,6 @@ from app.helpers.base import silence, suppressException
 from app.helpers.builders import ImageEditor
 from app.helpers.others import Times, Logger
 from app.helpers.qt import Widgets
-from app.resource.qt import Icons, Images
 from app.views.home.songs_table.dialogs.update_song_dialog import UpdateSongDialog
 
 

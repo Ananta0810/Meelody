@@ -1,6 +1,6 @@
 from typing import List, Optional
 
-from app.common.statics.colors import Colors
+from app.common.statics.styles import Colors
 from app.helpers.stylesheets import Color
 from app.helpers.stylesheets.translators.value_translators.value_translator import ValueTranslator
 
