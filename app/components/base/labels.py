@@ -4,6 +4,7 @@ from PyQt5.QtCore import Qt, pyqtSignal
 from PyQt5.QtGui import QFontMetrics, QResizeEvent
 from PyQt5.QtWidgets import QLabel, QLineEdit, QWidget
 
+from app.common.others import translator
 from app.components.base import Component
 from app.helpers.base import Strings
 
@@ -53,6 +54,22 @@ class Label(QLabel, Component):
         super().__init__(parent)
         super()._initComponent(autoChangeTheme)
         self.setWordWrap(True)
+
+
+class AutoTranslateLabel(QLabel, Component):
+
+    def __init__(self, parent: Optional[QWidget] = None, autoChangeTheme: bool = True):
+        super().__init__(parent)
+        super()._initComponent(autoChangeTheme)
+        self.__translateKey = None
+
+    def setTranslateText(self, text: str) -> None:
+        self.__translateKey = text
+        self._translateUI()
+
+    def _translateUI(self) -> None:
+        if self.__translateKey is not None:
+            self.setText(translator.translate(self.__translateKey))
 
 
 class LabelWithDefaultText(QLabel, Component):

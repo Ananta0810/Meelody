@@ -5,4 +5,4 @@ from .checkbox import CheckBox
 from .component_factory import Factory
 from .cover import CoverProps, Cover, CoverWithPlaceHolder, ZoomCover
 from .dropdown import DropDown
-from .labels import LabelWithDefaultText, EllipsisLabel, Input, Label
+from .labels import LabelWithDefaultText, EllipsisLabel, Input, Label, AutoTranslateLabel
