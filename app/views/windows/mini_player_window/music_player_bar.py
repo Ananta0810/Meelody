@@ -1,20 +1,18 @@
 import contextlib
 from time import sleep
-from typing import Optional, Union
+from typing import Optional
 
 from PyQt5.QtCore import Qt, QThread
 from PyQt5.QtGui import QKeySequence
-from PyQt5.QtWidgets import QHBoxLayout, QVBoxLayout, QWidget, QShortcut
+from PyQt5.QtWidgets import QHBoxLayout, QWidget, QShortcut
 
 from app.common.models import Song
 from app.common.others import musicPlayer, translator
-from app.common.statics.qt import Images, Icons
+from app.common.statics.qt import Icons
 from app.common.statics.styles import Colors
 from app.common.statics.styles import Paddings
 from app.components.base import Component, FontFactory
 from app.components.buttons import ButtonFactory, StateIcon
-from app.components.dialogs import Dialogs
-from app.components.images.cover import CoverWithPlaceHolder, Cover
 from app.components.labels import LabelWithPlaceHolder
 from app.components.sliders import HorizontalSlider
 from app.components.widgets import Box, FlexBox
@@ -32,7 +30,6 @@ class MusicPlayerBar(QWidget, Component):
 
         super()._initComponent()
 
-        self._songCover.setPlaceHolderCover(self.__createCover(Images.defaultSongCover))
         self._loopBtn.setActive(musicPlayer.isLooping())
         self._shuffleBtn.setActive(musicPlayer.isShuffle())
         self.setPlayingTime(musicPlayer.getPlayingTime())
@@ -55,29 +52,34 @@ class MusicPlayerBar(QWidget, Component):
         self._lowerLayout = FlexBox(self)
 
         self._mainLayout.addLayout(self._upperLayout)
-        self._mainLayout.addSpacing(12)
         self._mainLayout.addLayout(self._lowerLayout)
 
-        self._left = FlexBox()
-        self._left.setContentsMargins(4, 0, 0, 0)
-        self._left.setSpacing(12)
-        self._left.setAlignment(Qt.AlignVCenter)
+        self._left = QWidget()
+        self._left.setFixedWidth(180)
 
-        self._middle = QHBoxLayout()
-        self._middle.setSpacing(4)
-        self._middle.setSpacing(8)
-        self._middle.setAlignment(Qt.AlignVCenter)
+        self._leftLayout = FlexBox(self._left)
+        self._leftLayout.setContentsMargins(4, 0, 0, 0)
+        self._leftLayout.setSpacing(12)
+        self._leftLayout.setAlignment(Qt.AlignLeft | Qt.AlignVCenter)
 
-        self._right = QHBoxLayout()
-        self._right.setContentsMargins(0, 0, 0, 0)
-        self._right.setSpacing(8)
-        self._right.setAlignment(Qt.AlignVCenter)
+        self._middle = QWidget()
+        self._middleLayout = FlexBox(self._middle)
+        self._middleLayout.setSpacing(8)
+        self._middleLayout.setAlignment(Qt.AlignHCenter | Qt.AlignVCenter)
 
-        self._lowerLayout.addLayout(self._left)
+        self._right = QWidget()
+        self._right.setFixedWidth(180)
+
+        self._rightLayout = FlexBox(self._right)
+        self._rightLayout.setContentsMargins(0, 0, 0, 0)
+        self._rightLayout.setSpacing(8)
+        self._rightLayout.setAlignment(Qt.AlignRight | Qt.AlignVCenter)
+
+        self._lowerLayout.addWidget(self._left)
         self._lowerLayout.addStretch()
-        self._lowerLayout.addLayout(self._middle)
+        self._lowerLayout.addWidget(self._middle, alignment=Qt.AlignHCenter)
         self._lowerLayout.addStretch()
-        self._lowerLayout.addLayout(self._right)
+        self._lowerLayout.addWidget(self._right)
 
         # ======================================== UPPER ========================================
         self._playingTimeLabel = LabelWithPlaceHolder()
@@ -105,32 +107,36 @@ class MusicPlayerBar(QWidget, Component):
         self._upperLayout.addWidget(self._totalTimeLabel)
 
         # ======================================== LEFT ========================================
-        self._songCover = CoverWithPlaceHolder()
-        self._songCover.setFixedSize(64, 64)
+        self._volumeBtn = ButtonFactory.createMultiStatesButton(Icons.large, Paddings.RELATIVE_50)
+        self._volumeBtn.setIcons([
+            StateIcon(Icons.volumeUp.withColor(Colors.primary), Icons.volumeUp.withColor(Colors.white)),
+            StateIcon(Icons.volumeDown.withColor(Colors.primary), Icons.volumeDown.withColor(Colors.white)),
+            StateIcon(Icons.volumeSilent.withColor(Colors.primary), Icons.volumeSilent.withColor(Colors.white)),
+        ])
 
-        self._titleLabel = LabelWithPlaceHolder()
-        self._titleLabel.enableEllipsis()
-        self._titleLabel.setFixedWidth(128)
-        self._titleLabel.setFont(FontFactory.create(size=10, bold=True))
-        self._titleLabel.setClassName("text-black dark:text-white bg-none")
+        self._volumeBtn.setClassName("rounded-full bg-none hover:bg-primary-12 dark:hover:bg-white-20")
+        self._volumeBtn.setChangeStateOnPressed(False)
+        self._volumeBtn.setActiveState(0)
 
-        self._artistLabel = LabelWithPlaceHolder()
-        self._artistLabel.enableEllipsis()
-        self._artistLabel.setFixedWidth(128)
-        self._artistLabel.setFont(FontFactory.create(size=9))
-        self._artistLabel.setClassName("text-black dark:text-gray bg-none")
+        self._volumeBox = QWidget()
+        self._volumeBoxLayout = QHBoxLayout(self._volumeBox)
+        self._volumeBoxLayout.setContentsMargins(0, 0, 0, 0)
 
-        self._infoLayout = QVBoxLayout()
-        self._infoLayout.setContentsMargins(0, 0, 0, 0)
-        self._infoLayout.setSpacing(0)
+        self._volumeSlider = HorizontalSlider()
+        self._volumeSlider.setFixedHeight(40)
+        self._volumeSlider.setPageStep(0)
+        self._volumeSlider.setMaximum(100)
+        self._volumeSlider.setProperty("value", 0)
+        self._volumeSlider.setSliderPosition(100)
+        self._volumeSlider.setClassName("rounded-8 bg-primary-10 dark:bg-white-20 dark:handle/bg-white dark:track/active:bg-white")
+        self._volumeSlider.hide()
+        policy = self._volumeSlider.sizePolicy()
+        policy.setRetainSizeWhenHidden(True)
+        self._volumeSlider.setSizePolicy(policy)
 
-        self._infoLayout.addStretch(0)
-        self._infoLayout.addWidget(self._titleLabel)
-        self._infoLayout.addWidget(self._artistLabel)
-        self._infoLayout.addStretch(0)
-
-        self._left.addWidget(self._songCover)
-        self._left.addLayout(self._infoLayout, stretch=1)
+        self._volumeBoxLayout.addWidget(self._volumeSlider)
+        self._leftLayout.addWidget(self._volumeBtn)
+        self._leftLayout.addWidget(self._volumeBox, 1)
 
         # ======================================== MIDDLE ========================================
 
@@ -171,12 +177,12 @@ class MusicPlayerBar(QWidget, Component):
             "dark:inactive/hover:bg-white-20 dark:active/hover:bg-white-20"
         )
 
-        self._middle.addWidget(self._shuffleBtn)
-        self._middle.addWidget(self._prevSongBtn)
-        self._middle.addWidget(self._playSongBtn)
-        self._middle.addWidget(self._pauseSongBtn)
-        self._middle.addWidget(self._nextSongBtn)
-        self._middle.addWidget(self._loopBtn)
+        self._middleLayout.addWidget(self._shuffleBtn)
+        self._middleLayout.addWidget(self._prevSongBtn)
+        self._middleLayout.addWidget(self._playSongBtn)
+        self._middleLayout.addWidget(self._pauseSongBtn)
+        self._middleLayout.addWidget(self._nextSongBtn)
+        self._middleLayout.addWidget(self._loopBtn)
 
         # ======================================== RIGHT ========================================
 
@@ -188,40 +194,13 @@ class MusicPlayerBar(QWidget, Component):
             "dark:inactive/hover:bg-white-20 dark:active/hover:bg-danger-20"
         )
 
-        self._volumeBtn = ButtonFactory.createMultiStatesButton(Icons.large, Paddings.RELATIVE_50)
-        self._volumeBtn.setIcons([
-            StateIcon(Icons.volumeUp.withColor(Colors.primary), Icons.volumeUp.withColor(Colors.white)),
-            StateIcon(Icons.volumeDown.withColor(Colors.primary), Icons.volumeDown.withColor(Colors.white)),
-            StateIcon(Icons.volumeSilent.withColor(Colors.primary), Icons.volumeSilent.withColor(Colors.white)),
-        ])
-        self._volumeBtn.setClassName("rounded-full bg-none hover:bg-primary-12 dark:hover:bg-white-20")
-        self._volumeBtn.setChangeStateOnPressed(False)
-        self._volumeBtn.setActiveState(0)
-
-        self._volumeBox = QWidget()
-        self._volumeBoxLayout = QHBoxLayout(self._volumeBox)
-        self._volumeBoxLayout.setContentsMargins(0, 0, 0, 0)
-
-        self._volumeSlider = HorizontalSlider()
-        self._volumeSlider.setFixedHeight(40)
-        self._volumeSlider.setPageStep(0)
-        self._volumeSlider.setMaximum(100)
-        self._volumeSlider.setProperty("value", 0)
-        self._volumeSlider.setSliderPosition(100)
-        self._volumeSlider.setClassName("rounded-8 bg-primary-10 dark:bg-white-20 dark:handle/bg-white dark:track/active:bg-white")
-        self._volumeSlider.hide()
-
-        self._volumeBoxLayout.addWidget(self._volumeSlider)
-
         self._timerBtn = ButtonFactory.createIconButton(size=Icons.large, padding=Paddings.RELATIVE_50)
         self._timerBtn.setLightModeIcon(Icons.timer.withColor(Colors.primary))
         self._timerBtn.setDarkModeIcon(Icons.timer.withColor(Colors.white))
         self._timerBtn.setClassName("bg-none hover:bg-primary-10 rounded-full", "dark:bg-none dark:hover:bg-white-20")
 
-        self._right.addWidget(self._loveBtn)
-        self._right.addWidget(self._volumeBtn)
-        self._right.addWidget(self._volumeBox, 1)
-        self._right.addWidget(self._timerBtn)
+        self._rightLayout.addWidget(self._loveBtn)
+        self._rightLayout.addWidget(self._timerBtn)
 
         self._timerDialog = None
 
@@ -229,9 +208,6 @@ class MusicPlayerBar(QWidget, Component):
         self._playerTrackingThread = PlayerTrackingThread(self)
 
     def _translateUI(self) -> None:
-        self._titleLabel.setPlaceHolder(translator.translate("MUSIC_PLAYER.SONG_TITLE"))
-        self._artistLabel.setPlaceHolder(translator.translate("MUSIC_PLAYER.SONG_ARTIST"))
-
         self._prevSongBtn.setToolTip(translator.translate("MUSIC_PLAYER.TOOLTIP_PREV_BTN"))
         self._nextSongBtn.setToolTip(translator.translate("MUSIC_PLAYER.TOOLTIP_NEXT_BTN"))
         self._pauseSongBtn.setToolTip(translator.translate("MUSIC_PLAYER.TOOLTIP_PAUSE_BTN"))
@@ -356,7 +332,6 @@ class MusicPlayerBar(QWidget, Component):
     def __selectSong(self, song: Song) -> None:
         if self.__currentSong is not None:
             self.__currentSong.loved.disconnect(self.__updateLoveState)
-            self.__currentSong.coverChanged.disconnect(self.__updateCover)
             with contextlib.suppress(RuntimeError):
                 self._loveBtn.clicked.disconnect()
 
@@ -364,22 +339,11 @@ class MusicPlayerBar(QWidget, Component):
 
         # Connect signals
         song.loved.connect(self.__updateLoveState)
-        song.coverChanged.connect(self.__updateCover)
         self._loveBtn.clicked.connect(lambda: self.__currentSong.updateLoveState(self._loveBtn.isActive()))
 
         # Display song information
         self.setTotalTime(song.getLength())
-        self._titleLabel.setText(song.getTitle())
-        self._artistLabel.setText(song.getArtist())
         self.__updateLoveState(song.isLoved())
-        if song.isCoverLoaded():
-            self.__updateCover(song.getCover())
-        else:
-            self.__updateCover(None)
-            song.loadCover()
-
-    def __updateCover(self, cover: Optional[bytes]) -> None:
-        self._songCover.setCover(self.__createCover(cover))
 
     def __updateLoveState(self, state: bool) -> None:
         self._loveBtn.setActive(state)
@@ -400,16 +364,6 @@ class MusicPlayerBar(QWidget, Component):
         if self._timerDialog is None:
             self._timerDialog = TimerDialog()
         self._timerDialog.show()
-
-    @staticmethod
-    def __notifySongNotFound():
-        return Dialogs.alert(translator.translate("MUSIC_PLAYER.PLAYING_DELETED_SONG"))
-
-    @staticmethod
-    def __createCover(data: bytes) -> Union[Cover.Props, None]:
-        if data is None:
-            return None
-        return Cover.Props.fromBytes(data, width=64, height=64, radius=12)
 
 
 class PlayerTrackingThread(QThread):

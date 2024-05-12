@@ -25,7 +25,7 @@ class MiniPlayerWindow(TitleBarWindow, Component):
 
         self._musicPlayerBar = MusicPlayerBar()
         self._musicPlayerBar.setClassName("bg-none border-t border-gray-20 rounded-none")
-        self._musicPlayerBar.setContentsMargins(16, 24, 16, 16)
+        self._musicPlayerBar.setContentsMargins(16, 24, 16, 8)
 
         self.addWidget(self._musicPlayerBar, alignment=Qt.AlignBottom)
 
