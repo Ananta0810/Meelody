@@ -55,6 +55,10 @@ class Icons:
         return AppIcon("resource/images/icons/minimize.png")
 
     @memoizeStaticProperty
+    def maximize(self) -> AppIcon:
+        return AppIcon("resource/images/icons/maximize.png")
+
+    @memoizeStaticProperty
     def close(self) -> AppIcon:
         return AppIcon("resource/images/icons/close.png")
 

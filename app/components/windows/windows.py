@@ -112,6 +112,11 @@ class TitleBarWindow(FramelessWindow):
         self._minimizeBtn.setDarkModeIcon(Icons.minimize.withColor(Colors.white))
         self._minimizeBtn.setClassName("rounded-8 hover:bg-black-12 bg-none dark:hover:bg-white-20")
 
+        self._maximizeBtn = ButtonFactory.createIconButton(size=Icons.medium, padding=Paddings.RELATIVE_50)
+        self._maximizeBtn.setLightModeIcon(Icons.maximize.withColor(Colors.primary))
+        self._maximizeBtn.setDarkModeIcon(Icons.maximize.withColor(Colors.white))
+        self._maximizeBtn.setClassName("rounded-8 hover:bg-black-12 bg-none dark:hover:bg-white-20")
+
         self._closeBtn = ButtonFactory.createIconButton(size=Icons.medium, padding=Paddings.RELATIVE_50)
         self._closeBtn.setLightModeIcon(Icons.close.withColor(Colors.danger))
         self._closeBtn.setDarkModeIcon(Icons.close.withColor(Colors.white))
@@ -119,13 +124,14 @@ class TitleBarWindow(FramelessWindow):
 
         self._titleBarLayout.addStretch()
         self._titleBarLayout.addWidget(self._minimizeBtn)
+        self._titleBarLayout.addWidget(self._maximizeBtn)
         self._titleBarLayout.addWidget(self._closeBtn)
 
         self.addWidget(self._titleBar, alignment=Qt.AlignTop)
 
     def mousePressEvent(self, event: QMouseEvent) -> None:
         super().mousePressEvent(event)
-        if event.pos().y() < self._titleBar.height() and event.button() == Qt.LeftButton:
+        if event.pos().y() - 64 < self._titleBar.height() and event.button() == Qt.LeftButton:
             self.__offset = event.pos()
 
     def mouseReleaseEvent(self, event: QMouseEvent) -> None:

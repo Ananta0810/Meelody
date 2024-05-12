@@ -1,4 +1,4 @@
-from PyQt5.QtCore import Qt
+from PyQt5.QtGui import QWindow
 from PyQt5.QtWinExtras import QWinThumbnailToolBar, QWinThumbnailToolButton
 
 from app.common.others import appCenter, musicPlayer, translator
@@ -6,38 +6,20 @@ from app.common.statics.qt import Icons
 from app.common.statics.styles import Colors
 from app.components.base import Component
 from app.components.windows.windows import TitleBarWindow
-from app.utils.base import Strings
-from app.views.home import HomeBody
-from app.views.player_bar import MusicPlayerBar
-from app.views.windows.minimized_window import MiniPlayerWindow
 
 
-class MainWindow(TitleBarWindow, Component):
+class MiniPlayerWindow(TitleBarWindow, Component):
 
-    def __init__(self, width: int = 1280, height: int = 720) -> None:
+    def __init__(self, mainWindow: QWindow) -> None:
+        self.__mainWindow = mainWindow
         super().__init__()
-        self.setObjectName(Strings.randomId())
         super()._initComponent()
 
-        self.setFixedWidth(width)
-        self.setFixedHeight(height)
+        self.setFixedWidth(720)
+        self.setFixedHeight(540)
 
     def _createUI(self) -> None:
         self._inner.setClassName("rounded-24 bg-white dark:bg-dark")
-
-        self._body = HomeBody()
-        self._body.setVerticalScrollBarPolicy(Qt.ScrollBarAlwaysOff)
-        self._body.setHorizontalScrollBarPolicy(Qt.ScrollBarAlwaysOff)
-        self._body.setWidgetResizable(True)
-        self._body.setContentsMargins(64, 0, 50, 0)
-
-        self._musicPlayerBar = MusicPlayerBar()
-        self._musicPlayerBar.setFixedHeight(96)
-        self._musicPlayerBar.setContentsMargins(16, 0, 16, 0)
-        self._musicPlayerBar.setClassName("bg-none border-t border-gray-20 rounded-none")
-
-        self.addWidget(self._body)
-        self.addWidget(self._musicPlayerBar, alignment=Qt.AlignBottom)
 
         # Prev, Play/Pause, Next
         self._toolbarPrevBtn = QWinThumbnailToolButton()
@@ -63,9 +45,9 @@ class MainWindow(TitleBarWindow, Component):
         self._toolbarNextBtn.setToolTip(translator.translate("MUSIC_PLAYER.TOOLTIP_NEXT_BTN"))
 
     def _connectSignalSlots(self) -> None:
-        self._minimizeBtn.clicked.connect(lambda: self.showMinimized())
-        self._maximizeBtn.clicked.connect(lambda: self.showMiniPlayerWindow())
         self._closeBtn.clicked.connect(lambda: appCenter.exited.emit())
+        self._maximizeBtn.clicked.connect(lambda: self.showMainWindow())
+        self._minimizeBtn.clicked.connect(lambda: self.showMinimized())
 
         self._toolbarPrevBtn.clicked.connect(lambda: musicPlayer.playPreviousSong())
         self._toolbarPlayBtn.clicked.connect(lambda: musicPlayer.pause() if musicPlayer.isPlaying() else musicPlayer.play())
@@ -77,12 +59,20 @@ class MainWindow(TitleBarWindow, Component):
         musicPlayer.paused.connect(lambda: self._toolbarPlayBtn.setToolTip(translator.translate("MUSIC_PLAYER.TOOLTIP_PLAY_BTN")))
         musicPlayer.paused.connect(lambda: self._toolbarPlayBtn.setIcon(Icons.play.withColor(Colors.primary)))
 
+    def applyLightMode(self) -> None:
+        super().applyLightMode()
+        self.applyThemeToChildren()
+
+    def applyDarkMode(self) -> None:
+        super().applyDarkMode()
+        self.applyThemeToChildren()
+
     def show(self) -> None:
         super().show()
+        self.applyTheme()
         self.moveToCenter()
         self._toolbar.setWindow(self.windowHandle())
 
-    def showMiniPlayerWindow(self) -> None:
-        self.hide()
-        window = MiniPlayerWindow(self)
-        window.show()
+    def showMainWindow(self) -> None:
+        self.__mainWindow.show()
+        self.close()
