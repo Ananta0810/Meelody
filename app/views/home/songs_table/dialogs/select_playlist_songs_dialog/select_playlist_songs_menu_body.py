@@ -77,9 +77,15 @@ class MenuBody(SmoothVerticalScrollArea):
             songRow.unchecked.connect(lambda _song: self.songUnSelected.emit(_song))
 
             if index != len(songs) - 1:
-                songRow.setClassName("bg-none hover:bg-gray-8 border-l border-b border-gray-12")
+                songRow.setClassName(
+                    "hover:bg-gray-8 border-l border-b border-gray-12 bg-white",
+                    "dark:bg-white-[b12] dark:hover:bg-white-[b16] dark:border-white-[b20]"
+                )
             else:
-                songRow.setClassName("bg-none hover:bg-gray-8 border-l border-gray-12")
+                songRow.setClassName(
+                    "hover:bg-gray-8 border-l border-gray-12 bg-white",
+                    "dark:bg-white-[b12] dark:hover:bg-white-[b16] dark:border-white-[b20]"
+                )
 
             songRow.applyTheme()
 

@@ -26,7 +26,7 @@ class CheckBox(ExtendableStyleWidget):
 
         self._normal = _CheckBoxState()
         self._normal.setCursor(Cursors.HAND)
-        self._normal.setClassName("bg-white rounded-4 border border-gray-[w50] hover:bg-primary-12 hover:border-primary hover:border-2 p-2")
+        self._normal.setClassName("bg-none rounded-4 border border-gray-[w50] hover:bg-primary-12 hover:border-primary hover:border-2 p-2")
 
         self._active = _CheckBoxState()
         self._active.setCursor(Cursors.HAND)

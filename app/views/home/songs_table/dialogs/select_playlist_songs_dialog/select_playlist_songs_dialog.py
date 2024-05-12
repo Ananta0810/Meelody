@@ -1,6 +1,7 @@
 from PyQt5.QtCore import Qt
 
 from app.common.models import Playlist, Song
+from app.common.others import translator
 from app.components.base import ActionButton, Factory
 from app.components.dialogs import BaseDialog
 from app.components.widgets import StyleWidget, FlexBox, Box
@@ -27,7 +28,7 @@ class SelectPlaylistSongsDialog(BaseDialog):
         self._menuHeader = MenuHeader()
         self._menuHeader.setFixedWidth(640)
         self._menuHeader.setContentsMargins(0, 16, 0, 16)
-        self._menuHeader.setClassName("bg-gray-4 border border-gray-12 rounded-t-8")
+        self._menuHeader.setClassName("bg-gray-4 border border-gray-12 rounded-t-8 dark:border-white-[b20]")
 
         self._menuBodyWrapper = StyleWidget()
         self._menuBodyWrapper.setClassName("border-r border-gray-12")
@@ -36,13 +37,13 @@ class SelectPlaylistSongsDialog(BaseDialog):
         self._menuBody = MenuBody()
         self._menuBody.setFixedSize(640, 480)
         self._menuBody.setContentsMargins(0, 0, 0, 0)
-        self._menuBody.setClassName("scroll/bg-primary-75 scroll/hover:bg-primary scroll/rounded-2 bg-none border-gray-12")
+        self._menuBody.setClassName("scroll/bg-primary-75 scroll/hover:bg-primary scroll/rounded-2 bg-none border-gray-12 dark:border-white-[b20]")
 
         self._menuBodyWrapperLayout.addWidget(self._menuBody)
 
         self._footer = StyleWidget()
         self._footer.setFixedWidth(640)
-        self._footer.setClassName("rounded-b-8 border border-gray-12")
+        self._footer.setClassName("rounded-b-8 border border-gray-12 dark:border-white-[b20]")
 
         self._footerLayout = FlexBox()
         self._footerLayout.setContentsMargins(8, 8, 8, 8)
@@ -51,10 +52,12 @@ class SelectPlaylistSongsDialog(BaseDialog):
         self._footer.setLayout(self._footerLayout)
 
         self._applyBtn = ActionButton()
-        self._applyBtn.setFont(Factory.createFont(family="Segoe UI Semibold", size=10))
-        self._applyBtn.setClassName("text-white rounded-4 bg-black-90 hover:bg-black py-8 px-24 disabled:bg-gray-10 disabled:text-gray")
         self._applyBtn.setMinimumWidth(64)
-        self._applyBtn.setText("Save")
+        self._applyBtn.setFont(Factory.createFont(family="Segoe UI Semibold", size=10))
+        self._applyBtn.setClassName(
+            "text-white rounded-4 bg-black-90 hover:bg-black py-8 px-24 disabled:bg-gray-10 disabled:text-gray",
+            "dark:bg-primary dark:bg-primary-[w120]"
+        )
         self._applyBtn.setDisabled(True)
 
         self._footerLayout.addWidget(self._applyBtn)
@@ -62,6 +65,9 @@ class SelectPlaylistSongsDialog(BaseDialog):
         self.addWidget(self._menuHeader)
         self.addWidget(self._menuBodyWrapper)
         self.addWidget(self._footer)
+
+    def _translateUI(self) -> None:
+        self._applyBtn.setText(translator.translate("SELECT_PLAYLIST_SONGS_DIALOG.SAVE_BTN"))
 
     def _connectSignalSlots(self) -> None:
         super()._connectSignalSlots()

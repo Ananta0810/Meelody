@@ -4,7 +4,7 @@ from PyQt5 import QtGui
 from PyQt5.QtCore import pyqtSignal, Qt
 
 from app.common.models import Song
-from app.components.base import Factory, LabelWithDefaultText, CoverProps, CheckBox, CoverWithPlaceHolder
+from app.components.base import Factory, CoverProps, CheckBox, CoverWithPlaceHolder, Label, EllipsisLabel
 from app.components.widgets import ExtendableStyleWidget, FlexBox
 from app.helpers.others import Times
 from app.resource.qt import Images, Cursors
@@ -41,20 +41,17 @@ class SongRow(ExtendableStyleWidget):
         self._cover.setFixedSize(64, 64)
         self._cover.setPlaceHolderCover(CoverProps.fromBytes(Images.DEFAULT_SONG_COVER, width=64, height=64, radius=12))
 
-        self._titleLabel = LabelWithDefaultText()
-        self._titleLabel.enableEllipsis()
+        self._titleLabel = EllipsisLabel()
         self._titleLabel.setFixedWidth(200)
         self._titleLabel.setFont(Factory.createFont(size=10))
         self._titleLabel.setClassName("text-black dark:text-white")
 
-        self._artistLabel = LabelWithDefaultText()
-        self._artistLabel.enableEllipsis()
+        self._artistLabel = EllipsisLabel()
         self._artistLabel.setFixedWidth(128)
         self._artistLabel.setFont(Factory.createFont(size=10))
         self._artistLabel.setClassName("text-gray")
 
-        self._lengthLabel = LabelWithDefaultText()
-        self._lengthLabel.enableEllipsis()
+        self._lengthLabel = Label()
         self._lengthLabel.setFixedWidth(64)
         self._lengthLabel.setFont(Factory.createFont(size=10))
         self._lengthLabel.setClassName("text-gray")

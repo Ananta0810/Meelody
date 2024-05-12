@@ -6,7 +6,7 @@ from PyQt5.QtWidgets import QWidget, QHBoxLayout, QFileDialog
 from app.common.models import Playlist
 from app.common.models.playlists import FavouritesPlaylist, Library
 from app.common.others import appCenter, translator
-from app.components.base import Factory, EllipsisLabel, Component
+from app.components.base import Factory, Component, Label
 from app.components.dialogs import Dialogs
 from app.helpers.stylesheets import Paddings, Colors
 from app.resource.others import FileType
@@ -30,17 +30,17 @@ class SongsTableHeader(QWidget, Component):
         self._mainLayout.setContentsMargins(28, 0, 28 + self._scrollBarWidth, 0)
         self._mainLayout.setSpacing(0)
 
-        self._trackLabel = EllipsisLabel()
+        self._trackLabel = Label()
         self._trackLabel.setFont(Factory.createFont(size=9))
         self._trackLabel.setFixedWidth(64)
         self._trackLabel.setAlignment(Qt.AlignCenter)
         self._trackLabel.setClassName("text-black dark:text-white")
 
-        self._artistLabel = EllipsisLabel()
+        self._artistLabel = Label()
         self._artistLabel.setFont(Factory.createFont(size=9))
         self._artistLabel.setClassName("text-black dark:text-white")
 
-        self._lengthLabel = EllipsisLabel()
+        self._lengthLabel = Label()
         self._lengthLabel.setAlignment(Qt.AlignCenter)
         self._lengthLabel.setFont(Factory.createFont(size=9))
         self._lengthLabel.setClassName("text-black dark:text-white")

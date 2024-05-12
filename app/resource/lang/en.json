@@ -83,6 +83,12 @@
     "IMPORT_FAILED": "Import failed. Please try again.",
     "IMPORT_AGAIN_BTN": "Import again"
   },
+  "SELECT_PLAYLIST_SONGS_DIALOG": {
+    "HEADER.TITLE": "TITLE",
+    "HEADER.ARTIST": "ARTIST",
+    "HEADER.TIME": "TIME",
+    "SAVE_BTN": "Save"
+  },
   "UPDATE_SONG": {
     "LABEL": "Update song",
     "SAVE_BTN": "Apply",

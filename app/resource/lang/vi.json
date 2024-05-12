@@ -83,6 +83,12 @@
     "IMPORT_FAILED": "Thêm thất bại. Xin hãy thử lại.",
     "IMPORT_AGAIN_BTN": "Thêm lại"
   },
+  "SELECT_PLAYLIST_SONGS_DIALOG": {
+    "HEADER.TITLE": "TIÊU ĐỀ",
+    "HEADER.ARTIST": "NHẠC SĨ",
+    "HEADER.TIME": "THỜI LƯỢNG",
+    "SAVE_BTN": "Lưu"
+  },
   "UPDATE_SONG": {
     "LABEL": "Thay đổi thông tin bài hát",
     "SAVE_BTN": "Lưu",
