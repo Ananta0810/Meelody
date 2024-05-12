@@ -49,7 +49,7 @@ class DropDown(QComboBox, Component):
                 right: 8px;
                 width: 8px;
                 height: 8px;
-                image: url('app/resource/images/icons/{"chevron-down.png" if lightMode else "chevron-down-light.png"}');
+                image: url('resource/images/icons/{"chevron-down.png" if lightMode else "chevron-down-light.png"}');
             }}
             QComboBox QAbstractItemView {{
                 outline: 0px;

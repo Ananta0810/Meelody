@@ -4,8 +4,8 @@ from PyQt5.QtCore import QSize
 from PyQt5.QtGui import QMovie
 from PyQt5.QtWidgets import QLabel, QWidget
 
+from app.components.threads import UpdateUIThread
 from app.helpers.base import suppressException
-from app.views.threads import UpdateUIThread
 
 
 class Gif(QLabel):

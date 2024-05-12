@@ -12,9 +12,9 @@ class Translator(QObject):
         self.__dictionary = {}
 
     def setLanguage(self, lang: str) -> None:
-        fileName = f"app/resource/lang/{lang}.json"
+        fileName = f"resource/langs/{lang}.json"
         if not os.path.exists(fileName):
-            fileName = f"app/resource/lang/en.json"
+            fileName = f"resource/langs /en.json"
 
         with open(fileName, 'r', encoding='utf-8') as file:
             self.__dictionary = json.load(file)

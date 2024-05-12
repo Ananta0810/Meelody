@@ -24,11 +24,11 @@ from app.components.images.gif import Gif
 from app.components.labels import AutoTranslateLabel
 from app.components.labels.ellipsis_label import EllipsisLabel
 from app.components.sliders import ProgressBar
+from app.components.threads import UpdateUIThread
 from app.components.widgets import ExtendableStyleWidget, Box, FlexBox
 from app.helpers.base import Strings
 from app.helpers.builders import AudioEditor
 from app.helpers.others import Times, Files, Logger
-from app.views.threads import UpdateUIThread
 
 
 class DownloadSongItem(ExtendableStyleWidget):
@@ -80,13 +80,13 @@ class DownloadSongItem(ExtendableStyleWidget):
         self._failedIcon.setCursor(Cursors.base)
         self._failedIcon.hide()
 
-        self._downloadLabel = Gif("app/resource/images/defaults/downloading.gif")
+        self._downloadLabel = Gif("resource/images/defaults/downloading.gif")
         self._downloadLabel.setFixedSize(48, 48)
         self._downloadLabel.setGifSize(32)
         self._downloadLabel.setCursor(Cursors.base)
         self._downloadLabel.hide()
 
-        self._convertingLabel = Gif("app/resource/images/defaults/loading-bubble.gif")
+        self._convertingLabel = Gif("resource/images/defaults/loading-bubble.gif")
         self._convertingLabel.setFixedSize(48, 48)
         self._convertingLabel.hide()
 

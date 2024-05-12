@@ -12,172 +12,172 @@ class Icons:
     @memoizeStaticProperty
     def logo(self) -> 'AppIcon':
         from app.components.base import AppIcon
-        return AppIcon("app/resource/images/logo.ico")
+        return AppIcon("resource/images/logo.ico")
 
     @memoizeStaticProperty
     def delete(self) -> 'AppIcon':
         from app.components.base import AppIcon
 
-        return AppIcon("app/resource/images/icons/delete.png")
+        return AppIcon("resource/images/icons/delete.png")
 
     @memoizeStaticProperty
     def playSong(self) -> 'AppIcon':
         from app.components.base import AppIcon
 
-        return AppIcon("app/resource/images/icons/play-menu.png")
+        return AppIcon("resource/images/icons/play-menu.png")
 
     @memoizeStaticProperty
     def more(self) -> 'AppIcon':
         from app.components.base import AppIcon
 
-        return AppIcon("app/resource/images/icons/more.png")
+        return AppIcon("resource/images/icons/more.png")
 
     @memoizeStaticProperty
     def minus(self) -> 'AppIcon':
         from app.components.base import AppIcon
 
-        return AppIcon("app/resource/images/icons/minus.png")
+        return AppIcon("resource/images/icons/minus.png")
 
     @memoizeStaticProperty
     def add(self) -> 'AppIcon':
         from app.components.base import AppIcon
 
-        return AppIcon("app/resource/images/icons/add.png")
+        return AppIcon("resource/images/icons/add.png")
 
     @memoizeStaticProperty
     def edit(self) -> 'AppIcon':
         from app.components.base import AppIcon
 
-        return AppIcon("app/resource/images/icons/edit.png")
+        return AppIcon("resource/images/icons/edit.png")
 
     @memoizeStaticProperty
     def image(self) -> 'AppIcon':
         from app.components.base import AppIcon
 
-        return AppIcon("app/resource/images/icons/image.png")
+        return AppIcon("resource/images/icons/image.png")
 
     @memoizeStaticProperty
     def love(self) -> 'AppIcon':
         from app.components.base import AppIcon
 
-        return AppIcon("app/resource/images/icons/love.png")
+        return AppIcon("resource/images/icons/love.png")
 
     @memoizeStaticProperty
     def download(self) -> 'AppIcon':
         from app.components.base import AppIcon
 
-        return AppIcon("app/resource/images/icons/download.png")
+        return AppIcon("resource/images/icons/download.png")
 
     @memoizeStaticProperty
     def minimize(self) -> 'AppIcon':
         from app.components.base import AppIcon
 
-        return AppIcon("app/resource/images/icons/minimize.png")
+        return AppIcon("resource/images/icons/minimize.png")
 
     @memoizeStaticProperty
     def close(self) -> 'AppIcon':
         from app.components.base import AppIcon
 
-        return AppIcon("app/resource/images/icons/close.png")
+        return AppIcon("resource/images/icons/close.png")
 
     @memoizeStaticProperty
     def backward(self) -> 'AppIcon':
         from app.components.base import AppIcon
 
-        return AppIcon("app/resource/images/icons/chevron-backward.png")
+        return AppIcon("resource/images/icons/chevron-backward.png")
 
     @memoizeStaticProperty
     def forward(self) -> 'AppIcon':
         from app.components.base import AppIcon
 
-        return AppIcon("app/resource/images/icons/chevron-forward.png")
+        return AppIcon("resource/images/icons/chevron-forward.png")
 
     @memoizeStaticProperty
     def settings(self) -> 'AppIcon':
         from app.components.base import AppIcon
 
-        return AppIcon("app/resource/images/icons/settings.png")
+        return AppIcon("resource/images/icons/settings.png")
 
     @memoizeStaticProperty
     def languages(self) -> 'AppIcon':
         from app.components.base import AppIcon
 
-        return AppIcon("app/resource/images/icons/language.png")
+        return AppIcon("resource/images/icons/language.png")
 
     @memoizeStaticProperty
     def folder(self) -> 'AppIcon':
         from app.components.base import AppIcon
 
-        return AppIcon("app/resource/images/icons/folder.png")
+        return AppIcon("resource/images/icons/folder.png")
 
     @memoizeStaticProperty
     def darkMode(self) -> 'AppIcon':
         from app.components.base import AppIcon
 
-        return AppIcon("app/resource/images/icons/dark-mode.png")
+        return AppIcon("resource/images/icons/dark-mode.png")
 
     @memoizeStaticProperty
     def apply(self) -> 'AppIcon':
         from app.components.base import AppIcon
 
-        return AppIcon("app/resource/images/icons/apply.png")
+        return AppIcon("resource/images/icons/apply.png")
 
     @memoizeStaticProperty
     def play(self) -> 'AppIcon':
         from app.components.base import AppIcon
 
-        return AppIcon("app/resource/images/icons/play.png")
+        return AppIcon("resource/images/icons/play.png")
 
     @memoizeStaticProperty
     def pause(self) -> 'AppIcon':
         from app.components.base import AppIcon
 
-        return AppIcon("app/resource/images/icons/pause.png")
+        return AppIcon("resource/images/icons/pause.png")
 
     @memoizeStaticProperty
     def previous(self) -> 'AppIcon':
         from app.components.base import AppIcon
 
-        return AppIcon("app/resource/images/icons/previous.png")
+        return AppIcon("resource/images/icons/previous.png")
 
     @memoizeStaticProperty
     def next(self) -> 'AppIcon':
         from app.components.base import AppIcon
 
-        return AppIcon("app/resource/images/icons/next.png")
+        return AppIcon("resource/images/icons/next.png")
 
     @memoizeStaticProperty
     def loop(self) -> 'AppIcon':
         from app.components.base import AppIcon
 
-        return AppIcon("app/resource/images/icons/loop.png")
+        return AppIcon("resource/images/icons/loop.png")
 
     @memoizeStaticProperty
     def shuffle(self) -> 'AppIcon':
         from app.components.base import AppIcon
 
-        return AppIcon("app/resource/images/icons/shuffle.png")
+        return AppIcon("resource/images/icons/shuffle.png")
 
     @memoizeStaticProperty
     def volumeUp(self) -> 'AppIcon':
         from app.components.base import AppIcon
 
-        return AppIcon("app/resource/images/icons/volume-up.png")
+        return AppIcon("resource/images/icons/volume-up.png")
 
     @memoizeStaticProperty
     def volumeDown(self) -> 'AppIcon':
         from app.components.base import AppIcon
 
-        return AppIcon("app/resource/images/icons/volume-down.png")
+        return AppIcon("resource/images/icons/volume-down.png")
 
     @memoizeStaticProperty
     def volumeSilent(self) -> 'AppIcon':
         from app.components.base import AppIcon
 
-        return AppIcon("app/resource/images/icons/volume-silent.png")
+        return AppIcon("resource/images/icons/volume-silent.png")
 
     @memoizeStaticProperty
     def timer(self) -> 'AppIcon':
         from app.components.base import AppIcon
 
-        return AppIcon("app/resource/images/icons/timer.png")
+        return AppIcon("resource/images/icons/timer.png")

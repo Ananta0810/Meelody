@@ -1,10 +1,10 @@
 from PyQt5.QtCore import Qt, pyqtSignal, QTimer
 from PyQt5.QtWidgets import QWidget, QVBoxLayout
 
-from app.common.asyncs import ChunksConsumer
 from app.common.models import Song
 from app.common.others import appCenter, translator
 from app.common.statics.qt import Images
+from app.components.asyncs import ChunksConsumer
 from app.components.base import FontFactory
 from app.components.buttons import ActionButton
 from app.components.dialogs import BaseDialog

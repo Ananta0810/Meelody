@@ -5,10 +5,10 @@ from PyQt5.QtCore import Qt, pyqtSignal, QObject, QEvent
 from PyQt5.QtGui import QKeyEvent
 from PyQt5.QtWidgets import QWidget, qApp
 
-from app.common.asyncs import ChunksConsumer
 from app.common.models import Song, Playlist
 from app.common.models.playlists import Library
 from app.common.others import appCenter, musicPlayer
+from app.components.asyncs import ChunksConsumer
 from app.components.events import VisibleObserver
 from app.components.scroll_areas import SmoothVerticalScrollArea
 from app.helpers.base import Lists, Strings, silence, suppressException
