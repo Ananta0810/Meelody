@@ -6,6 +6,7 @@ from PyQt5.QtWidgets import QWidget, QShortcut
 
 from app.common.exceptions import ResourceException
 from app.common.models import Song
+from app.common.others import translator
 from app.components.base import CoverProps, Factory, ActionButton, Label, Input, CoverWithPlaceHolder
 from app.components.dialogs import BaseDialog, Dialogs
 from app.components.widgets import Box
@@ -37,12 +38,10 @@ class UpdateSongDialog(BaseDialog):
         self._header.setFont(Factory.createFont(family="Segoe UI Semibold", size=16, bold=True))
         self._header.setClassName("text-black dark:text-white bg-none")
         self._header.setAlignment(Qt.AlignCenter)
-        self._header.setText("Update Song")
 
         self._titleLabel = Label()
         self._titleLabel.setFont(Factory.createFont(size=11))
         self._titleLabel.setClassName("text-black dark:text-white bg-none")
-        self._titleLabel.setText("Title")
 
         self._titleErrorLabel = Label()
         self._titleErrorLabel.setFont(Factory.createFont(size=11))
@@ -51,16 +50,21 @@ class UpdateSongDialog(BaseDialog):
 
         self._titleInput = Input()
         self._titleInput.setFont(Factory.createFont(size=12))
-        self._titleInput.setClassName("px-12 py-8 rounded-4 border border-primary-12 bg-primary-4")
+        self._titleInput.setClassName(
+            "px-12 py-8 rounded-4 border border-primary-12 bg-primary-4 disabled:bg-none disabled:border-none disabled:text-black",
+            "dark:border-white-[b33] dark:bg-white-12 dark:text-white dark:disabled:text-white",
+        )
 
         self._artistLabel = Label()
         self._artistLabel.setFont(Factory.createFont(size=11))
         self._artistLabel.setClassName("text-black dark:text-white bg-none")
-        self._artistLabel.setText("Artist")
 
         self._artistInput = Input()
         self._artistInput.setFont(Factory.createFont(size=12))
-        self._artistInput.setClassName("px-12 py-8 rounded-4 border border-primary-12 bg-primary-4")
+        self._artistInput.setClassName(
+            "px-12 py-8 rounded-4 border border-primary-12 bg-primary-4 disabled:bg-none disabled:border-none disabled:text-black",
+            "dark:border-white-[b33] dark:bg-white-12 dark:text-white dark:disabled:text-white",
+        )
 
         self._artistErrorLabel = Label()
         self._artistErrorLabel.setFont(Factory.createFont(size=11))
@@ -70,7 +74,6 @@ class UpdateSongDialog(BaseDialog):
         self._acceptBtn = ActionButton()
         self._acceptBtn.setFont(Factory.createFont(family="Segoe UI Semibold", size=10))
         self._acceptBtn.setClassName("text-white rounded-4 bg-primary-75 bg-primary py-8 disabled:bg-gray-10 disabled:text-gray")
-        self._acceptBtn.setText("Apply")
         self._acceptBtn.setDisabled(True)
 
         self._mainView = QWidget()
@@ -92,6 +95,13 @@ class UpdateSongDialog(BaseDialog):
         self.addWidget(self._mainView)
         self.setFixedWidth(480 + 24 * 2)
 
+    def _translateUI(self) -> None:
+        self._header.setText(translator.translate("UPDATE_SONG.LABEL"))
+        self._acceptBtn.setText(translator.translate("UPDATE_SONG.SAVE_BTN"))
+
+        self._titleLabel.setText(translator.translate("SONG.TITLE"))
+        self._artistLabel.setText(translator.translate("SONG.ARTIST"))
+
     def _connectSignalSlots(self) -> None:
         super()._connectSignalSlots()
 
@@ -103,6 +113,10 @@ class UpdateSongDialog(BaseDialog):
         super()._assignShortcuts()
         acceptShortcut = QShortcut(QKeySequence(Qt.Key_Return), self._acceptBtn)
         acceptShortcut.activated.connect(lambda: self._acceptBtn.click())
+
+    def show(self) -> None:
+        self._translateUI()
+        super().show()
 
     def __checkValid(self) -> None:
         title = self._titleInput.text().strip()
@@ -119,17 +133,17 @@ class UpdateSongDialog(BaseDialog):
 
         if Strings.isBlank(title):
             self._titleErrorLabel.show()
-            self._titleErrorLabel.setText("Title should not be blank.")
+            self._titleErrorLabel.setText(translator.translate("SONG.VALIDATE.TITLE_BLANK"))
             return False
 
         if len(title) > 128:
             self._titleErrorLabel.show()
-            self._titleErrorLabel.setText("Title should be less than 128 characters.")
+            self._titleErrorLabel.setText(translator.translate("SONG.VALIDATE.TITLE_LENGTH"))
             return False
 
         if not Strings.equals(self.__song.getTitle(), title) and os.path.exists(f"library/{Strings.sanitizeFileName(title)}.mp3"):
             self._titleErrorLabel.show()
-            self._titleErrorLabel.setText("Title has already taken. Please try other title.")
+            self._titleErrorLabel.setText(translator.translate("SONG.VALIDATE.TITLE_EXISTED"))
             return False
 
         self._titleErrorLabel.hide()
@@ -139,7 +153,7 @@ class UpdateSongDialog(BaseDialog):
         artist = self._artistInput.text().strip()
         if len(artist) > 64:
             self._artistErrorLabel.show()
-            self._artistErrorLabel.setText("Artist should be less than 64 characters.")
+            self._artistErrorLabel.setText(translator.translate("SONG.VALIDATE.ARTIST_LENGTH"))
             return False
 
         self._artistErrorLabel.hide()
@@ -155,20 +169,23 @@ class UpdateSongDialog(BaseDialog):
 
         try:
             self.__song.updateInfo(title, artist)
-            Dialogs.success(message="Update song information successfully.")
+            Dialogs.success(message=translator.translate("UPDATE_SONG.SUCCESS"))
             Logger.info("Update song info succeed.")
             self.close()
         except ResourceException as e:
             if e.isNotFound():
-                Dialogs.alert(message="Song is not found in library, you might have deleted it while open our application.")
+                Dialogs.alert(message=translator.translate("UPDATE_SONG.NOT_FOUND"))
                 self.close()
             if e.isBeingUsed():
-                Dialogs.alert(message="You can not change info of the playing song. Please try again after you played other song.")
+                Dialogs.alert(message=translator.translate("UPDATE_SONG.USED"))
                 self.close()
             if e.isExisted():
-                Dialogs.alert(message="Song file have already existed. Please try with other title.")
+                Dialogs.alert(message=translator.translate("UPDATE_SONG.EXISTED"))
+        except PermissionError as e:
+            Dialogs.alert(message=translator.translate("UPDATE_SONG.USED"))
+            self.close()
         except Exception as e:
             Logger.error(e)
             Logger.error("Update song infor failed.")
-            Dialogs.alert(message="Something is wrong when saving the song. Please try again.")
+            Dialogs.alert(message=translator.translate("UPDATE_SONG.FAILED"))
             self.close()

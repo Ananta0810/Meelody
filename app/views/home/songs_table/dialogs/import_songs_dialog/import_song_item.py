@@ -237,8 +237,8 @@ class UpdateImportSongDialog(BaseDialog):
 
     def _translateUI(self) -> None:
         self._header.setText(translator.translate("IMPORT_SONGS_DIALOG.LABEL"))
-        self._titleLabel.setText(translator.translate("IMPORT_SONGS_DIALOG.TITLE_LABEL"))
         self._importBtn.setText(translator.translate("IMPORT_SONGS_DIALOG.IMPORT_AGAIN_BTN"))
+        self._titleLabel.setText(translator.translate("SONG.TITLE"))
 
     def _connectSignalSlots(self) -> None:
         super()._connectSignalSlots()
@@ -260,17 +260,17 @@ class UpdateImportSongDialog(BaseDialog):
 
         if Strings.isBlank(title):
             self._titleErrorLabel.show()
-            self._titleErrorLabel.setText(translator.translate("IMPORT_SONGS_DIALOG.VALIDATE.TITLE_BLANK"))
+            self._titleErrorLabel.setText(translator.translate("SONG.VALIDATE.TITLE_BLANK"))
             return False
 
         if len(title) > 128:
             self._titleErrorLabel.show()
-            self._titleErrorLabel.setText(translator.translate("IMPORT_SONGS_DIALOG.VALIDATE.TITLE_LENGTH"))
+            self._titleErrorLabel.setText(translator.translate("SONG.VALIDATE.TITLE_LENGTH"))
             return False
 
         if os.path.exists(f"library/{Strings.sanitizeFileName(title)}.mp3"):
             self._titleErrorLabel.show()
-            self._titleErrorLabel.setText(translator.translate("IMPORT_SONGS_DIALOG.VALIDATE.TITLE_EXISTED"))
+            self._titleErrorLabel.setText(translator.translate("SONG.VALIDATE.TITLE_EXISTED"))
             return False
 
         self._titleErrorLabel.hide()

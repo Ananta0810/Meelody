@@ -109,9 +109,12 @@ class DownloadSongsDialog(BaseDialog):
         self._searchBtn.setCursor(Cursors.HAND)
 
     def __downloadSong(self, ytb: YouTube, title: str, artist: str) -> None:
-        item = self._menu.addItem()
-        item.download(ytb, title, artist)
-        item.songDownloaded.connect(lambda songLocation: self.__insertSongToLibrary(songLocation))
+        try:
+            item = self._menu.addItem()
+            item.download(ytb, title, artist)
+            item.songDownloaded.connect(lambda songLocation: self.__insertSongToLibrary(songLocation))
+        except Exception as e:
+            print(e)
 
     @staticmethod
     def __insertSongToLibrary(path: str) -> None:
@@ -204,9 +207,9 @@ class _SongInfoDialog(BaseDialog):
 
     def _translateUI(self) -> None:
         self._header.setText(translator.translate("DOWNLOAD_DIALOG.LABEL"))
-        self._artistLabel.setText(translator.translate("DOWNLOAD_DIALOG.TITLE_LABEL"))
-        self._titleLabel.setText(translator.translate("DOWNLOAD_DIALOG.ARTIST_LABEL"))
         self._acceptBtn.setText(translator.translate("DOWNLOAD_DIALOG.DOWNLOAD_BTN"))
+        self._artistLabel.setText(translator.translate("SONG.TITLE"))
+        self._titleLabel.setText(translator.translate("SONG.ARTIST"))
 
     def _connectSignalSlots(self) -> None:
         super()._connectSignalSlots()
@@ -229,17 +232,17 @@ class _SongInfoDialog(BaseDialog):
 
         if Strings.isBlank(title):
             self._titleErrorLabel.show()
-            self._titleErrorLabel.setText(translator.translate("DOWNLOAD_DIALOG.VALIDATE.TITLE_BLANK"))
+            self._titleErrorLabel.setText(translator.translate("SONG.VALIDATE.TITLE_BLANK"))
             return False
 
         if len(title) > 128:
             self._titleErrorLabel.show()
-            self._titleErrorLabel.setText(translator.translate("DOWNLOAD_DIALOG.VALIDATE.TITLE_LENGTH"))
+            self._titleErrorLabel.setText(translator.translate("SONG.VALIDATE.TITLE_LENGTH"))
             return False
 
         if os.path.exists(f"library/{Strings.sanitizeFileName(title)}.mp3"):
             self._titleErrorLabel.show()
-            self._titleErrorLabel.setText(translator.translate("DOWNLOAD_DIALOG.VALIDATE.TITLE_EXISTED"))
+            self._titleErrorLabel.setText(translator.translate("SONG.VALIDATE.TITLE_EXISTED"))
             return False
 
         self._titleErrorLabel.hide()
@@ -249,7 +252,7 @@ class _SongInfoDialog(BaseDialog):
         artist = self._artistInput.text().strip()
         if len(artist) > 64:
             self._artistErrorLabel.show()
-            self._artistErrorLabel.setText(translator.translate("DOWNLOAD_DIALOG.VALIDATE.ARTIST_LENGTH"))
+            self._artistErrorLabel.setText(translator.translate("SONG.VALIDATE.ARTIST_LENGTH"))
             return False
 
         self._artistErrorLabel.hide()

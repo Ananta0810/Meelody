@@ -14,7 +14,7 @@ from pytube import YouTube, Stream
 from app.common.exceptions import ResourceException
 from app.common.models import Song
 from app.common.others import translator
-from app.components.base import Cover, Factory, CoverProps, Label, AutoTranslateLabel
+from app.components.base import Cover, Factory, CoverProps, AutoTranslateLabel, EllipsisLabel
 from app.components.base.gif import Gif
 from app.components.sliders import ProgressBar
 from app.components.widgets import ExtendableStyleWidget, Box, FlexBox
@@ -43,7 +43,7 @@ class DownloadSongItem(ExtendableStyleWidget):
         self._cover.setFixedSize(48, 48)
         self._cover.setCover(CoverProps.fromBytes(Images.DEFAULT_SONG_COVER, width=48, height=48, radius=8))
 
-        self._titleLabel = Label()
+        self._titleLabel = EllipsisLabel()
         self._titleLabel.setFont(Factory.createFont(size=10, bold=True))
         self._titleLabel.setClassName("text-black dark:text-white")
 
@@ -66,6 +66,7 @@ class DownloadSongItem(ExtendableStyleWidget):
         self._successIcon = Factory.createIconButton(size=Icons.SMALL, padding=Paddings.RELATIVE_25)
         self._successIcon.setLightModeIcon(Icons.APPLY.withColor(Colors.WHITE))
         self._successIcon.setClassName("rounded-full bg-success")
+        self._successIcon.setCursor(Cursors.DEFAULT)
         self._successIcon.hide()
 
         self._failedIcon = Factory.createIconButton(size=Icons.SMALL, padding=Paddings.RELATIVE_25)
@@ -192,7 +193,6 @@ class DownloadSongItem(ExtendableStyleWidget):
         self._convertingLabel.hide()
         self._successIcon.show()
 
-        # TODO: Auto translate this when language changed.
         self._descriptionLabel.setTranslateText("DOWNLOAD_DIALOG.DOWNLOAD_SUCCEED")
 
     def __markDownloadFailed(self, exception: Exception) -> None:
@@ -200,9 +200,9 @@ class DownloadSongItem(ExtendableStyleWidget):
         self._convertingLabel.hide()
         self._failedIcon.show()
         if isinstance(exception, FileExistsError):
-            self._descriptionLabel.setText("DOWNLOAD_DIALOG.DOWNLOAD_FAILED_EXISTED")
+            self._descriptionLabel.setTranslateText("DOWNLOAD_DIALOG.DOWNLOAD_FAILED_EXISTED")
         else:
-            self._descriptionLabel.setText("DOWNLOAD_DIALOG.DOWNLOAD_FAILED")
+            self._descriptionLabel.setTranslateText("DOWNLOAD_DIALOG.DOWNLOAD_FAILED")
 
     def __markConvertFailed(self, exception: Exception) -> None:
         self._downloadLabel.hide()
@@ -210,19 +210,19 @@ class DownloadSongItem(ExtendableStyleWidget):
         self._failedIcon.show()
 
         if isinstance(exception, FileExistsError):
-            self._descriptionLabel.setText("DOWNLOAD_DIALOG.CONVERT_FAILED_EXISTED")
+            self._descriptionLabel.setTranslateText("DOWNLOAD_DIALOG.CONVERT_FAILED_EXISTED")
             return
 
         if isinstance(exception, ResourceException):
             if exception.isExisted():
-                self._descriptionLabel.setText("DOWNLOAD_DIALOG.CONVERT_FAILED_EXISTED")
+                self._descriptionLabel.setTranslateText("DOWNLOAD_DIALOG.CONVERT_FAILED_EXISTED")
                 return
 
             if exception.isBroken():
-                self._descriptionLabel.setText("DOWNLOAD_DIALOG.CONVERT_FAILED_BROKEN")
+                self._descriptionLabel.setTranslateText("DOWNLOAD_DIALOG.CONVERT_FAILED_BROKEN")
                 return
 
-        self._descriptionLabel.setText("DOWNLOAD_DIALOG.CONVERT_FAILED")
+        self._descriptionLabel.setTranslateText("DOWNLOAD_DIALOG.CONVERT_FAILED")
 
 
 pytube.request.default_range_size = 128000

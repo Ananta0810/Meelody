@@ -62,13 +62,7 @@
     "NO_INTERNET": "Không có kết nối maạng",
     "VIDEO_NOT_FOUND": "Không tìm thấy video.",
     "INSERT_FAILED": "Có lỗi xảy ra trong quá trình lưu nhạc.",
-    "TITLE_LABEL": "Tiêu đề",
-    "ARTIST_LABEL": "Tác giả",
     "DOWNLOAD_BTN": "Tải nhạc",
-    "VALIDATE.TITLE_BLANK": "Tiêu đề không được để trống.",
-    "VALIDATE.TITLE_LENGTH": "Tiêu đề cần có độ dài tối đa 128 kí tự",
-    "VALIDATE.TITLE_EXISTED": "Tiêu đề đã tồn tại. Xin hãy thử tiêu đề khác.",
-    "VALIDATE.ARTIST_LENGTH": "Tác giả cần có độ dài tối đa 64 kí tự",
     "LOADING": "Đang tải dữ liệu bài hát",
     "CONVERTING": "Đang chuyển đổi thành nhạc",
     "ESTIMATE": "Ước tính còn khoảng",
@@ -87,10 +81,23 @@
     "IMPORT_FAILED_EXISTED": "Thêm thất bại. Bài hát đã tồn tại.",
     "IMPORT_FAILED_BROKEN": "Thêm thất bại. File nhạc không hợp lệ.",
     "IMPORT_FAILED": "Thêm thất bại. Xin hãy thử lại.",
-    "TITLE_LABEL": "Tiêu đề",
-    "IMPORT_AGAIN_BTN": "Thêm lại",
+    "IMPORT_AGAIN_BTN": "Thêm lại"
+  },
+  "UPDATE_SONG": {
+    "LABEL": "Thay đổi thông tin bài hát",
+    "SAVE_BTN": "Lưu",
+    "SUCCESS": "Thay đổi thông tin bài hát thành công",
+    "NOT_FOUND": "Bài hát không tồn tại trong thư viện, có thể bạn đã xoá nó trong lúc chạy ứng dụng.",
+    "USED": "Bạn không thể thay đổi thông tin của bài hát đang phát. Xin hãy thử lại sau khi chơi bài khác.",
+    "EXISTED": "Bài hát với tiêu đề đã tồn tại. Xin hãy thử lại với tiêu đề khác,",
+    "FAILED": "Có lỗi xảy ra trong quá trình lưu thông tin. Xin hãy thử lại."
+  },
+  "SONG": {
+    "TITLE": "Tiêu đề",
+    "ARTIST": "Tác giả",
     "VALIDATE.TITLE_BLANK": "Tiêu đề không được để trống.",
     "VALIDATE.TITLE_LENGTH": "Tiêu đề cần có độ dài tối đa 128 kí tự",
-    "VALIDATE.TITLE_EXISTED": "Tiêu đề đã tồn tại. Xin hãy thử tiêu đề khác."
+    "VALIDATE.TITLE_EXISTED": "Tiêu đề đã tồn tại. Xin hãy thử tiêu đề khác.",
+    "VALIDATE.ARTIST_LENGTH": "Tác giả cần có độ dài tối đa 64 kí tự"
   }
 }

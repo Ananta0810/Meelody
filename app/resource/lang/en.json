@@ -62,16 +62,10 @@
     "NO_INTERNET": "No internet connection available.",
     "VIDEO_NOT_FOUND": "Youtube video is not found.",
     "INSERT_FAILED": "Somthing wrong while save song.",
-    "TITLE_LABEL": "Title",
-    "ARTIST_LABEL": "Artist",
     "DOWNLOAD_BTN": "Download Now",
-    "VALIDATE.TITLE_BLANK": "Title should not be blank.",
-    "VALIDATE.TITLE_LENGTH": "Title should be less than 128 characters.",
-    "VALIDATE.TITLE_EXISTED": "Title has already taken. Please try other title.",
     "LOADING": "Loading",
     "CONVERTING": "Converting",
     "ESTIMATE": "Estimate remaining",
-    "VALIDATE.ARTIST_LENGTH": "Artist should be less than 64 characters.",
     "DOWNLOAD_SUCCEED": "Download Succeed.",
     "DOWNLOAD_FAILED": "Download failed.",
     "DOWNLOAD_FAILED_EXISTED": "Download failed. Song is already existed.",
@@ -87,10 +81,23 @@
     "IMPORT_FAILED_EXISTED": "Import failed. Song is already existed.",
     "IMPORT_FAILED_BROKEN": "Import failed. Song is broken.",
     "IMPORT_FAILED": "Import failed. Please try again.",
-    "TITLE_LABEL": "Title",
-    "IMPORT_AGAIN_BTN": "Import again",
+    "IMPORT_AGAIN_BTN": "Import again"
+  },
+  "UPDATE_SONG": {
+    "LABEL": "Update song",
+    "SAVE_BTN": "Apply",
+    "SUCCESS": "Update song information successfully.",
+    "NOT_FOUND": "Song is not found in library, you might have deleted it while open our application.",
+    "USED": "You can not change info of the playing song. Please try again after you played other song.",
+    "EXISTED": "Song title have already existed. Please try with other title.",
+    "FAILED": "Something is wrong when saving the song. Please try again."
+  },
+  "SONG": {
+    "TITLE": "Title",
+    "ARTIST": "Artist",
     "VALIDATE.TITLE_BLANK": "Title should not be blank.",
     "VALIDATE.TITLE_LENGTH": "Title should be less than 128 characters.",
-    "VALIDATE.TITLE_EXISTED": "Title has already taken. Please try other title."
+    "VALIDATE.TITLE_EXISTED": "Title has already taken. Please try other title.",
+    "VALIDATE.ARTIST_LENGTH": "Artist should be less than 64 characters."
   }
 }
