@@ -2,7 +2,7 @@ from typing import Callable
 
 from app.common.models.playlist import Playlist
 from app.common.models.song import Song
-from app.helpers.base import Lists, Strings
+from app.utils.base import Lists, Strings
 
 
 class CommonPlaylist:

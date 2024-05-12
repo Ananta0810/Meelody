@@ -11,8 +11,8 @@ from app.common.statics.styles import Paddings
 from app.components.base import Component
 from app.components.buttons import ButtonFactory
 from app.components.widgets import Box, StyleWidget
-from app.helpers.base import Strings
 from app.helpers.stylesheets import Color
+from app.utils.base import Strings
 
 
 class FramelessWindow(QMainWindow, Component):

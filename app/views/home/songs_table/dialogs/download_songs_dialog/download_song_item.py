@@ -26,9 +26,9 @@ from app.components.labels.ellipsis_label import EllipsisLabel
 from app.components.sliders import ProgressBar
 from app.components.threads import UpdateUIThread
 from app.components.widgets import ExtendableStyleWidget, Box, FlexBox
-from app.helpers.base import Strings
 from app.helpers.builders import AudioEditor
-from app.helpers.others import Times, Files, Logger
+from app.utils.base import Strings
+from app.utils.others import Times, Files, Logger
 
 
 class DownloadSongItem(ExtendableStyleWidget):

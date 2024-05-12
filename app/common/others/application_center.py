@@ -4,7 +4,7 @@ from app.common.models import Playlist
 from app.common.others.application_settings import AppSettings
 from app.common.others.playlists import Playlists
 from app.common.statics.enums import ThemeMode
-from app.helpers.systems import Systems
+from app.utils.systems import Systems
 
 
 class ApplicationCenter(QObject):

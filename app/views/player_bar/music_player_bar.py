@@ -17,7 +17,7 @@ from app.components.dialogs import Dialogs
 from app.components.images.cover import CoverWithPlaceHolder, Cover
 from app.components.labels import LabelWithPlaceHolder
 from app.components.sliders import HorizontalSlider
-from app.helpers.others import Times
+from app.utils.others import Times
 from app.views.player_bar.timer_dialog import TimerDialog
 
 

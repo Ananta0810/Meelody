@@ -3,7 +3,7 @@ from contextlib import suppress
 from app.common.models.playlist import Playlist
 from app.common.models.song import Song
 from app.common.others.translator import translator
-from app.helpers.base import Bytes, Lists, SingletonMeta
+from app.utils.base import Bytes, Lists, SingletonMeta
 from .common_playlist import CommonPlaylist
 
 

@@ -18,8 +18,8 @@ from app.components.inputs import Input
 from app.components.labels import AutoTranslateLabel, Label
 from app.components.labels.ellipsis_label import EllipsisLabel
 from app.components.widgets import ExtendableStyleWidget, Box, FlexBox
-from app.helpers.base import Strings
-from app.helpers.others import Logger, Files
+from app.utils.base import Strings
+from app.utils.others import Logger, Files
 
 
 class ImportSongItem(ExtendableStyleWidget):

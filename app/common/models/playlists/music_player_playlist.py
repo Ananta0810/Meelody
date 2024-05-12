@@ -2,7 +2,7 @@ from typing import Optional
 
 from app.common.models.playlist import Playlist
 from app.common.models.song import Song
-from app.helpers.base import Lists, Numbers
+from app.utils.base import Lists, Numbers
 from .common_playlist import CommonPlaylist
 
 

@@ -15,8 +15,8 @@ from app.components.images.cover import CoverWithPlaceHolder, Cover
 from app.components.inputs import Input
 from app.components.labels import Label
 from app.components.widgets import Box
-from app.helpers.base import Strings
-from app.helpers.others import Logger
+from app.utils.base import Strings
+from app.utils.others import Logger
 
 
 class UpdateSongDialog(BaseDialog):

@@ -6,7 +6,7 @@ from typing import final
 
 from PIL import Image
 
-from app.helpers.base import Strings
+from app.utils.base import Strings
 
 
 @final

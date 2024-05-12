@@ -1,6 +1,6 @@
 from typing import Optional
 
-from app.helpers.base import Strings, Lists
+from app.utils.base import Strings, Lists
 
 
 class ClassName:

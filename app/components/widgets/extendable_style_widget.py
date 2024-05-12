@@ -4,7 +4,7 @@ from PyQt5.QtCore import Qt
 from PyQt5.QtWidgets import QWidget
 
 from app.components.base import Component
-from app.helpers.base import Strings
+from app.utils.base import Strings
 
 
 class ExtendableStyleWidget(QWidget, Component):

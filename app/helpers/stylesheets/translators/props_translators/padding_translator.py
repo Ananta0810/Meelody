@@ -1,8 +1,8 @@
 from PyQt5.QtWidgets import QWidget
 
-from app.helpers.base import Dicts
 from app.helpers.stylesheets.translators.props_translators.class_name import ClassName
 from app.helpers.stylesheets.translators.props_translators.props_translator import PropsTranslator
+from app.utils.base import Dicts
 
 
 def _paddingOf(cn) -> str:

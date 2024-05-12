@@ -1,4 +1,4 @@
-from app.helpers.base import Bytes
+from app.utils.base import Bytes
 
 
 class Images:

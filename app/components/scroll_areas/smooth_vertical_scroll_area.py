@@ -6,8 +6,8 @@ from PyQt5.QtWidgets import QWidget
 
 from app.components.scroll_areas.style_scroll_area import StyleScrollArea
 from app.components.widgets import Box
-from app.helpers.base import Numbers
-from app.helpers.qt import Widgets
+from app.utils.base import Numbers
+from app.utils.qt import Widgets
 
 
 class SmoothVerticalScrollArea(StyleScrollArea):

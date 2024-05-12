@@ -4,8 +4,8 @@ from PyQt5.QtCore import QVariantAnimation, QEasingCurve, Qt
 from PyQt5.QtGui import QPixmap
 from PyQt5.QtWidgets import QLabel, QWidget
 
-from app.helpers.base import Bytes, suppressException, memoizeResult
-from app.helpers.qt.pixmaps import Pixmaps
+from app.utils.base import Bytes, suppressException, memoizeResult
+from app.utils.qt.pixmaps import Pixmaps
 
 
 class Cover(QLabel):

@@ -4,8 +4,8 @@ from dataclasses import dataclass
 
 from PyQt5.QtGui import QColor
 
-from app.helpers.base import Numbers
 from app.helpers.stylesheets.stylesheet_props import StylesheetProps
+from app.utils.base import Numbers
 
 _LUMINANCE_RED = 0.2126
 _LUMINANCE_GREEN = 0.7152

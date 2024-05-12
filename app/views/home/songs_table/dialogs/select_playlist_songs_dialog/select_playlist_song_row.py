@@ -11,7 +11,7 @@ from app.components.images.cover import CoverWithPlaceHolder, Cover
 from app.components.labels import Label
 from app.components.labels.ellipsis_label import EllipsisLabel
 from app.components.widgets import ExtendableStyleWidget, FlexBox
-from app.helpers.others import Times
+from app.utils.others import Times
 
 
 class SongRow(ExtendableStyleWidget):

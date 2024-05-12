@@ -4,7 +4,7 @@ from io import BytesIO
 
 from pydub import AudioSegment
 
-from app.helpers.base import SingletonMeta, Strings
+from app.utils.base import SingletonMeta, Strings
 
 
 class AudioEditor(metaclass=SingletonMeta):

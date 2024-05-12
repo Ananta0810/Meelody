@@ -10,7 +10,7 @@ from app.components.buttons import ActionButton
 from app.components.dialogs import BaseDialog
 from app.components.images import Cover
 from app.components.labels import Label
-from app.helpers.base import Strings
+from app.utils.base import Strings
 from app.views.home.songs_table.dialogs.import_songs_dialog.import_song_item import ImportSongItem
 from app.views.home.songs_table.dialogs.import_songs_dialog.import_songs_menu import ImportSongsMenu
 

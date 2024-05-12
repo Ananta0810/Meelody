@@ -6,7 +6,7 @@ from app.common.statics.qt import Icons
 from app.common.statics.styles import Colors
 from app.components.base import Component
 from app.components.windows.windows import TitleBarWindow
-from app.helpers.base import Strings
+from app.utils.base import Strings
 from app.views.home import HomeBody
 from app.views.player_bar import MusicPlayerBar
 

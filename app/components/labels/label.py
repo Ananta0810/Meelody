@@ -6,7 +6,7 @@ from PyQt5.QtWidgets import QLabel, QWidget
 
 from app.common.others import translator
 from app.components.base import Component
-from app.helpers.base import Strings
+from app.utils.base import Strings
 
 
 class Label(QLabel, Component):

@@ -6,8 +6,8 @@ from PyQt5.QtCore import QObject, pyqtSignal, QThread
 from eyed3 import load, mp3, id3
 
 from app.common.exceptions import ResourceException
-from app.helpers.base import Strings
-from app.helpers.others import Logger
+from app.utils.base import Strings
+from app.utils.others import Logger
 
 
 class Song(QObject):

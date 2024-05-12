@@ -1,7 +1,7 @@
 from PyQt5.QtGui import QIcon, QPainter, QPixmap
 
-from app.helpers.base import memoizeResult
-from app.helpers.stylesheets.color import Color
+from app.helpers.stylesheets import Color
+from app.utils.base import memoizeResult
 
 
 class AppIcon(QIcon):

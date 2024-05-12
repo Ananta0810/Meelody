@@ -12,7 +12,7 @@ from app.components.dialogs import BaseDialog
 from app.components.images import Cover
 from app.components.labels import Label
 from app.components.windows import FramelessWindow
-from app.helpers.base import Numbers
+from app.utils.base import Numbers
 
 
 class _ConfirmDialog(FramelessWindow):

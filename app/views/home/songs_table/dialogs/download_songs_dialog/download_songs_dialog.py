@@ -16,8 +16,8 @@ from app.components.dialogs import BaseDialog, Dialogs
 from app.components.images import Cover
 from app.components.inputs import Input
 from app.components.labels import Label
-from app.helpers.base import Strings
-from app.helpers.others import Logger
+from app.utils.base import Strings
+from app.utils.others import Logger
 from app.views.home.songs_table.dialogs.download_songs_dialog.download_songs_menu import DownloadSongsMenu
 
 

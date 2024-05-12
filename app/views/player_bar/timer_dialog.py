@@ -14,7 +14,7 @@ from app.components.images import Cover
 from app.components.inputs import Input
 from app.components.labels import Label
 from app.components.widgets import Box, FlexBox
-from app.helpers.others import Logger
+from app.utils.others import Logger
 
 
 class TimerDialog(BaseDialog):

@@ -6,8 +6,8 @@ from PyQt5.QtWidgets import QComboBox, QWidget, QStyledItemDelegate
 
 from app.common.statics.qt import Cursors
 from app.components.base import Component
-from app.helpers.base import Strings
 from app.helpers.stylesheets.translators.classname_translator import ClassNameTheme, ClassNameTranslator
+from app.utils.base import Strings
 
 
 class DropDown(QComboBox, Component):

@@ -16,10 +16,10 @@ from app.components.dialogs import Dialogs
 from app.components.images.cover import CoverWithPlaceHolder, Cover
 from app.components.labels import LabelWithPlaceHolder
 from app.components.widgets import ExtendableStyleWidget, StyleWidget, FlexBox
-from app.helpers.base import silence, suppressException
 from app.helpers.builders import ImageEditor
-from app.helpers.others import Times, Logger
-from app.helpers.qt import Widgets
+from app.utils.base import silence, suppressException
+from app.utils.others import Times, Logger
+from app.utils.qt import Widgets
 from app.views.home.songs_table.dialogs.update_song_dialog import UpdateSongDialog
 
 

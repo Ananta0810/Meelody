@@ -4,9 +4,9 @@ from PyQt5.QtCore import Qt
 from PyQt5.QtWidgets import QSlider, QWidget
 
 from app.components.base import Component
-from app.helpers.base import Strings, suppressException
-from app.helpers.stylesheets.translators import ClassNameTranslator
-from app.helpers.stylesheets.translators.classname_translator import ClassNameTheme
+from app.helpers.stylesheets import ClassNameTheme
+from app.helpers.stylesheets import ClassNameTranslator
+from app.utils.base import Strings, suppressException
 
 
 class HorizontalSlider(QSlider, Component):

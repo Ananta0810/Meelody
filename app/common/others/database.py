@@ -2,8 +2,8 @@ import os
 
 from app.common.models import Song, Playlist
 from app.common.models.playlists import UserPlaylist
-from app.helpers.base import Lists, Strings
-from app.helpers.others import Files, Jsons
+from app.utils.base import Lists, Strings
+from app.utils.others import Files, Jsons
 
 
 class Database:

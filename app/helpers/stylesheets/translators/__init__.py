@@ -1,1 +1,0 @@
-from .classname_translator import ClassNameTranslator

@@ -17,7 +17,7 @@ from app.components.images import Cover
 from app.components.labels import Label
 from app.components.widgets import StyleWidget
 from app.components.windows import FramelessWindow
-from app.helpers.stylesheets.translators import ClassNameTranslator
+from app.helpers.stylesheets import ClassNameTranslator
 
 
 class SettingsDialog(FramelessWindow):

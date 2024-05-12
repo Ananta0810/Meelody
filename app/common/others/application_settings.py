@@ -3,8 +3,8 @@ from contextlib import suppress
 from typing import Optional
 
 from app.common.statics.enums import ThemeMode
-from app.helpers.base import SingletonMeta
-from app.helpers.others import Jsons
+from app.utils.base import SingletonMeta
+from app.utils.others import Jsons
 
 SETTINGS_PATH = "configuration/settings.json"
 

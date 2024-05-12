@@ -1,6 +1,6 @@
 from PyQt5.QtCore import QObject, pyqtSignal, QEvent
 
-from app.helpers.qt import Widgets
+from app.utils.qt import Widgets
 
 
 class VisibleObserver(QObject):

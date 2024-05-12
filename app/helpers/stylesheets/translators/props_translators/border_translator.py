@@ -2,11 +2,11 @@ from typing import Optional
 
 from PyQt5.QtWidgets import QWidget
 
-from app.helpers.base import Dicts, Strings, Lists
 from app.helpers.stylesheets import Color
 from app.helpers.stylesheets.translators.props_translators.class_name import ClassName
 from app.helpers.stylesheets.translators.props_translators.props_translator import PropsTranslator
 from app.helpers.stylesheets.translators.value_translators import ValueTranslators
+from app.utils.base import Dicts, Strings, Lists
 
 _STYLES: set[str] = {"solid", "dotted", "dashed", "double", "hidden"}
 

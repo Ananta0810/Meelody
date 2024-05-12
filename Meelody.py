@@ -4,7 +4,7 @@ from sys import argv, exit
 from PyQt5.QtCore import Qt
 
 from app.components.applications import SingletonApplication
-from app.helpers.others import Times
+from app.utils.others import Times
 from app.views import Application
 
 
