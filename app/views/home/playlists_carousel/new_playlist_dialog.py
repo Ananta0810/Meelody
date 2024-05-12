@@ -127,8 +127,6 @@ class NewPlaylistDialog(BaseDialog):
                 Files.removeFile(path)
 
             Dialogs.alert(
-                header="Save playlist failed",
-                message='Something wrong while creating your playlist. Please try to create playlist again.',
-                acceptText="Ok",
-                onAccept=lambda: self.close()
+                header=translator.translate("PLAYLIST_CAROUSEL.NEW_PLAYLIST.FAILED_HEADER"),
+                message=translator.translate("PLAYLIST_CAROUSEL.NEW_PLAYLIST.FAILED_MSG"),
             )

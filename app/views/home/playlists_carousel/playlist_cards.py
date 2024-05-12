@@ -183,9 +183,8 @@ class FavouritePlaylistCard(PlaylistCard):
         except Exception as e:
             Logger.error(e)
             Dialogs.alert(
-                header="Change cover failed",
-                message='Something wrong while changing cover. Please try again.',
-                acceptText="Ok",
+                header=translator.translate("PLAYLIST_CAROUSEL.PLAYLIST.UPDATED_COVER_FAILED_HEADER"),
+                message=translator.translate("PLAYLIST_CAROUSEL.PLAYLIST.UPDATED_COVER_FAILED_MSG"),
             )
 
 

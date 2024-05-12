@@ -395,7 +395,7 @@ class MusicPlayerBar(QWidget, Component):
 
     @staticmethod
     def __notifySongNotFound():
-        return Dialogs.alert("The song that you are trying to play is deleted.")
+        return Dialogs.alert(translator.translate("MUSIC_PLAYER.PLAYING_DELETED_SONG"))
 
     @staticmethod
     def __createCover(data: bytes) -> Union[CoverProps, None]:

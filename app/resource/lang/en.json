@@ -22,7 +22,8 @@
     "TOOLTIP_VOLUME_BTN": "Change volume",
     "TOOLTIP_TIMER_BTN": "Set timer",
     "TIMER_START_BTN": "Start Now",
-    "TIMER_STOP_BTN": "Cancel"
+    "TIMER_STOP_BTN": "Cancel",
+    "PLAYING_DELETED_SONG": "The song that you are trying to play is deleted."
   },
   "PLAYLIST_CAROUSEL": {
     "LIBRARY": "Library",
@@ -33,15 +34,18 @@
     "PLAYLIST.DELETE_CURRENT_PLAYLIST": "You can not delete current selecting playlist.",
     "PLAYLIST.DELETE_CONFIRM_MESSAGE": "Are you sure want to delete this playlist? This action can not be reverted.",
     "PLAYLIST.DELETE_CONFIRM_OK": "Delete",
+    "PLAYLIST.UPDATED_COVER_FAILED_HEADER": "Change cover failed",
+    "PLAYLIST.UPDATED_COVER_FAILED_MSG": "Something wrong while changing cover. Please try again.",
     "TITLE_PLACEHOLDER": "Title...",
     "NEW_PLAYLIST_BTN": "New playlist",
     "NEW_PLAYLIST.ACCEPT_BTN": "Add playlist",
     "NEW_PLAYLIST.CHOOSE_COVER_BTN": "Choose cover",
+    "NEW_PLAYLIST.FAILED_HEADER": "Save playlist failed",
+    "NEW_PLAYLIST.FAILED_MSG": "Something wrong while creating your playlist. Please try to create playlist again.",
     "UPDATE_PLAYLIST.ACCEPT_BTN": "Save",
     "UPDATE_PLAYLIST.CHOOSE_COVER_BTN": "Chọn ảnh bìa",
     "UPDATE_PLAYLIST.SAVE_FAILED_HEADER": "Save playlist failed",
-    "UPDATE_PLAYLIST.SAVE_FAILED_MSG": "Something wrong while updating your playlist. Please try to update playlist again.",
-    "UPDATE_PLAYLIST.SAVE_FAILED_OK": "Close"
+    "UPDATE_PLAYLIST.SAVE_FAILED_MSG": "Something wrong while updating your playlist. Please try to update playlist again."
   },
   "CURRENT_PLAYLIST": {
     "TRACKS": "TRACKS"
@@ -115,6 +119,13 @@
     "EDIT_BTN": "Edit song's information",
     "EDIT_COVER_BTN": "Edit song's cover",
     "DELETE_BTN": "Delete this song",
-    "CLOSE_BTN": "Close"
+    "CLOSE_BTN": "Close",
+    "EDIT_FAILED_NOT_FOUND": "Song is not found in library, you might have deleted it while open our application.",
+    "EDIT_FAILED_SONG_PLAYING": "You can not change cover of the playing song. Please try again after you played other song.",
+    "EDIT_COVER_FAILED": "Something is wrong when saving song cover. Please try again.",
+    "DELETE_SONG_MSG": "Are you sure want to delete this song? This action can not be reverted.",
+    "DELETE_SONG_BTN": "Delete",
+    "DELETE_FAILED_PLAYING": "You can not delete the playing song. Please try again after you played other song.",
+    "DELETE_FAILED": "Something is wrong when delete the song. Please try again."
   }
 }

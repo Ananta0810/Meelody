@@ -267,13 +267,13 @@ class SongRow(ExtendableStyleWidget):
             Logger.info("Update song cover succeed.")
         except ResourceException as e:
             if e.isNotFound():
-                Dialogs.alert(message="Song is not found in library, you might have deleted it while open our application.")
+                Dialogs.alert(message=translator.translate("SONG_ROW.EDIT_FAILED_NOT_FOUND"))
             if e.isBeingUsed():
-                Dialogs.alert(message="You can not change cover of the playing song. Please try again after you played other song.")
+                Dialogs.alert(message=translator.translate("SONG_ROW.EDIT_FAILED_SONG_PLAYING"))
         except Exception as e:
             Logger.error(e)
             Logger.error("Update song cover failed.")
-            Dialogs.alert(message="Something is wrong when saving song cover. Please try again.")
+            Dialogs.alert(message=translator.translate("SONG_ROW.EDIT_COVER_FAILED"))
 
     def __changeSongInfo(self) -> None:
         dialog = UpdateSongDialog(self.__song)
@@ -281,7 +281,8 @@ class SongRow(ExtendableStyleWidget):
 
     def __confirmToDeleteSong(self) -> None:
         Dialogs.confirm(
-            message="Are you sure want to delete this song? This action can not be reverted.",
+            message=translator.translate("SONG_ROW.DELETE_SONG_MSG"),
+            acceptText=translator.translate("SONG_ROW.DELETE_SONG_BTN"),
             onAccept=lambda: self.__deleteCurrentSong()
         )
 
@@ -291,11 +292,11 @@ class SongRow(ExtendableStyleWidget):
             Logger.info("Delete song succeed.")
         except ResourceException as e:
             if e.isBeingUsed():
-                Dialogs.alert(message="You can not delete the playing song. Please try again after you played other song.")
+                Dialogs.alert(message=translator.translate("SONG_ROW.DELETE_FAILED_PLAYING"))
         except Exception as e:
             Logger.error(e)
             Logger.error("Delete song failed.")
-            Dialogs.alert(message="Something is wrong when delete the song. Please try again.")
+            Dialogs.alert(message=translator.translate("SONG_ROW.DELETE_FAILED"))
 
 
 class LoadCoverThread(QThread):

@@ -41,7 +41,10 @@ class _ConfirmDialog(FramelessWindow):
 
         self._cancelBtn = ActionButton()
         self._cancelBtn.setFont(Factory.createFont(family="Segoe UI Semibold", size=10))
-        self._cancelBtn.setClassName("rounded-4 text-black border border-gray-40 hover:bg-black-12 px-24")
+        self._cancelBtn.setClassName(
+            "rounded-4 text-black border border-gray-40 hover:bg-black-12 px-24",
+            "dark:text-white dark:border-gray-[b40] dark:hover:bg-white-12"
+        )
         self._cancelBtn.setFixedHeight(32)
 
         self._buttonBox = QHBoxLayout()
