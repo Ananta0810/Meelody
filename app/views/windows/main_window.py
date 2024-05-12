@@ -9,7 +9,7 @@ from app.components.windows.windows import TitleBarWindow
 from app.utils.base import Strings
 from app.views.home import HomeBody
 from app.views.player_bar import MusicPlayerBar
-from app.views.windows.minimized_window import MiniPlayerWindow
+from app.views.windows.mini_player_window.mini_player_window import MiniPlayerWindow
 
 
 class MainWindow(TitleBarWindow, Component):
