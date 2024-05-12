@@ -7,7 +7,6 @@ from app.common.models import Playlist
 from app.common.models.playlists import FavouritesPlaylist, Library
 from app.common.others import appCenter, translator
 from app.components.base import Factory, Component, Label
-from app.components.dialogs import Dialogs
 from app.helpers.stylesheets import Paddings, Colors
 from app.resource.others import FileType
 from app.resource.qt import Icons, Cursors
@@ -114,16 +113,6 @@ class SongsTableHeader(QWidget, Component):
         if paths is not None and len(paths) > 0:
             dialog = ImportSongsDialog(paths)
             dialog.show()
-
-    @staticmethod
-    def __displayImportSongsResult(succeed: bool, totalSongs: int) -> None:
-        if succeed:
-            if totalSongs > 0:
-                Dialogs.info(header="Import successfully", message=f"You have imported {totalSongs} songs\n from explorer successfully.")
-            else:
-                Dialogs.alert(header="Import failed", message=f"The songs that you are trying to import\n have already been existed.")
-        else:
-            Dialogs.alert(header="Import failed", message=f"You have imported songs from explorer failed.")
 
     def _openDownloadSongDialogs(self) -> None:
         if self._downloadDialog is None:

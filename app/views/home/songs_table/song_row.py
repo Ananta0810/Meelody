@@ -5,7 +5,7 @@ from PyQt5.QtWidgets import QWidget, QHBoxLayout, QFileDialog
 
 from app.common.exceptions import ResourceException
 from app.common.models import Song
-from app.common.others import musicPlayer, appCenter
+from app.common.others import musicPlayer, appCenter, translator
 from app.components.base import Factory, LabelWithDefaultText, CoverProps, CoverWithPlaceHolder
 from app.components.dialogs import Dialogs
 from app.components.widgets import ExtendableStyleWidget, StyleWidget, FlexBox
@@ -28,6 +28,7 @@ class SongRow(ExtendableStyleWidget):
         super()._initComponent()
 
         self.__displaySongInfo()
+        self._translateUI()
 
     def _createUI(self) -> None:
         self.setClassName("bg-none hover:bg-gray-12 rounded-12")
@@ -124,7 +125,7 @@ class SongRow(ExtendableStyleWidget):
         self._closeMenuBtn.hide()
 
         self._moreButtons = StyleWidget()
-        self._moreButtons.setClassName("bg-black-4 rounded-12")
+        self._moreButtons.setClassName("bg-black-4 rounded-12 dark:bg-white-4")
         self._moreButtonsLayout = FlexBox(self._moreButtons)
         self._moreButtonsLayout.setContentsMargins(8, 4, 8, 4)
         self._moreButtonsLayout.setSpacing(8)
@@ -136,6 +137,15 @@ class SongRow(ExtendableStyleWidget):
 
         self._mainLayout.addWidget(self._mainButtons)
         self._mainLayout.addWidget(self._moreButtons)
+
+    def _translateUI(self) -> None:
+        self._moreBtn.setToolTip(translator.translate("SONG_ROW.MORE_BTN"))
+        self._loveBtn.setToolTips([translator.translate("SONG_ROW.UNLOVE_BTN"), translator.translate("SONG_ROW.LOVE_BTN")])
+        self._playBtn.setToolTips([translator.translate("SONG_ROW.PAUSE_BTN"), translator.translate("SONG_ROW.PLAY_BTN")])
+        self._editSongBtn.setToolTip(translator.translate("SONG_ROW.EDIT_BTN"))
+        self._editCoverBtn.setToolTip(translator.translate("SONG_ROW.EDIT_COVER_BTN"))
+        self._deleteBtn.setToolTip(translator.translate("SONG_ROW.DELETE_BTN"))
+        self._closeMenuBtn.setToolTip(translator.translate("SONG_ROW.CLOSE_BTN"))
 
     def _connectSignalSlots(self) -> None:
         self._moreBtn.clicked.connect(lambda: silence(lambda: self.showMoreButtons(True)))

@@ -105,5 +105,16 @@
     "VALIDATE.TITLE_LENGTH": "Title should be less than 128 characters.",
     "VALIDATE.TITLE_EXISTED": "Title has already taken. Please try other title.",
     "VALIDATE.ARTIST_LENGTH": "Artist should be less than 64 characters."
+  },
+  "SONG_ROW": {
+    "MORE_BTN": "More",
+    "LOVE_BTN": "Love",
+    "UNLOVE_BTN": "Unlove",
+    "PLAY_BTN": "Play this song",
+    "PAUSE_BTN": "Pause this song",
+    "EDIT_BTN": "Edit song's information",
+    "EDIT_COVER_BTN": "Edit song's cover",
+    "DELETE_BTN": "Delete this song",
+    "CLOSE_BTN": "Close"
   }
 }

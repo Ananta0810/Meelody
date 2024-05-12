@@ -9,9 +9,9 @@
   "MUSIC_PLAYER": {
     "SONG_TITLE": "Tiêu đề",
     "SONG_ARTIST": "Tác giả",
-    "TOOLTIP_PREV_BTN": "Chơi bài nhạc phía trước",
-    "TOOLTIP_NEXT_BTN": "Chơi bài nhạc tiếp theo",
-    "TOOLTIP_PLAY_BTN": "Chơi bài hiện tại",
+    "TOOLTIP_PREV_BTN": "Phát bài nhạc phía trước",
+    "TOOLTIP_NEXT_BTN": "Phát bài nhạc tiếp theo",
+    "TOOLTIP_PLAY_BTN": "Phát bài hiện tại",
     "TOOLTIP_PAUSE_BTN": "Dừng phát nhạc",
     "TOOLTIP_LOOP_BTN": "Lặp bài hiện tại",
     "TOOLTIP_UN_LOOP_BTN": "Bỏ lặp",
@@ -94,7 +94,7 @@
     "SAVE_BTN": "Lưu",
     "SUCCESS": "Thay đổi thông tin bài hát thành công",
     "NOT_FOUND": "Bài hát không tồn tại trong thư viện, có thể bạn đã xoá nó trong lúc chạy ứng dụng.",
-    "USED": "Bạn không thể thay đổi thông tin của bài hát đang phát. Xin hãy thử lại sau khi chơi bài khác.",
+    "USED": "Bạn không thể thay đổi thông tin của bài hát đang phát. Xin hãy thử lại sau khi phát bài khác.",
     "EXISTED": "Bài hát với tiêu đề đã tồn tại. Xin hãy thử lại với tiêu đề khác,",
     "FAILED": "Có lỗi xảy ra trong quá trình lưu thông tin. Xin hãy thử lại."
   },
@@ -105,5 +105,16 @@
     "VALIDATE.TITLE_LENGTH": "Tiêu đề cần có độ dài tối đa 128 kí tự",
     "VALIDATE.TITLE_EXISTED": "Tiêu đề đã tồn tại. Xin hãy thử tiêu đề khác.",
     "VALIDATE.ARTIST_LENGTH": "Tác giả cần có độ dài tối đa 64 kí tự"
+  },
+  "SONG_ROW": {
+    "MORE_BTN": "Xem thêm",
+    "LOVE_BTN": "Yêu thích",
+    "UNLOVE_BTN": "Bỏ yêu thích",
+    "PLAY_BTN": "Phát nhạc",
+    "PAUSE_BTN": "Dừng phát nhạc",
+    "EDIT_BTN": "Sửa thông tin bài hát",
+    "EDIT_COVER_BTN": "Thay đổi ảnh bìa bài hát",
+    "DELETE_BTN": "Xoá bài hát",
+    "CLOSE_BTN": "Đóng"
   }
 }
