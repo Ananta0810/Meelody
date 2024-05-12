@@ -29,7 +29,7 @@ class DownloadSongsDialog(BaseDialog):
         self._image = Cover()
         self._image.setAlignment(Qt.AlignHCenter)
         self._image.setFixedHeight(156)
-        self._image.setCover(CoverProps.fromBytes(Images.DOWNLOAD, width=128))
+        self._image.setCover(CoverProps.fromBytes(Images.download, width=128))
 
         self._header = Label()
         self._header.setFont(Factory.createFont(family="Segoe UI Semibold", size=16, bold=True))
@@ -86,12 +86,12 @@ class DownloadSongsDialog(BaseDialog):
 
     def show(self) -> None:
         self._input.clear()
-        self._searchBtn.setCursor(Cursors.HAND)
+        self._searchBtn.setCursor(Cursors.pointer)
         super().show()
         self.applyTheme()
 
     def __searchSong(self) -> None:
-        self._searchBtn.setCursor(Cursors.WAITING)
+        self._searchBtn.setCursor(Cursors.waiting)
 
         try:
             ytb = YouTube(self._input.text().strip())
@@ -106,7 +106,7 @@ class DownloadSongsDialog(BaseDialog):
             Logger.error(e)
             Dialogs.alert(message=translator.translate("VIDEO_NOT_FOUND"))
 
-        self._searchBtn.setCursor(Cursors.HAND)
+        self._searchBtn.setCursor(Cursors.pointer)
 
     def __downloadSong(self, ytb: YouTube, title: str, artist: str) -> None:
         try:
@@ -143,7 +143,7 @@ class _SongInfoDialog(BaseDialog):
 
         self._image = Cover()
         self._image.setAlignment(Qt.AlignHCenter)
-        self._image.setCover(CoverProps.fromBytes(Images.DOWNLOAD, width=128))
+        self._image.setCover(CoverProps.fromBytes(Images.download, width=128))
 
         self._header = Label()
         self._header.setFont(Factory.createFont(family="Segoe UI Semibold", size=16, bold=True))

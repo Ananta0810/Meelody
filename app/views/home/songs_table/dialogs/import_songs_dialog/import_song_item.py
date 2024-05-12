@@ -38,7 +38,7 @@ class ImportSongItem(ExtendableStyleWidget):
 
         self._cover = CoverWithPlaceHolder()
         self._cover.setFixedSize(48, 48)
-        self._cover.setPlaceHolderCover(CoverProps.fromBytes(Images.DEFAULT_SONG_COVER, width=48, height=48, radius=8))
+        self._cover.setPlaceHolderCover(CoverProps.fromBytes(Images.defaultSongCover, width=48, height=48, radius=8))
 
         self._titleLabel = EllipsisLabel()
         self._titleLabel.setFont(Factory.createFont(size=10))
@@ -192,7 +192,7 @@ class UpdateImportSongDialog(BaseDialog):
 
         self._image = Cover()
         self._image.setAlignment(Qt.AlignHCenter)
-        self._image.setCover(CoverProps.fromBytes(Images.IMPORT_SONGS, width=128))
+        self._image.setCover(CoverProps.fromBytes(Images.importSongs, width=128))
 
         self._header = Label()
         self._header.setFont(Factory.createFont(family="Segoe UI Semibold", size=16, bold=True))

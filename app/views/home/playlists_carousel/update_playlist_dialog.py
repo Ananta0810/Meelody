@@ -36,7 +36,7 @@ class UpdatePlaylistDialog(BaseDialog):
 
         self._cover = CoverWithPlaceHolder()
         self._cover.setFixedSize(320, 320)
-        self._cover.setPlaceHolderCover(CoverProps.fromBytes(Images.DEFAULT_PLAYLIST_COVER, 320, 320, radius=16))
+        self._cover.setPlaceHolderCover(CoverProps.fromBytes(Images.defaultPlaylistCover, 320, 320, radius=16))
 
         self._titleInput = Input()
         self._titleInput.setFont(Factory.createFont(size=12))
@@ -106,7 +106,7 @@ class UpdatePlaylistDialog(BaseDialog):
             return titleLengthValid and title != self.__playlist.getInfo().getName()
 
     def __selectCover(self) -> None:
-        path = QFileDialog.getOpenFileName(self, filter=FileType.IMAGE)[0]
+        path = QFileDialog.getOpenFileName(self, filter=FileType.image)[0]
         if Strings.isBlank(path):
             return
 

@@ -26,7 +26,7 @@ class TimerDialog(BaseDialog):
         super()._createUI()
 
         self._cover = Cover()
-        self._cover.setCover(CoverProps.fromBytes(Images.TIMER, width=184))
+        self._cover.setCover(CoverProps.fromBytes(Images.timer, width=184))
 
         # ================================= Setup Timer =================================
         self._minuteInput = TimerInput(99)

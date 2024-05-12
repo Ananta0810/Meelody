@@ -42,10 +42,10 @@ class HorizontalSlider(QSlider, Component):
         trackMargin = (itemSize - self._trackSize) // 2
         handleMargin = (itemSize - self._handleHeight) // 2
 
-        sliderBg = theme.getElement("none").state("none").toProps() or Backgrounds.NONE.toStylesheet()
-        trackLeft = theme.getElement("track").state("active").toProps() or Backgrounds.PRIMARY.toStylesheet()
-        trackRight = theme.getElement("track").state("none").toProps() or Backgrounds.GRAY.withOpacity(50).toStylesheet()
-        handle = theme.getElement("handle").state("none").toProps() or Backgrounds.PRIMARY.toStylesheet()
+        sliderBg = theme.getElement("none").state("none").toProps() or Backgrounds.none.toStylesheet()
+        trackLeft = theme.getElement("track").state("active").toProps() or Backgrounds.primary.toStylesheet()
+        trackRight = theme.getElement("track").state("none").toProps() or Backgrounds.gray.withOpacity(50).toStylesheet()
+        handle = theme.getElement("handle").state("none").toProps() or Backgrounds.primary.toStylesheet()
         handleActive = theme.getElement("handle").state("active").toProps() or handle
 
         return f"""

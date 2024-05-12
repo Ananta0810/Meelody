@@ -23,7 +23,7 @@ class SongRow(ExtendableStyleWidget):
         self.__displaySongInfo()
 
     def _createUI(self) -> None:
-        self.setCursor(Cursors.HAND)
+        self.setCursor(Cursors.pointer)
         self.setContentsMargins(0, 0, 0, 0)
 
         self._mainLayout = FlexBox()
@@ -39,7 +39,7 @@ class SongRow(ExtendableStyleWidget):
 
         self._cover = CoverWithPlaceHolder(self)
         self._cover.setFixedSize(64, 64)
-        self._cover.setPlaceHolderCover(CoverProps.fromBytes(Images.DEFAULT_SONG_COVER, width=64, height=64, radius=12))
+        self._cover.setPlaceHolderCover(CoverProps.fromBytes(Images.defaultSongCover, width=64, height=64, radius=12))
 
         self._titleLabel = EllipsisLabel()
         self._titleLabel.setFixedWidth(200)

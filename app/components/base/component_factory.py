@@ -21,7 +21,7 @@ class Factory:
     @staticmethod
     def createIconButton(size: QSize, padding: Padding = Paddings.DEFAULT, parent: QObject = None) -> IconButton:
         button = IconButton(parent)
-        button.setCursor(Cursors.HAND)
+        button.setCursor(Cursors.pointer)
 
         button.setIconSize(size - padding.getWidth(size))
         button.setFixedSize(size)
@@ -31,7 +31,7 @@ class Factory:
     @staticmethod
     def createToggleButton(size: QSize, padding: Padding = Paddings.DEFAULT, parent: QObject = None) -> ToggleIconButton:
         button = ToggleIconButton(parent)
-        button.setCursor(Cursors.HAND)
+        button.setCursor(Cursors.pointer)
 
         button.setIconSize(size - padding.getWidth(size))
         button.setFixedSize(size)
@@ -41,7 +41,7 @@ class Factory:
     @staticmethod
     def createMultiStatesButton(size: QSize, padding: Padding = Paddings.DEFAULT, parent: QObject = None) -> MultiStatesIconButton:
         button = MultiStatesIconButton(parent)
-        button.setCursor(Cursors.HAND)
+        button.setCursor(Cursors.pointer)
 
         button.setIconSize(size - padding.getWidth(size))
         button.setFixedSize(size)

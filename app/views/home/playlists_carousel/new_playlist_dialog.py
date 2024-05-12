@@ -34,7 +34,7 @@ class NewPlaylistDialog(BaseDialog):
 
         self._cover = Cover()
         self._cover.setFixedSize(320, 320)
-        self._cover.setCover(CoverProps.fromBytes(Images.DEFAULT_PLAYLIST_COVER, 320, 320, radius=16))
+        self._cover.setCover(CoverProps.fromBytes(Images.defaultPlaylistCover, 320, 320, radius=16))
 
         self._titleInput = Input()
         self._titleInput.setFont(Factory.createFont(size=12))
@@ -96,7 +96,7 @@ class NewPlaylistDialog(BaseDialog):
         self._acceptBtn.setDisabled(not titleValid)
 
     def __onclickSelectCover(self) -> None:
-        path = QFileDialog.getOpenFileName(self, filter=FileType.IMAGE)[0]
+        path = QFileDialog.getOpenFileName(self, filter=FileType.image)[0]
 
         if Strings.isBlank(path):
             return

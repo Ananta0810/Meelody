@@ -32,7 +32,7 @@ class ImportSongsDialog(BaseDialog):
         self._image = Cover()
         self._image.setAlignment(Qt.AlignHCenter)
         self._image.setFixedHeight(156)
-        self._image.setCover(CoverProps.fromBytes(Images.IMPORT_SONGS, width=128))
+        self._image.setCover(CoverProps.fromBytes(Images.importSongs, width=128))
 
         self._header = Label()
         self._header.setFont(Factory.createFont(family="Segoe UI Semibold", size=16, bold=True))

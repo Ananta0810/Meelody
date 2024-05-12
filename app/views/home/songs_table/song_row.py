@@ -43,7 +43,7 @@ class SongRow(ExtendableStyleWidget):
 
         self._cover = CoverWithPlaceHolder(self)
         self._cover.setFixedSize(64, 64)
-        self._cover.setPlaceHolderCover(CoverProps.fromBytes(Images.DEFAULT_SONG_COVER, width=64, height=64, radius=12))
+        self._cover.setPlaceHolderCover(CoverProps.fromBytes(Images.defaultSongCover, width=64, height=64, radius=12))
 
         self._titleLabel = LabelWithDefaultText()
         self._titleLabel.enableEllipsis()
@@ -73,22 +73,22 @@ class SongRow(ExtendableStyleWidget):
         self._mainLayout.addLayout(self._info)
 
         # ============================================ REACT BUTTONS # ============================================
-        self._moreBtn = Factory.createIconButton(size=Icons.LARGE, padding=Paddings.RELATIVE_50)
-        self._moreBtn.setLightModeIcon(Icons.MORE.withColor(Colors.GRAY))
-        self._moreBtn.setDarkModeIcon(Icons.MORE.withColor(Colors.WHITE))
+        self._moreBtn = Factory.createIconButton(size=Icons.large, padding=Paddings.RELATIVE_50)
+        self._moreBtn.setLightModeIcon(Icons.more.withColor(Colors.gray))
+        self._moreBtn.setDarkModeIcon(Icons.more.withColor(Colors.white))
         self._moreBtn.setClassName("hover:bg-black-10 rounded-full", "dark:hover:bg-white-20")
 
-        self._loveBtn = Factory.createToggleButton(Icons.LARGE, Paddings.RELATIVE_50)
-        self._loveBtn.setActiveIcon(Icons.LOVE.withColor(Colors.DANGER))
-        self._loveBtn.setInactiveIcon(Icons.LOVE.withColor(Colors.GRAY))
+        self._loveBtn = Factory.createToggleButton(Icons.large, Paddings.RELATIVE_50)
+        self._loveBtn.setActiveIcon(Icons.love.withColor(Colors.danger))
+        self._loveBtn.setInactiveIcon(Icons.love.withColor(Colors.gray))
         self._loveBtn.setClassName(
             "rounded-full bg-none active/hover:bg-danger-12 inactive/hover:bg-gray-12",
             "dark:active/hover:bg-danger-20 dark:inactive/hover:bg-white-20"
         )
 
-        self._playBtn = Factory.createToggleButton(size=Icons.LARGE, padding=Paddings.RELATIVE_50)
-        self._playBtn.setActiveIcon(Icons.PAUSE.withColor(Colors.PRIMARY), Icons.PAUSE.withColor(Colors.WHITE))
-        self._playBtn.setInactiveIcon(Icons.PLAY.withColor(Colors.PRIMARY), Icons.PLAY.withColor(Colors.WHITE))
+        self._playBtn = Factory.createToggleButton(size=Icons.large, padding=Paddings.RELATIVE_50)
+        self._playBtn.setActiveIcon(Icons.pause.withColor(Colors.primary), Icons.pause.withColor(Colors.white))
+        self._playBtn.setInactiveIcon(Icons.play.withColor(Colors.primary), Icons.play.withColor(Colors.white))
         self._playBtn.setClassName("hover:bg-primary-25 bg-primary-10 rounded-full", "dark:bg-white-20 dark:hover:bg-primary")
         self._playBtn.setActive(False)
 
@@ -101,26 +101,26 @@ class SongRow(ExtendableStyleWidget):
         self._mainButtonsLayout.addWidget(self._playBtn)
 
         # ============================================ MORE BUTTONS # ============================================
-        self._editSongBtn = Factory.createIconButton(size=Icons.LARGE, padding=Paddings.RELATIVE_50)
-        self._editSongBtn.setLightModeIcon(Icons.EDIT.withColor(Colors.PRIMARY))
-        self._editSongBtn.setDarkModeIcon(Icons.EDIT.withColor(Colors.WHITE))
+        self._editSongBtn = Factory.createIconButton(size=Icons.large, padding=Paddings.RELATIVE_50)
+        self._editSongBtn.setLightModeIcon(Icons.edit.withColor(Colors.primary))
+        self._editSongBtn.setDarkModeIcon(Icons.edit.withColor(Colors.white))
         self._editSongBtn.setClassName("hover:bg-primary-12 rounded-full", "dark:hover:bg-white-20")
         self._editSongBtn.keepSpaceWhenHiding()
 
-        self._editCoverBtn = Factory.createIconButton(size=Icons.LARGE, padding=Paddings.RELATIVE_50)
-        self._editCoverBtn.setLightModeIcon(Icons.IMAGE.withColor(Colors.PRIMARY))
-        self._editCoverBtn.setDarkModeIcon(Icons.IMAGE.withColor(Colors.WHITE))
+        self._editCoverBtn = Factory.createIconButton(size=Icons.large, padding=Paddings.RELATIVE_50)
+        self._editCoverBtn.setLightModeIcon(Icons.image.withColor(Colors.primary))
+        self._editCoverBtn.setDarkModeIcon(Icons.image.withColor(Colors.white))
         self._editCoverBtn.setClassName("hover:bg-primary-12 rounded-full", "dark:hover:bg-white-20")
         self._editCoverBtn.keepSpaceWhenHiding()
 
-        self._deleteBtn = Factory.createIconButton(size=Icons.LARGE, padding=Paddings.RELATIVE_50)
-        self._deleteBtn.setLightModeIcon(Icons.DELETE.withColor(Colors.PRIMARY))
-        self._deleteBtn.setDarkModeIcon(Icons.DELETE.withColor(Colors.WHITE))
+        self._deleteBtn = Factory.createIconButton(size=Icons.large, padding=Paddings.RELATIVE_50)
+        self._deleteBtn.setLightModeIcon(Icons.delete.withColor(Colors.primary))
+        self._deleteBtn.setDarkModeIcon(Icons.delete.withColor(Colors.white))
         self._deleteBtn.setClassName("hover:bg-primary-12 rounded-full", "dark:hover:bg-white-20")
         self._deleteBtn.keepSpaceWhenHiding()
 
-        self._closeMenuBtn = Factory.createIconButton(size=Icons.MEDIUM, padding=Paddings.RELATIVE_50, parent=self)
-        self._closeMenuBtn.setLightModeIcon(Icons.CLOSE.withColor(Colors.WHITE))
+        self._closeMenuBtn = Factory.createIconButton(size=Icons.medium, padding=Paddings.RELATIVE_50, parent=self)
+        self._closeMenuBtn.setLightModeIcon(Icons.close.withColor(Colors.white))
         self._closeMenuBtn.setClassName("rounded-full bg-danger hover:bg-danger-[w120]")
         self._closeMenuBtn.hide()
 
@@ -262,7 +262,7 @@ class SongRow(ExtendableStyleWidget):
             self._loveBtn.setActive(self.__song.isLoved())
 
     def __changeCover(self) -> None:
-        path = QFileDialog.getOpenFileName(self, filter=FileType.IMAGE)[0]
+        path = QFileDialog.getOpenFileName(self, filter=FileType.image)[0]
         if path is None or path == '':
             return
         try:

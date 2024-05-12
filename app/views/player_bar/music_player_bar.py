@@ -27,7 +27,7 @@ class MusicPlayerBar(QWidget, Component):
 
         super()._initComponent()
 
-        self.setDefaultCover(Images.DEFAULT_SONG_COVER)
+        self.setDefaultCover(Images.defaultSongCover)
         self.setPlayingTime(0)
         self.setTotalTime(0)
         self._loopBtn.setActive(musicPlayer.isLooping())
@@ -87,25 +87,25 @@ class MusicPlayerBar(QWidget, Component):
         self._playButtons.setContentsMargins(0, 0, 0, 0)
         self._playButtons.setSpacing(8)
 
-        self._prevSongBtn = Factory.createIconButton(size=Icons.LARGE, padding=Paddings.RELATIVE_50)
-        self._prevSongBtn.setLightModeIcon(Icons.PREVIOUS.withColor(Colors.PRIMARY))
-        self._prevSongBtn.setDarkModeIcon(Icons.PREVIOUS.withColor(Colors.WHITE))
+        self._prevSongBtn = Factory.createIconButton(size=Icons.large, padding=Paddings.RELATIVE_50)
+        self._prevSongBtn.setLightModeIcon(Icons.previous.withColor(Colors.primary))
+        self._prevSongBtn.setDarkModeIcon(Icons.previous.withColor(Colors.white))
         self._prevSongBtn.setClassName("hover:bg-primary-10 bg-none rounded-full", "dark:bg-none dark:hover:bg-white-20")
 
-        self._playSongBtn = Factory.createIconButton(size=Icons.X_LARGE, padding=Paddings.RELATIVE_50)
-        self._playSongBtn.setLightModeIcon(Icons.PLAY.withColor(Colors.PRIMARY))
-        self._playSongBtn.setDarkModeIcon(Icons.PLAY.withColor(Colors.WHITE))
+        self._playSongBtn = Factory.createIconButton(size=Icons.xLarge, padding=Paddings.RELATIVE_50)
+        self._playSongBtn.setLightModeIcon(Icons.play.withColor(Colors.primary))
+        self._playSongBtn.setDarkModeIcon(Icons.play.withColor(Colors.white))
         self._playSongBtn.setClassName("hover:bg-primary-25 bg-primary-10 rounded-full", "dark:bg-primary dark:hover:bg-primary")
 
-        self._pauseSongBtn = Factory.createIconButton(size=Icons.X_LARGE, padding=Paddings.RELATIVE_50)
-        self._pauseSongBtn.setLightModeIcon(Icons.PAUSE.withColor(Colors.PRIMARY))
-        self._pauseSongBtn.setDarkModeIcon(Icons.PAUSE.withColor(Colors.WHITE))
+        self._pauseSongBtn = Factory.createIconButton(size=Icons.xLarge, padding=Paddings.RELATIVE_50)
+        self._pauseSongBtn.setLightModeIcon(Icons.pause.withColor(Colors.primary))
+        self._pauseSongBtn.setDarkModeIcon(Icons.pause.withColor(Colors.white))
         self._pauseSongBtn.setClassName("hover:bg-primary-25 bg-primary-10 rounded-full", "dark:bg-primary dark:hover:bg-primary")
         self._pauseSongBtn.hide()
 
-        self._nextSongBtn = Factory.createIconButton(size=Icons.LARGE, padding=Paddings.RELATIVE_50)
-        self._nextSongBtn.setLightModeIcon(Icons.NEXT.withColor(Colors.PRIMARY))
-        self._nextSongBtn.setDarkModeIcon(Icons.NEXT.withColor(Colors.WHITE))
+        self._nextSongBtn = Factory.createIconButton(size=Icons.large, padding=Paddings.RELATIVE_50)
+        self._nextSongBtn.setLightModeIcon(Icons.next.withColor(Colors.primary))
+        self._nextSongBtn.setDarkModeIcon(Icons.next.withColor(Colors.white))
         self._nextSongBtn.setClassName("hover:bg-primary-10 bg-none rounded-full", "dark:bg-none dark:hover:bg-white-20")
 
         self._playButtons.addWidget(self._prevSongBtn)
@@ -144,38 +144,38 @@ class MusicPlayerBar(QWidget, Component):
         self._middle.addWidget(self._totalTimeLabel)
 
         # ======================================== RIGHT ========================================
-        self._loopBtn = Factory.createToggleButton(Icons.LARGE, Paddings.RELATIVE_50)
-        self._loopBtn.setActiveIcon(Icons.LOOP.withColor(Colors.PRIMARY), Icons.LOOP.withColor(Colors.WHITE))
-        self._loopBtn.setInactiveIcon(Icons.LOOP.withColor(Colors.GRAY), Icons.LOOP.withColor(Colors.GRAY))
+        self._loopBtn = Factory.createToggleButton(Icons.large, Paddings.RELATIVE_50)
+        self._loopBtn.setActiveIcon(Icons.loop.withColor(Colors.primary), Icons.loop.withColor(Colors.white))
+        self._loopBtn.setInactiveIcon(Icons.loop.withColor(Colors.gray), Icons.loop.withColor(Colors.gray))
         self._loopBtn.setClassName(
             "rounded-full bg-none active/hover:bg-primary-12 inactive/hover:bg-gray-12",
             "dark:inactive/hover:bg-white-20 dark:active/hover:bg-white-20"
         )
         self._loopBtn.setActive(False)
 
-        self._shuffleBtn = Factory.createToggleButton(Icons.LARGE, Paddings.RELATIVE_50)
-        self._shuffleBtn.setActiveIcon(Icons.SHUFFLE.withColor(Colors.PRIMARY), Icons.SHUFFLE.withColor(Colors.WHITE))
-        self._shuffleBtn.setInactiveIcon(Icons.SHUFFLE.withColor(Colors.GRAY), Icons.SHUFFLE.withColor(Colors.GRAY))
+        self._shuffleBtn = Factory.createToggleButton(Icons.large, Paddings.RELATIVE_50)
+        self._shuffleBtn.setActiveIcon(Icons.shuffle.withColor(Colors.primary), Icons.shuffle.withColor(Colors.white))
+        self._shuffleBtn.setInactiveIcon(Icons.shuffle.withColor(Colors.gray), Icons.shuffle.withColor(Colors.gray))
         self._shuffleBtn.setClassName(
             "rounded-full bg-none active/hover:bg-primary-12 inactive/hover:bg-gray-12",
             "dark:inactive/hover:bg-white-20 dark:active/hover:bg-white-20"
         )
         self._shuffleBtn.setActive(False)
 
-        self._loveBtn = Factory.createToggleButton(Icons.LARGE, Paddings.RELATIVE_50)
-        self._loveBtn.setActiveIcon(Icons.LOVE.withColor(Colors.DANGER))
-        self._loveBtn.setInactiveIcon(Icons.LOVE.withColor(Colors.GRAY))
+        self._loveBtn = Factory.createToggleButton(Icons.large, Paddings.RELATIVE_50)
+        self._loveBtn.setActiveIcon(Icons.love.withColor(Colors.danger))
+        self._loveBtn.setInactiveIcon(Icons.love.withColor(Colors.gray))
         self._loveBtn.setClassName(
             "rounded-full bg-none active/hover:bg-danger-12 inactive/hover:bg-gray-12",
             "dark:inactive/hover:bg-white-20 dark:active/hover:bg-danger-20"
         )
         self._loveBtn.setActive(False)
 
-        self._volumeBtn = Factory.createMultiStatesButton(Icons.LARGE, Paddings.RELATIVE_50)
+        self._volumeBtn = Factory.createMultiStatesButton(Icons.large, Paddings.RELATIVE_50)
         self._volumeBtn.setIcons([
-            StateIcon(Icons.VOLUME_UP.withColor(Colors.PRIMARY), Icons.VOLUME_UP.withColor(Colors.WHITE)),
-            StateIcon(Icons.VOLUME_DOWN.withColor(Colors.PRIMARY), Icons.VOLUME_DOWN.withColor(Colors.WHITE)),
-            StateIcon(Icons.VOLUME_SILENT.withColor(Colors.PRIMARY), Icons.VOLUME_SILENT.withColor(Colors.WHITE)),
+            StateIcon(Icons.volumeUp.withColor(Colors.primary), Icons.volumeUp.withColor(Colors.white)),
+            StateIcon(Icons.volumeDown.withColor(Colors.primary), Icons.volumeDown.withColor(Colors.white)),
+            StateIcon(Icons.volumeSilent.withColor(Colors.primary), Icons.volumeSilent.withColor(Colors.white)),
         ])
         self._volumeBtn.setClassName("rounded-full bg-none hover:bg-primary-12 dark:hover:bg-white-20")
         self._volumeBtn.setChangeStateOnPressed(False)
@@ -196,9 +196,9 @@ class MusicPlayerBar(QWidget, Component):
 
         self._volumeBoxLayout.addWidget(self._volumeSlider)
 
-        self._timerBtn = Factory.createIconButton(size=Icons.LARGE, padding=Paddings.RELATIVE_50)
-        self._timerBtn.setLightModeIcon(Icons.TIMER.withColor(Colors.PRIMARY))
-        self._timerBtn.setDarkModeIcon(Icons.TIMER.withColor(Colors.WHITE))
+        self._timerBtn = Factory.createIconButton(size=Icons.large, padding=Paddings.RELATIVE_50)
+        self._timerBtn.setLightModeIcon(Icons.timer.withColor(Colors.primary))
+        self._timerBtn.setDarkModeIcon(Icons.timer.withColor(Colors.white))
         self._timerBtn.setClassName("bg-none hover:bg-primary-10 rounded-full", "dark:bg-none dark:hover:bg-white-20")
 
         self._right.addWidget(self._loopBtn)

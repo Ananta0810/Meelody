@@ -25,13 +25,13 @@ class CheckBox(ExtendableStyleWidget):
         self._mainLayout = FlexBox(self)
 
         self._normal = _CheckBoxState()
-        self._normal.setCursor(Cursors.HAND)
+        self._normal.setCursor(Cursors.pointer)
         self._normal.setClassName("bg-none rounded-4 border border-gray-[w50] hover:bg-primary-12 hover:border-primary hover:border-2 p-2")
 
         self._active = _CheckBoxState()
-        self._active.setCursor(Cursors.HAND)
+        self._active.setCursor(Cursors.pointer)
         self._active.setClassName("bg-primary rounded-4 border border-primary hover:bg-primary-[w125] p-2")
-        self._active.setIcon(Icons.APPLY.withColor(color=Colors.WHITE))
+        self._active.setIcon(Icons.apply.withColor(color=Colors.white))
         self._active.hide()
 
         self._mainLayout.addWidget(self._normal)

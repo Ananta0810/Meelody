@@ -18,8 +18,8 @@ class DropDown(QComboBox, Component):
     def _createUI(self) -> None:
         self.view().window().setWindowFlags(Qt.Popup | Qt.FramelessWindowHint | Qt.NoDropShadowWindowHint)
         self.view().window().setAttribute(Qt.WA_TranslucentBackground)
-        self.setCursor(Cursors.HAND)
-        self.view().setCursor(Cursors.HAND)
+        self.setCursor(Cursors.pointer)
+        self.view().setCursor(Cursors.pointer)
         self.setItemDelegate(QStyledItemDelegate())
 
     def setClassName(self, *classNames: str) -> None:

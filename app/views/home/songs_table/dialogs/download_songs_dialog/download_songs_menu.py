@@ -19,7 +19,7 @@ class DownloadSongsMenu(StyleScrollArea):
     def _createUI(self) -> None:
         self.setWidgetResizable(True)
         self.setHorizontalScrollBarPolicy(Qt.ScrollBarAlwaysOff)
-        self.verticalScrollBar().setCursor(Cursors.HAND)
+        self.verticalScrollBar().setCursor(Cursors.pointer)
 
         self._menu = QWidget(self)
         self.setWidget(self._menu)

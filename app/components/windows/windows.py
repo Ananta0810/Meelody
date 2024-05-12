@@ -20,7 +20,7 @@ class FramelessWindow(QMainWindow, Component):
         self.__shadowHeight = 0
 
         self.__initUI()
-        self.setShadow(Colors.GRAY, 32)
+        self.setShadow(Colors.gray, 32)
 
     def __initUI(self) -> None:
         self.setWindowFlags(Qt.Window | Qt.FramelessWindowHint | Qt.WindowMinMaxButtonsHint)
@@ -104,14 +104,14 @@ class TitleBarWindow(FramelessWindow):
         self._titleBarLayout.setSpacing(8)
         self._titleBar.setLayout(self._titleBarLayout)
 
-        self._minimizeBtn = Factory.createIconButton(size=Icons.MEDIUM, padding=Paddings.RELATIVE_50)
-        self._minimizeBtn.setLightModeIcon(Icons.MINIMIZE.withColor(Colors.PRIMARY))
-        self._minimizeBtn.setDarkModeIcon(Icons.MINIMIZE.withColor(Colors.WHITE))
+        self._minimizeBtn = Factory.createIconButton(size=Icons.medium, padding=Paddings.RELATIVE_50)
+        self._minimizeBtn.setLightModeIcon(Icons.minimize.withColor(Colors.primary))
+        self._minimizeBtn.setDarkModeIcon(Icons.minimize.withColor(Colors.white))
         self._minimizeBtn.setClassName("rounded-8 hover:bg-black-12 bg-none dark:hover:bg-white-20")
 
-        self._closeBtn = Factory.createIconButton(size=Icons.MEDIUM, padding=Paddings.RELATIVE_50)
-        self._closeBtn.setLightModeIcon(Icons.CLOSE.withColor(Colors.DANGER))
-        self._closeBtn.setDarkModeIcon(Icons.CLOSE.withColor(Colors.WHITE))
+        self._closeBtn = Factory.createIconButton(size=Icons.medium, padding=Paddings.RELATIVE_50)
+        self._closeBtn.setLightModeIcon(Icons.close.withColor(Colors.danger))
+        self._closeBtn.setDarkModeIcon(Icons.close.withColor(Colors.white))
         self._closeBtn.setClassName("rounded-8 bg-danger-25 hover:bg-danger-33 dark:bg-danger-[b75] dark:hover:bg-danger")
 
         self._titleBarLayout.addStretch()

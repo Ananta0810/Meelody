@@ -4,23 +4,23 @@ from app.helpers.stylesheets import Color, Colors
 from app.helpers.stylesheets.translators.value_translators.value_translator import ValueTranslator
 
 _VARIANTS: dict[str, Color] = {
-    "primary": Colors.PRIMARY,
+    "primary": Colors.primary,
 
-    "success": Colors.SUCCESS,
-    "danger": Colors.DANGER,
-    "warning": Colors.WARNING,
+    "success": Colors.success,
+    "danger": Colors.danger,
+    "warning": Colors.warning,
 
-    "dark": Colors.DARK,
-    "white": Colors.WHITE,
-    "black": Colors.BLACK,
-    "gray": Colors.GRAY,
-    "none": Colors.NONE,
-    "transparent": Colors.NONE,
+    "dark": Colors.dark,
+    "white": Colors.white,
+    "black": Colors.black,
+    "gray": Colors.gray,
+    "none": Colors.none,
+    "transparent": Colors.none,
 }
 
 _CONTRAST_BACKGROUNDS: dict[str, Color] = {
-    "b": Colors.BLACK,
-    "w": Colors.WHITE
+    "b": Colors.black,
+    "w": Colors.white
 }
 
 

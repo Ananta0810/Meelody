@@ -28,7 +28,7 @@ class SongsTable(QWidget):
         self._menu = SongsMenu()
         self._menu.setClassName("scroll/bg-primary-75 scroll/hover:bg-primary scroll/rounded-2")
         self._menu.setContentsMargins(8, 0, 8, 0)
-        self._menu.verticalScrollBar().setCursor(Cursors.HAND)
+        self._menu.verticalScrollBar().setCursor(Cursors.pointer)
 
         self._mainLayout.addWidget(self._header)
         self._mainLayout.addWidget(self._menu)

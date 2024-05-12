@@ -21,7 +21,7 @@ class _Info(QVBoxLayout, Component):
 
         self._cover = CoverWithPlaceHolder()
         self._cover.setFixedSize(320, 320)
-        self._cover.setPlaceHolderCover(self.__createCover(Images.DEFAULT_PLAYLIST_COVER))
+        self._cover.setPlaceHolderCover(self.__createCover(Images.defaultPlaylistCover))
 
         self._titleLabel = LabelWithDefaultText()
         self._titleLabel.enableEllipsis()

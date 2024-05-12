@@ -31,7 +31,7 @@ class MenuBody(SmoothVerticalScrollArea):
         super()._createUI()
         self._menu.setContentsMargins(0, 0, 0, 0)
         self.setFrameShape(QFrame.NoFrame)
-        self.verticalScrollBar().setCursor(Cursors.HAND)
+        self.verticalScrollBar().setCursor(Cursors.pointer)
 
     def _connectSignalSlots(self) -> None:
         super()._connectSignalSlots()
@@ -47,7 +47,7 @@ class MenuBody(SmoothVerticalScrollArea):
 
         # Remove background color.
         palette = self.widget().palette()
-        palette.setColor(QPalette.Background, Colors.WHITE.toQColor())
+        palette.setColor(QPalette.Background, Colors.white.toQColor())
         self.widget().setPalette(palette)
         self.update()
 
@@ -61,7 +61,7 @@ class MenuBody(SmoothVerticalScrollArea):
 
         # Remove background color.
         palette = self.widget().palette()
-        palette.setColor(QPalette.Background, Colors.BLACK.toQColor())
+        palette.setColor(QPalette.Background, Colors.black.toQColor())
         self.widget().setPalette(palette)
         self.update()
 

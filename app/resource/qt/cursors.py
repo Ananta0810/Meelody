@@ -7,17 +7,17 @@ from app.helpers.base import memoizeStaticProperty
 class Cursors:
 
     @memoizeStaticProperty
-    def HAND(self) -> QCursor:
-        return QCursor(Qt.PointingHandCursor)
-
-    @memoizeStaticProperty
-    def DEFAULT(self) -> QCursor:
+    def base(self) -> QCursor:
         return QCursor(Qt.ArrowCursor)
 
     @memoizeStaticProperty
-    def NOT_ALLOWED(self) -> QCursor:
+    def pointer(self) -> QCursor:
+        return QCursor(Qt.PointingHandCursor)
+
+    @memoizeStaticProperty
+    def notAllowed(self) -> QCursor:
         return QCursor(Qt.ForbiddenCursor)
 
     @memoizeStaticProperty
-    def WAITING(self) -> QCursor:
+    def waiting(self) -> QCursor:
         return QCursor(Qt.WaitCursor)

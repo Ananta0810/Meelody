@@ -22,11 +22,11 @@ class Background(StylesheetProps, ABC):
 
 @final
 class Backgrounds:
-    NONE = Background(color=Colors.NONE)
-    PRIMARY = Background(color=Colors.PRIMARY)
-    SUCCESS = Background(color=Colors.SUCCESS)
-    DANGER = Background(color=Colors.DANGER)
-    WARNING = Background(color=Colors.WARNING)
-    WHITE = Background(color=Colors.WHITE)
-    BLACK = Background(color=Colors.BLACK)
-    GRAY = Background(color=Colors.GRAY)
+    none = Background(color=Colors.none)
+    primary = Background(color=Colors.primary)
+    success = Background(color=Colors.success)
+    danger = Background(color=Colors.danger)
+    warning = Background(color=Colors.warning)
+    white = Background(color=Colors.white)
+    black = Background(color=Colors.black)
+    gray = Background(color=Colors.gray)

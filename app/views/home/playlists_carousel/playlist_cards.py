@@ -31,13 +31,13 @@ class PlaylistCard(ExtendableStyleWidget):
 
     def _createUI(self) -> None:
         self.setFixedSize(256, 320)
-        self.setCursor(Cursors.HAND)
+        self.setCursor(Cursors.pointer)
 
         self._mainLayout = QVBoxLayout(self)
         self._mainLayout.setContentsMargins(20, 20, 20, 20)
 
         self._cover = ZoomCover(self)
-        self._cover.setCover(self._toCoverProps(Images.DEFAULT_PLAYLIST_COVER))
+        self._cover.setCover(self._toCoverProps(Images.defaultPlaylistCover))
         self._cover.setAnimation(duration=250, start=1.0, end=1.1)
 
         self._title = EllipsisLabel(autoChangeTheme=False)
@@ -53,7 +53,7 @@ class PlaylistCard(ExtendableStyleWidget):
         self.setCover(info.getCover())
 
     def setCover(self, data: bytes) -> None:
-        data = data or Images.DEFAULT_PLAYLIST_COVER
+        data = data or Images.defaultPlaylistCover
 
         cover = self._toCoverProps(data)
         self._cover.setCover(self._toCoverProps(data))
@@ -111,7 +111,7 @@ class LibraryPlaylistCard(PlaylistCard):
     def __init__(self, parent: Optional[QWidget] = None):
         super().__init__(parent)
         super()._initComponent()
-        super().setCover(Images.DEFAULT_PLAYLIST_COVER)
+        super().setCover(Images.defaultPlaylistCover)
 
     def _translateUI(self) -> None:
         self._title.setText(translator.translate("PLAYLIST_CAROUSEL.LIBRARY"))
@@ -139,8 +139,8 @@ class FavouritePlaylistCard(PlaylistCard):
     def _createUI(self) -> None:
         super()._createUI()
 
-        self._editCoverBtn = Factory.createIconButton(size=Icons.MEDIUM, padding=Paddings.RELATIVE_50)
-        self._editCoverBtn.setLightModeIcon(Icons.IMAGE.withColor(Colors.WHITE))
+        self._editCoverBtn = Factory.createIconButton(size=Icons.medium, padding=Paddings.RELATIVE_50)
+        self._editCoverBtn.setLightModeIcon(Icons.image.withColor(Colors.white))
         self._editCoverBtn.setClassName("rounded-full bg-primary hover:bg-primary-[w120]")
 
         self._topLayout = QHBoxLayout()
@@ -170,7 +170,7 @@ class FavouritePlaylistCard(PlaylistCard):
         appCenter.setActivePlaylist(favouritePlaylist)
 
     def __chooseCover(self) -> None:
-        path = QFileDialog.getOpenFileName(self, filter=FileType.IMAGE)[0]
+        path = QFileDialog.getOpenFileName(self, filter=FileType.image)[0]
         if path is None or path == '':
             return
 
@@ -201,13 +201,13 @@ class UserPlaylistCard(PlaylistCard):
 
     def _createUI(self) -> None:
         super()._createUI()
-        self._editBtn = Factory.createIconButton(size=Icons.MEDIUM, padding=Paddings.RELATIVE_50)
-        self._editBtn.setLightModeIcon(Icons.EDIT.withColor(Colors.WHITE))
+        self._editBtn = Factory.createIconButton(size=Icons.medium, padding=Paddings.RELATIVE_50)
+        self._editBtn.setLightModeIcon(Icons.edit.withColor(Colors.white))
         self._editBtn.setClassName("rounded-full bg-primary hover:bg-primary-[w120]")
         self._editBtn.applyLightMode()
 
-        self._deleteBtn = Factory.createIconButton(size=Icons.MEDIUM, padding=Paddings.RELATIVE_50)
-        self._deleteBtn.setLightModeIcon(Icons.DELETE.withColor(Colors.WHITE))
+        self._deleteBtn = Factory.createIconButton(size=Icons.medium, padding=Paddings.RELATIVE_50)
+        self._deleteBtn.setLightModeIcon(Icons.delete.withColor(Colors.white))
         self._deleteBtn.setClassName("rounded-full bg-danger hover:bg-danger-[w120]")
         self._deleteBtn.applyLightMode()
 

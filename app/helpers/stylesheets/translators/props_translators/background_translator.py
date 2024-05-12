@@ -12,7 +12,7 @@ def _toProps(cn: ClassName) -> str:
         raise ValueError(f"Invalid color, please add color to {cn}")
     try:
         if color in ["transparent", "none"]:
-            return Colors.NONE.toStylesheet()
+            return Colors.none.toStylesheet()
 
         return ValueTranslators.Color.translate([color])
     except Exception:

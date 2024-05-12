@@ -172,7 +172,7 @@ class Dialogs:
     def info(header: str,
              message: str,
              acceptText: Optional[str] = None,
-             image: bytes = Images.SUCCESS,
+             image: bytes = Images.success,
              onAccept: Optional[callable] = None) -> None:
         dialog = _AlertDialog()
         dialog.setInfo(image, header, message, acceptText or translator.translate("DIALOG.CLOSE"), onAccept)
@@ -183,7 +183,7 @@ class Dialogs:
     def success(message: str,
                 header: Optional[str] = None,
                 acceptText: Optional[str] = None,
-                image: bytes = Images.SUCCESS,
+                image: bytes = Images.success,
                 onAccept: Optional[callable] = None) -> None:
         dialog = _AlertDialog()
         dialog.setInfo(image, header or translator.translate("DIALOG.SUCCESS"), message, acceptText or translator.translate("DIALOG.CLOSE"), onAccept)
@@ -194,7 +194,7 @@ class Dialogs:
     def alert(message: str,
               header: Optional[str] = None,
               acceptText: Optional[str] = None,
-              image: bytes = Images.WARNING,
+              image: bytes = Images.warning,
               onAccept: Optional[callable] = None) -> None:
         dialog = _AlertDialog()
         dialog.setInfo(image, header or translator.translate("DIALOG.WARNING"), message, acceptText or translator.translate("DIALOG.CLOSE"), onAccept)

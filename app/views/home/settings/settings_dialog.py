@@ -44,9 +44,9 @@ class SettingsDialog(FramelessWindow):
         self.setClassName("rounded-12 bg-white dark:bg-dark")
 
         # ==================================== TITLE BAR ====================================
-        self._closeBtn = Factory.createIconButton(Icons.MEDIUM, Paddings.RELATIVE_50)
-        self._closeBtn.setLightModeIcon(Icons.CLOSE.withColor(Colors.BLACK))
-        self._closeBtn.setDarkModeIcon(Icons.CLOSE.withColor(Colors.WHITE))
+        self._closeBtn = Factory.createIconButton(Icons.medium, Paddings.RELATIVE_50)
+        self._closeBtn.setLightModeIcon(Icons.close.withColor(Colors.black))
+        self._closeBtn.setDarkModeIcon(Icons.close.withColor(Colors.white))
         self._closeBtn.setClassName("rounded-8 bg-none hover:bg-gray-25 dark:hover:bg-white-20")
 
         self._dialogTitle = Label()
@@ -129,7 +129,7 @@ class SettingsDialog(FramelessWindow):
 
         self._systemModeBtn = ThemeButton()
         self._systemModeBtn.setFixedWidth(160)
-        self._systemModeBtn.setCover(CoverProps.fromBytes(Images.SYSTEM_MODE, width=156, height=90, radius=6))
+        self._systemModeBtn.setCover(CoverProps.fromBytes(Images.systemMode, width=156, height=90, radius=6))
         self._systemModeBtn.setClassName("rounded-8 border-2 border-transparent active:rounded-8 active:border-2 active:border-primary")
 
         self._systemModeLabel = Label()
@@ -146,7 +146,7 @@ class SettingsDialog(FramelessWindow):
 
         self._lightModeBtn = ThemeButton()
         self._lightModeBtn.setFixedWidth(160)
-        self._lightModeBtn.setCover(CoverProps.fromBytes(Images.LIGHT_MODE, width=156, height=90, radius=6))
+        self._lightModeBtn.setCover(CoverProps.fromBytes(Images.lightMode, width=156, height=90, radius=6))
         self._lightModeBtn.setClassName("rounded-8 border-2 border-transparent active:rounded-8 active:border-2 active:border-primary")
 
         self._lightModeLabel = Label()
@@ -163,7 +163,7 @@ class SettingsDialog(FramelessWindow):
 
         self._darkModeBtn = ThemeButton()
         self._darkModeBtn.setFixedWidth(160)
-        self._darkModeBtn.setCover(CoverProps.fromBytes(Images.DARK_MODE, width=156, height=90, radius=6))
+        self._darkModeBtn.setCover(CoverProps.fromBytes(Images.darkMode, width=156, height=90, radius=6))
         self._darkModeBtn.setClassName("rounded-8 border-2 border-transparent active:rounded-8 active:border-2 active:border-primary")
 
         self._darkModeLabel = Label()
@@ -262,7 +262,7 @@ class SettingsDialog(FramelessWindow):
         super().show()
 
     def __saveChanges(self) -> None:
-        self._saveBtn.setCursor(Cursors.WAITING)
+        self._saveBtn.setCursor(Cursors.waiting)
 
         appCenter.setTheme(self.__theme)
 
@@ -270,7 +270,7 @@ class SettingsDialog(FramelessWindow):
         appCenter.settings.setLanguage(lang)
         translator.setLanguage(lang)
 
-        self._saveBtn.setCursor(Cursors.HAND)
+        self._saveBtn.setCursor(Cursors.pointer)
         self.close()
 
 
@@ -279,7 +279,7 @@ class ThemeButton(Cover):
 
     def __init__(self, parent: Optional[QWidget] = None):
         super().__init__(parent)
-        self.setCursor(Cursors.HAND)
+        self.setCursor(Cursors.pointer)
         self.__normalState = None
         self.__activeState = None
 

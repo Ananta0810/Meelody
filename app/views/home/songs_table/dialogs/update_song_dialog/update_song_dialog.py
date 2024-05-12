@@ -32,7 +32,7 @@ class UpdateSongDialog(BaseDialog):
 
         self._image = CoverWithPlaceHolder()
         self._image.setAlignment(Qt.AlignHCenter)
-        self._image.setPlaceHolderCover(CoverProps.fromBytes(Images.EDIT, width=128))
+        self._image.setPlaceHolderCover(CoverProps.fromBytes(Images.edit, width=128))
 
         self._header = Label()
         self._header.setFont(Factory.createFont(family="Segoe UI Semibold", size=16, bold=True))

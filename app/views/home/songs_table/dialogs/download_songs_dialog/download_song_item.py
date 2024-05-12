@@ -41,7 +41,7 @@ class DownloadSongItem(ExtendableStyleWidget):
 
         self._cover = Cover()
         self._cover.setFixedSize(48, 48)
-        self._cover.setCover(CoverProps.fromBytes(Images.DEFAULT_SONG_COVER, width=48, height=48, radius=8))
+        self._cover.setCover(CoverProps.fromBytes(Images.defaultSongCover, width=48, height=48, radius=8))
 
         self._titleLabel = EllipsisLabel()
         self._titleLabel.setFont(Factory.createFont(size=10, bold=True))
@@ -63,22 +63,22 @@ class DownloadSongItem(ExtendableStyleWidget):
         self._infoLayout.addWidget(self._progressBar)
         self._infoLayout.addStretch(0)
 
-        self._successIcon = Factory.createIconButton(size=Icons.SMALL, padding=Paddings.RELATIVE_25)
-        self._successIcon.setLightModeIcon(Icons.APPLY.withColor(Colors.WHITE))
+        self._successIcon = Factory.createIconButton(size=Icons.small, padding=Paddings.RELATIVE_25)
+        self._successIcon.setLightModeIcon(Icons.apply.withColor(Colors.white))
         self._successIcon.setClassName("rounded-full bg-success")
-        self._successIcon.setCursor(Cursors.DEFAULT)
+        self._successIcon.setCursor(Cursors.base)
         self._successIcon.hide()
 
-        self._failedIcon = Factory.createIconButton(size=Icons.SMALL, padding=Paddings.RELATIVE_25)
-        self._failedIcon.setLightModeIcon(Icons.CLOSE.withColor(Colors.WHITE))
+        self._failedIcon = Factory.createIconButton(size=Icons.small, padding=Paddings.RELATIVE_25)
+        self._failedIcon.setLightModeIcon(Icons.close.withColor(Colors.white))
         self._failedIcon.setClassName("rounded-full bg-danger")
-        self._failedIcon.setCursor(Cursors.DEFAULT)
+        self._failedIcon.setCursor(Cursors.base)
         self._failedIcon.hide()
 
         self._downloadLabel = Gif("app/resource/images/defaults/downloading.gif")
         self._downloadLabel.setFixedSize(48, 48)
         self._downloadLabel.setGifSize(32)
-        self._downloadLabel.setCursor(Cursors.DEFAULT)
+        self._downloadLabel.setCursor(Cursors.base)
         self._downloadLabel.hide()
 
         self._convertingLabel = Gif("app/resource/images/defaults/loading-bubble.gif")

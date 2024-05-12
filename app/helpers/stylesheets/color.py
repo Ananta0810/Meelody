@@ -64,12 +64,12 @@ class Color(StylesheetProps, ABC):
 
 @final
 class Colors:
-    PRIMARY = Color(100, 32, 255)
-    SUCCESS = Color(50, 216, 100)
-    DANGER = Color(255, 80, 80)
-    WARNING = Color(255, 170, 28)
-    WHITE = Color(255, 255, 255)
-    DARK = Color(32, 32, 32)
-    BLACK = Color(0, 0, 0)
-    GRAY = Color(128, 128, 128)
-    NONE = Color(255, 255, 255, 0)
+    primary = Color(100, 32, 255)
+    success = Color(50, 216, 100)
+    danger = Color(255, 80, 80)
+    warning = Color(255, 170, 28)
+    white = Color(255, 255, 255)
+    dark = Color(32, 32, 32)
+    black = Color(0, 0, 0)
+    gray = Color(128, 128, 128)
+    none = Color(255, 255, 255, 0)

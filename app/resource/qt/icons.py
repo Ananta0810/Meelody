@@ -5,123 +5,123 @@ from app.helpers.base import memoizeStaticProperty
 
 
 class Icons:
-    SMALL: QSize = QSize(24, 24)
-    MEDIUM: QSize = QSize(32, 32)
-    LARGE: QSize = QSize(48, 48)
-    X_LARGE: QSize = QSize(64, 64)
+    small: QSize = QSize(24, 24)
+    medium: QSize = QSize(32, 32)
+    large: QSize = QSize(48, 48)
+    xLarge: QSize = QSize(64, 64)
 
     @memoizeStaticProperty
-    def LOGO(self) -> AppIcon:
+    def logo(self) -> AppIcon:
         return AppIcon("app/resource/images/logo.ico")
 
     @memoizeStaticProperty
-    def DELETE(self) -> AppIcon:
+    def delete(self) -> AppIcon:
         return AppIcon("app/resource/images/icons/delete.png")
 
     @memoizeStaticProperty
-    def PLAY_SONG(self) -> AppIcon:
+    def playSong(self) -> AppIcon:
         return AppIcon("app/resource/images/icons/play-menu.png")
 
     @memoizeStaticProperty
-    def MORE(self) -> AppIcon:
+    def more(self) -> AppIcon:
         return AppIcon("app/resource/images/icons/more.png")
 
     @memoizeStaticProperty
-    def MINUS(self) -> AppIcon:
+    def minus(self) -> AppIcon:
         return AppIcon("app/resource/images/icons/minus.png")
 
     @memoizeStaticProperty
-    def ADD(self) -> AppIcon:
+    def add(self) -> AppIcon:
         return AppIcon("app/resource/images/icons/add.png")
 
     @memoizeStaticProperty
-    def EDIT(self) -> AppIcon:
+    def edit(self) -> AppIcon:
         return AppIcon("app/resource/images/icons/edit.png")
 
     @memoizeStaticProperty
-    def IMAGE(self) -> AppIcon:
+    def image(self) -> AppIcon:
         return AppIcon("app/resource/images/icons/image.png")
 
     @memoizeStaticProperty
-    def LOVE(self) -> AppIcon:
+    def love(self) -> AppIcon:
         return AppIcon("app/resource/images/icons/love.png")
 
     @memoizeStaticProperty
-    def DOWNLOAD(self) -> AppIcon:
+    def download(self) -> AppIcon:
         return AppIcon("app/resource/images/icons/download.png")
 
     @memoizeStaticProperty
-    def MINIMIZE(self) -> AppIcon:
+    def minimize(self) -> AppIcon:
         return AppIcon("app/resource/images/icons/minimize.png")
 
     @memoizeStaticProperty
-    def CLOSE(self) -> AppIcon:
+    def close(self) -> AppIcon:
         return AppIcon("app/resource/images/icons/close.png")
 
     @memoizeStaticProperty
-    def BACKWARD(self) -> AppIcon:
+    def backward(self) -> AppIcon:
         return AppIcon("app/resource/images/icons/chevron-backward.png")
 
     @memoizeStaticProperty
-    def FORWARD(self) -> AppIcon:
+    def forward(self) -> AppIcon:
         return AppIcon("app/resource/images/icons/chevron-forward.png")
 
     @memoizeStaticProperty
-    def SETTINGS(self) -> AppIcon:
+    def settings(self) -> AppIcon:
         return AppIcon("app/resource/images/icons/settings.png")
 
     @memoizeStaticProperty
-    def LANGUAGES(self) -> AppIcon:
+    def languages(self) -> AppIcon:
         return AppIcon("app/resource/images/icons/language.png")
 
     @memoizeStaticProperty
-    def FOLDER(self) -> AppIcon:
+    def folder(self) -> AppIcon:
         return AppIcon("app/resource/images/icons/folder.png")
 
     @memoizeStaticProperty
-    def DARK_MODE(self) -> AppIcon:
+    def darkMode(self) -> AppIcon:
         return AppIcon("app/resource/images/icons/dark-mode.png")
 
     @memoizeStaticProperty
-    def APPLY(self) -> AppIcon:
+    def apply(self) -> AppIcon:
         return AppIcon("app/resource/images/icons/apply.png")
 
     @memoizeStaticProperty
-    def PLAY(self) -> AppIcon:
+    def play(self) -> AppIcon:
         return AppIcon("app/resource/images/icons/play.png")
 
     @memoizeStaticProperty
-    def PAUSE(self) -> AppIcon:
+    def pause(self) -> AppIcon:
         return AppIcon("app/resource/images/icons/pause.png")
 
     @memoizeStaticProperty
-    def PREVIOUS(self) -> AppIcon:
+    def previous(self) -> AppIcon:
         return AppIcon("app/resource/images/icons/previous.png")
 
     @memoizeStaticProperty
-    def NEXT(self) -> AppIcon:
+    def next(self) -> AppIcon:
         return AppIcon("app/resource/images/icons/next.png")
 
     @memoizeStaticProperty
-    def LOOP(self) -> AppIcon:
+    def loop(self) -> AppIcon:
         return AppIcon("app/resource/images/icons/loop.png")
 
     @memoizeStaticProperty
-    def SHUFFLE(self) -> AppIcon:
+    def shuffle(self) -> AppIcon:
         return AppIcon("app/resource/images/icons/shuffle.png")
 
     @memoizeStaticProperty
-    def VOLUME_UP(self) -> AppIcon:
+    def volumeUp(self) -> AppIcon:
         return AppIcon("app/resource/images/icons/volume-up.png")
 
     @memoizeStaticProperty
-    def VOLUME_DOWN(self) -> AppIcon:
+    def volumeDown(self) -> AppIcon:
         return AppIcon("app/resource/images/icons/volume-down.png")
 
     @memoizeStaticProperty
-    def VOLUME_SILENT(self) -> AppIcon:
+    def volumeSilent(self) -> AppIcon:
         return AppIcon("app/resource/images/icons/volume-silent.png")
 
     @memoizeStaticProperty
-    def TIMER(self) -> AppIcon:
+    def timer(self) -> AppIcon:
         return AppIcon("app/resource/images/icons/timer.png")

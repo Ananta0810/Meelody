@@ -3,5 +3,5 @@ from typing import final
 
 @final
 class FileType:
-    IMAGE: str = "JPEG, PNG (*.JPEG *.jpeg *.JPG *.jpg *.JPE *.jpe)"
-    AUDIO: str = "MP3 (*.MP3 *.mp3)"
+    image: str = "JPEG, PNG (*.JPEG *.jpeg *.JPG *.jpg *.JPE *.jpe)"
+    audio: str = "MP3 (*.MP3 *.mp3)"

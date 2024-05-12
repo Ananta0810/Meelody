@@ -40,14 +40,14 @@ class MainWindow(TitleBarWindow, Component):
 
         # Prev, Play/Pause, Next
         self._toolbarPrevBtn = QWinThumbnailToolButton()
-        self._toolbarPrevBtn.setIcon(Icons.PREVIOUS.withColor(Colors.PRIMARY))
+        self._toolbarPrevBtn.setIcon(Icons.previous.withColor(Colors.primary))
 
         self._toolbarPlayBtn = QWinThumbnailToolButton()
         self._toolbarPlayBtn.setProperty('status', 0)
-        self._toolbarPlayBtn.setIcon(Icons.PLAY.withColor(Colors.PRIMARY))
+        self._toolbarPlayBtn.setIcon(Icons.play.withColor(Colors.primary))
 
         self._toolbarNextBtn = QWinThumbnailToolButton()
-        self._toolbarNextBtn.setIcon(Icons.NEXT.withColor(Colors.PRIMARY))
+        self._toolbarNextBtn.setIcon(Icons.next.withColor(Colors.primary))
 
         self._toolbar = QWinThumbnailToolBar()
         self._toolbar.addButton(self._toolbarPrevBtn)
@@ -69,10 +69,10 @@ class MainWindow(TitleBarWindow, Component):
         self._toolbarNextBtn.clicked.connect(lambda: musicPlayer.playNextSong())
 
         musicPlayer.played.connect(lambda: self._toolbarPlayBtn.setToolTip(translator.translate("MUSIC_PLAYER.TOOLTIP_PAUSE_BTN")))
-        musicPlayer.played.connect(lambda: self._toolbarPlayBtn.setIcon(Icons.PAUSE.withColor(Colors.PRIMARY)))
+        musicPlayer.played.connect(lambda: self._toolbarPlayBtn.setIcon(Icons.pause.withColor(Colors.primary)))
 
         musicPlayer.paused.connect(lambda: self._toolbarPlayBtn.setToolTip(translator.translate("MUSIC_PLAYER.TOOLTIP_PLAY_BTN")))
-        musicPlayer.paused.connect(lambda: self._toolbarPlayBtn.setIcon(Icons.PLAY.withColor(Colors.PRIMARY)))
+        musicPlayer.paused.connect(lambda: self._toolbarPlayBtn.setIcon(Icons.play.withColor(Colors.primary)))
 
         self._minimizeBtn.clicked.connect(lambda: self.showMinimized())
 

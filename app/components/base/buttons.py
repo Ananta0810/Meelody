@@ -21,7 +21,7 @@ class ActionButton(QPushButton, Component):
         super()._initComponent()
 
     def _createUI(self) -> None:
-        self.setCursor(Cursors.HAND)
+        self.setCursor(Cursors.pointer)
 
 
 class StateIcon:
@@ -201,7 +201,7 @@ class LoadingButton(ExtendableStyleWidget):
         super()._initComponent()
 
     def _createUI(self) -> None:
-        self.setCursor(Cursors.WAITING)
+        self.setCursor(Cursors.waiting)
 
         self._layout = QVBoxLayout(self)
         self._layout.setContentsMargins(0, 0, 0, 0)
