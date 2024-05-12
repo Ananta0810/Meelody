@@ -5,9 +5,10 @@ from PyQt5.QtWidgets import QScrollArea, QWidget
 
 from app.common.models import Playlist
 from app.common.others import appCenter, translator
+from app.common.statics.colors import Colors
+from app.common.statics.paddings import Paddings
 from app.components.base import Component, Factory
 from app.components.widgets import StyleWidget, FlexBox
-from app.helpers.stylesheets import Paddings, Colors
 from app.resource.qt import Icons
 from .new_playlist_dialog import NewPlaylistDialog
 from .playlist_cards import LibraryPlaylistCard, FavouritePlaylistCard, UserPlaylistCard

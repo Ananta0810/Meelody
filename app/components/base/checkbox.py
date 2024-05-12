@@ -3,9 +3,9 @@ from typing import Optional
 from PyQt5.QtCore import QSize, pyqtSignal
 from PyQt5.QtWidgets import QWidget, QPushButton
 
+from app.common.statics.colors import Colors
 from app.components.base import Component
 from app.components.widgets import ExtendableStyleWidget, FlexBox
-from app.helpers.stylesheets import Colors
 from app.resource.qt import Cursors, Icons
 
 

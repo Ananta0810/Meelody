@@ -3,9 +3,9 @@ from typing import Optional
 from PyQt5.QtCore import Qt
 from PyQt5.QtWidgets import QSlider, QWidget
 
+from app.common.statics.backgrounds import Backgrounds
 from app.components.base import Component
 from app.helpers.base import Strings, suppressException
-from app.helpers.stylesheets import Backgrounds
 from app.helpers.stylesheets.translators import ClassNameTranslator
 from app.helpers.stylesheets.translators.classname_translator import ClassNameTheme
 

@@ -5,9 +5,10 @@ from PyQt5.QtGui import QShowEvent, QWheelEvent
 from PyQt5.QtWidgets import QWidget, QVBoxLayout, QScrollArea, QHBoxLayout
 
 from app.common.others import translator
+from app.common.statics.colors import Colors
+from app.common.statics.paddings import Paddings
 from app.components.base import Component, Factory
 from app.components.widgets import StyleWidget
-from app.helpers.stylesheets import Colors, Paddings
 from app.resource.qt import Icons
 from app.views.home.current_playlist import CurrentPlaylist
 from app.views.home.playlists_carousel import PlaylistsCarousel

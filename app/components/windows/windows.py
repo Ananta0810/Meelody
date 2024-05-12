@@ -5,10 +5,12 @@ from PyQt5.QtCore import Qt
 from PyQt5.QtGui import QShowEvent, QResizeEvent, QMouseEvent
 from PyQt5.QtWidgets import QMainWindow, QWidget, QLayout, QHBoxLayout, QGraphicsDropShadowEffect, QApplication
 
+from app.common.statics.colors import Colors
+from app.common.statics.paddings import Paddings
 from app.components.base import Factory, Component
 from app.components.widgets import Box, StyleWidget
 from app.helpers.base import Strings
-from app.helpers.stylesheets import Colors, Paddings, Color
+from app.helpers.stylesheets import Color
 from app.resource.qt import Icons
 
 

@@ -1,6 +1,7 @@
 from typing import List, Optional
 
-from app.helpers.stylesheets import Color, Colors
+from app.common.statics.colors import Colors
+from app.helpers.stylesheets import Color
 from app.helpers.stylesheets.translators.value_translators.value_translator import ValueTranslator
 
 _VARIANTS: dict[str, Color] = {

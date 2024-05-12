@@ -8,11 +8,12 @@ from PyQt5.QtWidgets import QHBoxLayout, QVBoxLayout, QWidget, QShortcut
 
 from app.common.models import Song
 from app.common.others import musicPlayer, translator
+from app.common.statics.colors import Colors
+from app.common.statics.paddings import Paddings
 from app.components.base import Component, LabelWithDefaultText, Factory, StateIcon, CoverProps, CoverWithPlaceHolder
 from app.components.dialogs import Dialogs
 from app.components.sliders import HorizontalSlider
 from app.helpers.others import Times
-from app.helpers.stylesheets import Colors, Paddings
 from app.resource.qt import Images, Icons
 from app.views.player_bar.timer_dialog import TimerDialog
 

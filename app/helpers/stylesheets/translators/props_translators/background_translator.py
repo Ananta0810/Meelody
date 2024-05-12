@@ -1,6 +1,6 @@
 from PyQt5.QtWidgets import QWidget
 
-from app.helpers.stylesheets import Colors
+from app.common.statics.colors import Colors
 from app.helpers.stylesheets.translators.props_translators.class_name import ClassName
 from app.helpers.stylesheets.translators.props_translators.props_translator import PropsTranslator
 from app.helpers.stylesheets.translators.value_translators import ValueTranslators

@@ -4,10 +4,11 @@ from PyQt5.QtCore import Qt, pyqtSignal
 from PyQt5.QtGui import QKeySequence, QResizeEvent
 from PyQt5.QtWidgets import QHBoxLayout, QShortcut, QWidget, QLayout
 
+from app.common.statics.colors import Colors
+from app.common.statics.paddings import Paddings
 from app.components.base import Factory
 from app.components.widgets import Box
 from app.components.windows import FramelessWindow
-from app.helpers.stylesheets import Paddings, Colors
 from app.resource.qt import Icons
 
 

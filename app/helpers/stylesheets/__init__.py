@@ -1,6 +1,5 @@
-from .animation import Animation
-from .background import Background, Backgrounds
+from .background import Background
 from .border import Border
-from .color import Color, Colors
-from .padding import Padding, Paddings
+from .color import Color
+from .padding import Padding
 from .stylesheet_props import StylesheetProps

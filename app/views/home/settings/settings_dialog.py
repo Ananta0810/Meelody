@@ -6,11 +6,12 @@ from PyQt5.QtWidgets import QHBoxLayout, QVBoxLayout, QWidget
 
 from app.common.models import ThemeMode
 from app.common.others import appCenter, translator
+from app.common.statics.colors import Colors
+from app.common.statics.paddings import Paddings
 from app.components.base import Label, Factory, ActionButton, DropDown, Cover, CoverProps
 from app.components.events import ClickObserver
 from app.components.widgets import StyleWidget
 from app.components.windows import FramelessWindow
-from app.helpers.stylesheets import Colors, Paddings
 from app.helpers.stylesheets.translators import ClassNameTranslator
 from app.resource.qt import Icons, Images, Cursors
 
