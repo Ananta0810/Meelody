@@ -3,7 +3,6 @@ from typing import Optional
 from PyQt5.QtCore import Qt
 from PyQt5.QtWidgets import QSlider, QWidget
 
-from app.common.statics.backgrounds import Backgrounds
 from app.components.base import Component
 from app.helpers.base import Strings, suppressException
 from app.helpers.stylesheets.translators import ClassNameTranslator
@@ -42,10 +41,10 @@ class HorizontalSlider(QSlider, Component):
         trackMargin = (itemSize - self._trackSize) // 2
         handleMargin = (itemSize - self._handleHeight) // 2
 
-        sliderBg = theme.getElement("none").state("none").toProps() or Backgrounds.none.toStylesheet()
-        trackLeft = theme.getElement("track").state("active").toProps() or Backgrounds.primary.toStylesheet()
-        trackRight = theme.getElement("track").state("none").toProps() or Backgrounds.gray.withOpacity(50).toStylesheet()
-        handle = theme.getElement("handle").state("none").toProps() or Backgrounds.primary.toStylesheet()
+        sliderBg = theme.getElement("none").state("none").toProps(["background-color: transparent"])
+        trackLeft = theme.getElement("track").state("active").toProps(["background-color: rgb(100, 32, 255)"])
+        trackRight = theme.getElement("track").state("none").toProps(["background-color: rgba(128, 128, 128, 128)"])
+        handle = theme.getElement("handle").state("none").toProps(["background-color: rgb(100, 32, 255)"])
         handleActive = theme.getElement("handle").state("active").toProps() or handle
 
         return f"""
