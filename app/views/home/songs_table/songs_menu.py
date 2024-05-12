@@ -42,6 +42,7 @@ class SongsMenu(SmoothVerticalScrollArea):
 
         self.__playlistUpdated.connect(lambda: self.__showSongsOfPlaylist(self.__currentPlaylist))
 
+        appCenter.library.getSongs().loaded.connect(lambda: self.__createSongRows(appCenter.library.getSongs().getSongs()))
         appCenter.library.getSongs().updated.connect(lambda: self.__createSongRows(appCenter.library.getSongs().getSongs()))
         appCenter.currentPlaylistChanged.connect(lambda playlist: self.__showSongsOfPlaylist(playlist))
 

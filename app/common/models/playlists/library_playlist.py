@@ -1,5 +1,7 @@
 from contextlib import suppress
 
+from PyQt5.QtCore import pyqtSignal
+
 from app.common.models.playlist import Playlist
 from app.common.models.song import Song
 from app.common.others.translator import translator
@@ -24,18 +26,22 @@ class Library(Playlist, metaclass=SingletonMeta):
             pass
 
     class Songs(CommonPlaylist.Songs):
+        loaded = pyqtSignal()
 
         def __init__(self):
             super().__init__(None, isSorted=True)
             self.updated.connect(lambda: self.__saveDatabase())
 
         def setSongs(self, songs: list[Song]) -> None:
-            super().setSongs(songs)
+            self._songs = []
+            if songs is None:
+                return
 
             for song in songs:
+                self._insert(song)
                 self.__connectToSong(song)
 
-            self.updated.emit()
+            self.loaded.emit()
 
         def insert(self, song: Song) -> None:
             super().insert(song)
