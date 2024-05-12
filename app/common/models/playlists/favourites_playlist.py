@@ -37,7 +37,7 @@ class FavouritesPlaylist(Playlist, metaclass=SingletonMeta):
             for song in self._songs:
                 self.__disconnectToSong(song)
 
-            self._songs = [song for song in self.__library.getSongs().getSongs() if song.isLoved()]
+            self._songs = [song for song in self.__library.getSongs().toList() if song.isLoved()]
 
             for song in self._songs:
                 self.__connectToSong(song)
@@ -49,7 +49,7 @@ class FavouritesPlaylist(Playlist, metaclass=SingletonMeta):
             with suppress(TypeError):
                 song.deleted.disconnect(lambda: self.remove(song))
 
-        def getSongs(self) -> list[Song]:
+        def toList(self) -> list[Song]:
             return self._songs
 
         def hasAnySong(self) -> bool:

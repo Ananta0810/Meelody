@@ -73,7 +73,7 @@ class UserPlaylist(Playlist):
             self.updated.emit()
 
         def clone(self) -> Playlist.Songs:
-            return UserPlaylist.Songs(self.getSongs(), self._isSorted)
+            return UserPlaylist.Songs(self.toList(), self._isSorted)
 
     def clone(self) -> 'Playlist':
         return UserPlaylist(self.getInfo(), self.getSongs())
@@ -82,7 +82,7 @@ class UserPlaylist(Playlist):
         playlistInfo = self.getInfo()
 
         info = {"name": playlistInfo.getName(), "id": playlistInfo.getId(), "cover": playlistInfo.getCoverPath()}
-        ids: list[str] = [song.getId() for song in self.getSongs().getSongs()]
+        ids: list[str] = [song.getId() for song in self.getSongs().toList()]
 
         return {'info': info, 'ids': ids}
 

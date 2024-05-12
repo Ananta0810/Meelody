@@ -42,8 +42,8 @@ class SongsMenu(SmoothVerticalScrollArea):
 
         self.__playlistUpdated.connect(lambda: self.__showSongsOfPlaylist(self.__currentPlaylist))
 
-        appCenter.library.getSongs().loaded.connect(lambda: self.__createSongRows(appCenter.library.getSongs().getSongs()))
-        appCenter.library.getSongs().updated.connect(lambda: self.__createSongRows(appCenter.library.getSongs().getSongs()))
+        appCenter.library.getSongs().loaded.connect(lambda: self.__createSongRows(appCenter.library.getSongs().toList()))
+        appCenter.library.getSongs().updated.connect(lambda: self.__createSongRows(appCenter.library.getSongs().toList()))
         appCenter.currentPlaylistChanged.connect(lambda playlist: self.__showSongsOfPlaylist(playlist))
 
         musicPlayer.songChanged.connect(lambda song: self.__scrollToSong(song))
@@ -162,7 +162,7 @@ class SongsMenu(SmoothVerticalScrollArea):
         if isPlaylistChanged:
             self.__setPlaylist(playlist)
 
-        songIdSet = set([song.getId() for song in playlist.getSongs().getSongs()])
+        songIdSet = set([song.getId() for song in playlist.getSongs().toList()])
         songRows: list[SongRow] = self.widgets()
 
         needUpdateVisible = any([row.isVisible() != (row.content().getId() in songIdSet) for row in songRows])
@@ -170,7 +170,7 @@ class SongsMenu(SmoothVerticalScrollArea):
         if not needUpdateVisible:
             return
 
-        self.__updateTitleMaps(playlist.getSongs().getSongs())
+        self.__updateTitleMaps(playlist.getSongs().toList())
 
         currentPosition = self.verticalScrollBar().value()
 

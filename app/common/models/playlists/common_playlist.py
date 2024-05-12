@@ -60,7 +60,7 @@ class CommonPlaylist:
         def clone(self) -> Playlist.Songs:
             return CommonPlaylist.Songs(self._songs)
 
-        def getSongs(self) -> list[Song]:
+        def toList(self) -> list[Song]:
             return [song for song in self._songs]
 
         def hasAnySong(self) -> bool:

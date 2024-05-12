@@ -15,12 +15,12 @@ class SelectPlaylistSongsDialog(BaseDialog):
     def __init__(self, playlist: Playlist) -> None:
         self.__playlist: Playlist = playlist
         self.__selectedSongs: Playlist.Songs = playlist.getSongs().clone()
-        self.__playlistSongIds: list[str] = self.__songIdsOf(playlist.getSongs().getSongs())
+        self.__playlistSongIds: list[str] = self.__songIdsOf(playlist.getSongs().toList())
 
         super().__init__()
         super()._initComponent()
 
-        self._menuBody.setSelectedSongs(playlist.getSongs().getSongs())
+        self._menuBody.setSelectedSongs(playlist.getSongs().toList())
 
     def _createUI(self) -> None:
         super()._createUI()
@@ -87,11 +87,11 @@ class SelectPlaylistSongsDialog(BaseDialog):
             self._checkCanSave()
 
     def _checkCanSave(self) -> None:
-        canSave = self.__playlistSongIds != self.__songIdsOf(self.__selectedSongs.getSongs())
+        canSave = self.__playlistSongIds != self.__songIdsOf(self.__selectedSongs.toList())
         self._applyBtn.setDisabled(not canSave)
 
     def _savePlaylist(self) -> None:
-        songs = self.__selectedSongs.getSongs()
+        songs = self.__selectedSongs.toList()
         self.__playlist.getSongs().setSongs(songs)
         self.close()
 

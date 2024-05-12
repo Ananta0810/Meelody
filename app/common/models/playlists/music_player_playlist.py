@@ -1,3 +1,5 @@
+from typing import Optional
+
 from app.common.models.playlist import Playlist
 from app.common.models.song import Song
 from app.helpers.base import Lists, Numbers
@@ -11,12 +13,12 @@ class MusicPlayerPlaylistSongs(Playlist.Songs):
 
     def __init__(self, playlist: Playlist.Songs):
         super().__init__()
-        self.__playlist = playlist
-        self.__shufflePlaylist = None
+        self.__playlist: Playlist.Songs = playlist
+        self.__shufflePlaylist: Optional[Playlist.Songs] = None
 
     def setShuffle(self, shuffle: bool) -> None:
         if shuffle:
-            songs = Lists.shuffle(self.__playlist.getSongs())
+            songs = Lists.shuffle(self.__playlist.toList())
             self.__shufflePlaylist = CommonPlaylist.Songs(songs, isSorted=False)
             self.__playlist.updated.connect(lambda: self.__updateShufflePlaylistSongs())
         else:
@@ -29,14 +31,14 @@ class MusicPlayerPlaylistSongs(Playlist.Songs):
     def __updateShufflePlaylistSongs(self):
         if self.__shufflePlaylist is None:
             return
-        
-        addedSongs = Lists.itemsInLeftOnly(self.__playlist.getSongs(), self.__shufflePlaylist.getSongs())
-        removedSongs = set(Lists.itemsInLeftOnly(self.__playlist.getSongs(), self.__shufflePlaylist.getSongs()))
 
-        songs = [song for song in self.__shufflePlaylist.getSongs() if song not in removedSongs]
+        addedSongs = Lists.itemsInLeftOnly(self.__playlist.toList(), self.__shufflePlaylist.toList())
+        removedSongs = set(Lists.itemsInLeftOnly(self.__playlist.toList(), self.__shufflePlaylist.toList()))
+
+        songs = [song for song in self.__shufflePlaylist.toList() if song not in removedSongs]
 
         for song in addedSongs:
-            randomIndex = Numbers.randomInteger(0, len(self.__shufflePlaylist.getSongs()) - 1)
+            randomIndex = Numbers.randomInteger(0, len(self.__shufflePlaylist.toList()) - 1)
             songs.insert(randomIndex, song)
 
         self.__shufflePlaylist.setSongs(songs)
@@ -50,8 +52,8 @@ class MusicPlayerPlaylistSongs(Playlist.Songs):
     def setSongs(self, songs: list[Song]) -> None:
         pass
 
-    def getSongs(self) -> list[Song]:
-        return self.__getPlaylist().getSongs()
+    def toList(self) -> list[Song]:
+        return self.__getPlaylist().toList()
 
     def hasAnySong(self) -> bool:
         return self.__playlist.hasAnySong()

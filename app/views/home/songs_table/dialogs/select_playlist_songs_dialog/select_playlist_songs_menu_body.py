@@ -70,7 +70,7 @@ class MenuBody(SmoothVerticalScrollArea):
         self.__keyPressed.emit(event)
 
     def __setSongs(self) -> None:
-        songs = appCenter.library.getSongs().getSongs()
+        songs = appCenter.library.getSongs().toList()
         for index, song in enumerate(songs):
             songRow = SongRow(song)
             songRow.checked.connect(lambda _song: self.songSelected.emit(_song))

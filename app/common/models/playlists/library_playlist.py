@@ -110,7 +110,7 @@ class Library(Playlist, metaclass=SingletonMeta):
 
         def __saveDatabase(self) -> None:
             from app.common.others import database
-            database.songs.save(self.getSongs())
+            database.songs.save(self.toList())
 
     def clone(self) -> 'Playlist':
         return self

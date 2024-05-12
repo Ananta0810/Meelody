@@ -63,7 +63,7 @@ class Playlist:
             """
             ...
 
-        def getSongs(self) -> list[Song]:
+        def toList(self) -> list[Song]:
             """
                 Get a copy list of songs.
             """
