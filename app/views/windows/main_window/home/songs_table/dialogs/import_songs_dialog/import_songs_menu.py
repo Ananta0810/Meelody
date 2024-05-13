@@ -5,16 +5,15 @@ from PyQt5.QtWidgets import QWidget, QVBoxLayout
 
 from app.common.statics.qt import Cursors
 from app.components.scroll_areas import StyleScrollArea
-from app.views.home.songs_table.dialogs.download_songs_dialog.download_song_item import DownloadSongItem
+from app.views.windows.main_window.home.songs_table.dialogs.import_songs_dialog.import_song_item import ImportSongItem
 
 
-class DownloadSongsMenu(StyleScrollArea):
+class ImportSongsMenu(StyleScrollArea):
 
     def __init__(self, parent: Optional[QWidget] = None):
         super().__init__(parent)
-        self._widgets: list[QWidget] = []
+        self._widgets: list[ImportSongItem] = []
         self._initComponent()
-        self.setFixedHeight(0)
 
     def _createUI(self) -> None:
         self.setWidgetResizable(True)
@@ -26,12 +25,11 @@ class DownloadSongsMenu(StyleScrollArea):
 
         self._mainLayout = QVBoxLayout(self._menu)
         self._mainLayout.setAlignment(Qt.AlignTop)
-        self._mainLayout.setSpacing(0)
-        self._mainLayout.setContentsMargins(0, 0, 0, 0)
+        self._mainLayout.setSpacing(12)
+        self._mainLayout.setContentsMargins(12, 0, 12, 0)
 
-    def addItem(self) -> DownloadSongItem:
-        row = DownloadSongItem()
-        row.setFixedHeight(64)
+    def addItem(self, path: str) -> ImportSongItem:
+        row = ImportSongItem(path)
         row.applyTheme()
 
         self._widgets.append(row)
@@ -40,5 +38,9 @@ class DownloadSongsMenu(StyleScrollArea):
         return row
 
     def _updateHeight(self, row) -> None:
-        height_ = min(len(self._widgets), 3) * row.height()
+        totalShown = min(len(self._widgets), 6)
+        height_ = totalShown * row.height() + (totalShown - 1) * self._mainLayout.spacing()
         self.setFixedHeight(height_)
+
+    def items(self) -> list[ImportSongItem]:
+        return self._widgets

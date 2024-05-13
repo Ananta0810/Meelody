@@ -13,9 +13,9 @@ from app.common.statics.styles import Paddings
 from app.components.base import Component, FontFactory
 from app.components.buttons import ButtonFactory
 from app.components.labels import Label
-from app.views.home.songs_table.dialogs.download_songs_dialog import DownloadSongsDialog
-from app.views.home.songs_table.dialogs.import_songs_dialog import ImportSongsDialog
-from app.views.home.songs_table.dialogs.select_playlist_songs_dialog import SelectPlaylistSongsDialog
+from app.views.windows.main_window.home.songs_table.dialogs.download_songs_dialog import DownloadSongsDialog
+from app.views.windows.main_window.home.songs_table.dialogs.import_songs_dialog import ImportSongsDialog
+from app.views.windows.main_window.home.songs_table.dialogs.select_playlist_songs_dialog import SelectPlaylistSongsDialog
 
 
 class SongsTableHeader(QWidget, Component):

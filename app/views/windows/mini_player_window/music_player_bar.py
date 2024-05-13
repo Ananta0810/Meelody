@@ -17,7 +17,7 @@ from app.components.labels import LabelWithPlaceHolder
 from app.components.sliders import HorizontalSlider
 from app.components.widgets import Box, FlexBox
 from app.utils.others import Times
-from app.views.player_bar.timer_dialog import TimerDialog
+from app.views.windows.main_window.player_bar.timer_dialog import TimerDialog
 
 
 class MusicPlayerBar(QWidget, Component):

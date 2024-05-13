@@ -11,9 +11,9 @@ from app.common.statics.styles import Paddings
 from app.components.base import Component
 from app.components.buttons import ButtonFactory
 from app.components.widgets import StyleWidget
-from app.views.home.current_playlist import CurrentPlaylist
-from app.views.home.playlists_carousel import PlaylistsCarousel
-from app.views.home.settings import SettingsDialog
+from app.views.windows.main_window.home.current_playlist import CurrentPlaylist
+from app.views.windows.main_window.home.playlists_carousel import PlaylistsCarousel
+from app.views.windows.main_window.home.settings import SettingsDialog
 
 
 class HomeBody(QScrollArea, Component):

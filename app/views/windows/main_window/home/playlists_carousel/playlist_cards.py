@@ -23,7 +23,7 @@ from app.helpers.builders import ImageEditor
 from app.utils.base import Bytes, Lists
 from app.utils.others import Files, Logger
 from app.utils.qt import Pixmaps, Widgets
-from app.views.home.playlists_carousel.update_playlist_dialog import UpdatePlaylistDialog
+from app.views.windows.main_window.home.playlists_carousel.update_playlist_dialog import UpdatePlaylistDialog
 
 
 class PlaylistCard(ExtendableStyleWidget):

@@ -9,8 +9,8 @@ from app.common.statics.styles import Colors
 from app.components.base import Component
 from app.components.windows.windows import TitleBarWindow
 from app.utils.base import Strings
-from app.views.home import HomeBody
-from app.views.player_bar import MusicPlayerBar
+from app.views.windows.main_window.home import HomeBody
+from app.views.windows.main_window.player_bar import MusicPlayerBar
 from app.views.windows.mini_player_window.mini_player_window import MiniPlayerWindow
 
 

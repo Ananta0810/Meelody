@@ -20,7 +20,7 @@ from app.helpers.builders import ImageEditor
 from app.utils.base import silence, suppressException
 from app.utils.others import Times, Logger
 from app.utils.qt import Widgets
-from app.views.home.songs_table.dialogs.update_song_dialog import UpdateSongDialog
+from app.views.windows.main_window.home.songs_table.dialogs.update_song_dialog import UpdateSongDialog
 
 
 class SongRow(ExtendableStyleWidget):

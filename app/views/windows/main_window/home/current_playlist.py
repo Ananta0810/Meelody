@@ -10,7 +10,7 @@ from app.common.statics.qt import Images
 from app.components.base import Component, FontFactory
 from app.components.images.cover import CoverWithPlaceHolder, Cover
 from app.components.labels import LabelWithPlaceHolder
-from app.views.home.songs_table import SongsTable
+from app.views.windows.main_window.home.songs_table import SongsTable
 
 
 class _Info(QVBoxLayout, Component):

@@ -18,7 +18,7 @@ from app.components.inputs import Input
 from app.components.labels import Label
 from app.utils.base import Strings
 from app.utils.others import Logger
-from app.views.home.songs_table.dialogs.download_songs_dialog.download_songs_menu import DownloadSongsMenu
+from app.views.windows.main_window.home.songs_table.dialogs.download_songs_dialog.download_songs_menu import DownloadSongsMenu
 
 
 class DownloadSongsDialog(BaseDialog):

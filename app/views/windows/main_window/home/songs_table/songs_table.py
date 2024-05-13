@@ -4,8 +4,8 @@ from PyQt5.QtCore import Qt
 from PyQt5.QtWidgets import QWidget, QVBoxLayout
 
 from app.common.statics.qt import Cursors
-from app.views.home.songs_table.songs_menu import SongsMenu
-from app.views.home.songs_table.songs_table_header import SongsTableHeader
+from app.views.windows.main_window.home.songs_table.songs_menu import SongsMenu
+from app.views.windows.main_window.home.songs_table.songs_table_header import SongsTableHeader
 
 
 class SongsTable(QWidget):

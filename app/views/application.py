@@ -1,5 +1,5 @@
 from app.common.others import appCenter, database, musicPlayer, translator
-from app.views.windows import MainWindow
+from app.views.windows.main_window import MainWindow
 
 
 class Application:

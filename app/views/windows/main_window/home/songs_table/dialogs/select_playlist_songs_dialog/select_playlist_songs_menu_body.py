@@ -10,7 +10,7 @@ from app.common.statics.qt import Cursors
 from app.common.statics.styles import Colors
 from app.components.scroll_areas import SmoothVerticalScrollArea
 from app.utils.base import Lists, Dicts
-from app.views.home.songs_table.dialogs.select_playlist_songs_dialog.select_playlist_song_row import SongRow
+from app.views.windows.main_window.home.songs_table.dialogs.select_playlist_songs_dialog.select_playlist_song_row import SongRow
 
 
 class MenuBody(SmoothVerticalScrollArea):

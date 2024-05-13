@@ -6,8 +6,8 @@ from app.components.base import FontFactory
 from app.components.buttons import ActionButton
 from app.components.dialogs import BaseDialog
 from app.components.widgets import StyleWidget, FlexBox, Box
-from app.views.home.songs_table.dialogs.select_playlist_songs_dialog.select_playlist_songs_menu_body import MenuBody
-from app.views.home.songs_table.dialogs.select_playlist_songs_dialog.select_playlist_songs_menu_header import MenuHeader
+from app.views.windows.main_window.home.songs_table.dialogs.select_playlist_songs_dialog.select_playlist_songs_menu_body import MenuBody
+from app.views.windows.main_window.home.songs_table.dialogs.select_playlist_songs_dialog.select_playlist_songs_menu_header import MenuHeader
 
 
 class SelectPlaylistSongsDialog(BaseDialog):
