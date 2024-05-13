@@ -17,9 +17,10 @@ from app.components.images.cover import CoverWithPlaceHolder, Cover
 from app.components.labels import LabelWithPlaceHolder
 from app.components.widgets import ExtendableStyleWidget, StyleWidget, FlexBox
 from app.helpers.builders import ImageEditor
-from app.utils.base import silence, suppressException
+from app.utils.base import silence
 from app.utils.others import Times, Logger
 from app.utils.qt import Widgets
+from app.utils.reflections import suppressException
 from app.views.windows.main_window.home.songs_table.dialogs.update_song_dialog import UpdateSongDialog
 
 

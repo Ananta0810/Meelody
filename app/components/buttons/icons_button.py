@@ -7,7 +7,8 @@ from app.components.base.app_icon import AppIcon
 from app.components.base.base_component import Component
 from app.helpers.stylesheets import ClassNameTheme
 from app.helpers.stylesheets import ClassNameTranslator
-from app.utils.base import Strings, suppressException
+from app.utils.base import Strings
+from app.utils.reflections import suppressException
 
 
 class StateIcon:

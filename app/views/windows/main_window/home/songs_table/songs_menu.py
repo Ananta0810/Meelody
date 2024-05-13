@@ -11,8 +11,9 @@ from app.common.others import appCenter, musicPlayer
 from app.components.asyncs import ChunksConsumer
 from app.components.events import VisibleObserver
 from app.components.scroll_areas import SmoothVerticalScrollArea
-from app.utils.base import Lists, Strings, silence, suppressException
+from app.utils.base import Lists, Strings, silence
 from app.utils.qt import Widgets
+from app.utils.reflections import suppressException
 from app.views.windows.main_window.home.songs_table.song_row import SongRow
 
 MAX_ITEMS_VISIBLE_ON_MENU = 6

@@ -4,7 +4,8 @@ from PyQt5.QtGui import QResizeEvent
 from PyQt5.QtWidgets import QWidget
 
 from app.components.widgets import ExtendableStyleWidget, StyleWidget
-from app.utils.base import Numbers, Strings, suppressException
+from app.utils.base import Numbers, Strings
+from app.utils.reflections import suppressException
 
 
 class ProgressBar(ExtendableStyleWidget):

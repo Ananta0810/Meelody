@@ -4,7 +4,7 @@ from typing import final, Optional
 from app.common.others import appCenter, translator
 from app.helpers.stylesheets import ClassNameTranslator
 from app.utils.base import Strings
-from app.utils.base.decorators import suppressException
+from app.utils.reflections import suppressException
 
 
 class Component:

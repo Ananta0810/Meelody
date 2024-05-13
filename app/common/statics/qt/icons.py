@@ -1,7 +1,7 @@
 from PyQt5.QtCore import QSize
 
 from app.components.base import AppIcon
-from app.utils.base import memoizeStaticProperty
+from app.utils.reflections import memoizeStaticProperty
 
 
 class Icons:

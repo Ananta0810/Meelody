@@ -4,7 +4,8 @@ from PyQt5.QtWidgets import QWidget
 
 from app.helpers.stylesheets.translators.props_translators import PaddingTranslator, TextTranslator, RoundedTranslator, BackgroundTranslator, \
     BorderTranslator, ClassName, PropsTranslator
-from app.utils.base import Dicts, Strings, Lists, Classes
+from app.utils.base import Dicts, Strings, Lists
+from app.utils.reflections import Classes
 
 
 class ElementStateStyles:
