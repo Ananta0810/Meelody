@@ -217,7 +217,7 @@ class MusicPlayerBar(QWidget, Component):
     def _createThreads(self):
         self._playerTrackingThread = PlayerTrackingThread(self)
 
-    def _translateUI(self) -> None:
+    def translateUI(self) -> None:
         self._titleLabel.setPlaceHolder(translator.translate("MUSIC_PLAYER.SONG_TITLE"))
         self._artistLabel.setPlaceHolder(translator.translate("MUSIC_PLAYER.SONG_ARTIST"))
 

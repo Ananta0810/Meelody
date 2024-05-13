@@ -1,3 +1,5 @@
+import sys
+
 from PyQt5.QtCore import Qt
 from PyQt5.QtGui import QWindow
 from PyQt5.QtWinExtras import QWinThumbnailToolBar, QWinThumbnailToolButton
@@ -22,7 +24,7 @@ class MiniPlayerWindow(TitleBarWindow, Component):
         self.setFixedHeight(540)
 
     def _createUI(self) -> None:
-        self._inner.setClassName("rounded-24 bg-white dark:bg-dark")
+        self._inner.setClassName("rounded-12 bg-white dark:bg-dark")
 
         self._songInfo = CurrentSongInfo()
         self._songInfo.setContentsMargins(16, 32, 16, 16)
@@ -50,7 +52,7 @@ class MiniPlayerWindow(TitleBarWindow, Component):
         self._toolbar.addButton(self._toolbarPlayBtn)
         self._toolbar.addButton(self._toolbarNextBtn)
 
-    def _translateUI(self) -> None:
+    def translateUI(self) -> None:
         playTooltip = "MUSIC_PLAYER.TOOLTIP_PAUSE_BTN" if musicPlayer.isPlaying() else "MUSIC_PLAYER.TOOLTIP_PLAY_BTN"
 
         self._toolbarPrevBtn.setToolTip(translator.translate("MUSIC_PLAYER.TOOLTIP_PREV_BTN"))
@@ -59,6 +61,8 @@ class MiniPlayerWindow(TitleBarWindow, Component):
 
     def _connectSignalSlots(self) -> None:
         self._closeBtn.clicked.connect(lambda: appCenter.exited.emit())
+        self._closeBtn.clicked.connect(lambda: sys.exit())
+
         self._maximizeBtn.clicked.connect(lambda: self.showMainWindow())
         self._minimizeBtn.clicked.connect(lambda: self.showMinimized())
 
@@ -82,6 +86,9 @@ class MiniPlayerWindow(TitleBarWindow, Component):
 
     def show(self) -> None:
         super().show()
+        children = self.findChildren(Component)
+        for child in children:
+            child.translateUI()
         self.applyTheme()
         self.moveToCenter()
         self._toolbar.setWindow(self.windowHandle())
