@@ -4,7 +4,7 @@ from typing import Optional
 
 from PyQt5.QtCore import Qt, QThread
 from PyQt5.QtGui import QKeySequence
-from PyQt5.QtWidgets import QHBoxLayout, QWidget, QShortcut
+from PyQt5.QtWidgets import QWidget, QShortcut
 
 from app.common.models import Song
 from app.common.others import musicPlayer, translator
@@ -113,36 +113,18 @@ class MusicPlayerBar(QWidget, Component):
         self._upperLayout.addWidget(self._totalTimeLabel)
 
         # ======================================== LEFT ========================================
-        self._volumeBtn = ButtonFactory.createMultiStatesButton(Icons.large, Paddings.RELATIVE_50)
-        self._volumeBtn.setIcons([
+        self.volumeBtn = ButtonFactory.createMultiStatesButton(Icons.large, Paddings.RELATIVE_50)
+        self.volumeBtn.setIcons([
             StateIcon(Icons.volumeUp.withColor(Colors.primary), Icons.volumeUp.withColor(Colors.white)),
             StateIcon(Icons.volumeDown.withColor(Colors.primary), Icons.volumeDown.withColor(Colors.white)),
             StateIcon(Icons.volumeSilent.withColor(Colors.primary), Icons.volumeSilent.withColor(Colors.white)),
         ])
 
-        self._volumeBtn.setClassName("rounded-full bg-none hover:bg-primary-12 dark:hover:bg-white-20")
-        self._volumeBtn.setChangeStateOnPressed(False)
-        self._volumeBtn.setActiveState(0)
+        self.volumeBtn.setClassName("rounded-full bg-none hover:bg-primary-12 dark:hover:bg-white-20")
+        self.volumeBtn.setChangeStateOnPressed(False)
+        self.volumeBtn.setActiveState(0)
 
-        self._volumeBox = QWidget()
-        self._volumeBoxLayout = QHBoxLayout(self._volumeBox)
-        self._volumeBoxLayout.setContentsMargins(0, 0, 0, 0)
-
-        self._volumeSlider = HorizontalSlider()
-        self._volumeSlider.setFixedHeight(40)
-        self._volumeSlider.setPageStep(0)
-        self._volumeSlider.setMaximum(100)
-        self._volumeSlider.setProperty("value", 0)
-        self._volumeSlider.setSliderPosition(100)
-        self._volumeSlider.setClassName("rounded-8 bg-primary-10 dark:bg-white-20 dark:handle/bg-white dark:track/active:bg-white")
-        self._volumeSlider.hide()
-        policy = self._volumeSlider.sizePolicy()
-        policy.setRetainSizeWhenHidden(True)
-        self._volumeSlider.setSizePolicy(policy)
-
-        self._volumeBoxLayout.addWidget(self._volumeSlider)
-        self._leftLayout.addWidget(self._volumeBtn)
-        self._leftLayout.addWidget(self._volumeBox, 1)
+        self._leftLayout.addWidget(self.volumeBtn)
 
         # ======================================== MIDDLE ========================================
 
@@ -234,7 +216,7 @@ class MusicPlayerBar(QWidget, Component):
             translator.translate("MUSIC_PLAYER.TOOLTIP_LOVE_BTN")
         ])
 
-        self._volumeBtn.setToolTips([
+        self.volumeBtn.setToolTips([
             translator.translate("MUSIC_PLAYER.TOOLTIP_VOLUME_BTN"),
             translator.translate("MUSIC_PLAYER.TOOLTIP_VOLUME_BTN"),
             translator.translate("MUSIC_PLAYER.TOOLTIP_VOLUME_BTN"),
@@ -243,7 +225,6 @@ class MusicPlayerBar(QWidget, Component):
         self._timerBtn.setToolTip(translator.translate("MUSIC_PLAYER.TOOLTIP_TIMER_BTN"))
 
     def _connectSignalSlots(self) -> None:
-        self._volumeBtn.clicked.connect(lambda: self._volumeSlider.setVisible(not self._volumeSlider.isVisible()))
         self._timeSlider.sliderPressed.connect(lambda: self.__setCanRunTimeSlider(False))
         self._timeSlider.sliderReleased.connect(lambda: self.__setCanRunTimeSlider(True))
 
@@ -254,7 +235,6 @@ class MusicPlayerBar(QWidget, Component):
         self._timeSlider.sliderReleased.connect(lambda: self.__skipTo(self._timeSlider.sliderPosition()))
         self._loopBtn.clicked.connect(lambda: musicPlayer.setLooping(self._loopBtn.isActive()))
         self._shuffleBtn.clicked.connect(lambda: musicPlayer.setShuffle(self._shuffleBtn.isActive()))
-        self._volumeSlider.valueChanged.connect(lambda: musicPlayer.setVolume(self._volumeSlider.value()))
         self._timerBtn.clicked.connect(lambda: self.__openTimer())
 
         musicPlayer.played.connect(lambda: self.__setPLaying(True))
@@ -364,7 +344,7 @@ class MusicPlayerBar(QWidget, Component):
             state = VOLUME_DOWN_STATE
         if 33 < volume <= 100:
             state = VOLUME_UP_STATE
-        self._volumeBtn.setActiveState(state)
+        self.volumeBtn.setActiveState(state)
 
     def __openTimer(self) -> None:
         if self._timerDialog is None:

@@ -20,8 +20,6 @@ class VerticalSlider(QSlider, Component):
         self._handleHeight = 10
         self._trackSize = 2
         self.setOrientation(Qt.Vertical)
-        self.setInvertedAppearance(True)
-        self.setInvertedControls(True)
 
     def setSliderSize(self, handle: int, track: int = 2) -> None:
         self._handleHeight = handle
@@ -46,7 +44,7 @@ class VerticalSlider(QSlider, Component):
 
         sliderBg = theme.getElement("none").state("none").toProps(["background-color: transparent"])
         trackActive = theme.getElement("track").state("active").toProps(["background-color: rgb(100, 32, 255)"])
-        trackInactive = theme.getElement("track").state("none").toProps(["background-color: rgba(128, 128, 128, 128)"])
+        trackInactive = theme.getElement("track").state("inactive").toProps(["background-color: rgba(128, 128, 128, 128)"])
         handle = theme.getElement("handle").state("none").toProps(["background-color: rgb(100, 32, 255)"])
         handleActive = theme.getElement("handle").state("active").toProps() or handle
 
