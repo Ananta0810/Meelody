@@ -47,6 +47,10 @@ class Icons:
         return AppIcon("resource/images/icons/love.png")
 
     @memoizeStaticProperty
+    def loved(self) -> AppIcon:
+        return AppIcon("resource/images/icons/loved.png")
+
+    @memoizeStaticProperty
     def download(self) -> AppIcon:
         return AppIcon("resource/images/icons/download.png")
 

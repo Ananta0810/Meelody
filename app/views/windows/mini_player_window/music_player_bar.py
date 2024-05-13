@@ -193,7 +193,7 @@ class MusicPlayerBar(QWidget, Component):
         # ======================================== RIGHT ========================================
 
         self._loveBtn = ButtonFactory.createToggleButton(Icons.large, Paddings.RELATIVE_50)
-        self._loveBtn.setActiveIcon(Icons.love.withColor(Colors.danger))
+        self._loveBtn.setActiveIcon(Icons.loved.withColor(Colors.danger))
         self._loveBtn.setInactiveIcon(Icons.love.withColor(Colors.gray))
         self._loveBtn.setClassName(
             "rounded-full bg-none active/hover:bg-danger-12 inactive/hover:bg-gray-12",
