@@ -1,7 +1,7 @@
 import io
 from io import BytesIO
 
-from PIL import Image, UnidentifiedImageError
+from PIL import Image, UnidentifiedImageError, ImageFilter
 
 from app.common.exceptions import ResourceException
 
@@ -34,7 +34,7 @@ class ImageEditor:
             return False
         except TypeError:
             return True
-        except AttributeError:
+        except (AttributeError, RuntimeError):
             return False
 
     def crop(self, left, top, right, bottom) -> 'ImageEditor':
@@ -70,6 +70,10 @@ class ImageEditor:
         if self.isBroken():
             return self
         image: Image = self._data.copy().resize((width, height), Image.ANTIALIAS)
+        return ImageEditor(image)
+
+    def gaussianBlur(self, blurRadius=50) -> 'ImageEditor':
+        image: Image = self._data.filter(ImageFilter.GaussianBlur(radius=blurRadius))
         return ImageEditor(image)
 
     def toBytes(self) -> bytes:

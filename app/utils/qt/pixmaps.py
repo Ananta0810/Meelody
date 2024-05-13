@@ -85,6 +85,22 @@ class Pixmaps:
         return target
 
     @staticmethod
+    def blur(pixmap: QPixmap, rate: float = 0) -> QPixmap:
+        target = QPixmap(pixmap.size())
+        target.fill(Qt.transparent)
+
+        painter = QPainter(target)
+        painter.setRenderHint(QPainter.Antialiasing, True)
+
+        path = QPainterPath()
+        path.addRoundedRect(0, 0, pixmap.width(), pixmap.height(), radius, radius)
+
+        painter.setClipPath(path)
+        painter.drawPixmap(0, 0, pixmap)
+        painter.end()
+        return target
+
+    @staticmethod
     def getDominantColors(pixmap: QPixmap, maxColors: int = 10) -> list[Color]:
         pixmapBytes: bytes = Pixmaps.toBytes(pixmap)
         image: Image = Image.open(BytesIO(pixmapBytes))
