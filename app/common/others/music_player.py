@@ -32,6 +32,7 @@ class MusicPlayer(QObject):
         self.__currentSong: Optional[Song] = None
         self.__currentSongIndex: int = 0
         self.__timeStartInSec: float = 0
+        self.__volume: int = 100
         self.__loaded: bool = False
         self.__timeToStopAsSeconds: int | None = None
         self.__elapsedTimeAsSeconds: int = 0
@@ -72,6 +73,9 @@ class MusicPlayer(QObject):
 
     def getTimeStart(self):
         return self.__timeStartInSec
+
+    def getVolume(self):
+        return self.__volume
 
     def loadSongToPlay(self):
         if self.__loaded:
@@ -199,6 +203,8 @@ class MusicPlayer(QObject):
         """
         MAX_VOLUME = 100
         mixer.music.set_volume(volume / MAX_VOLUME)
+
+        self.__volume = volume
         self.volumeChanged.emit(volume)
 
     def refreshRate(self) -> float:

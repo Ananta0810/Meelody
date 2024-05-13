@@ -24,6 +24,7 @@ class MiniPlayerWindow(TitleBarWindow, Component):
 
         self.setFixedWidth(720)
         self.setFixedHeight(540)
+        self._volumeSlider.setValue(musicPlayer.getVolume())
 
     def _createUI(self) -> None:
         self._inner.setClassName("rounded-12 bg-white dark:bg-dark")
@@ -94,6 +95,8 @@ class MiniPlayerWindow(TitleBarWindow, Component):
 
         musicPlayer.paused.connect(lambda: self._toolbarPlayBtn.setToolTip(translator.translate("MUSIC_PLAYER.TOOLTIP_PLAY_BTN")))
         musicPlayer.paused.connect(lambda: self._toolbarPlayBtn.setIcon(Icons.play.withColor(Colors.primary)))
+
+        musicPlayer.volumeChanged.connect(lambda volume: self._volumeSlider.setValue(volume))
 
     def applyLightMode(self) -> None:
         super().applyLightMode()

@@ -36,6 +36,7 @@ class MusicPlayerBar(QWidget, Component):
         self.setTotalTime(0)
         self._loopBtn.setActive(musicPlayer.isLooping())
         self._shuffleBtn.setActive(musicPlayer.isShuffle())
+        self._volumeSlider.setValue(musicPlayer.getVolume())
 
     def _createUI(self) -> None:
         self.setAttribute(Qt.WA_StyledBackground, True)
@@ -273,7 +274,7 @@ class MusicPlayerBar(QWidget, Component):
         musicPlayer.songChanged.connect(lambda song: self.__selectSong(song))
         musicPlayer.loopChanged.connect(lambda a0: self._loopBtn.setActive(a0))
         musicPlayer.shuffleChanged.connect(lambda a0: self._shuffleBtn.setActive(a0))
-        musicPlayer.volumeChanged.connect(lambda volume: self.__changeVolumeIcon(volume))
+        musicPlayer.volumeChanged.connect(lambda volume: self.__setVolume(volume))
 
     def _assignShortcuts(self) -> None:
         playShortcut = QShortcut(QKeySequence(Qt.Key_Space), self._playSongBtn)
@@ -377,7 +378,7 @@ class MusicPlayerBar(QWidget, Component):
     def __updateLoveState(self, state: bool) -> None:
         self._loveBtn.setActive(state)
 
-    def __changeVolumeIcon(self, volume: int) -> None:
+    def __setVolume(self, volume: int) -> None:
         VOLUME_UP_STATE: int = 0
         VOLUME_DOWN_STATE: int = 1
         SILENT_STATE: int = 2
@@ -387,6 +388,8 @@ class MusicPlayerBar(QWidget, Component):
             state = VOLUME_DOWN_STATE
         if 33 < volume <= 100:
             state = VOLUME_UP_STATE
+
+        self._volumeSlider.setValue(volume)
         self._volumeBtn.setActiveState(state)
 
     def __openTimer(self) -> None:
