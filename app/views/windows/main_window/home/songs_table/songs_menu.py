@@ -168,7 +168,9 @@ class SongsMenu(SmoothVerticalScrollArea):
         songIdSet = set([song.getId() for song in playlist.getSongs().toList()])
         songRows: list[SongRow] = self.widgets()
 
-        needUpdateVisible = any([row.isVisible() != (row.content().getId() in songIdSet) for row in songRows])
+        visibleRowIdSet = {row.content().getId() for row in songRows if row.isVisible()}
+
+        needUpdateVisible = visibleRowIdSet != songIdSet
 
         if not needUpdateVisible:
             return
