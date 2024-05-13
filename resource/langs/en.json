@@ -1,4 +1,10 @@
 {
+  "TITLE_BAR": {
+    "MINIMIZE_BNT": "Minimize",
+    "CLOSE_BTN": "Close",
+    "MINI_PLAYER_BTN": "Mini player",
+    "EXIT_MINI_PLAYER_BTN": "Exit mini player"
+  },
   "DIALOG": {
     "SUCCESS": "Success",
     "WARNING": "Warning",

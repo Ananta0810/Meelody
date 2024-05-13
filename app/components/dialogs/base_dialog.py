@@ -4,6 +4,7 @@ from PyQt5.QtCore import Qt, pyqtSignal
 from PyQt5.QtGui import QKeySequence, QResizeEvent
 from PyQt5.QtWidgets import QHBoxLayout, QShortcut, QWidget, QLayout
 
+from app.common.others import translator
 from app.common.statics.qt import Icons
 from app.common.statics.styles import Colors
 from app.common.statics.styles import Paddings
@@ -27,7 +28,6 @@ class BaseDialog(FramelessWindow):
         self._btnClose.setLightModeIcon(Icons.close.withColor(Colors.gray))
         self._btnClose.setDarkModeIcon(Icons.close.withColor(Colors.white))
         self._btnClose.setClassName("bg-gray-12 hover:bg-gray-25 rounded-8 dark:bg-gray-20 dark:hover:bg-gray-33")
-        self._btnClose.setToolTip(f"(Esc)")
 
         self._titleBar = QWidget()
 
@@ -44,6 +44,9 @@ class BaseDialog(FramelessWindow):
         super().addWidget(self._titleBar)
         super().addLayout(self._body)
         self._animation = Fade(self)
+
+    def translateUI(self) -> None:
+        self._btnClose.setToolTip(f'{translator.translate("TITLE_BAR.CLOSE_BTN")} (Esc)')
 
     def _connectSignalSlots(self) -> None:
         self._btnClose.clicked.connect(lambda: self.closed.emit())

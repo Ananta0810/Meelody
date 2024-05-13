@@ -58,6 +58,9 @@ class MainWindow(TitleBarWindow, Component):
         self._toolbar.addButton(self._toolbarNextBtn)
 
     def translateUI(self) -> None:
+        super().translateUI()
+        self._maximizeBtn.setToolTip(translator.translate("TITLE_BAR.MINI_PLAYER_BTN"))
+
         playTooltip = "MUSIC_PLAYER.TOOLTIP_PAUSE_BTN" if musicPlayer.isPlaying() else "MUSIC_PLAYER.TOOLTIP_PLAY_BTN"
 
         self._toolbarPrevBtn.setToolTip(translator.translate("MUSIC_PLAYER.TOOLTIP_PREV_BTN"))

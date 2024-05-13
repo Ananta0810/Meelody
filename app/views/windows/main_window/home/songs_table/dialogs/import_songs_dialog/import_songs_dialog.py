@@ -69,6 +69,7 @@ class ImportSongsDialog(BaseDialog):
         self.addWidget(self._mainView)
 
     def translateUI(self) -> None:
+        super().translateUI()
         self._header.setText(translator.translate("IMPORT_SONGS_DIALOG.LABEL"))
         self._closeBtn.setText(translator.translate("IMPORT_SONGS_DIALOG.CLOSE_BTN"))
 

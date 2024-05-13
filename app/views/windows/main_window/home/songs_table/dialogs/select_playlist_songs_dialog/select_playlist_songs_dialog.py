@@ -68,6 +68,7 @@ class SelectPlaylistSongsDialog(BaseDialog):
         self.addWidget(self._footer)
 
     def translateUI(self) -> None:
+        super().translateUI()
         self._applyBtn.setText(translator.translate("SELECT_PLAYLIST_SONGS_DIALOG.SAVE_BTN"))
 
     def _connectSignalSlots(self) -> None:

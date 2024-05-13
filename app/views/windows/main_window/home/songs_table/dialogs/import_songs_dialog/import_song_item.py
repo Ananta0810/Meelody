@@ -241,8 +241,10 @@ class UpdateImportSongDialog(BaseDialog):
         self.addWidget(self._mainView)
 
     def translateUI(self) -> None:
+        super().translateUI()
+        self._importBtn.setToolTip("(Enter)")
         self._header.setText(translator.translate("IMPORT_SONGS_DIALOG.LABEL"))
-        self._importBtn.setText(f'{translator.translate("IMPORT_SONGS_DIALOG.IMPORT_AGAIN_BTN")} (Enter)')
+        self._importBtn.setText(translator.translate("IMPORT_SONGS_DIALOG.IMPORT_AGAIN_BTN"))
         self._titleLabel.setText(translator.translate("SONG.TITLE"))
 
     def _connectSignalSlots(self) -> None:

@@ -70,6 +70,9 @@ class MiniPlayerWindow(TitleBarWindow, Component):
         self._toolbar.addButton(self._toolbarNextBtn)
 
     def translateUI(self) -> None:
+        super().translateUI()
+        self._maximizeBtn.setToolTip(translator.translate("TITLE_BAR.EXIT_MINI_PLAYER_BTN"))
+
         playTooltip = "MUSIC_PLAYER.TOOLTIP_PAUSE_BTN" if musicPlayer.isPlaying() else "MUSIC_PLAYER.TOOLTIP_PLAY_BTN"
 
         self._toolbarPrevBtn.setToolTip(translator.translate("MUSIC_PLAYER.TOOLTIP_PREV_BTN"))
@@ -108,9 +111,12 @@ class MiniPlayerWindow(TitleBarWindow, Component):
 
     def show(self) -> None:
         super().show()
+
+        self.translateUI()
         children = self.findChildren(Component)
         for child in children:
             child.translateUI()
+
         self.applyTheme()
         self.moveToCenter()
         self._toolbar.setWindow(self.windowHandle())

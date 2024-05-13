@@ -1,4 +1,10 @@
 {
+  "TITLE_BAR": {
+    "MINIMIZE_BNT": "Thu nhỏ",
+    "CLOSE_BTN": "Đóng",
+    "MINI_PLAYER_BTN": "Trình phát mini",
+    "EXIT_MINI_PLAYER_BTN": "Thoát trình thoát mini"
+  },
   "DIALOG": {
     "SUCCESS": "Thành công",
     "WARNING": "Cảnh báo",

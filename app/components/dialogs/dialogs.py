@@ -69,6 +69,11 @@ class _ConfirmDialog(FramelessWindow):
         super().addLayout(self._body)
         self._animation = Fade(self)
 
+    def translateUI(self) -> None:
+        super().translateUI()
+        self._acceptBtn.setToolTip("(Enter)")
+        self._cancelBtn.setToolTip("(Esc)")
+
     def _connectSignalSlots(self) -> None:
         self._acceptBtn.clicked.connect(lambda: self.confirmed.emit())
         self._cancelBtn.clicked.connect(lambda: self.canceled.emit())
@@ -86,8 +91,8 @@ class _ConfirmDialog(FramelessWindow):
     def setInfo(self, header: str, message: str, acceptText: str, cancelText: str) -> None:
         self._header.setText(header)
         self._message.setText(message)
-        self._acceptBtn.setText(f'{acceptText} (Enter)')
-        self._cancelBtn.setText(f'{cancelText} (Esc)')
+        self._acceptBtn.setText(acceptText)
+        self._cancelBtn.setText(cancelText)
 
         width = Numbers.clamp(self.sizeHint().width(), 480, 640)
         self.setFixedWidth(width)
@@ -106,6 +111,7 @@ class _ConfirmDialog(FramelessWindow):
         super().applyThemeToChildren()
 
     def show(self) -> None:
+        self.translateUI()
         self.applyTheme()
         self.moveToCenter()
         self.setWindowOpacity(0)
@@ -149,6 +155,10 @@ class _AlertDialog(BaseDialog):
         self.addWidget(self._message)
         self.addSpacing(8)
         self.addWidget(self._acceptBtn)
+
+    def translateUI(self) -> None:
+        super().translateUI()
+        self._acceptBtn.setToolTip("(Esc)")
 
     def _connectSignalSlots(self) -> None:
         super()._connectSignalSlots()

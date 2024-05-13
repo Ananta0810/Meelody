@@ -1,8 +1,8 @@
 from typing import Optional
 
 from PyQt5.QtCore import Qt, pyqtSignal
-from PyQt5.QtGui import QResizeEvent
-from PyQt5.QtWidgets import QHBoxLayout, QVBoxLayout, QWidget
+from PyQt5.QtGui import QResizeEvent, QKeySequence
+from PyQt5.QtWidgets import QHBoxLayout, QVBoxLayout, QWidget, QShortcut
 
 from app.common.others import appCenter, translator
 from app.common.statics.enums import ThemeMode
@@ -222,6 +222,7 @@ class SettingsDialog(FramelessWindow):
         self._animation = Fade(self)
 
     def translateUI(self) -> None:
+        self._closeBtn.setToolTip(f'{translator.translate("TITLE_BAR.CLOSE_BTN")} (Esc)')
         self._dialogTitle.setText(translator.translate("SETTINGS.LABEL"))
         self._languageTitleLabel.setText(translator.translate("SETTINGS.LANGUAGE_LABEL"))
         self._languageDescriptionLabel.setText(translator.translate("SETTINGS.LANGUAGE_DESCRIPTION"))
@@ -243,6 +244,11 @@ class SettingsDialog(FramelessWindow):
         self._closeBtn.clicked.connect(lambda: self.closeWithAnimation())
         self._cancelBtn.clicked.connect(lambda: self.closeWithAnimation())
         self._saveBtn.clicked.connect(lambda: self.__saveChanges())
+
+    def _assignShortcuts(self) -> None:
+        super()._assignShortcuts()
+        settingsShortcut = QShortcut(QKeySequence(Qt.Key_Escape), self._closeBtn)
+        settingsShortcut.activated.connect(lambda: self._closeBtn.click())
 
     def __selectTheme(self, theme: ThemeMode) -> None:
         self.__theme = theme

@@ -1,8 +1,8 @@
 from typing import Optional
 
 from PyQt5.QtCore import Qt, QSize
-from PyQt5.QtGui import QShowEvent, QWheelEvent
-from PyQt5.QtWidgets import QWidget, QVBoxLayout, QScrollArea, QHBoxLayout
+from PyQt5.QtGui import QShowEvent, QWheelEvent, QKeySequence
+from PyQt5.QtWidgets import QWidget, QVBoxLayout, QScrollArea, QHBoxLayout, QShortcut
 
 from app.common.others import translator
 from app.common.statics.qt import Icons
@@ -56,7 +56,12 @@ class HomeBody(QScrollArea, Component):
         self._mainLayout.addWidget(self._currentPlaylist)
 
     def translateUI(self) -> None:
-        self._settingsBtn.setToolTip(translator.translate("SETTINGS.LABEL"))
+        self._settingsBtn.setToolTip(f'{translator.translate("SETTINGS.LABEL")} (Ctrl+.)')
+
+    def _assignShortcuts(self) -> None:
+        super()._assignShortcuts()
+        settingsShortcut = QShortcut(QKeySequence("ctrl+."), self._settingsBtn)
+        settingsShortcut.activated.connect(lambda: self._settingsBtn.click())
 
     def wheelEvent(self, event: QWheelEvent) -> None:
         carouselTop = self._playlistsCarousel.mapToParent(self._inner.pos()).y()
