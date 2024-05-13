@@ -4,6 +4,5 @@ from .decorators import staticproperty, memoizeStaticProperty, memoizeResult, su
 from .dictionaries import Dicts
 from .functions import silence
 from .lists import Lists
-from .metas import SingletonMeta
 from .numbers import Numbers
 from .strings import Strings

@@ -1,3 +1,6 @@
+from PyQt5.QtCore import QObject
+
+
 class SingletonMeta(type):
     """
     The Singleton class can be implemented in different ways in Python. Some
@@ -16,3 +19,10 @@ class SingletonMeta(type):
             instance = super().__call__(*args, **kwargs)
             cls._instances[cls] = instance
         return cls._instances[cls]
+
+
+QObjectMeta = type(QObject)
+
+
+class SingletonQObjectMeta(QObjectMeta, SingletonMeta):
+    pass

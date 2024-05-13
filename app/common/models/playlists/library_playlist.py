@@ -5,7 +5,8 @@ from PyQt5.QtCore import pyqtSignal
 from app.common.models.playlist import Playlist
 from app.common.models.song import Song
 from app.common.others.translator import translator
-from app.utils.base import returnOnFailed, SingletonMeta
+from app.utils.base import returnOnFailed
+from app.utils.reflections import SingletonMeta
 from .common_playlist import CommonPlaylist
 
 

@@ -15,9 +15,10 @@ from app.components.inputs import Input
 from app.components.labels import Label
 from app.components.widgets import Box, FlexBox
 from app.utils.others import Logger
+from app.utils.reflections import SingletonQObjectMeta
 
 
-class TimerDialog(BaseDialog):
+class TimerDialog(BaseDialog, metaclass=SingletonQObjectMeta):
 
     def __init__(self):
         self.__isCountDown: bool = False
