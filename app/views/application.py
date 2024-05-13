@@ -38,10 +38,12 @@ class Application:
         musicPlayer.songChanged.connect(lambda song: settings.setPlayingSongId(song.getId()))
         musicPlayer.loopChanged.connect(lambda loop: settings.setIsLooping(loop))
         musicPlayer.shuffleChanged.connect(lambda shuffle: settings.setIsShuffle(shuffle))
+        musicPlayer.volumeChanged.connect(lambda shuffle: settings.setVolume(shuffle))
 
         musicPlayer.loadPlaylist(appCenter.library.getSongs())
         musicPlayer.setLooping(settings.isLooping)
         musicPlayer.setShuffle(settings.isShuffle)
+        musicPlayer.setVolume(settings.volume)
         musicPlayer.setCurrentSongIndex(appCenter.library.getSongs().getSongIndexWithId(appCenter.settings.playingSongId))
         musicPlayer.loadSongToPlay()
 
