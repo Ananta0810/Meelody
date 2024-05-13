@@ -19,7 +19,7 @@ class Component:
         self._connectSignalSlots()
         self._assignShortcuts()
 
-        translator.changed.connect(lambda: self._translateUI())
+        translator.changed.connect(lambda: self.translateUI())
 
         if autoChangeTheme:
             appCenter.themeChanged.connect(lambda light: self.applyLightMode() if light else self.applyDarkMode())
@@ -36,7 +36,7 @@ class Component:
     def _assignShortcuts(self) -> None:
         pass
 
-    def _translateUI(self) -> None:
+    def translateUI(self) -> None:
         pass
 
     @suppressException

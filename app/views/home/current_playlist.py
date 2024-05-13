@@ -46,7 +46,7 @@ class _Info(QVBoxLayout, Component):
         self.addWidget(self._cover)
         self.addLayout(self._labelsLayout)
 
-    def _translateUI(self) -> None:
+    def translateUI(self) -> None:
         playlist = appCenter.currentPlaylist
         self._titleLabel.setText(playlist.getInfo().getName())
         self.__setTotalSongs(playlist)

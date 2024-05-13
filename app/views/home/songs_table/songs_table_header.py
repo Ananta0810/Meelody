@@ -86,7 +86,7 @@ class SongsTableHeader(QWidget, Component):
 
         self._downloadDialog = None
 
-    def _translateUI(self) -> None:
+    def translateUI(self) -> None:
         self._trackLabel.setText(translator.translate("SONGS_MENU.HEADER.TRACK"))
         self._artistLabel.setText(translator.translate("SONGS_MENU.HEADER.ARTIST"))
         self._lengthLabel.setText(translator.translate("SONGS_MENU.HEADER.LENGTH"))

@@ -74,7 +74,7 @@ class DownloadSongsDialog(BaseDialog):
 
         self.addWidget(self._mainView)
 
-    def _translateUI(self) -> None:
+    def translateUI(self) -> None:
         self._header.setText(translator.translate("DOWNLOAD_DIALOG.LABEL"))
         self._input.setPlaceholderText(translator.translate("DOWNLOAD_DIALOG.PLACE_HOLDER"))
         self._searchBtn.setText(translator.translate("DOWNLOAD_DIALOG.SEARCH_BTN"))
@@ -209,7 +209,7 @@ class _SongInfoDialog(BaseDialog):
 
         self.addWidget(self._mainView)
 
-    def _translateUI(self) -> None:
+    def translateUI(self) -> None:
         self._header.setText(translator.translate("DOWNLOAD_DIALOG.LABEL"))
         self._acceptBtn.setText(translator.translate("DOWNLOAD_DIALOG.DOWNLOAD_BTN"))
         self._artistLabel.setText(translator.translate("SONG.TITLE"))

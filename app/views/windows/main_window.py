@@ -1,3 +1,5 @@
+import sys
+
 from PyQt5.QtCore import Qt
 from PyQt5.QtWinExtras import QWinThumbnailToolBar, QWinThumbnailToolButton
 
@@ -55,7 +57,7 @@ class MainWindow(TitleBarWindow, Component):
         self._toolbar.addButton(self._toolbarPlayBtn)
         self._toolbar.addButton(self._toolbarNextBtn)
 
-    def _translateUI(self) -> None:
+    def translateUI(self) -> None:
         playTooltip = "MUSIC_PLAYER.TOOLTIP_PAUSE_BTN" if musicPlayer.isPlaying() else "MUSIC_PLAYER.TOOLTIP_PLAY_BTN"
 
         self._toolbarPrevBtn.setToolTip(translator.translate("MUSIC_PLAYER.TOOLTIP_PREV_BTN"))
@@ -66,6 +68,7 @@ class MainWindow(TitleBarWindow, Component):
         self._minimizeBtn.clicked.connect(lambda: self.showMinimized())
         self._maximizeBtn.clicked.connect(lambda: self.showMiniPlayerWindow())
         self._closeBtn.clicked.connect(lambda: appCenter.exited.emit())
+        self._closeBtn.clicked.connect(lambda: sys.exit())
 
         self._toolbarPrevBtn.clicked.connect(lambda: musicPlayer.playPreviousSong())
         self._toolbarPlayBtn.clicked.connect(lambda: musicPlayer.pause() if musicPlayer.isPlaying() else musicPlayer.play())

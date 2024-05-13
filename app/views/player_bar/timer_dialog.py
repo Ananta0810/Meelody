@@ -100,7 +100,7 @@ class TimerDialog(BaseDialog):
         self._body.setContentsMargins(4, 4, 4, 12)
         self.addWidget(self._mainView)
 
-    def _translateUI(self) -> None:
+    def translateUI(self) -> None:
         self._startBtn.setText(translator.translate("MUSIC_PLAYER.TIMER_START_BTN"))
         self._stopBtn.setText(translator.translate("MUSIC_PLAYER.TIMER_STOP_BTN"))
 

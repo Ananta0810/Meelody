@@ -55,7 +55,7 @@ class HomeBody(QScrollArea, Component):
         self._mainLayout.addSpacing(50)
         self._mainLayout.addWidget(self._currentPlaylist)
 
-    def _translateUI(self) -> None:
+    def translateUI(self) -> None:
         self._settingsBtn.setToolTip(translator.translate("SETTINGS.LABEL"))
 
     def wheelEvent(self, event: QWheelEvent) -> None:

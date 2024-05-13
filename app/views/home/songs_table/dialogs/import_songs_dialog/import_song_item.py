@@ -31,7 +31,7 @@ class ImportSongItem(ExtendableStyleWidget):
     def __init__(self, path: str):
         super().__init__()
         self._initComponent()
-        self._translateUI()
+        self.translateUI()
 
         self._path = path
         self.__artist: Optional[str] = None
@@ -85,7 +85,7 @@ class ImportSongItem(ExtendableStyleWidget):
         self.setFixedHeight(self.sizeHint().height())
         self.setMinimumHeight(self.sizeHint().height())
 
-    def _translateUI(self) -> None:
+    def translateUI(self) -> None:
         self._updateBtn.setText(translator.translate("IMPORT_SONGS_DIALOG.CHANGE_TITLE_BTN"))
 
     def path(self) -> str:
@@ -240,7 +240,7 @@ class UpdateImportSongDialog(BaseDialog):
 
         self.addWidget(self._mainView)
 
-    def _translateUI(self) -> None:
+    def translateUI(self) -> None:
         self._header.setText(translator.translate("IMPORT_SONGS_DIALOG.LABEL"))
         self._importBtn.setText(translator.translate("IMPORT_SONGS_DIALOG.IMPORT_AGAIN_BTN"))
         self._titleLabel.setText(translator.translate("SONG.TITLE"))

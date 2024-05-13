@@ -49,11 +49,11 @@ class MenuHeader(ExtendableStyleWidget):
         self._mainLayout.addWidget(self._lengthLabel)
         self._mainLayout.addStretch()
 
-    def _translateUI(self) -> None:
+    def translateUI(self) -> None:
         self._titleLabel.setText(translator.translate("SELECT_PLAYLIST_SONGS_DIALOG.HEADER.TITLE"))
         self._artistLabel.setText(translator.translate("SELECT_PLAYLIST_SONGS_DIALOG.HEADER.ARTIST"))
         self._lengthLabel.setText(translator.translate("SELECT_PLAYLIST_SONGS_DIALOG.HEADER.TIME"))
 
     def showEvent(self, a0: Optional[QtGui.QShowEvent]) -> None:
         super().showEvent(a0)
-        self._translateUI()
+        self.translateUI()

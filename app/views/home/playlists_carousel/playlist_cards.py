@@ -116,9 +116,9 @@ class LibraryPlaylistCard(PlaylistCard):
         super()._initComponent()
         super().setCover(Images.defaultPlaylistCover)
 
-    def _translateUI(self) -> None:
+    def translateUI(self) -> None:
         self._title.setText(translator.translate("PLAYLIST_CAROUSEL.LIBRARY"))
-        super()._translateUI()
+        super().translateUI()
 
     def _connectSignalSlots(self) -> None:
         super()._connectSignalSlots()
@@ -153,7 +153,7 @@ class FavouritePlaylistCard(PlaylistCard):
 
         self._mainLayout.insertLayout(0, self._topLayout)
 
-    def _translateUI(self) -> None:
+    def translateUI(self) -> None:
         self._title.setText(translator.translate("PLAYLIST_CAROUSEL.FAVOURITES"))
         self._editCoverBtn.setToolTip(translator.translate("PLAYLIST_CAROUSEL.FAVOURITES.EDIT_COVER_BTN"))
 
@@ -200,7 +200,7 @@ class UserPlaylistCard(PlaylistCard):
         self.__playlist = playlist
         self.setInfo(playlist.getInfo())
         self.applyLightMode()
-        self._translateUI()
+        self.translateUI()
 
     def _createUI(self) -> None:
         super()._createUI()
@@ -225,7 +225,7 @@ class UserPlaylistCard(PlaylistCard):
         self._topLayout.addLayout(self._buttonsLayout)
         self._mainLayout.insertLayout(0, self._topLayout)
 
-    def _translateUI(self) -> None:
+    def translateUI(self) -> None:
         self._editBtn.setToolTip(translator.translate("PLAYLIST_CAROUSEL.PLAYLIST.EDIT_BTN"))
         self._deleteBtn.setToolTip(translator.translate("PLAYLIST_CAROUSEL.PLAYLIST.DELETE_BTN"))
 

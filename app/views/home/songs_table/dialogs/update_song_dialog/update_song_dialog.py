@@ -99,7 +99,7 @@ class UpdateSongDialog(BaseDialog):
         self.addWidget(self._mainView)
         self.setFixedWidth(480 + 24 * 2)
 
-    def _translateUI(self) -> None:
+    def translateUI(self) -> None:
         self._header.setText(translator.translate("UPDATE_SONG.LABEL"))
         self._acceptBtn.setText(translator.translate("UPDATE_SONG.SAVE_BTN"))
 
@@ -119,7 +119,7 @@ class UpdateSongDialog(BaseDialog):
         acceptShortcut.activated.connect(lambda: self._acceptBtn.click())
 
     def show(self) -> None:
-        self._translateUI()
+        self.translateUI()
         super().show()
 
     def __checkValid(self) -> None:

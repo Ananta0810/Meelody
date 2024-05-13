@@ -85,7 +85,7 @@ class BaseDialog(FramelessWindow):
 
     def show(self) -> None:
         self.applyTheme()
-        self._translateUI()
+        self.translateUI()
         self.moveToCenter()
         self.setWindowOpacity(0)
         super().show()

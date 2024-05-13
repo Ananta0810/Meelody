@@ -32,7 +32,7 @@ class SongRow(ExtendableStyleWidget):
         super()._initComponent()
 
         self.__displaySongInfo()
-        self._translateUI()
+        self.translateUI()
 
     def _createUI(self) -> None:
         self.setClassName("bg-none hover:bg-gray-12 rounded-12")
@@ -142,7 +142,7 @@ class SongRow(ExtendableStyleWidget):
         self._mainLayout.addWidget(self._mainButtons)
         self._mainLayout.addWidget(self._moreButtons)
 
-    def _translateUI(self) -> None:
+    def translateUI(self) -> None:
         self._moreBtn.setToolTip(translator.translate("SONG_ROW.MORE_BTN"))
         self._loveBtn.setToolTips([translator.translate("SONG_ROW.UNLOVE_BTN"), translator.translate("SONG_ROW.LOVE_BTN")])
         self._playBtn.setToolTips([translator.translate("SONG_ROW.PAUSE_BTN"), translator.translate("SONG_ROW.PLAY_BTN")])

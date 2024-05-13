@@ -221,7 +221,7 @@ class SettingsDialog(FramelessWindow):
 
         self._animation = Fade(self)
 
-    def _translateUI(self) -> None:
+    def translateUI(self) -> None:
         self._dialogTitle.setText(translator.translate("SETTINGS.LABEL"))
         self._languageTitleLabel.setText(translator.translate("SETTINGS.LANGUAGE_LABEL"))
         self._languageDescriptionLabel.setText(translator.translate("SETTINGS.LANGUAGE_DESCRIPTION"))
@@ -263,7 +263,7 @@ class SettingsDialog(FramelessWindow):
         super().applyThemeToChildren()
 
     def show(self) -> None:
-        self._translateUI()
+        self.translateUI()
         self.applyTheme()
         self.moveToCenter()
         self.setWindowOpacity(0)

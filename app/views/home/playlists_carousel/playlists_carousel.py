@@ -61,7 +61,7 @@ class PlaylistsCarousel(QScrollArea, Component):
         self._mainLayout.addWidget(self._newPlaylistCard)
         self._mainLayout.addStretch()
 
-    def _translateUI(self) -> None:
+    def translateUI(self) -> None:
         self._addPlaylistBtn.setToolTip(translator.translate("PLAYLIST_CAROUSEL.NEW_PLAYLIST_BTN"))
 
     def _connectSignalSlots(self) -> None:

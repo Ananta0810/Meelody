@@ -26,9 +26,9 @@ class AutoTranslateLabel(QLabel, Component):
 
     def setTranslateText(self, text: str) -> None:
         self.__translateKey = text
-        self._translateUI()
+        self.translateUI()
 
-    def _translateUI(self) -> None:
+    def translateUI(self) -> None:
         if self.__translateKey is not None:
             self.setText(translator.translate(self.__translateKey))
 

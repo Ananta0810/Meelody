@@ -33,6 +33,8 @@ class MusicPlayerBar(QWidget, Component):
         self._loopBtn.setActive(musicPlayer.isLooping())
         self._shuffleBtn.setActive(musicPlayer.isShuffle())
         self.setPlayingTime(musicPlayer.getPlayingTime())
+        self._playSongBtn.setVisible(not musicPlayer.isPlaying())
+        self._pauseSongBtn.setVisible(musicPlayer.isPlaying())
 
         song = musicPlayer.getCurrentSong()
         if song is None:
@@ -211,7 +213,7 @@ class MusicPlayerBar(QWidget, Component):
     def _createThreads(self):
         self._playerTrackingThread = PlayerTrackingThread(self)
 
-    def _translateUI(self) -> None:
+    def translateUI(self) -> None:
         self._prevSongBtn.setToolTip(translator.translate("MUSIC_PLAYER.TOOLTIP_PREV_BTN"))
         self._nextSongBtn.setToolTip(translator.translate("MUSIC_PLAYER.TOOLTIP_NEXT_BTN"))
         self._pauseSongBtn.setToolTip(translator.translate("MUSIC_PLAYER.TOOLTIP_PAUSE_BTN"))
