@@ -1,9 +1,10 @@
 import io
 from io import BytesIO
 
-from PIL import Image, UnidentifiedImageError, ImageFilter
+from PIL import Image, UnidentifiedImageError, ImageFilter, ImageEnhance
 
 from app.common.exceptions import ResourceException
+from app.utils.base import Numbers
 
 
 class ImageEditor:
@@ -74,6 +75,12 @@ class ImageEditor:
 
     def gaussianBlur(self, blurRadius=50) -> 'ImageEditor':
         image: Image = self._data.filter(ImageFilter.GaussianBlur(radius=blurRadius))
+        return ImageEditor(image)
+
+    def darken(self, brightness=50) -> 'ImageEditor':
+        brightness = Numbers.clamp(brightness, 0, 100)
+        enhancer = ImageEnhance.Brightness(self._data)
+        image = enhancer.enhance((100 - brightness) / 100)
         return ImageEditor(image)
 
     def toBytes(self) -> bytes:

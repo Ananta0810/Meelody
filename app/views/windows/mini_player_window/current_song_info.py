@@ -37,15 +37,16 @@ class CurrentSongInfo(ExtendableStyleWidget):
         self._cover.setFixedSize(256, 256)
         self._cover.setPlaceHolderCover(Cover.Props.fromBytes(Images.defaultPlaylistCover, width=256, height=256, radius=16))
 
-        self._titleLabel = Label()
+        self._titleLabel = Label(autoChangeTheme=False)
         self._titleLabel.setFont(FontFactory.create(family="Segoe UI Semibold", size=14))
-        self._titleLabel.setClassName("text-black dark:text-white bg-none")
-        self._titleLabel.setText("Song name here")
+        self._titleLabel.setClassName("text-white bg-none")
 
-        self._artistLabel = Label()
+        self._titleLabel.setAlignment(Qt.AlignHCenter)
+
+        self._artistLabel = Label(autoChangeTheme=False)
         self._artistLabel.setFont(FontFactory.create(size=9))
-        self._artistLabel.setClassName("text-gray bg-none")
-        self._artistLabel.setText("Song artist here")
+        self._artistLabel.setClassName("text-white-50 bg-none")
+        self._artistLabel.setAlignment(Qt.AlignHCenter)
 
         self._mainLayout.addWidget(self._cover, alignment=Qt.AlignHCenter)
         self._mainLayout.addSpacing(12)
@@ -60,6 +61,8 @@ class CurrentSongInfo(ExtendableStyleWidget):
     def resizeEvent(self, a0: typing.Optional[QtGui.QResizeEvent]) -> None:
         super().resizeEvent(a0)
         self._background.setFixedSize(a0.size())
+        self._titleLabel.setFixedWidth(a0.size().width() - self.contentsMargins().left() - self.contentsMargins().right())
+        self._artistLabel.setFixedWidth(a0.size().width() - self.contentsMargins().left() - self.contentsMargins().right())
 
     def __displaySongInfo(self, song: Song) -> None:
         if song is None:
@@ -89,4 +92,4 @@ class CurrentSongInfo(ExtendableStyleWidget):
 
     @staticmethod
     def __blurBackgroundOf(cover: bytes) -> bytes:
-        return ImageEditor.of(cover).resize(width=720, height=540).gaussianBlur(blurRadius=100).toBytes()
+        return ImageEditor.of(cover).resize(width=720, height=540).gaussianBlur(blurRadius=100).darken(33).toBytes()
