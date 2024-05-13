@@ -242,7 +242,7 @@ class UpdateImportSongDialog(BaseDialog):
 
     def translateUI(self) -> None:
         self._header.setText(translator.translate("IMPORT_SONGS_DIALOG.LABEL"))
-        self._importBtn.setText(translator.translate("IMPORT_SONGS_DIALOG.IMPORT_AGAIN_BTN"))
+        self._importBtn.setText(f'{translator.translate("IMPORT_SONGS_DIALOG.IMPORT_AGAIN_BTN")} (Enter)')
         self._titleLabel.setText(translator.translate("SONG.TITLE"))
 
     def _connectSignalSlots(self) -> None:

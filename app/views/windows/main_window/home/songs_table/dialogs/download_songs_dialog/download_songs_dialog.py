@@ -77,7 +77,7 @@ class DownloadSongsDialog(BaseDialog):
     def translateUI(self) -> None:
         self._header.setText(translator.translate("DOWNLOAD_DIALOG.LABEL"))
         self._input.setPlaceholderText(translator.translate("DOWNLOAD_DIALOG.PLACE_HOLDER"))
-        self._searchBtn.setText(translator.translate("DOWNLOAD_DIALOG.SEARCH_BTN"))
+        self._searchBtn.setText(f'{translator.translate("DOWNLOAD_DIALOG.SEARCH_BTN")} (Enter)')
 
     def _connectSignalSlots(self) -> None:
         super()._connectSignalSlots()
@@ -211,7 +211,7 @@ class _SongInfoDialog(BaseDialog):
 
     def translateUI(self) -> None:
         self._header.setText(translator.translate("DOWNLOAD_DIALOG.LABEL"))
-        self._acceptBtn.setText(translator.translate("DOWNLOAD_DIALOG.DOWNLOAD_BTN"))
+        self._acceptBtn.setText(f'{translator.translate("DOWNLOAD_DIALOG.DOWNLOAD_BTN")} (Enter)')
         self._artistLabel.setText(translator.translate("SONG.TITLE"))
         self._titleLabel.setText(translator.translate("SONG.ARTIST"))
 

@@ -101,7 +101,7 @@ class UpdateSongDialog(BaseDialog):
 
     def translateUI(self) -> None:
         self._header.setText(translator.translate("UPDATE_SONG.LABEL"))
-        self._acceptBtn.setText(translator.translate("UPDATE_SONG.SAVE_BTN"))
+        self._acceptBtn.setText(f'{translator.translate("UPDATE_SONG.SAVE_BTN")} (Enter)')
 
         self._titleLabel.setText(translator.translate("SONG.TITLE"))
         self._artistLabel.setText(translator.translate("SONG.ARTIST"))

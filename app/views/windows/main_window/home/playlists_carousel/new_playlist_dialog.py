@@ -71,7 +71,7 @@ class NewPlaylistDialog(BaseDialog):
 
     def translateUI(self) -> None:
         self._titleInput.setPlaceholderText(translator.translate("PLAYLIST_CAROUSEL.TITLE_PLACEHOLDER"))
-        self._acceptBtn.setText(translator.translate("PLAYLIST_CAROUSEL.NEW_PLAYLIST.ACCEPT_BTN"))
+        self._acceptBtn.setText(f'translator.translate("PLAYLIST_CAROUSEL.NEW_PLAYLIST.ACCEPT_BTN") (Enter)')
         self._editCoverBtn.setText(translator.translate("PLAYLIST_CAROUSEL.NEW_PLAYLIST.CHOOSE_COVER_BTN"))
 
     def _connectSignalSlots(self) -> None:

@@ -86,8 +86,8 @@ class _ConfirmDialog(FramelessWindow):
     def setInfo(self, header: str, message: str, acceptText: str, cancelText: str) -> None:
         self._header.setText(header)
         self._message.setText(message)
-        self._acceptBtn.setText(acceptText)
-        self._cancelBtn.setText(cancelText)
+        self._acceptBtn.setText(f'{acceptText} (Enter)')
+        self._cancelBtn.setText(f'{cancelText} (Esc)')
 
         width = Numbers.clamp(self.sizeHint().width(), 480, 640)
         self.setFixedWidth(width)

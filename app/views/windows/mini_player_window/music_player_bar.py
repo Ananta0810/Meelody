@@ -196,10 +196,10 @@ class MusicPlayerBar(QWidget, Component):
         self._playerTrackingThread = PlayerTrackingThread(self)
 
     def translateUI(self) -> None:
-        self._prevSongBtn.setToolTip(translator.translate("MUSIC_PLAYER.TOOLTIP_PREV_BTN"))
-        self._nextSongBtn.setToolTip(translator.translate("MUSIC_PLAYER.TOOLTIP_NEXT_BTN"))
-        self._pauseSongBtn.setToolTip(translator.translate("MUSIC_PLAYER.TOOLTIP_PAUSE_BTN"))
-        self._playSongBtn.setToolTip(translator.translate("MUSIC_PLAYER.TOOLTIP_PLAY_BTN"))
+        self._prevSongBtn.setToolTip(f'{translator.translate("MUSIC_PLAYER.TOOLTIP_PREV_BTN")} (Ctrl + ←)')
+        self._nextSongBtn.setToolTip(f'{translator.translate("MUSIC_PLAYER.TOOLTIP_NEXT_BTN")} (Ctrl + →)')
+        self._pauseSongBtn.setToolTip(f'{translator.translate("MUSIC_PLAYER.TOOLTIP_PAUSE_BTN")} (Ctrl + Space)')
+        self._playSongBtn.setToolTip(f'{translator.translate("MUSIC_PLAYER.TOOLTIP_PLAY_BTN")} (Ctrl + Space)')
 
         self._loopBtn.setToolTips([
             translator.translate("MUSIC_PLAYER.TOOLTIP_UN_LOOP_BTN"),
@@ -248,16 +248,16 @@ class MusicPlayerBar(QWidget, Component):
         musicPlayer.volumeChanged.connect(lambda volume: self.__changeVolumeIcon(volume))
 
     def _assignShortcuts(self) -> None:
-        playShortcut = QShortcut(QKeySequence(Qt.Key_Space), self._playSongBtn)
+        playShortcut = QShortcut(QKeySequence(Qt.CTRL + Qt.Key_Space), self._playSongBtn)
         playShortcut.activated.connect(lambda: self._playSongBtn.click())
 
-        pauseShortcut = QShortcut(QKeySequence(Qt.Key_Space), self._pauseSongBtn)
+        pauseShortcut = QShortcut(QKeySequence(Qt.CTRL + Qt.Key_Space), self._pauseSongBtn)
         pauseShortcut.activated.connect(lambda: self._pauseSongBtn.click())
 
-        prevShortcut = QShortcut(QKeySequence(Qt.Key_Left), self._prevSongBtn)
+        prevShortcut = QShortcut(QKeySequence(Qt.CTRL + Qt.Key_Left), self._prevSongBtn)
         prevShortcut.activated.connect(lambda: self._prevSongBtn.click())
 
-        nextShortcut = QShortcut(QKeySequence(Qt.Key_Right), self._nextSongBtn)
+        nextShortcut = QShortcut(QKeySequence(Qt.CTRL + Qt.Key_Right), self._nextSongBtn)
         nextShortcut.activated.connect(lambda: self._nextSongBtn.click())
 
         shortcut0 = QShortcut(QKeySequence(Qt.Key_0), self._timeSlider)
