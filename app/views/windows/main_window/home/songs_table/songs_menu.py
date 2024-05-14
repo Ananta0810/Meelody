@@ -9,7 +9,6 @@ from app.common.models import Song, Playlist
 from app.common.models.playlists import Library
 from app.common.others import appCenter, musicPlayer
 from app.components.asyncs import ChunksConsumer
-from app.components.events import VisibleObserver
 from app.components.scroll_areas import SmoothVerticalScrollArea
 from app.utils.base import Lists, Strings, silence
 from app.utils.qt import Widgets
@@ -90,8 +89,8 @@ class SongsMenu(SmoothVerticalScrollArea):
         """
             This function is used to create rows on song menu on startup. Those rows will be re-used later to shown as items on menu.
         """
-        if not Widgets.isInView(self):
-            VisibleObserver(self).visible.connect(lambda visible: self.__loadLibrarySongs(songs) if visible else None)
+        if not appCenter.isLoaded:
+            appCenter.loaded.connect(lambda: self.__loadLibrarySongs(songs))
             return
 
         for song in songs:
@@ -147,8 +146,9 @@ class SongsMenu(SmoothVerticalScrollArea):
             rowToMove.showMoreButtons(False)
 
     def __showSongsOfPlaylist(self, playlist: Playlist) -> None:
-        if not Widgets.isInView(self):
-            VisibleObserver(self).visible.connect(lambda visible: self.__showSongsOfPlaylist(playlist) if visible else None)
+        if not appCenter.isLoaded:
+            self.__currentPlaylist = playlist
+            self.__currentPlaylist.getSongs().updated.connect(self.__playlistUpdated.emit)
             return
 
         isPlaylistChanged = self.__currentPlaylist != playlist

@@ -1,3 +1,4 @@
+from contextlib import suppress
 from msilib.schema import Component
 from typing import final, Optional
 
@@ -47,11 +48,13 @@ class Component:
 
     @suppressException
     def applyLightMode(self) -> None:
-        self.setStyleSheet(self._lightModeStyle)
+        with suppress(AttributeError):
+            self.setStyleSheet(self._lightModeStyle)
 
     @suppressException
     def applyDarkMode(self) -> None:
-        self.setStyleSheet(self._darkModeStyle)
+        with suppress(AttributeError):
+            self.setStyleSheet(self._darkModeStyle)
 
     @final
     def applyTheme(self) -> None:

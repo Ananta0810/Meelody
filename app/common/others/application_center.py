@@ -11,17 +11,24 @@ class ApplicationCenter(QObject):
     themeChanged = pyqtSignal(bool)
     currentPlaylistChanged = pyqtSignal(Playlist)
     exited = pyqtSignal()
+    loaded = pyqtSignal()
 
     def __init__(self) -> None:
         super().__init__()
         from app.common.models.playlists import Library
         self.settings: AppSettings = AppSettings()
 
+        self.isLoaded: bool = False
         self.isLightMode: bool = self.__isLightTheme(self.settings.theme)
         self.playlists: Playlists = Playlists()
 
         self.library: Library = Library(Library.Info(), Library.Songs())
         self.currentPlaylist: Playlist = self.library
+
+        self.loaded.connect(lambda: self.__loaded())
+
+    def __loaded(self) -> None:
+        self.isLoaded = True
 
     def setTheme(self, theme: ThemeMode) -> None:
         self.settings.setTheme(theme)

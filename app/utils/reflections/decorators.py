@@ -46,7 +46,6 @@ def returnOnFailed(value: any):
             try:
                 return f(*args, **kwargs)
             except:
-                print('Error')
                 return value
 
         return applicator

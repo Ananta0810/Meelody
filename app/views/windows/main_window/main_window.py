@@ -1,6 +1,7 @@
 import sys
 
-from PyQt5.QtCore import Qt
+from PyQt5.QtCore import Qt, QTimer
+from PyQt5.QtGui import QShowEvent
 from PyQt5.QtWinExtras import QWinThumbnailToolBar, QWinThumbnailToolButton
 
 from app.common.others import appCenter, musicPlayer, translator
@@ -87,6 +88,14 @@ class MainWindow(TitleBarWindow, Component):
         super().show()
         self.moveToCenter()
         self._toolbar.setWindow(self.windowHandle())
+
+    def showEvent(self, a0: QShowEvent) -> None:
+        super().showEvent(a0)
+        if not appCenter.isLoaded:
+            timer = QTimer(self)
+            timer.setSingleShot(True)
+            timer.timeout.connect(lambda: appCenter.loaded.emit())
+            timer.start(10)
 
     def showMiniPlayerWindow(self) -> None:
         self.hide()
