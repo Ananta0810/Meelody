@@ -45,9 +45,13 @@ class Pixmaps:
     @staticmethod
     def scaleKeepingRatio(pixmap: QPixmap, smallerEdgeSize: int) -> QPixmap:
         temp: QPixmap = pixmap.copy()
-        if pixmap.height() <= pixmap.width():
+        if pixmap.height() == pixmap.width():
             return temp.scaledToWidth(smallerEdgeSize, Qt.SmoothTransformation)
-        return temp.scaledToHeight(smallerEdgeSize, Qt.SmoothTransformation)
+        
+        if pixmap.height() < pixmap.width():
+            return temp.scaledToHeight(smallerEdgeSize, Qt.SmoothTransformation)
+
+        return temp.scaledToWidth(smallerEdgeSize, Qt.SmoothTransformation)
 
     @staticmethod
     def square(pixmap: QPixmap) -> QPixmap:
@@ -93,7 +97,7 @@ class Pixmaps:
         painter.setRenderHint(QPainter.Antialiasing, True)
 
         path = QPainterPath()
-        path.addRoundedRect(0, 0, pixmap.width(), pixmap.height(), radius, radius)
+        path.addRoundedRect(0, 0, pixmap.width(), pixmap.height(), rate, rate)
 
         painter.setClipPath(path)
         painter.drawPixmap(0, 0, pixmap)
