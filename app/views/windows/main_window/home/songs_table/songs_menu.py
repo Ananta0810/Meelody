@@ -20,7 +20,6 @@ MAX_ITEMS_VISIBLE_ON_MENU = 6
 
 
 class SongsMenu(SmoothVerticalScrollArea):
-    __menuReset = pyqtSignal()
     __playlistUpdated = pyqtSignal()
 
     def __init__(self, parent: Optional[QWidget] = None) -> None:
@@ -43,8 +42,8 @@ class SongsMenu(SmoothVerticalScrollArea):
 
         self.__playlistUpdated.connect(lambda: self.__showSongsOfPlaylist(self.__currentPlaylist))
 
-        appCenter.library.getSongs().loaded.connect(lambda: self.__createSongRows(appCenter.library.getSongs().toList()))
-        appCenter.library.getSongs().updated.connect(lambda: self.__createSongRows(appCenter.library.getSongs().toList()))
+        appCenter.library.getSongs().loaded.connect(lambda: self.__loadLibrarySongs(appCenter.library.getSongs().toList()))
+        appCenter.library.getSongs().updated.connect(lambda: self.__updateLayoutBasedOnLibrary(appCenter.library.getSongs().toList()))
         appCenter.currentPlaylistChanged.connect(lambda playlist: self.__showSongsOfPlaylist(playlist))
 
         musicPlayer.songChanged.connect(lambda song: self.__scrollToSong(song))
@@ -87,19 +86,23 @@ class SongsMenu(SmoothVerticalScrollArea):
             itemIndex = self.__songMap[song.getId()]
             self.scrollToItemAt(itemIndex)
 
-    def __createSongRows(self, songs: list[Song]) -> None:
+    def __loadLibrarySongs(self, songs: list[Song]) -> None:
         """
-        This function is used to create rows on song menu. Those rows will be re-used later to shown as items on menu.
+            This function is used to create rows on song menu on startup. Those rows will be re-used later to shown as items on menu.
         """
-        onStartup = len(self.__songRowDict) == 0
-
-        if onStartup:
-            for song in songs:
-                self.__addRow(song)
-
-            self.__menuReset.emit()
+        if not Widgets.isInView(self):
+            VisibleObserver(self).visible.connect(lambda visible: self.__loadLibrarySongs(songs) if visible else None)
             return
 
+        for song in songs:
+            self.__addRow(song)
+
+        self.__playlistUpdated.emit()
+
+    def __updateLayoutBasedOnLibrary(self, songs: list[Song]) -> None:
+        """
+            This function is used to create rows on song menu on realtime. Those rows will be re-used later to shown as items on menu.
+        """
         currentSongs = [row.content() for row in self.__songRowDict.values()]
 
         addedSongs = Lists.itemsInRightOnly(currentSongs, songs)
@@ -121,16 +124,6 @@ class SongsMenu(SmoothVerticalScrollArea):
 
         self.verticalScrollBar().setValue(currentPosition)
 
-        self.__menuReset.emit()
-
-    def __moveRows(self, newSongs: list[Song]) -> None:
-        oldSongs = [row.content() for row in self.widgets()]
-        oldIndex, newIndex = Lists.findMoved(oldSongs, newSongs)
-        if oldIndex >= 0:
-            rowToMove = self.widgets()[oldIndex]
-            self.moveWidget(rowToMove, newIndex)
-            rowToMove.showMoreButtons(False)
-
     def __addRow(self, song):
         songRow = SongRow(song)
         songRow.applyTheme()
@@ -145,13 +138,13 @@ class SongsMenu(SmoothVerticalScrollArea):
 
         self.__songRowDict.pop(row.content().getId())
 
-    def __setPlaylist(self, playlist: Playlist) -> None:
-        if self.__currentPlaylist is not None:
-            with suppress(TypeError):
-                self.__currentPlaylist.getSongs().updated.disconnect()
-
-        self.__currentPlaylist = playlist
-        self.__currentPlaylist.getSongs().updated.connect(self.__playlistUpdated.emit)
+    def __moveRows(self, newSongs: list[Song]) -> None:
+        oldSongs = [row.content() for row in self.widgets()]
+        oldIndex, newIndex = Lists.findMoved(oldSongs, newSongs)
+        if oldIndex >= 0:
+            rowToMove = self.widgets()[oldIndex]
+            self.moveWidget(rowToMove, newIndex)
+            rowToMove.showMoreButtons(False)
 
     def __showSongsOfPlaylist(self, playlist: Playlist) -> None:
         if not Widgets.isInView(self):
@@ -161,7 +154,12 @@ class SongsMenu(SmoothVerticalScrollArea):
         isPlaylistChanged = self.__currentPlaylist != playlist
 
         if isPlaylistChanged:
-            self.__setPlaylist(playlist)
+            if self.__currentPlaylist is not None:
+                with suppress(TypeError):
+                    self.__currentPlaylist.getSongs().updated.disconnect()
+
+            self.__currentPlaylist = playlist
+            self.__currentPlaylist.getSongs().updated.connect(self.__playlistUpdated.emit)
 
         self.__updateTitleMaps(playlist.getSongs().toList())
 
@@ -191,8 +189,8 @@ class SongsMenu(SmoothVerticalScrollArea):
 
     def __showRows(self, rows: list[SongRow]) -> None:
         displayer = ChunksConsumer(items=rows, size=MAX_ITEMS_VISIBLE_ON_MENU, parent=self)
-        displayer.stopped.connect(lambda: silence(lambda: self.__menuReset.disconnect(displayer.stop)))
-        self.__menuReset.connect(displayer.stop)
+        displayer.stopped.connect(lambda: silence(lambda: self.__playlistUpdated.disconnect(displayer.stop)))
+        self.__playlistUpdated.connect(displayer.stop)
 
         self._menu.setMinimumHeight(0)
         displayer.forEach(lambda row, index: self.__showRow(row, index), delay=10)
