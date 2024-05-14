@@ -4,6 +4,8 @@ from typing import Optional, Union
 from PyQt5 import QtCore
 from PyQt5.QtWidgets import QVBoxLayout, QWidget, QLayout, QHBoxLayout
 
+from app.utils.reflections import suppressException
+
 
 class Box(QVBoxLayout):
 
@@ -57,12 +59,20 @@ class Box(QVBoxLayout):
         super().addSpacing(size)
 
     def clear(self) -> None:
-        for i in reversed(range(self.count())):
-            widgetToRemove = self.itemAt(i).widget()
-            # remove it from the layout list
-            self.removeWidget(widgetToRemove)
-            # remove it from the gui
-            widgetToRemove.setParent(None)
+        for index in reversed(range(self.count())):
+            self.removeAt(index)
+
+    def removeAtIndexes(self, indexes: list[int]) -> None:
+        for index in reversed(indexes):
+            self.removeAt(index)
+
+    @suppressException
+    def removeAt(self, index: int) -> None:
+        widgetToRemove = self.itemAt(index).widget()
+        # remove it from the layout list
+        self.removeWidget(widgetToRemove)
+        # remove it from the gui
+        widgetToRemove.setParent(None)
 
 
 class FlexBox(QHBoxLayout):
@@ -114,9 +124,17 @@ class FlexBox(QHBoxLayout):
             super().addStretch(stretch)
 
     def clear(self) -> None:
-        for i in reversed(range(self.count())):
-            widgetToRemove = self.itemAt(i).widget()
-            # remove it from the layout list
-            self.removeWidget(widgetToRemove)
-            # remove it from the gui
-            widgetToRemove.setParent(None)
+        for index in reversed(range(self.count())):
+            self.removeAt(index)
+
+    def removeAtIndexes(self, indexes: list[int]) -> None:
+        for index in reversed(indexes):
+            self.removeAt(index)
+
+    @suppressException
+    def removeAt(self, index: int) -> None:
+        widgetToRemove = self.itemAt(index).widget()
+        # remove it from the layout list
+        self.removeWidget(widgetToRemove)
+        # remove it from the gui
+        widgetToRemove.setParent(None)

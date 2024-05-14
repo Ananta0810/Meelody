@@ -11,6 +11,7 @@ from app.common.statics.styles import Paddings
 from app.components.base import Component
 from app.components.buttons import ButtonFactory
 from app.components.widgets import StyleWidget, FlexBox
+from app.utils.base import Lists
 from .new_playlist_dialog import NewPlaylistDialog
 from .playlist_cards import LibraryPlaylistCard, FavouritePlaylistCard, UserPlaylistCard
 
@@ -20,6 +21,8 @@ class PlaylistsCarousel(QScrollArea, Component):
     def __init__(self, parent: Optional[QWidget] = None):
         super().__init__(parent)
         self._initComponent()
+
+        self.__userPlaylistIds: list[str] = []
 
     def _createUI(self):
         self.setWidgetResizable(True)
@@ -79,13 +82,30 @@ class PlaylistsCarousel(QScrollArea, Component):
         self._mainLayout.setContentsMargins(left, top, right, bottom)
 
     def setPlaylists(self, playlists: list[Playlist]) -> None:
+        if not appCenter.isLoaded:
+            appCenter.loaded.connect(lambda: self.setPlaylists(playlists))
+            return
+
         if len(playlists) != 0:
             self._userPlaylists.show()
 
-        self._userPlaylistsLayout.clear()
-        for playlist in playlists:
-            userPlaylist = UserPlaylistCard(playlist)
-            self._userPlaylistsLayout.addWidget(userPlaylist)
+        oldPlaylistIds = self.__userPlaylistIds
+        newPlaylistIds = [playlist.getInfo().getId() for playlist in playlists]
+
+        self.__userPlaylistIds = newPlaylistIds
+
+        addedPlaylistIds = Lists.itemsInRightOnly(oldPlaylistIds, newPlaylistIds)
+        removedPlaylistIds = Lists.itemsInLeftOnly(oldPlaylistIds, newPlaylistIds)
+
+        if len(addedPlaylistIds) > 0:
+            newPlaylistDict: dict[str, Playlist] = {playlist.getInfo().getId(): playlist for playlist in playlists}
+            for playlistId in addedPlaylistIds:
+                userPlaylist = UserPlaylistCard(newPlaylistDict[playlistId])
+                self._userPlaylistsLayout.addWidget(userPlaylist)
+
+        if len(removedPlaylistIds) > 0:
+            indexesToRemove = [index for index, playlistId in enumerate(oldPlaylistIds) if playlistId in removedPlaylistIds]
+            self._userPlaylistsLayout.removeAtIndexes(indexesToRemove)
 
     @staticmethod
     def __openNewPlaylistDialog() -> None:

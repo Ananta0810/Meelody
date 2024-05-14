@@ -60,17 +60,17 @@ class Lists:
         return random.sample(list(Lists.clone(collection)), len(collection))
 
     @staticmethod
-    def itemsInLeftOnly(left: list[T], right: list[T]) -> list[T]:
+    def itemsInLeftOnly(left: list[T] | set[T], right: list[T] | set[T]) -> list[T]:
         if left is None or right is None:
             return []
-        rightSet = set(right)
+        rightSet = right if isinstance(right, set) else set(right)
         return [item for item in left if item not in rightSet]
 
     @staticmethod
-    def itemsInRightOnly(left: list[T], right: list[T]) -> list[T]:
+    def itemsInRightOnly(left: list[T] | set[T], right: list[T] | set[T]) -> list[T]:
         if left is None or right is None:
             return []
-        leftSet = set(left)
+        leftSet = left if isinstance(left, set) else set(left)
         return [item for item in right if item not in leftSet]
 
     @staticmethod

@@ -16,6 +16,7 @@ from app.common.statics.styles import Paddings
 from app.components.base import FontFactory
 from app.components.buttons import ButtonFactory
 from app.components.dialogs import Dialogs
+from app.components.events import VisibleObserver
 from app.components.images.cover import ZoomCover, Cover
 from app.components.labels.ellipsis_label import EllipsisLabel
 from app.components.widgets import ExtendableStyleWidget
@@ -56,6 +57,10 @@ class PlaylistCard(ExtendableStyleWidget):
         self.setCover(info.getCover())
 
     def setCover(self, data: bytes) -> None:
+        if not Widgets.isInView(self):
+            VisibleObserver(self).visible.connect(lambda visible: self.setCover(data) if visible else None)
+            return
+
         data = data or Images.defaultPlaylistCover
 
         cover = self._toCoverProps(data)
@@ -67,8 +72,6 @@ class PlaylistCard(ExtendableStyleWidget):
         self._adaptTitleColorToCover()
 
     def _adaptTitleColorToCover(self):
-        if not Widgets.isInView(self):
-            return
         width = self._title.fontMetrics().boundingRect(self._title.ellipsisText()).width()
         labelRect = QRect(self._title.pos().x(),
                           self._title.pos().y(),
