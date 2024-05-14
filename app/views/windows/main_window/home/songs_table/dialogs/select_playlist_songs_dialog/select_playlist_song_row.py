@@ -1,6 +1,6 @@
 from typing import Optional
 
-from PyQt5.QtCore import pyqtSignal, Qt
+from PyQt5.QtCore import pyqtSignal, Qt, pyqtBoundSignal
 from PyQt5.QtGui import QMouseEvent
 
 from app.common.models import Song
@@ -15,8 +15,8 @@ from app.utils.others import Times
 
 
 class SongRow(ExtendableStyleWidget):
-    checked = pyqtSignal(Song)
-    unchecked = pyqtSignal(Song)
+    checked: pyqtBoundSignal = pyqtSignal(Song)
+    unchecked: pyqtBoundSignal = pyqtSignal(Song)
 
     def __init__(self, song: Song):
         self.__song = song

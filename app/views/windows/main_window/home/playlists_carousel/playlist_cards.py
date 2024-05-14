@@ -2,7 +2,7 @@ import typing
 from typing import Optional
 
 from PyQt5 import QtGui
-from PyQt5.QtCore import QEvent, QRect, pyqtSignal, Qt
+from PyQt5.QtCore import QEvent, QRect, pyqtSignal, Qt, pyqtBoundSignal
 from PyQt5.QtGui import QResizeEvent
 from PyQt5.QtWidgets import QWidget, QVBoxLayout, QHBoxLayout, QFileDialog
 
@@ -28,7 +28,7 @@ from app.views.windows.main_window.home.playlists_carousel.update_playlist_dialo
 
 
 class PlaylistCard(ExtendableStyleWidget):
-    clicked = pyqtSignal()
+    clicked: pyqtBoundSignal = pyqtSignal()
 
     def __init__(self, parent: Optional[QWidget] = None):
         super().__init__(parent)

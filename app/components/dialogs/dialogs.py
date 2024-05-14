@@ -1,6 +1,6 @@
 from typing import Optional, final
 
-from PyQt5.QtCore import Qt, pyqtSignal
+from PyQt5.QtCore import Qt, pyqtSignal, pyqtBoundSignal
 from PyQt5.QtGui import QKeySequence, QResizeEvent
 from PyQt5.QtWidgets import QShortcut, QVBoxLayout, QHBoxLayout
 
@@ -17,8 +17,8 @@ from app.utils.base import Numbers
 
 
 class _ConfirmDialog(FramelessWindow):
-    confirmed: pyqtSignal() = pyqtSignal()
-    canceled: pyqtSignal() = pyqtSignal()
+    confirmed: pyqtBoundSignal = pyqtSignal()
+    canceled: pyqtBoundSignal = pyqtSignal()
 
     def __init__(self):
         super().__init__()

@@ -1,6 +1,6 @@
 from contextlib import suppress
 
-from PyQt5.QtCore import pyqtSignal
+from PyQt5.QtCore import pyqtSignal, pyqtBoundSignal
 
 from app.common.models.playlist import Playlist
 from app.common.models.song import Song
@@ -26,7 +26,7 @@ class Library(Playlist, metaclass=SingletonMeta):
             pass
 
     class Songs(CommonPlaylist.Songs):
-        loaded = pyqtSignal()
+        loaded: pyqtBoundSignal = pyqtSignal()
 
         def __init__(self):
             super().__init__(None, isSorted=True)

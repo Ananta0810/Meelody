@@ -1,8 +1,8 @@
-from PyQt5.QtCore import QObject, QEvent, pyqtSignal
+from PyQt5.QtCore import QObject, QEvent, pyqtSignal, pyqtBoundSignal
 
 
 class ClickObserver(QObject):
-    clicked = pyqtSignal()
+    clicked: pyqtBoundSignal = pyqtSignal()
 
     def __init__(self, widget: QObject):
         super().__init__(widget)

@@ -6,7 +6,7 @@ from typing import Callable
 from typing import Optional
 
 import pytube.request
-from PyQt5.QtCore import Qt
+from PyQt5.QtCore import Qt, pyqtBoundSignal
 from PyQt5.QtCore import pyqtSignal, QThread
 from PyQt5.QtWidgets import QWidget, QHBoxLayout
 from pytube import YouTube, Stream
@@ -32,7 +32,7 @@ from app.utils.others import Times, Files, Logger
 
 
 class DownloadSongItem(ExtendableStyleWidget):
-    songDownloaded = pyqtSignal(str)
+    songDownloaded: pyqtBoundSignal = pyqtSignal(str)
 
     def __init__(self, parent: Optional[QWidget] = None):
         super().__init__(parent)
@@ -234,9 +234,9 @@ pytube.request.default_range_size = 128000
 
 
 class DownloadSongThread(QThread):
-    loaded = pyqtSignal()
-    succeed = pyqtSignal(io.BytesIO)
-    failed = pyqtSignal(Exception)
+    loaded: pyqtBoundSignal = pyqtSignal()
+    succeed: pyqtBoundSignal = pyqtSignal(io.BytesIO)
+    failed: pyqtBoundSignal = pyqtSignal(Exception)
 
     def __init__(self, ytb: YouTube, onDownloading: Callable[[int, int, int], None]) -> None:
         super().__init__()
@@ -273,8 +273,8 @@ class DownloadSongThread(QThread):
 
 
 class ConvertSongThread(QThread):
-    succeed = pyqtSignal(str)
-    failed = pyqtSignal(Exception)
+    succeed: pyqtBoundSignal = pyqtSignal(str)
+    failed: pyqtBoundSignal = pyqtSignal(Exception)
 
     def __init__(self, songData: io.BytesIO, title: str, artist: str) -> None:
         super().__init__()

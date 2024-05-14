@@ -1,12 +1,12 @@
 from typing import Optional
 
-from PyQt5.QtCore import QObject, pyqtSignal, QEvent, QTimer
+from PyQt5.QtCore import QObject, pyqtSignal, QEvent, QTimer, pyqtBoundSignal
 
 from app.utils.qt import Widgets
 
 
 class VisibleObserver(QObject):
-    visible = pyqtSignal(bool)
+    visible: pyqtBoundSignal = pyqtSignal(bool)
 
     def __init__(self, widget: QObject, oneTime: bool = True, delay: Optional[int] = None):
         super().__init__(widget)

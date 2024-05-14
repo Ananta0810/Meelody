@@ -1,6 +1,6 @@
 from typing import Optional
 
-from PyQt5.QtCore import Qt, pyqtSignal
+from PyQt5.QtCore import Qt, pyqtSignal, pyqtBoundSignal
 from PyQt5.QtGui import QResizeEvent, QKeySequence
 from PyQt5.QtWidgets import QHBoxLayout, QVBoxLayout, QWidget, QShortcut
 
@@ -293,7 +293,7 @@ class SettingsDialog(FramelessWindow):
 
 
 class ThemeButton(Cover):
-    selected = pyqtSignal()
+    selected: pyqtBoundSignal = pyqtSignal()
 
     def __init__(self, parent: Optional[QWidget] = None):
         super().__init__(parent)

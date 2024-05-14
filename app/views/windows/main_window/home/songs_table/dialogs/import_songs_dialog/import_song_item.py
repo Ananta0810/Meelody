@@ -1,7 +1,7 @@
 import os
 from typing import Optional
 
-from PyQt5.QtCore import pyqtSignal, Qt
+from PyQt5.QtCore import pyqtSignal, Qt, pyqtBoundSignal
 from PyQt5.QtGui import QKeySequence
 from PyQt5.QtWidgets import QWidget, QShortcut, QVBoxLayout
 
@@ -23,10 +23,10 @@ from app.utils.others import Logger, Files
 
 
 class ImportSongItem(ExtendableStyleWidget):
-    succeed = pyqtSignal(str)
-    failed = pyqtSignal(Exception)
-    imported = pyqtSignal()
-    reImported = pyqtSignal(str)
+    succeed: pyqtBoundSignal = pyqtSignal(str)
+    failed: pyqtBoundSignal = pyqtSignal(Exception)
+    imported: pyqtBoundSignal = pyqtSignal()
+    reImported: pyqtBoundSignal = pyqtSignal(str)
 
     def __init__(self, path: str):
         super().__init__()
@@ -178,7 +178,7 @@ class ImportSongItem(ExtendableStyleWidget):
 
 
 class UpdateImportSongDialog(BaseDialog):
-    accepted = pyqtSignal(str)
+    accepted: pyqtBoundSignal = pyqtSignal(str)
 
     def __init__(self, path: str) -> None:
         self.__canUpdate = False

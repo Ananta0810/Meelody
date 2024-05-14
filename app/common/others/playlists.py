@@ -1,12 +1,12 @@
-from PyQt5.QtCore import QObject, pyqtSignal
+from PyQt5.QtCore import QObject, pyqtSignal, pyqtBoundSignal
 
 from app.common.models import Playlist
 from .database import database
 
 
 class Playlists(QObject):
-    loaded = pyqtSignal()
-    changed = pyqtSignal(list)
+    loaded: pyqtBoundSignal = pyqtSignal()
+    changed: pyqtBoundSignal = pyqtSignal(list)
 
     def __init__(self) -> None:
         super().__init__()

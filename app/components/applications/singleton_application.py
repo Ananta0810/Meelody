@@ -1,13 +1,13 @@
 import sys
 from typing import List
 
-from PyQt5.QtCore import pyqtSignal, QSharedMemory, QIODevice
+from PyQt5.QtCore import pyqtSignal, QSharedMemory, QIODevice, pyqtBoundSignal
 from PyQt5.QtNetwork import QLocalServer, QLocalSocket
 from PyQt5.QtWidgets import QApplication
 
 
 class SingletonApplication(QApplication):
-    messageSent = pyqtSignal(object)
+    messageSent: pyqtBoundSignal = pyqtSignal(object)
 
     def __init__(self, argv: List[str], key: str):
         super().__init__(argv)

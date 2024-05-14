@@ -1,11 +1,11 @@
 import json
 import os.path
 
-from PyQt5.QtCore import QObject, pyqtSignal
+from PyQt5.QtCore import QObject, pyqtSignal, pyqtBoundSignal
 
 
 class Translator(QObject):
-    changed = pyqtSignal()
+    changed: pyqtBoundSignal = pyqtSignal()
 
     def __init__(self):
         super().__init__(None)

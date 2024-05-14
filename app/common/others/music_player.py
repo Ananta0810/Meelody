@@ -2,7 +2,7 @@ import os
 from time import sleep
 from typing import Optional, Callable
 
-from PyQt5.QtCore import QObject, pyqtSignal, QThread, QTimer
+from PyQt5.QtCore import QObject, pyqtSignal, QThread, QTimer, pyqtBoundSignal
 from pygame import mixer, error
 
 from app.common.models import Song, Playlist
@@ -13,15 +13,15 @@ os.environ['PYGAME_HIDE_SUPPORT_PROMPT'] = "hide"
 
 
 class MusicPlayer(QObject):
-    loadFailed = pyqtSignal()
+    loadFailed: pyqtBoundSignal = pyqtSignal()
 
-    played = pyqtSignal()
-    paused = pyqtSignal()
+    played: pyqtBoundSignal = pyqtSignal()
+    paused: pyqtBoundSignal = pyqtSignal()
 
-    songChanged = pyqtSignal(Song)
-    loopChanged = pyqtSignal(bool)
-    shuffleChanged = pyqtSignal(bool)
-    volumeChanged = pyqtSignal(int)
+    songChanged: pyqtBoundSignal = pyqtSignal(Song)
+    loopChanged: pyqtBoundSignal = pyqtSignal(bool)
+    shuffleChanged: pyqtBoundSignal = pyqtSignal(bool)
+    volumeChanged: pyqtBoundSignal = pyqtSignal(int)
 
     def __init__(self):
         super().__init__()
@@ -192,7 +192,8 @@ class MusicPlayer(QObject):
     def getPlayingTime(self) -> float:
         return self.__timeStartInSec + mixer.music.get_pos() / 1000
 
-    def isPlaying(self) -> bool:
+    @staticmethod
+    def isPlaying() -> bool:
         if mixer.get_init() is None:
             return False
         return mixer.music.get_busy()

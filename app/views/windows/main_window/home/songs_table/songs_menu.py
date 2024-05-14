@@ -1,7 +1,7 @@
 from contextlib import suppress
 from typing import Optional
 
-from PyQt5.QtCore import Qt, pyqtSignal, QObject, QEvent
+from PyQt5.QtCore import Qt, pyqtSignal, QObject, QEvent, pyqtBoundSignal
 from PyQt5.QtGui import QKeyEvent
 from PyQt5.QtWidgets import QWidget, qApp
 
@@ -20,8 +20,8 @@ MAX_ITEMS_VISIBLE_ON_MENU = 6
 
 
 class SongsMenu(SmoothVerticalScrollArea):
-    __playlistUpdated = pyqtSignal()
-    __rowMoved = pyqtSignal(int)
+    __playlistUpdated: pyqtBoundSignal = pyqtSignal()
+    __rowMoved: pyqtBoundSignal = pyqtSignal(int)
 
     def __init__(self, parent: Optional[QWidget] = None) -> None:
         super().__init__(parent)

@@ -1,4 +1,4 @@
-from PyQt5.QtCore import QObject, pyqtSignal
+from PyQt5.QtCore import QObject, pyqtSignal, pyqtBoundSignal
 
 from app.common.models import Playlist
 from app.common.others.application_settings import AppSettings
@@ -8,10 +8,10 @@ from app.utils.systems import Systems
 
 
 class ApplicationCenter(QObject):
-    themeChanged = pyqtSignal(bool)
-    currentPlaylistChanged = pyqtSignal(Playlist)
-    exited = pyqtSignal()
-    loaded = pyqtSignal()
+    themeChanged: pyqtBoundSignal = pyqtSignal(bool)
+    currentPlaylistChanged: pyqtBoundSignal = pyqtSignal(Playlist)
+    exited: pyqtBoundSignal = pyqtSignal()
+    loaded: pyqtBoundSignal = pyqtSignal()
 
     def __init__(self) -> None:
         super().__init__()

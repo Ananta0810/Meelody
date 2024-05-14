@@ -1,7 +1,7 @@
 from abc import ABCMeta
 from typing import TypeVar, Generic, Callable
 
-from PyQt5.QtCore import QObject, QTimer, pyqtSignal
+from PyQt5.QtCore import QObject, QTimer, pyqtSignal, pyqtBoundSignal
 from PyQt5.QtWidgets import QWidget
 
 QObjectType = type(QObject)
@@ -13,8 +13,8 @@ class QABCMeta(QObjectType, ABCMeta):
 
 
 class ChunksConsumer(QObject, Generic[T], metaclass=QABCMeta):
-    stopped = pyqtSignal()
-    finished = pyqtSignal()
+    stopped: pyqtBoundSignal = pyqtSignal()
+    finished: pyqtBoundSignal = pyqtSignal()
 
     def __init__(self, items: list[T], size: int, parent: QWidget) -> None:
         super().__init__(parent)

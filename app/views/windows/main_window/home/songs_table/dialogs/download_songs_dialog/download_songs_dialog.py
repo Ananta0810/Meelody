@@ -1,7 +1,7 @@
 import os
 from urllib.error import URLError
 
-from PyQt5.QtCore import Qt, pyqtSignal
+from PyQt5.QtCore import Qt, pyqtSignal, pyqtBoundSignal
 from PyQt5.QtGui import QKeySequence
 from PyQt5.QtWidgets import QShortcut, QWidget, QVBoxLayout
 from pytube import YouTube
@@ -131,7 +131,7 @@ class DownloadSongsDialog(BaseDialog):
 
 
 class _SongInfoDialog(BaseDialog):
-    acceptDownload = pyqtSignal(YouTube, str, str)
+    acceptDownload: pyqtBoundSignal = pyqtSignal(YouTube, str, str)
 
     def __init__(self, youtube: YouTube) -> None:
         self.__ytb = youtube

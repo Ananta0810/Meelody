@@ -1,6 +1,6 @@
 from typing import Optional
 
-from PyQt5.QtCore import pyqtSignal, Qt
+from PyQt5.QtCore import pyqtSignal, Qt, pyqtBoundSignal
 from PyQt5.QtGui import QKeyEvent, QPalette
 from PyQt5.QtWidgets import QWidget, QFrame
 
@@ -14,10 +14,10 @@ from app.views.windows.main_window.home.songs_table.dialogs.select_playlist_song
 
 
 class MenuBody(SmoothVerticalScrollArea):
-    __keyPressed = pyqtSignal(QKeyEvent)
+    __keyPressed: pyqtBoundSignal = pyqtSignal(QKeyEvent)
 
-    songSelected = pyqtSignal(Song)
-    songUnSelected = pyqtSignal(Song)
+    songSelected: pyqtBoundSignal = pyqtSignal(Song)
+    songUnSelected: pyqtBoundSignal = pyqtSignal(Song)
 
     def __init__(self, parent: Optional[QWidget] = None) -> None:
         self.__rowDict: dict[str, SongRow] = {}

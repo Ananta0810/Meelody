@@ -1,6 +1,6 @@
 from typing import Optional
 
-from PyQt5.QtCore import QSize, pyqtSignal
+from PyQt5.QtCore import QSize, pyqtSignal, pyqtBoundSignal
 from PyQt5.QtWidgets import QWidget, QPushButton
 
 from app.common.statics.qt import Cursors, Icons
@@ -10,8 +10,8 @@ from app.components.widgets import ExtendableStyleWidget, FlexBox
 
 
 class CheckBox(ExtendableStyleWidget):
-    checked = pyqtSignal()
-    unchecked = pyqtSignal()
+    checked: pyqtBoundSignal = pyqtSignal()
+    unchecked: pyqtBoundSignal = pyqtSignal()
 
     def __init__(self, parent: Optional[QWidget] = None) -> None:
         self.__states = {}

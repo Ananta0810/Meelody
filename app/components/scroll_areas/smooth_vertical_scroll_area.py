@@ -1,6 +1,6 @@
 from typing import Optional, Union
 
-from PyQt5.QtCore import pyqtSignal, QVariantAnimation, QEasingCurve, Qt
+from PyQt5.QtCore import pyqtSignal, QVariantAnimation, QEasingCurve, Qt, pyqtBoundSignal
 from PyQt5.QtGui import QWheelEvent, QPaintEvent
 from PyQt5.QtWidgets import QWidget
 
@@ -11,7 +11,7 @@ from app.utils.qt import Widgets
 
 
 class SmoothVerticalScrollArea(StyleScrollArea):
-    scrolled = pyqtSignal()
+    scrolled: pyqtBoundSignal = pyqtSignal()
 
     def __init__(self, parent: Optional[QWidget] = None) -> None:
         super().__init__(parent=parent)

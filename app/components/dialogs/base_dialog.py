@@ -1,6 +1,6 @@
 from typing import Union
 
-from PyQt5.QtCore import Qt, pyqtSignal
+from PyQt5.QtCore import Qt, pyqtSignal, pyqtBoundSignal
 from PyQt5.QtGui import QKeySequence, QResizeEvent
 from PyQt5.QtWidgets import QHBoxLayout, QShortcut, QWidget, QLayout
 
@@ -15,7 +15,7 @@ from app.components.windows import FramelessWindow
 
 
 class BaseDialog(FramelessWindow):
-    closed: pyqtSignal() = pyqtSignal()
+    closed: pyqtBoundSignal = pyqtSignal()
 
     def __init__(self):
         super().__init__()

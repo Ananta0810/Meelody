@@ -2,7 +2,7 @@ import os
 import uuid
 from typing import Optional, Callable
 
-from PyQt5.QtCore import QObject, pyqtSignal, QThread
+from PyQt5.QtCore import QObject, pyqtSignal, QThread, pyqtBoundSignal
 from eyed3 import load, mp3, id3
 
 from app.common.exceptions import ResourceException
@@ -20,10 +20,10 @@ class Song(QObject):
     __isLoved: bool
     __sampleRate: float
 
-    loved = pyqtSignal(bool)
-    coverChanged = pyqtSignal(bytes)
-    updated = pyqtSignal(str)
-    deleted = pyqtSignal()
+    loved: pyqtBoundSignal = pyqtSignal(bool)
+    coverChanged: pyqtBoundSignal = pyqtSignal(bytes)
+    updated: pyqtBoundSignal = pyqtSignal(str)
+    deleted: pyqtBoundSignal = pyqtSignal()
 
     def __init__(self, location: str = None, title: str = None, artist: str = None, cover: bytes = None, length: float = 0, sampleRate: float = 48000,
                  loved: bool = False):

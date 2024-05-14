@@ -1,4 +1,4 @@
-from PyQt5.QtCore import Qt, pyqtSignal, QTimer
+from PyQt5.QtCore import Qt, pyqtSignal, QTimer, pyqtBoundSignal
 from PyQt5.QtWidgets import QWidget, QVBoxLayout
 
 from app.common.models import Song
@@ -16,7 +16,7 @@ from app.views.windows.main_window.home.songs_table.dialogs.import_songs_dialog.
 
 
 class ImportSongsDialog(BaseDialog):
-    importDone = pyqtSignal()
+    importDone: pyqtBoundSignal = pyqtSignal()
 
     def __init__(self, paths: list[str]):
         super().__init__()

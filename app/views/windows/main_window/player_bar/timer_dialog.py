@@ -1,7 +1,7 @@
 import time
 from typing import Optional
 
-from PyQt5.QtCore import Qt, QRegExp, QThread, QObject, pyqtSignal
+from PyQt5.QtCore import Qt, QRegExp, QThread, QObject, pyqtSignal, pyqtBoundSignal
 from PyQt5.QtGui import QRegExpValidator, QWheelEvent, QResizeEvent
 from PyQt5.QtWidgets import QWidget
 
@@ -211,8 +211,8 @@ class TimerInput(Input):
 
 
 class CountDownThread(QThread):
-    finished = pyqtSignal()
-    tick = pyqtSignal(int)
+    finished: pyqtBoundSignal = pyqtSignal()
+    tick: pyqtBoundSignal = pyqtSignal(int)
 
     def __init__(self, parent: Optional[QObject] = None) -> None:
         self.__currentTime = 0

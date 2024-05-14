@@ -1,4 +1,4 @@
-from PyQt5.QtCore import QObject, pyqtSignal
+from PyQt5.QtCore import QObject, pyqtSignal, pyqtBoundSignal
 
 from app.common.models.song import Song
 
@@ -49,7 +49,7 @@ class Playlist:
             ...
 
     class Songs(QObject):
-        updated = pyqtSignal()
+        updated: pyqtBoundSignal = pyqtSignal()
 
         def clone(self) -> 'Playlist.Songs':
             """
