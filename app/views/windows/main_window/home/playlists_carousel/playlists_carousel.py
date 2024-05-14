@@ -8,6 +8,7 @@ from app.common.others import appCenter, translator
 from app.common.statics.qt import Icons
 from app.common.statics.styles import Colors
 from app.common.statics.styles import Paddings
+from app.components.asyncs import ChunksConsumer
 from app.components.base import Component
 from app.components.buttons import ButtonFactory
 from app.components.widgets import StyleWidget, FlexBox
@@ -86,7 +87,8 @@ class PlaylistsCarousel(QScrollArea, Component):
             appCenter.loaded.connect(lambda: self.setPlaylists(playlists))
             return
 
-        if len(playlists) != 0:
+        totalPlaylists = len(playlists)
+        if totalPlaylists != 0:
             self._userPlaylists.show()
 
         oldPlaylistIds = self.__userPlaylistIds
@@ -98,14 +100,19 @@ class PlaylistsCarousel(QScrollArea, Component):
         removedPlaylistIds = Lists.itemsInLeftOnly(oldPlaylistIds, newPlaylistIds)
 
         if len(addedPlaylistIds) > 0:
+            self._userPlaylists.setMinimumWidth(totalPlaylists * 256 + (totalPlaylists - 1) * self._userPlaylistsLayout.spacing())
             newPlaylistDict: dict[str, Playlist] = {playlist.getInfo().getId(): playlist for playlist in playlists}
-            for playlistId in addedPlaylistIds:
-                userPlaylist = UserPlaylistCard(newPlaylistDict[playlistId])
-                self._userPlaylistsLayout.addWidget(userPlaylist)
+            displayer = ChunksConsumer(items=addedPlaylistIds, size=3, parent=self)
+            displayer.forEach(lambda playlistId, index: self.__addPlaylist(newPlaylistDict[playlistId]), delay=10)
 
         if len(removedPlaylistIds) > 0:
             indexesToRemove = [index for index, playlistId in enumerate(oldPlaylistIds) if playlistId in removedPlaylistIds]
             self._userPlaylistsLayout.removeAtIndexes(indexesToRemove)
+            self._userPlaylists.setMinimumWidth(totalPlaylists * 256 + (totalPlaylists - 1) * self._userPlaylistsLayout.spacing())
+
+    def __addPlaylist(self, playlist: Playlist):
+        userPlaylist = UserPlaylistCard(playlist)
+        self._userPlaylistsLayout.addWidget(userPlaylist)
 
     @staticmethod
     def __openNewPlaylistDialog() -> None:

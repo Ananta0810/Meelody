@@ -99,8 +99,8 @@ class ImportSongsDialog(BaseDialog):
             self._menu.setVerticalScrollBarPolicy(Qt.ScrollBarAlwaysOff)
 
         displayer = ChunksConsumer(items=self.__paths, size=6, parent=self)
-        displayer.forEach(lambda path, index: self._menu.addItem(path), delay=10)
         displayer.stopped.connect(lambda: self.__startImportAll())
+        displayer.forEach(lambda path, index: self._menu.addItem(path), delay=10)
 
     def __startImportAll(self):
         for item in self._menu.items():
