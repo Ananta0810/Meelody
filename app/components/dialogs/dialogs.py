@@ -26,6 +26,7 @@ class _ConfirmDialog(FramelessWindow):
 
     def _createUI(self) -> None:
         self.setWindowModality(Qt.ApplicationModal)
+        self.setAttribute(Qt.WA_DeleteOnClose)
         self.setContentsMargins(24, 16, 24, 16)
         self.setClassName("rounded-12 bg-white dark:bg-dark")
 
@@ -138,8 +139,9 @@ class _AlertDialog(BaseDialog):
 
     def _createUI(self) -> None:
         super()._createUI()
-        self.setFixedWidth(360)
+        self.setAttribute(Qt.WA_DeleteOnClose)
 
+        self.setFixedWidth(360)
         self.setContentsMargins(16, 16, 16, 16)
 
         self._image = Cover()

@@ -194,6 +194,7 @@ class UpdateImportSongDialog(BaseDialog):
 
     def _createUI(self) -> None:
         super()._createUI()
+        self.setAttribute(Qt.WA_DeleteOnClose)
 
         self._image = Cover()
         self._image.setAlignment(Qt.AlignHCenter)

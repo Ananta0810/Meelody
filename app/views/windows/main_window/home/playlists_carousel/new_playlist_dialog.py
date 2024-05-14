@@ -34,6 +34,7 @@ class NewPlaylistDialog(BaseDialog):
 
     def _createUI(self) -> None:
         super()._createUI()
+        self.setAttribute(Qt.WA_DeleteOnClose)
 
         self._cover = Cover()
         self._cover.setFixedSize(320, 320)

@@ -26,6 +26,7 @@ class SelectPlaylistSongsDialog(BaseDialog):
     def _createUI(self) -> None:
         super()._createUI()
         self.setContentsMargins(20, 20, 20, 20)
+        self.setAttribute(Qt.WA_DeleteOnClose)
 
         self._menuHeader = MenuHeader()
         self._menuHeader.setFixedWidth(640)

@@ -46,6 +46,7 @@ class SettingsDialog(FramelessWindow):
     def _createUI(self) -> None:
         super()._createUI()
 
+        self.setAttribute(Qt.WA_DeleteOnClose)
         self.setWindowModality(Qt.ApplicationModal)
         self.setClassName("rounded-12 bg-white dark:bg-dark")
 

@@ -27,6 +27,7 @@ class MiniPlayerWindow(TitleBarWindow, Component):
         self._volumeSlider.setValue(musicPlayer.getVolume())
 
     def _createUI(self) -> None:
+        self.setAttribute(Qt.WA_DeleteOnClose)
         self._inner.setClassName("rounded-12 bg-white dark:bg-dark")
 
         self._songInfo = CurrentSongInfo()

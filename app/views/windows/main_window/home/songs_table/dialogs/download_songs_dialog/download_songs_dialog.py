@@ -18,10 +18,11 @@ from app.components.inputs import Input
 from app.components.labels import Label
 from app.utils.base import Strings
 from app.utils.others import Logger
+from app.utils.reflections import SingletonQObjectMeta
 from app.views.windows.main_window.home.songs_table.dialogs.download_songs_dialog.download_songs_menu import DownloadSongsMenu
 
 
-class DownloadSongsDialog(BaseDialog):
+class DownloadSongsDialog(BaseDialog, metaclass=SingletonQObjectMeta):
 
     def __init__(self):
         super().__init__()
@@ -146,6 +147,7 @@ class _SongInfoDialog(BaseDialog):
 
     def _createUI(self) -> None:
         super()._createUI()
+        self.setAttribute(Qt.WA_DeleteOnClose)
 
         self._image = Cover()
         self._image.setAlignment(Qt.AlignHCenter)
