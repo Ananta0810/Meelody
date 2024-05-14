@@ -193,7 +193,6 @@ class SongsMenu(SmoothVerticalScrollArea):
 
         for songRow in songRows:
             songRow.setEditable(isLibrary)
-            songRow.showMoreButtons(False)
             songRow.hide()
 
         self.__showRows([row for row in songRows if row.content().getId() in songIdSet])

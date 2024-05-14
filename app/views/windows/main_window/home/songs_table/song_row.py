@@ -15,9 +15,9 @@ from app.components.buttons import ButtonFactory
 from app.components.dialogs import Dialogs
 from app.components.images.cover import CoverWithPlaceHolder, Cover
 from app.components.labels import LabelWithPlaceHolder
-from app.components.widgets import ExtendableStyleWidget, StyleWidget, FlexBox
+from app.components.widgets import ExtendableStyleWidget, FlexBox, StyleWidget
 from app.helpers.builders import ImageEditor
-from app.utils.base import silence
+from app.utils.base import silence, nothing
 from app.utils.others import Times, Logger
 from app.utils.qt import Widgets
 from app.utils.reflections import suppressException
@@ -105,6 +105,16 @@ class SongRow(ExtendableStyleWidget):
         self._mainButtonsLayout.addWidget(self._loveBtn)
         self._mainButtonsLayout.addWidget(self._playBtn)
 
+        self._mainLayout.addWidget(self._mainButtons)
+
+    def __isCreatedMoreButtons(self) -> bool:
+        try:
+            nothing(self._moreButtons)
+            return True
+        except AttributeError:
+            return False
+
+    def __createMoreButtons(self) -> None:
         # ============================================ MORE BUTTONS # ============================================
         self._editSongBtn = ButtonFactory.createIconButton(size=Icons.large, padding=Paddings.RELATIVE_50)
         self._editSongBtn.setLightModeIcon(Icons.edit.withColor(Colors.primary))
@@ -131,6 +141,7 @@ class SongRow(ExtendableStyleWidget):
 
         self._moreButtons = StyleWidget()
         self._moreButtons.setClassName("bg-black-4 rounded-12 dark:bg-white-4")
+
         self._moreButtonsLayout = FlexBox(self._moreButtons)
         self._moreButtonsLayout.setContentsMargins(8, 4, 8, 4)
         self._moreButtonsLayout.setSpacing(8)
@@ -139,28 +150,32 @@ class SongRow(ExtendableStyleWidget):
         self._moreButtonsLayout.addWidget(self._editSongBtn)
         self._moreButtonsLayout.addWidget(self._editCoverBtn)
         self._moreButtonsLayout.addWidget(self._deleteBtn)
-
-        self._mainLayout.addWidget(self._mainButtons)
         self._mainLayout.addWidget(self._moreButtons)
 
+        self.applyTheme()
+        self.translateUI()
+
+        self._editCoverBtn.clicked.connect(lambda: self.__changeCover())
+        self._closeMenuBtn.clicked.connect(lambda: silence(lambda: self.__showMoreButtons(False)))
+        self._editSongBtn.clicked.connect(lambda: self.__changeSongInfo())
+        self._deleteBtn.clicked.connect(lambda: self.__confirmToDeleteSong())
+
+    @suppressException
     def translateUI(self) -> None:
         self._moreBtn.setToolTip(translator.translate("SONG_ROW.MORE_BTN"))
         self._loveBtn.setToolTips([translator.translate("SONG_ROW.UNLOVE_BTN"), translator.translate("SONG_ROW.LOVE_BTN")])
         self._playBtn.setToolTips([translator.translate("SONG_ROW.PAUSE_BTN"), translator.translate("SONG_ROW.PLAY_BTN")])
-        self._editSongBtn.setToolTip(translator.translate("SONG_ROW.EDIT_BTN"))
-        self._editCoverBtn.setToolTip(translator.translate("SONG_ROW.EDIT_COVER_BTN"))
-        self._deleteBtn.setToolTip(translator.translate("SONG_ROW.DELETE_BTN"))
-        self._closeMenuBtn.setToolTip(translator.translate("SONG_ROW.CLOSE_BTN"))
+
+        if self.__isCreatedMoreButtons():
+            self._editSongBtn.setToolTip(translator.translate("SONG_ROW.EDIT_BTN"))
+            self._editCoverBtn.setToolTip(translator.translate("SONG_ROW.EDIT_COVER_BTN"))
+            self._deleteBtn.setToolTip(translator.translate("SONG_ROW.DELETE_BTN"))
+            self._closeMenuBtn.setToolTip(translator.translate("SONG_ROW.CLOSE_BTN"))
 
     def _connectSignalSlots(self) -> None:
-        self._moreBtn.clicked.connect(lambda: silence(lambda: self.showMoreButtons(True)))
-        self._closeMenuBtn.clicked.connect(lambda: silence(lambda: self.showMoreButtons(False)))
-
+        self._moreBtn.clicked.connect(lambda: silence(lambda: self.__showMoreButtons(True)))
         self._loveBtn.clicked.connect(lambda: silence(lambda: self.__song.updateLoveState(self._loveBtn.isActive())))
         self._playBtn.clicked.connect(lambda: self.__playOrPauseCurrentSong())
-        self._editCoverBtn.clicked.connect(lambda: self.__changeCover())
-        self._editSongBtn.clicked.connect(lambda: self.__changeSongInfo())
-        self._deleteBtn.clicked.connect(lambda: self.__confirmToDeleteSong())
 
         self.__song.loved.connect(lambda loved: silence(lambda: self._loveBtn.setActive(loved)))
         self.__song.coverChanged.connect(lambda cover: self.__setCover(cover))
@@ -192,6 +207,8 @@ class SongRow(ExtendableStyleWidget):
             self.__setEditable(editable)
 
     def __setEditable(self, editable):
+        if not self.__isCreatedMoreButtons():
+            return
         self._editSongBtn.setVisible(editable)
         self._editCoverBtn.setVisible(editable)
         self._deleteBtn.setVisible(editable)
@@ -217,18 +234,28 @@ class SongRow(ExtendableStyleWidget):
 
     @suppressException
     def show(self) -> None:
-        self.showMoreButtons(False)
+        self.__showMoreButtons(False)
         super().show()
 
         if not self.__song.isCoverLoaded():
             self.__song.loadCover()
 
+    def hide(self) -> None:
+        super().hide()
+        self.__showMoreButtons(False)
+
     @suppressException
-    def showMoreButtons(self, a0: bool) -> None:
-        self._mainButtons.setVisible(not a0)
-        self._moreButtons.setVisible(a0)
-        self._closeMenuBtn.setVisible(a0)
-        if a0:
+    def __showMoreButtons(self, show: bool) -> None:
+        if not show and not self.__isCreatedMoreButtons():
+            return
+
+        if not self.__isCreatedMoreButtons():
+            self.__createMoreButtons()
+
+        self._mainButtons.setVisible(not show)
+        self._moreButtons.setVisible(show)
+        self._closeMenuBtn.setVisible(show)
+        if show:
             menuCorner = self._moreButtons.geometry().topRight()
             self._closeMenuBtn.move(menuCorner.x() - self._closeMenuBtn.width() - 4, menuCorner.y() + 4)
             self._closeMenuBtn.raise_()

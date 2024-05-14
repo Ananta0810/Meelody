@@ -5,3 +5,7 @@ def silence(fn):
         from app.utils.others import Logger
         Logger.error(e)
         pass
+
+
+def nothing(v: object):
+    v
