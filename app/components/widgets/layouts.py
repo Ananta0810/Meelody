@@ -58,6 +58,9 @@ class Box(QVBoxLayout):
     def addSpacing(self, size: int) -> None:
         super().addSpacing(size)
 
+    def widgets(self) -> list[QWidget]:
+        return [self.itemAt(index).widget() for index in range(self.count()) if self.itemAt(index) is not None]
+
     def clear(self) -> None:
         for index in reversed(range(self.count())):
             self.removeAt(index)
@@ -122,6 +125,9 @@ class FlexBox(QHBoxLayout):
             super().addStretch()
         else:
             super().addStretch(stretch)
+
+    def widgets(self) -> list[QWidget]:
+        return [self.itemAt(index).widget() for index in range(self.count()) if self.itemAt(index) is not None]
 
     def clear(self) -> None:
         for index in reversed(range(self.count())):

@@ -1,9 +1,8 @@
-import typing
 from typing import Optional
 
 from PyQt5 import QtGui
 from PyQt5.QtCore import QEvent, QRect, pyqtSignal, Qt, pyqtBoundSignal
-from PyQt5.QtGui import QResizeEvent
+from PyQt5.QtGui import QResizeEvent, QShowEvent
 from PyQt5.QtWidgets import QWidget, QVBoxLayout, QHBoxLayout, QFileDialog
 
 from app.common.models import Playlist
@@ -16,7 +15,6 @@ from app.common.statics.styles import Paddings
 from app.components.base import FontFactory
 from app.components.buttons import ButtonFactory
 from app.components.dialogs import Dialogs
-from app.components.events import VisibleObserver
 from app.components.images.cover import ZoomCover, Cover
 from app.components.labels.ellipsis_label import EllipsisLabel
 from app.components.widgets import ExtendableStyleWidget
@@ -57,34 +55,27 @@ class PlaylistCard(ExtendableStyleWidget):
         self.setCover(info.getCover())
 
     def setCover(self, data: bytes) -> None:
-        if not Widgets.isInView(self):
-            VisibleObserver(self).visible.connect(lambda visible: self.setCover(data) if visible else None)
-            return
-
         data = data or Images.defaultPlaylistCover
 
         cover = self._toCoverProps(data)
         self._cover.setCover(self._toCoverProps(data))
 
         if cover is None:
+            self._title.applyLightMode()
             return
 
-        self._adaptTitleColorToCover()
+        if Widgets.isInView(self):
+            self.adaptTitleColorToCover()
 
-    def _adaptTitleColorToCover(self):
+    def adaptTitleColorToCover(self):
         width = self._title.fontMetrics().boundingRect(self._title.ellipsisText()).width()
-        labelRect = QRect(self._title.pos().x(),
-                          self._title.pos().y(),
-                          width,
-                          self._title.rect().height())
+        labelRect = QRect(self._title.pos().x(), self._title.pos().y(), width, self._title.rect().height())
 
-        colors = Pixmaps.getDominantColorsAt(labelRect, of=self._cover.currentCover().content(), maxColors=5)
+        pixmap = self._cover.currentCover().content().copy(labelRect)
+        colors = Pixmaps.getDominantColors(pixmap, maxColors=10)
         isDarkMode = Lists.findMostFrequency([color.isDarkColor() for color in colors])
 
-        if isDarkMode:
-            self._title.applyDarkMode()
-        else:
-            self._title.applyLightMode()
+        self._title.applyDarkMode() if isDarkMode else self._title.applyLightMode()
 
     def resizeEvent(self, event: QResizeEvent) -> None:
         self._cover.setFixedSize(self.size())
@@ -97,10 +88,6 @@ class PlaylistCard(ExtendableStyleWidget):
     def leaveEvent(self, event: QEvent) -> None:
         super().leaveEvent(event)
         self._cover.animationOnLeftHover()
-
-    def showEvent(self, a0: typing.Optional[QtGui.QShowEvent]) -> None:
-        super().showEvent(a0)
-        self._adaptTitleColorToCover()
 
     def mousePressEvent(self, event: Optional[QtGui.QMouseEvent]) -> None:
         super().mousePressEvent(event)
@@ -131,6 +118,10 @@ class LibraryPlaylistCard(PlaylistCard):
     def __selectLibraryPlaylist():
         if appCenter.currentPlaylist.getInfo().getId() != Library.Info().getId():
             appCenter.setActivePlaylist(appCenter.library)
+
+    def showEvent(self, a0: Optional[QShowEvent]) -> None:
+        super().showEvent(a0)
+        self.adaptTitleColorToCover()
 
 
 class FavouritePlaylistCard(PlaylistCard):
@@ -164,6 +155,10 @@ class FavouritePlaylistCard(PlaylistCard):
         super()._connectSignalSlots()
         self.clicked.connect(lambda: self.__selectFavouritesPlaylist())
         self._editCoverBtn.clicked.connect(lambda: self.__chooseCover())
+
+    def showEvent(self, a0: Optional[QShowEvent]) -> None:
+        super().showEvent(a0)
+        self.adaptTitleColorToCover()
 
     @staticmethod
     def __selectFavouritesPlaylist() -> None:

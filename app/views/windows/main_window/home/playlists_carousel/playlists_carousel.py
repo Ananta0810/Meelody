@@ -102,17 +102,23 @@ class PlaylistsCarousel(QScrollArea, Component):
         if len(addedPlaylistIds) > 0:
             self._userPlaylists.setMinimumWidth(totalPlaylists * 256 + (totalPlaylists - 1) * self._userPlaylistsLayout.spacing())
             newPlaylistDict: dict[str, Playlist] = {playlist.getInfo().getId(): playlist for playlist in playlists}
-            displayer = ChunksConsumer(items=addedPlaylistIds, size=3, parent=self)
-            displayer.forEach(lambda playlistId, index: self.__addPlaylist(newPlaylistDict[playlistId]), delay=10)
+
+            chunks = ChunksConsumer(items=addedPlaylistIds, size=3, parent=self)
+            chunks.finished.connect(lambda: self.__adaptCovers())
+            chunks.forEach(lambda playlistId, index: self.__addPlaylist(newPlaylistDict[playlistId]), delay=10)
 
         if len(removedPlaylistIds) > 0:
             indexesToRemove = [index for index, playlistId in enumerate(oldPlaylistIds) if playlistId in removedPlaylistIds]
             self._userPlaylistsLayout.removeAtIndexes(indexesToRemove)
             self._userPlaylists.setMinimumWidth(totalPlaylists * 256 + (totalPlaylists - 1) * self._userPlaylistsLayout.spacing())
 
-    def __addPlaylist(self, playlist: Playlist):
+    def __addPlaylist(self, playlist: Playlist) -> None:
         userPlaylist = UserPlaylistCard(playlist)
         self._userPlaylistsLayout.addWidget(userPlaylist)
+
+    def __adaptCovers(self) -> None:
+        chunks = ChunksConsumer(items=self._userPlaylistsLayout.widgets(), size=1, parent=self)
+        chunks.forEach(lambda playlist, index: playlist.adaptTitleColorToCover(), delay=10)
 
     @staticmethod
     def __openNewPlaylistDialog() -> None:
