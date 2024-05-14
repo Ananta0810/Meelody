@@ -24,10 +24,8 @@ class Application:
 
     @staticmethod
     def __configureDatabase() -> None:
-        librarySongs = database.songs.load("library", withExtension="mp3")
-        playlists = database.playlists.load(librarySongs)
+        playlists = database.playlists.load(appCenter.library.getSongs().toList())
 
-        appCenter.library.getSongs().setSongs(librarySongs)
         appCenter.setPlaylists(playlists)
         appCenter.setActivePlaylist(appCenter.library)
 

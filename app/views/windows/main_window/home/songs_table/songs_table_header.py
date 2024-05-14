@@ -4,7 +4,8 @@ from PyQt5.QtCore import Qt
 from PyQt5.QtWidgets import QWidget, QHBoxLayout, QFileDialog
 
 from app.common.models import Playlist
-from app.common.models.playlists import FavouritesPlaylist, Library
+from app.common.models.database import Library
+from app.common.models.playlists import FavouritesPlaylist
 from app.common.others import appCenter, translator
 from app.common.statics.enums import FileType
 from app.common.statics.qt import Icons, Cursors
@@ -102,7 +103,7 @@ class SongsTableHeader(QWidget, Component):
         self._selectSongsToPlaylistBtn.clicked.connect(lambda: self._openSelectPlaylistSongsDialog())
 
     def __showActionsToPlaylist(self, playlist: Playlist) -> None:
-        libraryId = Library.Info().getId()
+        libraryId = Library().getInfo().getId()
         favouriteId = FavouritesPlaylist.Info().getId()
 
         playlistId = playlist.getInfo().getId()

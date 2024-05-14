@@ -1,6 +1,7 @@
 from PyQt5.QtCore import QObject, pyqtSignal, pyqtBoundSignal
 
 from app.common.models import Playlist
+from app.common.models.database import Library
 from app.common.others.application_settings import AppSettings
 from app.common.others.playlists import Playlists
 from app.common.statics.enums import ThemeMode
@@ -15,14 +16,13 @@ class ApplicationCenter(QObject):
 
     def __init__(self) -> None:
         super().__init__()
-        from app.common.models.playlists import Library
         self.settings: AppSettings = AppSettings()
 
         self.isLoaded: bool = False
         self.isLightMode: bool = self.__isLightTheme(self.settings.theme)
         self.playlists: Playlists = Playlists()
 
-        self.library: Library = Library(Library.Info(), Library.Songs())
+        self.library: Library = Library()
         self.currentPlaylist: Playlist = self.library
 
         self.loaded.connect(lambda: self.__loaded())

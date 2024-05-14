@@ -6,7 +6,6 @@ from PyQt5.QtGui import QKeyEvent
 from PyQt5.QtWidgets import QWidget, qApp
 
 from app.common.models import Song, Playlist
-from app.common.models.playlists import Library
 from app.common.others import appCenter, musicPlayer, translator
 from app.components.asyncs import ChunksConsumer
 from app.components.dialogs import Dialogs
@@ -36,6 +35,8 @@ class SongsMenu(SmoothVerticalScrollArea):
         self.__titleKeys: dict[str, list[int]] = {}
 
         self._initComponent()
+
+        self.__loadLibrarySongs(appCenter.library.getSongs().toList())
         qApp.installEventFilter(self)
 
     def _connectSignalSlots(self) -> None:
@@ -44,7 +45,6 @@ class SongsMenu(SmoothVerticalScrollArea):
         self.__playlistUpdated.connect(lambda: self.__showSongsOfPlaylist(self.__currentPlaylist))
         self.__rowMoved.connect(lambda index: self.__askToScrollToSongAt(index))
 
-        appCenter.library.getSongs().loaded.connect(lambda: self.__loadLibrarySongs(appCenter.library.getSongs().toList()))
         appCenter.library.getSongs().updated.connect(lambda: self.__updateLayoutBasedOnLibrary(appCenter.library.getSongs().toList()))
         appCenter.currentPlaylistChanged.connect(lambda playlist: self.__showSongsOfPlaylist(playlist))
 
@@ -189,7 +189,7 @@ class SongsMenu(SmoothVerticalScrollArea):
 
         currentPosition = self.verticalScrollBar().value()
 
-        isLibrary = playlist.getInfo().getId() == Library.Info().getId()
+        isLibrary = playlist.getInfo().getId() == appCenter.library.getInfo().getId()
 
         for songRow in songRows:
             songRow.setEditable(isLibrary)

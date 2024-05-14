@@ -6,7 +6,7 @@ from PyQt5.QtGui import QResizeEvent, QShowEvent
 from PyQt5.QtWidgets import QWidget, QVBoxLayout, QHBoxLayout, QFileDialog
 
 from app.common.models import Playlist
-from app.common.models.playlists import FavouritesPlaylist, Library
+from app.common.models.playlists import FavouritesPlaylist
 from app.common.others import appCenter, translator
 from app.common.statics.enums import FileType
 from app.common.statics.qt import Cursors, Images, Icons
@@ -116,7 +116,7 @@ class LibraryPlaylistCard(PlaylistCard):
 
     @staticmethod
     def __selectLibraryPlaylist():
-        if appCenter.currentPlaylist.getInfo().getId() != Library.Info().getId():
+        if appCenter.currentPlaylist.getInfo().getId() != appCenter.library.getInfo().getId():
             appCenter.setActivePlaylist(appCenter.library)
 
     def showEvent(self, a0: Optional[QShowEvent]) -> None:

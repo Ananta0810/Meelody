@@ -1,12 +1,41 @@
+import os
 from contextlib import suppress
 
 from PyQt5.QtCore import pyqtSignal, pyqtBoundSignal
 
 from app.common.models.playlist import Playlist
+from app.common.models.playlists.common_playlist import CommonPlaylist
 from app.common.models.song import Song
 from app.common.others.translator import translator
+from app.utils.base import Lists, Strings
+from app.utils.others import Jsons, Files
 from app.utils.reflections import SingletonMeta, returnOnFailed
-from .common_playlist import CommonPlaylist
+
+
+class _Database:
+
+    def __init__(self, path: str) -> None:
+        self.__path = path
+
+    def load(self, directory: str, withExtension: str) -> list[Song]:
+        if not os.path.exists(directory):
+            os.mkdir(directory)
+
+        if os.path.exists(self.__path):
+            data: list[dict] = Jsons.readFromFile(self.__path)
+            if data is not None:
+                return [Song.fromDict(item) for item in data]
+
+        return self.__loadSongsFromFolder(directory, withExtension)
+
+    def __loadSongsFromFolder(self, directory, withExtension):
+        files: set = Files.getFrom(directory, withExtension)
+        songs = Lists.nonNull([Song.fromFile(file, Strings.getFileBasename(file)) for file in files])
+        self.save(songs)
+        return songs
+
+    def save(self, songs: list[Song]) -> None:
+        Jsons.writeToFile(self.__path, [song.toDict() for song in songs])
 
 
 class Library(Playlist, metaclass=SingletonMeta):
@@ -30,18 +59,20 @@ class Library(Playlist, metaclass=SingletonMeta):
 
         def __init__(self):
             super().__init__(None, isSorted=True)
+            self._database = _Database("configuration/songs.json")
+            self._loadSongs()
+
             self.updated.connect(lambda: self.__saveDatabase())
 
-        def setSongs(self, songs: list[Song]) -> None:
-            self._songs = []
-            if songs is None:
-                return
-
-            for song in songs:
+        def _loadSongs(self) -> None:
+            for song in self._database.load("library", withExtension="mp3"):
                 self._insert(song)
                 self.__connectToSong(song)
 
             self.loaded.emit()
+
+        def setSongs(self, songs: list[Song]) -> None:
+            pass
 
         def insert(self, song: Song) -> None:
             super().insert(song)
@@ -109,8 +140,10 @@ class Library(Playlist, metaclass=SingletonMeta):
             return self
 
         def __saveDatabase(self) -> None:
-            from app.common.others import database
-            database.songs.save(self.toList())
+            self._database.save(self.toList())
+
+    def __init__(self):
+        super().__init__(Library.Info(), Library.Songs())
 
     def clone(self) -> 'Playlist':
         return self
