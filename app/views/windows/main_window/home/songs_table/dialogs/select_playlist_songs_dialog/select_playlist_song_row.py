@@ -1,7 +1,7 @@
 from typing import Optional
 
-from PyQt5 import QtGui
 from PyQt5.QtCore import pyqtSignal, Qt
+from PyQt5.QtGui import QMouseEvent
 
 from app.common.models import Song
 from app.common.statics.qt import Images, Cursors
@@ -82,7 +82,15 @@ class SongRow(ExtendableStyleWidget):
         self._lengthLabel.setText(Times.toString(self.__song.getLength()))
         self._checkBox.setFixedHeight(self.sizeHint().height())
 
-    def mousePressEvent(self, a0: Optional[QtGui.QMouseEvent]) -> None:
+    def applyLightMode(self) -> None:
+        super().applyLightMode()
+        self.applyThemeToChildren()
+
+    def applyDarkMode(self) -> None:
+        super().applyDarkMode()
+        self.applyThemeToChildren()
+
+    def mousePressEvent(self, a0: Optional[QMouseEvent]) -> None:
         super().mousePressEvent(a0)
         self._checkBox.nextCheckState()
 

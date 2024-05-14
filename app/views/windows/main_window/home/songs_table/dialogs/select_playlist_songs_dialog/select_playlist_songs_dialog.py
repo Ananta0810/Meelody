@@ -5,6 +5,7 @@ from app.common.others import translator
 from app.components.base import FontFactory
 from app.components.buttons import ActionButton
 from app.components.dialogs import BaseDialog
+from app.components.events import VisibleObserver
 from app.components.widgets import StyleWidget, FlexBox, Box
 from app.views.windows.main_window.home.songs_table.dialogs.select_playlist_songs_dialog.select_playlist_songs_menu_body import MenuBody
 from app.views.windows.main_window.home.songs_table.dialogs.select_playlist_songs_dialog.select_playlist_songs_menu_header import MenuHeader
@@ -76,6 +77,7 @@ class SelectPlaylistSongsDialog(BaseDialog):
         self._menuBody.songSelected.connect(lambda song: self._selectSong(song))
         self._menuBody.songUnSelected.connect(lambda song: self._unSelectSong(song))
         self._applyBtn.clicked.connect(lambda: self._savePlaylist())
+        VisibleObserver(self, delay=10).visible.connect(lambda: self._menuBody.showSongs())
 
     def _selectSong(self, song: Song) -> None:
         if not self.__selectedSongs.hasSong(song):

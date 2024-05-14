@@ -25,7 +25,6 @@ class MenuBody(SmoothVerticalScrollArea):
 
         super().__init__(parent)
         self._initComponent()
-        self.__setSongs()
 
     def _createUI(self) -> None:
         super()._createUI()
@@ -69,7 +68,7 @@ class MenuBody(SmoothVerticalScrollArea):
         super().keyPressEvent(event)
         self.__keyPressed.emit(event)
 
-    def __setSongs(self) -> None:
+    def showSongs(self) -> None:
         songs = appCenter.library.getSongs().toList()
         for index, song in enumerate(songs):
             songRow = SongRow(song)
