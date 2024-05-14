@@ -176,7 +176,6 @@ class UpdateSongDialog(BaseDialog):
 
         try:
             self.__song.updateInfo(title, artist)
-            Dialogs.success(message=translator.translate("UPDATE_SONG.SUCCESS"))
             Logger.info("Update song info succeed.")
             self.closeWithAnimation()
         except ResourceException as e:

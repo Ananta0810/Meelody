@@ -7,8 +7,9 @@ from PyQt5.QtWidgets import QWidget, qApp
 
 from app.common.models import Song, Playlist
 from app.common.models.playlists import Library
-from app.common.others import appCenter, musicPlayer
+from app.common.others import appCenter, musicPlayer, translator
 from app.components.asyncs import ChunksConsumer
+from app.components.dialogs import Dialogs
 from app.components.scroll_areas import SmoothVerticalScrollArea
 from app.utils.base import Lists, Strings, silence
 from app.utils.qt import Widgets
@@ -20,6 +21,7 @@ MAX_ITEMS_VISIBLE_ON_MENU = 6
 
 class SongsMenu(SmoothVerticalScrollArea):
     __playlistUpdated = pyqtSignal()
+    __rowMoved = pyqtSignal(int)
 
     def __init__(self, parent: Optional[QWidget] = None) -> None:
         super().__init__(parent)
@@ -40,6 +42,7 @@ class SongsMenu(SmoothVerticalScrollArea):
         super()._connectSignalSlots()
 
         self.__playlistUpdated.connect(lambda: self.__showSongsOfPlaylist(self.__currentPlaylist))
+        self.__rowMoved.connect(lambda index: self.__askToScrollToSongAt(index))
 
         appCenter.library.getSongs().loaded.connect(lambda: self.__loadLibrarySongs(appCenter.library.getSongs().toList()))
         appCenter.library.getSongs().updated.connect(lambda: self.__updateLayoutBasedOnLibrary(appCenter.library.getSongs().toList()))
@@ -84,6 +87,16 @@ class SongsMenu(SmoothVerticalScrollArea):
         if song.getId() in self.__songMap:
             itemIndex = self.__songMap[song.getId()]
             self.scrollToItemAt(itemIndex)
+
+    def __askToScrollToSongAt(self, index: int) -> None:
+        Dialogs.confirm(
+            header=translator.translate("UPDATE_SONG.SUCCESS"),
+            message=translator.translate("UPDATE_SONG.MOVED_MSG"),
+            acceptText=translator.translate("UPDATE_SONG.MOVED_ACCEPT_BTN"),
+            cancelText=translator.translate("UPDATE_SONG.MOVED_CANCEL_BTN"),
+            onAccept=lambda: self.scrollToItemAt(index),
+            variant="info"
+        )
 
     def __loadLibrarySongs(self, songs: list[Song]) -> None:
         """
@@ -144,6 +157,7 @@ class SongsMenu(SmoothVerticalScrollArea):
             rowToMove = self.widgets()[oldIndex]
             self.moveWidget(rowToMove, newIndex)
             rowToMove.showMoreButtons(False)
+            self.__rowMoved.emit(newIndex)
 
     def __showSongsOfPlaylist(self, playlist: Playlist) -> None:
         if not appCenter.isLoaded:

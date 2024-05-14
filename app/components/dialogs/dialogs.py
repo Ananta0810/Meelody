@@ -40,7 +40,6 @@ class _ConfirmDialog(FramelessWindow):
 
         self._acceptBtn = ActionButton()
         self._acceptBtn.setFont(FontFactory.create(family="Segoe UI Semibold", size=10))
-        self._acceptBtn.setClassName("text-white rounded-4 bg-danger hover:bg-danger-[w120] px-24")
         self._acceptBtn.setFixedHeight(32)
 
         self._cancelBtn = ActionButton()
@@ -88,11 +87,20 @@ class _ConfirmDialog(FramelessWindow):
         cancelShortcut = QShortcut(QKeySequence(Qt.Key_Escape), self._cancelBtn)
         cancelShortcut.activated.connect(lambda: self.canceled.emit())
 
-    def setInfo(self, header: str, message: str, acceptText: str, cancelText: str) -> None:
+    def setInfo(self, header: str, message: str, acceptText: str, cancelText: str, variant: str) -> None:
         self._header.setText(header)
         self._message.setText(message)
         self._acceptBtn.setText(acceptText)
         self._cancelBtn.setText(cancelText)
+
+        acceptStyles = {
+            "alert": "text-white rounded-4 bg-danger hover:bg-danger-[w120] px-24",
+            "info": "text-white rounded-4 bg-primary hover:bg-primary-[w120] px-24",
+            "success": "text-white rounded-4 bg-success hover:bg-success-[w120] px-24",
+        }
+
+        if variant in acceptStyles:
+            self._acceptBtn.setClassName(acceptStyles[variant])
 
         width = Numbers.clamp(self.sizeHint().width(), 480, 640)
         self.setFixedWidth(width)
@@ -230,13 +238,15 @@ class Dialogs:
         cancelText: Optional[str] = None,
         onAccept: Optional[callable] = None,
         onCancel: Optional[callable] = None,
+        variant: str = "alert"
     ) -> None:
         dialog = _ConfirmDialog()
         dialog.setInfo(
             header or translator.translate("DIALOG.WARNING"),
             message,
             acceptText or translator.translate("DIALOG.CONTINUE"),
-            cancelText or translator.translate("DIALOG.CANCEL")
+            cancelText or translator.translate("DIALOG.CANCEL"),
+            variant
         )
 
         if onAccept is not None:

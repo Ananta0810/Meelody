@@ -102,7 +102,10 @@
   "UPDATE_SONG": {
     "LABEL": "Thay đổi thông tin bài hát",
     "SAVE_BTN": "Lưu",
-    "SUCCESS": "Thay đổi thông tin bài hát thành công",
+    "SUCCESS": "Thay đổi thông tin thành công",
+    "MOVED_MSG": "Bài hát của bạn đã được thay đổi vị trí trong danh sách nhạc. Bạn có muốn cuộn đến vị trí mới không?",
+    "MOVED_ACCEPT_BTN": "Có, tôi muôn đến đó",
+    "MOVED_CANCEL_BTN": "Không, tôi muốn ở đây",
     "NOT_FOUND": "Bài hát không tồn tại trong thư viện. Nó có thể đã bị xoá trong khi chạy ứng dụng.",
     "USED": "Bạn không thể thay đổi thông tin của bài hát đang phát. Xin hãy thử lại sau khi phát bài khác.",
     "EXISTED": "Bài hát với tiêu đề đã tồn tại. Xin hãy thử lại với tiêu đề khác,",

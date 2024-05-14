@@ -102,7 +102,10 @@
   "UPDATE_SONG": {
     "LABEL": "Update song",
     "SAVE_BTN": "Apply",
-    "SUCCESS": "Update song information successfully.",
+    "SUCCESS": "Update successfully.",
+    "MOVED_MSG": "Your song's position in playlist has been changed. Do you want to scroll to new position of the song in the menu?",
+    "MOVED_ACCEPT_BTN": "Yes, I want to",
+    "MOVED_CANCEL_BTN": "No, stay here",
     "NOT_FOUND": "Song is not found in library, you might have deleted it while open our application.",
     "USED": "You can not change info of the playing song. Please try again after you played other song.",
     "EXISTED": "Song title have already existed. Please try with other title.",
