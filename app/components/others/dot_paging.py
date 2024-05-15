@@ -37,7 +37,7 @@ class DotPage(ExtendableStyleWidget):
     def __createPage(self, number: int) -> None:
         page = ActionButton()
         page.setFixedSize(8, 8)
-        page.setClassName("rounded-full bg-primary-20 checked:bg-primary dark:bg-white-20 checked:bg-white")
+        page.setClassName("rounded-full bg-primary-20 checked:bg-primary dark:bg-white-20 dark:checked:bg-white")
         page.setCheckable(True)
         self._layout.addWidget(page)
 
@@ -69,4 +69,3 @@ class DotPage(ExtendableStyleWidget):
     def setToolTip(self, a0: typing.Optional[str]) -> None:
         for i in range(0, self.__total):
             self._layout.itemAt(i).widget().setToolTip(a0)
-

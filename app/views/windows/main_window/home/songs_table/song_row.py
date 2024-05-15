@@ -1,3 +1,4 @@
+import os
 from contextlib import suppress
 from typing import Optional
 
@@ -20,8 +21,8 @@ from app.components.labels import LabelWithPlaceHolder
 from app.components.others import DotPage
 from app.components.widgets import ExtendableStyleWidget, FlexBox
 from app.helpers.files import ImageEditor
-from app.utils.base import silence
-from app.utils.others import Times, Logger
+from app.utils.base import silence, Strings
+from app.utils.others import Times, Logger, Files
 from app.utils.qt import Widgets
 from app.utils.reflections import suppressException
 from app.views.windows.main_window.home.songs_table.dialogs.update_song_dialog import UpdateSongDialog
@@ -124,6 +125,7 @@ class SongRow(ExtendableStyleWidget):
         self._moreMenu.editCoverBtn.clicked.connect(lambda: self.__changeCover())
         self._moreMenu.editSongBtn.clicked.connect(lambda: self.__changeSongInfo())
         self._moreMenu.deleteBtn.clicked.connect(lambda: self.__confirmToDeleteSong())
+        self._moreMenu.exportBtn.clicked.connect(lambda: self.__exportSong())
 
         self._mainLayout.addWidget(self._moreMenu)
 
@@ -294,6 +296,34 @@ class SongRow(ExtendableStyleWidget):
             Logger.error(e)
             Logger.error("Delete song failed.")
             Dialogs.alert(message=translator.translate("SONG_ROW.DELETE_FAILED"))
+
+    def __exportSong(self) -> None:
+        directory = QFileDialog.getExistingDirectory(self, 'Select folder to export')
+        if Strings.isBlank(directory):
+            return
+
+        try:
+            destiny = Strings.joinPath(directory, f"{self.__song.getTitle()}.mp3")
+
+            if os.path.exists(destiny):
+                Dialogs.alert(message=translator.translate("SONG_ROW.EXPORT_FAILED_EXISTED"))
+                return
+
+            Files.copyFile(self.__song.getLocation(), destiny)
+
+            Dialogs.confirm(
+                header=translator.translate("SONG_ROW.EXPORT_HEADER"),
+                message=translator.translate("SONG_ROW.EXPORT_MESSAGE"),
+                acceptText=translator.translate("SONG_ROW.EXPORT_ACCEPT_BTN"),
+                cancelText=translator.translate("SONG_ROW.EXPORT_CANCEL_BTN"),
+                onAccept=lambda: os.startfile(directory),
+                variant="info"
+            )
+            Logger.error(f"Export song '{self.__song.getTitle()}' to '{directory}' successfully")
+        except Exception as e:
+            print(e)
+            Logger.error(f"Failed to export song '{self.__song.getTitle()}' to '{directory}'")
+            Dialogs.alert(message=translator.translate("SONG_ROW.EXPORT_FAILED"))
 
 
 class LoadCoverThread(QThread):

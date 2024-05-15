@@ -23,7 +23,8 @@ class Component:
         translator.changed.connect(lambda: self.translateUI())
 
         if autoChangeTheme:
-            appCenter.themeChanged.connect(lambda light: self.applyLightMode() if light else self.applyDarkMode())
+            with suppress(RuntimeError, Exception):
+                appCenter.themeChanged.connect(lambda light: self.applyLightMode() if light else self.applyDarkMode())
 
     def _createUI(self) -> None:
         pass
@@ -37,6 +38,7 @@ class Component:
     def _assignShortcuts(self) -> None:
         pass
 
+    @suppressException
     def translateUI(self) -> None:
         pass
 

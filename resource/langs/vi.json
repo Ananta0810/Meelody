@@ -41,17 +41,17 @@
     "PLAYLIST.DELETE_CONFIRM_MESSAGE": "Bạn có muốn tiếp tục xoá danh sách này không? Tác vụ này sẽ không hoàn tác được.",
     "PLAYLIST.DELETE_CONFIRM_OK": "Tiếp tục xoá",
     "PLAYLIST.UPDATED_COVER_FAILED_HEADER": "Đổi ảnh bìa không thành công.",
-    "PLAYLIST.UPDATED_COVER_FAILED_MSG": "Có lỗi xảy ra trong quá trình đổi ảnh bìa. Xin hãy thử lại.",
+    "PLAYLIST.UPDATED_COVER_FAILED_MSG": "Đã có lỗi xảy ra trong quá trình đổi ảnh bìa. Xin hãy thử lại.",
     "TITLE_PLACEHOLDER": "Tiêu đề...",
     "NEW_PLAYLIST_BTN": "Thêm danh sách nhạc",
     "NEW_PLAYLIST.ACCEPT_BTN": "Thêm",
     "NEW_PLAYLIST.CHOOSE_COVER_BTN": "Chọn ảnh bìa",
     "NEW_PLAYLIST.FAILED_HEADER": "Tạo danh sách không thành công",
-    "NEW_PLAYLIST.FAILED_MSG": "Có lỗi xảy ra trong quá trình tại danh sách nhạc. Xin hãy thử lại.",
+    "NEW_PLAYLIST.FAILED_MSG": "Đã có lỗi xảy ra trong quá trình tại danh sách nhạc. Xin hãy thử lại.",
     "UPDATE_PLAYLIST.ACCEPT_BTN": "Sửa đổi",
     "UPDATE_PLAYLIST.CHOOSE_COVER_BTN": "Chọn ảnh bìa",
     "UPDATE_PLAYLIST.SAVE_FAILED_HEADER": "Sửa đổi không thành công",
-    "UPDATE_PLAYLIST.SAVE_FAILED_MSG": "Có lỗi xảy ra trong quá trình lưu danh sách. Xin hãy thử lại sau."
+    "UPDATE_PLAYLIST.SAVE_FAILED_MSG": "Đã có lỗi xảy ra trong quá trình lưu danh sách. Xin hãy thử lại."
   },
   "CURRENT_PLAYLIST": {
     "TRACKS": "Bản nhạc"
@@ -71,7 +71,7 @@
     "INVALID_URL": "Liên kết không hợp lệ.",
     "NO_INTERNET": "Không có kết nối maạng",
     "VIDEO_NOT_FOUND": "Không tìm thấy video.",
-    "INSERT_FAILED": "Có lỗi xảy ra trong quá trình lưu nhạc.",
+    "INSERT_FAILED": "Đã có lỗi xảy ra trong quá trình lưu nhạc. Xin hãy thử lại.",
     "DOWNLOAD_BTN": "Tải nhạc",
     "LOADING": "Đang tải dữ liệu bài hát",
     "CONVERTING": "Đang chuyển đổi thành nhạc",
@@ -109,7 +109,7 @@
     "NOT_FOUND": "Bài hát không tồn tại trong thư viện. Nó có thể đã bị xoá trong khi chạy ứng dụng.",
     "USED": "Bạn không thể thay đổi thông tin của bài hát đang phát. Xin hãy thử lại sau khi phát bài khác.",
     "EXISTED": "Bài hát với tiêu đề đã tồn tại. Xin hãy thử lại với tiêu đề khác,",
-    "FAILED": "Có lỗi xảy ra trong quá trình lưu thông tin. Xin hãy thử lại."
+    "FAILED": "Đã có lỗi xảy ra trong quá trình lưu thông tin. Xin hãy thử lại."
   },
   "SONG": {
     "TITLE": "Tiêu đề",
@@ -128,15 +128,21 @@
     "EDIT_BTN": "Sửa thông tin bài hát",
     "EDIT_COVER_BTN": "Thay đổi ảnh bìa bài hát",
     "DELETE_BTN": "Xoá bài hát",
-    "EXPORT_BTN": "Lưu bài hát",
+    "EXPORT_BTN": "Xuất bài hát",
     "NEXT_PAGE": "Chuột phải sang trang",
     "EDIT_FAILED_NOT_FOUND": "Bài hát không tồn tại trong thư viện. Nó có thể đã bị xoá trong khi chạy ứng dụng.",
     "EDIT_FAILED_SONG_PLAYING": "Bạn không thể thay đổi ảnh bìa của bài hát đang phát. Xin hãy thử lại sau khi phát bài khác.",
-    "EDIT_COVER_FAILED": "Có lỗi xảy ra trong quá trình lưu ảnh bìa. Xin hãy thử lại.",
+    "EDIT_COVER_FAILED": "Đã có lỗi xảy ra trong quá trình lưu ảnh bìa. Xin hãy thử lại.",
     "DELETE_SONG_MSG": "Bạn có muốn tiếp tục xoá bài hát này không? Tác vụ này sẽ không hoàn tác được.",
     "DELETE_SONG_BTN": "Xoá",
     "DELETE_FAILED_PLAYING": "Bạn không thể xoá bài hát đang phát. Xin hãy thử lại sau khi phát bài khác.",
-    "DELETE_FAILED": "Có lỗi xảy ra trong quá trình xoá bài hát. Xin hãy thử lại."
+    "DELETE_FAILED": "Đã có lỗi xảy ra trong quá trình xoá bài hát. Xin hãy thử lại.",
+    "EXPORT_HEADER": "Xuất tệp thành công",
+    "EXPORT_MESSAGE": "Bài hát của bạn đã được xuất ra thư mục thành công. Bạn có muốn mở thư mục chứa tệp không?",
+    "EXPORT_ACCEPT_BTN": "Mở thư mục",
+    "EXPORT_CANCEL_BTN": "Bỏ qua",
+    "EXPORT_FAILED_EXISTED": "Bài hát đã tồn tại trong thư mục. \nXin hãy chọn thư mục khác để xuất tệp.",
+    "EXPORT_FAILED": "Đã có lỗi xảy ra trong quá trình xuất tệp. \nXin hãy thử lại."
   },
   "SETTINGS": {
     "LABEL": "Cài đặt",

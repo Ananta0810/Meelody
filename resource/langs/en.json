@@ -136,7 +136,13 @@
     "DELETE_SONG_MSG": "Are you sure want to delete this song? This action can not be reverted.",
     "DELETE_SONG_BTN": "Delete",
     "DELETE_FAILED_PLAYING": "You can not delete the playing song. Please try again after you played other song.",
-    "DELETE_FAILED": "Something is wrong when delete the song. Please try again."
+    "DELETE_FAILED": "Something is wrong when delete the song. Please try again.",
+    "EXPORT_HEADER": "Export file successfully",
+    "EXPORT_MESSAGE": "Your song had been exported. Do you want to open the file's directory in explorer?",
+    "EXPORT_ACCEPT_BTN": "Yes, open it",
+    "EXPORT_CANCEL_BTN": "No, I don't want",
+    "EXPORT_FAILED_EXISTED": "Song already existed in this folder. \nPlease choose other folder to export.",
+    "EXPORT_FAILED": "Something is wrong when exporting song to the folder. Please try again."
   },
   "SETTINGS": {
     "LABEL": "Settings",
