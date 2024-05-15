@@ -1,6 +1,8 @@
 from contextlib import suppress
+from typing import Optional
 
 from PyQt5.QtCore import Qt, QThread
+from PyQt5.QtGui import QMouseEvent
 from PyQt5.QtWidgets import QWidget, QHBoxLayout, QFileDialog
 
 from app.common.exceptions import ResourceException
@@ -107,58 +109,57 @@ class SongRow(ExtendableStyleWidget):
 
         self._mainLayout.addWidget(self._mainButtons)
 
-    def __isCreatedMoreButtons(self) -> bool:
+    def __isCreatedMoreMenu(self) -> bool:
         try:
-            nothing(self._moreButtons)
+            nothing(self._moreMenu)
             return True
         except AttributeError:
             return False
 
-    def __createMoreButtons(self) -> None:
+    def __createMoreMenu(self) -> None:
         # ============================================ MORE BUTTONS # ============================================
         self._editSongBtn = ButtonFactory.createIconButton(size=Icons.large, padding=Paddings.RELATIVE_50)
         self._editSongBtn.setLightModeIcon(Icons.edit.withColor(Colors.primary))
         self._editSongBtn.setDarkModeIcon(Icons.edit.withColor(Colors.white))
         self._editSongBtn.setClassName("hover:bg-primary-12 rounded-full", "dark:hover:bg-white-20")
-        self._editSongBtn.keepSpaceWhenHiding()
 
         self._editCoverBtn = ButtonFactory.createIconButton(size=Icons.large, padding=Paddings.RELATIVE_50)
         self._editCoverBtn.setLightModeIcon(Icons.image.withColor(Colors.primary))
         self._editCoverBtn.setDarkModeIcon(Icons.image.withColor(Colors.white))
         self._editCoverBtn.setClassName("hover:bg-primary-12 rounded-full", "dark:hover:bg-white-20")
-        self._editCoverBtn.keepSpaceWhenHiding()
 
         self._deleteBtn = ButtonFactory.createIconButton(size=Icons.large, padding=Paddings.RELATIVE_50)
         self._deleteBtn.setLightModeIcon(Icons.delete.withColor(Colors.primary))
         self._deleteBtn.setDarkModeIcon(Icons.delete.withColor(Colors.white))
         self._deleteBtn.setClassName("hover:bg-primary-12 rounded-full", "dark:hover:bg-white-20")
-        self._deleteBtn.keepSpaceWhenHiding()
 
-        self._closeMenuBtn = ButtonFactory.createIconButton(size=Icons.medium, padding=Paddings.RELATIVE_50, parent=self)
-        self._closeMenuBtn.setLightModeIcon(Icons.close.withColor(Colors.white))
-        self._closeMenuBtn.setClassName("rounded-full bg-danger hover:bg-danger-[w120]")
-        self._closeMenuBtn.hide()
+        self._moreMenu = StyleWidget()
+        self._moreMenu.setFixedWidth(236)
+        self._moreMenu.setClassName("bg-black-4 rounded-12 dark:bg-white-4")
 
-        self._moreButtons = StyleWidget()
-        self._moreButtons.setClassName("bg-black-4 rounded-12 dark:bg-white-4")
+        self._moreMenuLayout = FlexBox(self._moreMenu)
+        self._moreMenuLayout.setContentsMargins(8, 4, 8, 4)
+        self._moreMenuLayout.setSpacing(8)
+        self._moreMenu.hide()
 
-        self._moreButtonsLayout = FlexBox(self._moreButtons)
-        self._moreButtonsLayout.setContentsMargins(8, 4, 8, 4)
-        self._moreButtonsLayout.setSpacing(8)
-        self._moreButtons.hide()
-
-        self._moreButtonsLayout.addWidget(self._editSongBtn)
-        self._moreButtonsLayout.addWidget(self._editCoverBtn)
-        self._moreButtonsLayout.addWidget(self._deleteBtn)
-        self._mainLayout.addWidget(self._moreButtons)
+        self._moreMenuLayout.addWidget(self._editSongBtn)
+        self._moreMenuLayout.addWidget(self._editCoverBtn)
+        self._moreMenuLayout.addWidget(self._deleteBtn)
+        self._mainLayout.addWidget(self._moreMenu)
 
         self.applyTheme()
         self.translateUI()
 
         self._editCoverBtn.clicked.connect(lambda: self.__changeCover())
-        self._closeMenuBtn.clicked.connect(lambda: silence(lambda: self.__showMoreButtons(False)))
         self._editSongBtn.clicked.connect(lambda: self.__changeSongInfo())
         self._deleteBtn.clicked.connect(lambda: self.__confirmToDeleteSong())
+
+    def mousePressEvent(self, a0: Optional[QMouseEvent]) -> None:
+        super().mousePressEvent(a0)
+        if self.__isCreatedMoreMenu():
+            clickedOutsideMoreMenu = not self._moreMenu.geometry().contains(a0.pos())
+            if clickedOutsideMoreMenu:
+                self.__showMoreMenu(False)
 
     @suppressException
     def translateUI(self) -> None:
@@ -166,14 +167,13 @@ class SongRow(ExtendableStyleWidget):
         self._loveBtn.setToolTips([translator.translate("SONG_ROW.UNLOVE_BTN"), translator.translate("SONG_ROW.LOVE_BTN")])
         self._playBtn.setToolTips([translator.translate("SONG_ROW.PAUSE_BTN"), translator.translate("SONG_ROW.PLAY_BTN")])
 
-        if self.__isCreatedMoreButtons():
+        if self.__isCreatedMoreMenu():
             self._editSongBtn.setToolTip(translator.translate("SONG_ROW.EDIT_BTN"))
             self._editCoverBtn.setToolTip(translator.translate("SONG_ROW.EDIT_COVER_BTN"))
             self._deleteBtn.setToolTip(translator.translate("SONG_ROW.DELETE_BTN"))
-            self._closeMenuBtn.setToolTip(translator.translate("SONG_ROW.CLOSE_BTN"))
 
     def _connectSignalSlots(self) -> None:
-        self._moreBtn.clicked.connect(lambda: silence(lambda: self.__showMoreButtons(True)))
+        self._moreBtn.clicked.connect(lambda: silence(lambda: self.__showMoreMenu(True)))
         self._loveBtn.clicked.connect(lambda: silence(lambda: self.__song.updateLoveState(self._loveBtn.isActive())))
         self._playBtn.clicked.connect(lambda: self.__playOrPauseCurrentSong())
 
@@ -207,7 +207,7 @@ class SongRow(ExtendableStyleWidget):
             self.__setEditable(editable)
 
     def __setEditable(self, editable):
-        if not self.__isCreatedMoreButtons():
+        if not self.__isCreatedMoreMenu():
             return
         self._editSongBtn.setVisible(editable)
         self._editCoverBtn.setVisible(editable)
@@ -230,35 +230,32 @@ class SongRow(ExtendableStyleWidget):
             musicPlayer.played.disconnect(self.__checkEditable)
             musicPlayer.played.disconnect(self.__updatePlayBtn)
             musicPlayer.paused.disconnect(self.__onMusicPlayerPaused)
+
         super().deleteLater()
 
     @suppressException
     def show(self) -> None:
-        self.__showMoreButtons(False)
+        self.__showMoreMenu(False)
         super().show()
 
         if not self.__song.isCoverLoaded():
             self.__song.loadCover()
 
+    @suppressException
     def hide(self) -> None:
         super().hide()
-        self.__showMoreButtons(False)
+        self.__showMoreMenu(False)
 
     @suppressException
-    def __showMoreButtons(self, show: bool) -> None:
-        if not show and not self.__isCreatedMoreButtons():
+    def __showMoreMenu(self, show: bool) -> None:
+        if not show and not self.__isCreatedMoreMenu():
             return
 
-        if not self.__isCreatedMoreButtons():
-            self.__createMoreButtons()
+        if not self.__isCreatedMoreMenu():
+            self.__createMoreMenu()
 
         self._mainButtons.setVisible(not show)
-        self._moreButtons.setVisible(show)
-        self._closeMenuBtn.setVisible(show)
-        if show:
-            menuCorner = self._moreButtons.geometry().topRight()
-            self._closeMenuBtn.move(menuCorner.x() - self._closeMenuBtn.width() - 4, menuCorner.y() + 4)
-            self._closeMenuBtn.raise_()
+        self._moreMenu.setVisible(show)
 
     @suppressException
     def __playOrPauseCurrentSong(self) -> None:

@@ -37,6 +37,8 @@ class Song(QObject):
         if cover is not None:
             self.__cover = cover
 
+        self.deleted.connect(lambda: self.deleteLater())
+
     @staticmethod
     def fromFile(location: str, title: str) -> Optional['Song']:
         """
