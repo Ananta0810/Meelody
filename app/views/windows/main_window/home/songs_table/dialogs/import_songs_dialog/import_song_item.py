@@ -6,7 +6,6 @@ from PyQt5.QtWidgets import QWidget, QShortcut, QVBoxLayout
 
 from app.common.exceptions import ResourceException
 from app.common.models import Song
-from app.common.models.song import SongReader, SongWriter
 from app.common.others import translator, appCenter
 from app.common.statics.qt import Images
 from app.components.base import FontFactory
@@ -17,6 +16,7 @@ from app.components.inputs import Input
 from app.components.labels import AutoTranslateLabel, Label
 from app.components.labels.ellipsis_label import EllipsisLabel
 from app.components.widgets import ExtendableStyleWidget, Box, FlexBox
+from app.helpers.files import SongWriter, SongReader
 from app.utils.base import Strings
 from app.utils.others import Logger, Files
 

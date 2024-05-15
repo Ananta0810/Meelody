@@ -13,7 +13,7 @@ from app.components.base import FontFactory
 from app.components.images.cover import CoverWithPlaceHolder, Cover
 from app.components.labels import Label
 from app.components.widgets import ExtendableStyleWidget, Box
-from app.helpers.builders import ImageEditor
+from app.helpers.files import ImageEditor
 
 
 class CurrentSongInfo(ExtendableStyleWidget):

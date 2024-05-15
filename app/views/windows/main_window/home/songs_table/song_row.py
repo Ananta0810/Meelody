@@ -16,7 +16,7 @@ from app.components.dialogs import Dialogs
 from app.components.images.cover import CoverWithPlaceHolder, Cover
 from app.components.labels import LabelWithPlaceHolder
 from app.components.widgets import ExtendableStyleWidget, FlexBox, StyleWidget
-from app.helpers.builders import ImageEditor
+from app.helpers.files import ImageEditor
 from app.utils.base import silence, nothing
 from app.utils.others import Times, Logger
 from app.utils.qt import Widgets

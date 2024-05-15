@@ -18,7 +18,7 @@ from app.components.dialogs import BaseDialog, Dialogs
 from app.components.images import Cover
 from app.components.inputs import Input
 from app.components.widgets import Box
-from app.helpers.builders import ImageEditor
+from app.helpers.files import ImageEditor
 from app.utils.base import Strings
 from app.utils.others import Files
 

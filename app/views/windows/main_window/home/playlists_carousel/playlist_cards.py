@@ -18,7 +18,7 @@ from app.components.dialogs import Dialogs
 from app.components.images.cover import ZoomCover, Cover
 from app.components.labels.ellipsis_label import EllipsisLabel
 from app.components.widgets import ExtendableStyleWidget
-from app.helpers.builders import ImageEditor
+from app.helpers.files import ImageEditor
 from app.utils.base import Bytes, Lists
 from app.utils.others import Files, Logger
 from app.utils.qt import Pixmaps, Widgets
