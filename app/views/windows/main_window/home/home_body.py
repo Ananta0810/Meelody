@@ -39,7 +39,7 @@ class HomeBody(QScrollArea, Component):
         self._settingsAreaLayout.setContentsMargins(0, 0, 0, 0)
         self._settingsAreaLayout.setAlignment(Qt.AlignLeft | Qt.AlignTop)
 
-        self._settingsBtn = ButtonFactory.createIconButton(QSize(40, 40), padding=Paddings.RELATIVE_33)
+        self._settingsBtn = ButtonFactory.createIconButton(QSize(40, 40), padding=Paddings.relative33)
         self._settingsBtn.setLightModeIcon(Icons.settings.withColor(Colors.primary))
         self._settingsBtn.setDarkModeIcon(Icons.settings.withColor(Colors.white))
         self._settingsBtn.setClassName("bg-none border-none hover:bg-primary-10 rounded-full dark:hover:bg-white-12")

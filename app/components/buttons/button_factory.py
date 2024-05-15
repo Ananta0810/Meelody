@@ -12,7 +12,7 @@ from .icons_button import MultiStatesIconButton, IconButton, ToggleIconButton
 class ButtonFactory:
 
     @staticmethod
-    def createIconButton(size: QSize, padding: Padding = Paddings.DEFAULT, parent: QObject = None) -> IconButton:
+    def createIconButton(size: QSize, padding: Padding = Paddings.none, parent: QObject = None) -> IconButton:
         button = IconButton(parent)
         button.setCursor(Cursors.pointer)
 
@@ -22,7 +22,7 @@ class ButtonFactory:
         return button
 
     @staticmethod
-    def createToggleButton(size: QSize, padding: Padding = Paddings.DEFAULT, parent: QObject = None) -> ToggleIconButton:
+    def createToggleButton(size: QSize, padding: Padding = Paddings.none, parent: QObject = None) -> ToggleIconButton:
         button = ToggleIconButton(parent)
         button.setCursor(Cursors.pointer)
 
@@ -32,7 +32,7 @@ class ButtonFactory:
         return button
 
     @staticmethod
-    def createMultiStatesButton(size: QSize, padding: Padding = Paddings.DEFAULT, parent: QObject = None) -> MultiStatesIconButton:
+    def createMultiStatesButton(size: QSize, padding: Padding = Paddings.none, parent: QObject = None) -> MultiStatesIconButton:
         button = MultiStatesIconButton(parent)
         button.setCursor(Cursors.pointer)
 

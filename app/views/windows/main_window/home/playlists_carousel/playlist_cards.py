@@ -136,7 +136,7 @@ class FavouritePlaylistCard(PlaylistCard):
     def _createUI(self) -> None:
         super()._createUI()
 
-        self._editCoverBtn = ButtonFactory.createIconButton(size=Icons.medium, padding=Paddings.RELATIVE_50)
+        self._editCoverBtn = ButtonFactory.createIconButton(size=Icons.medium, padding=Paddings.relative50)
         self._editCoverBtn.setLightModeIcon(Icons.image.withColor(Colors.white))
         self._editCoverBtn.setClassName("rounded-full bg-primary hover:bg-primary-[w120]")
 
@@ -202,12 +202,12 @@ class UserPlaylistCard(PlaylistCard):
 
     def _createUI(self) -> None:
         super()._createUI()
-        self._editBtn = ButtonFactory.createIconButton(size=Icons.medium, padding=Paddings.RELATIVE_50)
+        self._editBtn = ButtonFactory.createIconButton(size=Icons.medium, padding=Paddings.relative50)
         self._editBtn.setLightModeIcon(Icons.edit.withColor(Colors.white))
         self._editBtn.setClassName("rounded-full bg-primary hover:bg-primary-[w120]")
         self._editBtn.applyLightMode()
 
-        self._deleteBtn = ButtonFactory.createIconButton(size=Icons.medium, padding=Paddings.RELATIVE_50)
+        self._deleteBtn = ButtonFactory.createIconButton(size=Icons.medium, padding=Paddings.relative50)
         self._deleteBtn.setLightModeIcon(Icons.delete.withColor(Colors.white))
         self._deleteBtn.setClassName("rounded-full bg-danger hover:bg-danger-[w120]")
         self._deleteBtn.applyLightMode()

@@ -51,7 +51,7 @@ class SettingsDialog(FramelessWindow):
         self.setClassName("rounded-12 bg-white dark:bg-dark")
 
         # ==================================== TITLE BAR ====================================
-        self._closeBtn = ButtonFactory.createIconButton(Icons.medium, Paddings.RELATIVE_50)
+        self._closeBtn = ButtonFactory.createIconButton(Icons.medium, Paddings.relative50)
         self._closeBtn.setLightModeIcon(Icons.close.withColor(Colors.black))
         self._closeBtn.setDarkModeIcon(Icons.close.withColor(Colors.white))
         self._closeBtn.setClassName("rounded-8 bg-none hover:bg-gray-25 dark:hover:bg-white-20")

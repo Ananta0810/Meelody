@@ -81,12 +81,12 @@ class SongRow(ExtendableStyleWidget):
         self._mainLayout.addLayout(self._info)
 
         # ============================================ REACT BUTTONS # ============================================
-        self._moreBtn = ButtonFactory.createIconButton(size=Icons.large, padding=Paddings.RELATIVE_50)
+        self._moreBtn = ButtonFactory.createIconButton(size=Icons.large, padding=Paddings.relative50)
         self._moreBtn.setLightModeIcon(Icons.more.withColor(Colors.gray))
         self._moreBtn.setDarkModeIcon(Icons.more.withColor(Colors.white))
         self._moreBtn.setClassName("hover:bg-black-10 rounded-full", "dark:hover:bg-white-20")
 
-        self._loveBtn = ButtonFactory.createToggleButton(Icons.large, Paddings.RELATIVE_50)
+        self._loveBtn = ButtonFactory.createToggleButton(Icons.large, Paddings.relative50)
         self._loveBtn.setActiveIcon(Icons.loved.withColor(Colors.danger))
         self._loveBtn.setInactiveIcon(Icons.love.withColor(Colors.gray))
         self._loveBtn.setClassName(
@@ -94,7 +94,7 @@ class SongRow(ExtendableStyleWidget):
             "dark:active/hover:bg-danger-20 dark:inactive/hover:bg-white-20"
         )
 
-        self._playBtn = ButtonFactory.createToggleButton(size=Icons.large, padding=Paddings.RELATIVE_50)
+        self._playBtn = ButtonFactory.createToggleButton(size=Icons.large, padding=Paddings.relative50)
         self._playBtn.setActiveIcon(Icons.pause.withColor(Colors.primary), Icons.pause.withColor(Colors.white))
         self._playBtn.setInactiveIcon(Icons.play.withColor(Colors.primary), Icons.play.withColor(Colors.white))
         self._playBtn.setClassName("hover:bg-primary-25 bg-primary-10 rounded-full", "dark:bg-white-20 dark:hover:bg-primary")
@@ -313,22 +313,22 @@ class _MoreMenu(ExtendableStyleWidget):
 
     def _createUI(self) -> None:
         super()._createUI()
-        self.editSongBtn = ButtonFactory.createIconButton(size=Icons.large, padding=Paddings.RELATIVE_50)
+        self.editSongBtn = ButtonFactory.createIconButton(size=Icons.large, padding=Paddings.relative50)
         self.editSongBtn.setLightModeIcon(Icons.edit.withColor(Colors.primary))
         self.editSongBtn.setDarkModeIcon(Icons.edit.withColor(Colors.white))
         self.editSongBtn.setClassName("hover:bg-primary-12 rounded-full", "dark:hover:bg-white-20")
 
-        self.editCoverBtn = ButtonFactory.createIconButton(size=Icons.large, padding=Paddings.RELATIVE_50)
+        self.editCoverBtn = ButtonFactory.createIconButton(size=Icons.large, padding=Paddings.relative50)
         self.editCoverBtn.setLightModeIcon(Icons.image.withColor(Colors.primary))
         self.editCoverBtn.setDarkModeIcon(Icons.image.withColor(Colors.white))
         self.editCoverBtn.setClassName("hover:bg-primary-12 rounded-full", "dark:hover:bg-white-20")
 
-        self.deleteBtn = ButtonFactory.createIconButton(size=Icons.large, padding=Paddings.RELATIVE_50)
+        self.deleteBtn = ButtonFactory.createIconButton(size=Icons.large, padding=Paddings.relative50)
         self.deleteBtn.setLightModeIcon(Icons.delete.withColor(Colors.primary))
         self.deleteBtn.setDarkModeIcon(Icons.delete.withColor(Colors.white))
         self.deleteBtn.setClassName("hover:bg-primary-12 rounded-full", "dark:hover:bg-white-20")
 
-        self.exportBtn = ButtonFactory.createIconButton(size=Icons.large, padding=Paddings.RELATIVE_50)
+        self.exportBtn = ButtonFactory.createIconButton(size=Icons.large, padding=Paddings.relative50)
         self.exportBtn.setLightModeIcon(Icons.export.withColor(Colors.primary))
         self.exportBtn.setDarkModeIcon(Icons.export.withColor(Colors.white))
         self.exportBtn.setClassName("hover:bg-primary-12 rounded-full", "dark:hover:bg-white-20")

@@ -54,19 +54,19 @@ class SongsTableHeader(QWidget, Component):
         self._buttonsLayout.setSpacing(8)
         self._buttonsLayout.setContentsMargins(8, 0, 8, 0)
 
-        self._downloadSongsToLibraryBtn = ButtonFactory.createIconButton(Icons.large, Paddings.RELATIVE_50)
+        self._downloadSongsToLibraryBtn = ButtonFactory.createIconButton(Icons.large, Paddings.relative50)
         self._downloadSongsToLibraryBtn.setLightModeIcon(Icons.download.withColor(Colors.primary))
         self._downloadSongsToLibraryBtn.setDarkModeIcon(Icons.download.withColor(Colors.white))
         self._downloadSongsToLibraryBtn.setToolTip("Download songs from Youtube.")
         self._downloadSongsToLibraryBtn.setClassName("rounded-full bg-primary-12 hover:bg-primary-25 dark:bg-white-20 dark:hover:bg-white-33")
 
-        self._importSongsToLibraryBtn = ButtonFactory.createIconButton(Icons.large, Paddings.RELATIVE_67)
+        self._importSongsToLibraryBtn = ButtonFactory.createIconButton(Icons.large, Paddings.relative67)
         self._importSongsToLibraryBtn.setLightModeIcon(Icons.add.withColor(Colors.primary))
         self._importSongsToLibraryBtn.setDarkModeIcon(Icons.add.withColor(Colors.white))
         self._importSongsToLibraryBtn.setToolTip("Import songs from computer.")
         self._importSongsToLibraryBtn.setClassName("rounded-full bg-primary-12 hover:bg-primary-25 dark:bg-white-20 dark:hover:bg-white-33")
 
-        self._selectSongsToPlaylistBtn = ButtonFactory.createIconButton(Icons.large, Paddings.RELATIVE_67)
+        self._selectSongsToPlaylistBtn = ButtonFactory.createIconButton(Icons.large, Paddings.relative67)
         self._selectSongsToPlaylistBtn.setLightModeIcon(Icons.edit.withColor(Colors.primary))
         self._selectSongsToPlaylistBtn.setDarkModeIcon(Icons.edit.withColor(Colors.white))
         self._selectSongsToPlaylistBtn.setToolTip("Select playlist songs.")

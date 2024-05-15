@@ -108,17 +108,17 @@ class TitleBarWindow(FramelessWindow):
         self._titleBarLayout.setSpacing(8)
         self._titleBar.setLayout(self._titleBarLayout)
 
-        self._minimizeBtn = ButtonFactory.createIconButton(size=Icons.medium, padding=Paddings.RELATIVE_50)
+        self._minimizeBtn = ButtonFactory.createIconButton(size=Icons.medium, padding=Paddings.relative50)
         self._minimizeBtn.setLightModeIcon(Icons.minimize.withColor(Colors.primary))
         self._minimizeBtn.setDarkModeIcon(Icons.minimize.withColor(Colors.white))
         self._minimizeBtn.setClassName("rounded-8 hover:bg-black-12 bg-none dark:hover:bg-white-20")
 
-        self._maximizeBtn = ButtonFactory.createIconButton(size=Icons.medium, padding=Paddings.RELATIVE_50)
+        self._maximizeBtn = ButtonFactory.createIconButton(size=Icons.medium, padding=Paddings.relative50)
         self._maximizeBtn.setLightModeIcon(Icons.maximize.withColor(Colors.primary))
         self._maximizeBtn.setDarkModeIcon(Icons.maximize.withColor(Colors.white))
         self._maximizeBtn.setClassName("rounded-8 hover:bg-black-12 bg-none dark:hover:bg-white-20")
 
-        self._closeBtn = ButtonFactory.createIconButton(size=Icons.medium, padding=Paddings.RELATIVE_50)
+        self._closeBtn = ButtonFactory.createIconButton(size=Icons.medium, padding=Paddings.relative50)
         self._closeBtn.setLightModeIcon(Icons.close.withColor(Colors.danger))
         self._closeBtn.setDarkModeIcon(Icons.close.withColor(Colors.white))
         self._closeBtn.setClassName("rounded-8 bg-danger-25 hover:bg-danger-33 dark:bg-danger dark:hover:bg-danger-[b120]")

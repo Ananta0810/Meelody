@@ -68,13 +68,13 @@ class DownloadSongItem(ExtendableStyleWidget):
         self._infoLayout.addWidget(self._progressBar)
         self._infoLayout.addStretch(0)
 
-        self._successIcon = ButtonFactory.createIconButton(size=Icons.small, padding=Paddings.RELATIVE_25)
+        self._successIcon = ButtonFactory.createIconButton(size=Icons.small, padding=Paddings.relative25)
         self._successIcon.setLightModeIcon(Icons.apply.withColor(Colors.white))
         self._successIcon.setClassName("rounded-full bg-success")
         self._successIcon.setCursor(Cursors.base)
         self._successIcon.hide()
 
-        self._failedIcon = ButtonFactory.createIconButton(size=Icons.small, padding=Paddings.RELATIVE_25)
+        self._failedIcon = ButtonFactory.createIconButton(size=Icons.small, padding=Paddings.relative25)
         self._failedIcon.setLightModeIcon(Icons.close.withColor(Colors.white))
         self._failedIcon.setClassName("rounded-full bg-danger")
         self._failedIcon.setCursor(Cursors.base)

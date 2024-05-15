@@ -50,7 +50,7 @@ class PlaylistsCarousel(QScrollArea, Component):
         self._newPlaylistCard.setFixedSize(256, 320)
         self._newPlaylistCard.setClassName("rounded-24 bg-primary-12 dark:bg-white-12")
 
-        self._addPlaylistBtn = ButtonFactory.createIconButton(size=Icons.large, padding=Paddings.RELATIVE_67, parent=self._newPlaylistCard)
+        self._addPlaylistBtn = ButtonFactory.createIconButton(size=Icons.large, padding=Paddings.relative67, parent=self._newPlaylistCard)
         self._addPlaylistBtn.move(self._newPlaylistCard.rect().center() - self._addPlaylistBtn.rect().center())
         self._addPlaylistBtn.setLightModeIcon(Icons.add.withColor(Colors.primary))
         self._addPlaylistBtn.setDarkModeIcon(Icons.add.withColor(Colors.white))
