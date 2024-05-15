@@ -1,22 +1,51 @@
+import os
+
 from PyQt5.QtCore import QObject, pyqtSignal, pyqtBoundSignal
 
-from app.common.models import Playlist
-from .database import database
+from app.common.models import Song, Playlist
+from app.common.models.playlists import UserPlaylist
+from app.utils.others import Jsons
+from app.utils.reflections import SingletonQObjectMeta
 
 
-class Playlists(QObject):
+class _Database:
+
+    def __init__(self, path: str) -> None:
+        self.__path = path
+
+    def load(self, songs: list[Song]) -> list[Playlist]:
+        if os.path.exists(self.__path):
+            data: list[dict] = Jsons.readFromFile(self.__path)
+            if data is not None:
+                return [UserPlaylist.fromDict(item, songs) for item in data]
+
+        self.save([])
+        return []
+
+    def save(self, data: list[UserPlaylist]) -> None:
+        data = [playlist.toDict() for playlist in data]
+        Jsons.writeToFile(self.__path, data)
+
+
+class Playlists(QObject, metaclass=SingletonQObjectMeta):
     loaded: pyqtBoundSignal = pyqtSignal()
     changed: pyqtBoundSignal = pyqtSignal(list)
 
-    def __init__(self) -> None:
+    def __init__(self, librarySongs: list[Song]) -> None:
         super().__init__()
         self.__items = []
+        self.__database = _Database("configuration/playlists.json")
+        self.__load(librarySongs)
+
         self.changed.connect(lambda playlists_: self.__updateToDatabase())
 
-    def load(self, items: list[Playlist]) -> None:
+    def __load(self, songs: list[Song]) -> None:
+        items = self.__database.load(songs)
+
         for item in items:
             self.__items.append(item)
             item.getSongs().updated.connect(lambda: self.__updateToDatabase())
+
         self.loaded.emit()
 
     def append(self, item: Playlist) -> None:
@@ -49,4 +78,4 @@ class Playlists(QObject):
         return self.__items
 
     def __updateToDatabase(self):
-        return database.playlists.save([item for item in self.__items])
+        return self.__database.save([item for item in self.__items])

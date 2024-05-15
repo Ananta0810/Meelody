@@ -2,8 +2,8 @@ from PyQt5.QtCore import QObject, pyqtSignal, pyqtBoundSignal
 
 from app.common.models import Playlist
 from app.common.models.database import Library
+from app.common.models.database.playlists import Playlists
 from app.common.others.application_settings import AppSettings
-from app.common.others.playlists import Playlists
 from app.common.statics.enums import ThemeMode
 from app.utils.systems import Systems
 
@@ -20,9 +20,9 @@ class ApplicationCenter(QObject):
 
         self.isLoaded: bool = False
         self.isLightMode: bool = self.__isLightTheme(self.settings.theme)
-        self.playlists: Playlists = Playlists()
 
         self.library: Library = Library()
+        self.playlists: Playlists = Playlists(self.library.getSongs().toList())
         self.currentPlaylist: Playlist = self.library
 
         self.loaded.connect(lambda: self.__loaded())
@@ -39,9 +39,6 @@ class ApplicationCenter(QObject):
     def setActivePlaylist(self, playlist: Playlist) -> None:
         self.currentPlaylist = playlist
         self.currentPlaylistChanged.emit(playlist)
-
-    def setPlaylists(self, playlists: list[Playlist]) -> None:
-        self.playlists.load(playlists)
 
     @staticmethod
     def __isLightTheme(theme: ThemeMode) -> bool:

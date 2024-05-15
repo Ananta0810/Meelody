@@ -1,4 +1,4 @@
-from app.common.others import appCenter, database, musicPlayer, translator
+from app.common.others import appCenter, musicPlayer, translator
 from app.views.windows.main_window import MainWindow
 
 
@@ -25,9 +25,6 @@ class Application:
 
     @staticmethod
     def __configureDatabase() -> None:
-        playlists = database.playlists.load(appCenter.library.getSongs().toList())
-
-        appCenter.setPlaylists(playlists)
         appCenter.setActivePlaylist(appCenter.library)
 
     @staticmethod
