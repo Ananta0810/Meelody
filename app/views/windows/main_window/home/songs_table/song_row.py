@@ -17,7 +17,7 @@ from app.components.buttons import ButtonFactory
 from app.components.dialogs import Dialogs
 from app.components.images.cover import CoverWithPlaceHolder, Cover
 from app.components.labels import LabelWithPlaceHolder
-from app.components.widgets import ExtendableStyleWidget, FlexBox, StyleWidget
+from app.components.widgets import ExtendableStyleWidget, FlexBox
 from app.helpers.files import ImageEditor
 from app.utils.base import silence, nothing
 from app.utils.others import Times, Logger
@@ -118,41 +118,17 @@ class SongRow(ExtendableStyleWidget):
 
     def __createMoreMenu(self) -> None:
         # ============================================ MORE BUTTONS # ============================================
-        self._editSongBtn = ButtonFactory.createIconButton(size=Icons.large, padding=Paddings.RELATIVE_50)
-        self._editSongBtn.setLightModeIcon(Icons.edit.withColor(Colors.primary))
-        self._editSongBtn.setDarkModeIcon(Icons.edit.withColor(Colors.white))
-        self._editSongBtn.setClassName("hover:bg-primary-12 rounded-full", "dark:hover:bg-white-20")
-
-        self._editCoverBtn = ButtonFactory.createIconButton(size=Icons.large, padding=Paddings.RELATIVE_50)
-        self._editCoverBtn.setLightModeIcon(Icons.image.withColor(Colors.primary))
-        self._editCoverBtn.setDarkModeIcon(Icons.image.withColor(Colors.white))
-        self._editCoverBtn.setClassName("hover:bg-primary-12 rounded-full", "dark:hover:bg-white-20")
-
-        self._deleteBtn = ButtonFactory.createIconButton(size=Icons.large, padding=Paddings.RELATIVE_50)
-        self._deleteBtn.setLightModeIcon(Icons.delete.withColor(Colors.primary))
-        self._deleteBtn.setDarkModeIcon(Icons.delete.withColor(Colors.white))
-        self._deleteBtn.setClassName("hover:bg-primary-12 rounded-full", "dark:hover:bg-white-20")
-
-        self._moreMenu = StyleWidget()
+        self._moreMenu = _MoreMenu()
         self._moreMenu.setFixedWidth(236)
         self._moreMenu.setClassName("bg-black-4 rounded-12 dark:bg-white-4")
+        self._moreMenu.applyTheme()
+        self._moreMenu.translateUI()
 
-        self._moreMenuLayout = FlexBox(self._moreMenu)
-        self._moreMenuLayout.setContentsMargins(8, 4, 8, 4)
-        self._moreMenuLayout.setSpacing(8)
-        self._moreMenu.hide()
+        self._moreMenu.editCoverBtn.clicked.connect(lambda: self.__changeCover())
+        self._moreMenu.editSongBtn.clicked.connect(lambda: self.__changeSongInfo())
+        self._moreMenu.deleteBtn.clicked.connect(lambda: self.__confirmToDeleteSong())
 
-        self._moreMenuLayout.addWidget(self._editSongBtn)
-        self._moreMenuLayout.addWidget(self._editCoverBtn)
-        self._moreMenuLayout.addWidget(self._deleteBtn)
         self._mainLayout.addWidget(self._moreMenu)
-
-        self.applyTheme()
-        self.translateUI()
-
-        self._editCoverBtn.clicked.connect(lambda: self.__changeCover())
-        self._editSongBtn.clicked.connect(lambda: self.__changeSongInfo())
-        self._deleteBtn.clicked.connect(lambda: self.__confirmToDeleteSong())
 
     def mousePressEvent(self, a0: Optional[QMouseEvent]) -> None:
         super().mousePressEvent(a0)
@@ -166,11 +142,6 @@ class SongRow(ExtendableStyleWidget):
         self._moreBtn.setToolTip(translator.translate("SONG_ROW.MORE_BTN"))
         self._loveBtn.setToolTips([translator.translate("SONG_ROW.UNLOVE_BTN"), translator.translate("SONG_ROW.LOVE_BTN")])
         self._playBtn.setToolTips([translator.translate("SONG_ROW.PAUSE_BTN"), translator.translate("SONG_ROW.PLAY_BTN")])
-
-        if self.__isCreatedMoreMenu():
-            self._editSongBtn.setToolTip(translator.translate("SONG_ROW.EDIT_BTN"))
-            self._editCoverBtn.setToolTip(translator.translate("SONG_ROW.EDIT_COVER_BTN"))
-            self._deleteBtn.setToolTip(translator.translate("SONG_ROW.DELETE_BTN"))
 
     def _connectSignalSlots(self) -> None:
         self._moreBtn.clicked.connect(lambda: silence(lambda: self.__showMoreMenu(True)))
@@ -198,20 +169,15 @@ class SongRow(ExtendableStyleWidget):
     @suppressException
     def setEditable(self, editable: bool) -> None:
         self.__editable = editable
-        self.__setEditable(editable and musicPlayer.getCurrentSong() != self.__song)
+        if self.__isCreatedMoreMenu():
+            self._moreMenu.setEditable(editable and musicPlayer.getCurrentSong() != self.__song)
 
     @suppressException
     def __checkEditable(self, currentPlayingSong: Song) -> None:
         if self.__editable:
             editable = currentPlayingSong != self.__song
-            self.__setEditable(editable)
-
-    def __setEditable(self, editable):
-        if not self.__isCreatedMoreMenu():
-            return
-        self._editSongBtn.setVisible(editable)
-        self._editCoverBtn.setVisible(editable)
-        self._deleteBtn.setVisible(editable)
+            if self.__isCreatedMoreMenu():
+                self._moreMenu.setEditable(editable)
 
     @suppressException
     def __updatePlayBtn(self) -> None:
@@ -341,3 +307,48 @@ class LoadCoverThread(QThread):
 
     def run(self) -> None:
         self.__song.loadCover()
+
+
+class _MoreMenu(ExtendableStyleWidget):
+    def __init__(self, parent: Optional[QWidget] = None):
+        super().__init__(parent)
+        super()._initComponent()
+
+    def _createUI(self) -> None:
+        super()._createUI()
+        self.editSongBtn = ButtonFactory.createIconButton(size=Icons.large, padding=Paddings.RELATIVE_50)
+        self.editSongBtn.setLightModeIcon(Icons.edit.withColor(Colors.primary))
+        self.editSongBtn.setDarkModeIcon(Icons.edit.withColor(Colors.white))
+        self.editSongBtn.setClassName("hover:bg-primary-12 rounded-full", "dark:hover:bg-white-20")
+
+        self.editCoverBtn = ButtonFactory.createIconButton(size=Icons.large, padding=Paddings.RELATIVE_50)
+        self.editCoverBtn.setLightModeIcon(Icons.image.withColor(Colors.primary))
+        self.editCoverBtn.setDarkModeIcon(Icons.image.withColor(Colors.white))
+        self.editCoverBtn.setClassName("hover:bg-primary-12 rounded-full", "dark:hover:bg-white-20")
+
+        self.deleteBtn = ButtonFactory.createIconButton(size=Icons.large, padding=Paddings.RELATIVE_50)
+        self.deleteBtn.setLightModeIcon(Icons.delete.withColor(Colors.primary))
+        self.deleteBtn.setDarkModeIcon(Icons.delete.withColor(Colors.white))
+        self.deleteBtn.setClassName("hover:bg-primary-12 rounded-full", "dark:hover:bg-white-20")
+
+        self._layout = FlexBox(self)
+        self._layout.setContentsMargins(8, 4, 8, 4)
+        self._layout.setSpacing(8)
+
+        self._layout.addWidget(self.editSongBtn)
+        self._layout.addWidget(self.editCoverBtn)
+        self._layout.addWidget(self.deleteBtn)
+
+        self.applyTheme()
+        self.applyThemeToChildren()
+        self.translateUI()
+
+    def translateUI(self) -> None:
+        self.editSongBtn.setToolTip(translator.translate("SONG_ROW.EDIT_BTN"))
+        self.editCoverBtn.setToolTip(translator.translate("SONG_ROW.EDIT_COVER_BTN"))
+        self.deleteBtn.setToolTip(translator.translate("SONG_ROW.DELETE_BTN"))
+
+    def setEditable(self, editable: bool) -> None:
+        self.editSongBtn.setVisible(editable)
+        self.editCoverBtn.setVisible(editable)
+        self.deleteBtn.setVisible(editable)
