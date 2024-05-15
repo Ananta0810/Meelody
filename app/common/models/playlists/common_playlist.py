@@ -67,7 +67,7 @@ class CommonPlaylist:
             return len(self._songs) > 0
 
         def hasSong(self, song: Song) -> bool:
-            return any(song == song_ for song_ in self._songs)
+            return Lists.binarySearch(self._songs, song, comparator=self.__comparator()) >= 0
 
         def size(self) -> int:
             return len(self._songs)

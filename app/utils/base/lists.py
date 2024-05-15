@@ -1,6 +1,7 @@
 from typing import TypeVar, Callable, final
 
 T = TypeVar('T')
+E = TypeVar('E')
 R = TypeVar('R')
 
 
@@ -8,50 +9,50 @@ R = TypeVar('R')
 class Lists:
 
     @staticmethod
-    def nonNull(collection: list[T]) -> list[T]:
+    def nonNull(collection: list[E]) -> list[E]:
         if collection is None:
             return []
         return [item for item in collection if item is not None]
 
     @staticmethod
-    def indexOf(condition: Callable[[T], bool], collection: list[T], indexIfNotFound: int = -1) -> int:
+    def indexOf(condition: Callable[[E], bool], collection: list[E], indexIfNotFound: int = -1) -> int:
         for index, item in enumerate(collection):
             if condition(item):
                 return index
         return indexIfNotFound
 
     @staticmethod
-    def lastOf(collection: list[T]) -> T | None:
+    def lastOf(collection: list[E]) -> T | None:
         if collection is None:
             return None
 
         return collection[len(collection) - 1]
 
     @staticmethod
-    def elementAt(index: int, collection: list[T]) -> T | None:
+    def elementAt(index: int, collection: list[E]) -> T | None:
         try:
             return collection[index]
         except IndexError:
             return None
 
     @staticmethod
-    def elementsAfter(index: int, collection: list[T]) -> list[T]:
+    def elementsAfter(index: int, collection: list[E]) -> list[E]:
         try:
             return collection[index + 1:]
         except IndexError:
             return []
 
     @staticmethod
-    def flat(collection: list[list[T]]) -> list[T]:
+    def flat(collection: list[list[E]]) -> list[E]:
         import itertools
         return list(itertools.chain.from_iterable(collection))
 
     @staticmethod
-    def clone(collection: list[T]) -> list[T]:
+    def clone(collection: list[E]) -> list[E]:
         return [item for item in collection]
 
     @staticmethod
-    def shuffle(collection: list[T]) -> list[T]:
+    def shuffle(collection: list[E]) -> list[E]:
         """
         Create a shuffled list of the input collection.
         """
@@ -60,21 +61,21 @@ class Lists:
         return random.sample(list(Lists.clone(collection)), len(collection))
 
     @staticmethod
-    def itemsInLeftOnly(left: list[T] | set[T], right: list[T] | set[T]) -> list[T]:
+    def itemsInLeftOnly(left: list[E] | set[E], right: list[E] | set[E]) -> list[E]:
         if left is None or right is None:
             return []
         rightSet = right if isinstance(right, set) else set(right)
         return [item for item in left if item not in rightSet]
 
     @staticmethod
-    def itemsInRightOnly(left: list[T] | set[T], right: list[T] | set[T]) -> list[T]:
+    def itemsInRightOnly(left: list[E] | set[E], right: list[E] | set[E]) -> list[E]:
         if left is None or right is None:
             return []
         leftSet = left if isinstance(left, set) else set(left)
         return [item for item in right if item not in leftSet]
 
     @staticmethod
-    def moveElement(collection: list[T], fromIndex: int, toIndex: int) -> None:
+    def moveElement(collection: list[E], fromIndex: int, toIndex: int) -> None:
         start: int = fromIndex
         end: int = toIndex
         if start == end:
@@ -87,7 +88,7 @@ class Lists:
         collection.pop(start)
 
     @staticmethod
-    def findMoved(originalList: list[T], newList: list[T]) -> (int, int):
+    def findMoved(originalList: list[E], newList: list[E]) -> (int, int):
         if len(originalList) != len(newList):
             return -1, -1  # different length
 
@@ -104,14 +105,14 @@ class Lists:
         return -1, -1
 
     @staticmethod
-    def findMostFrequency(collection: list[T]) -> T:
+    def findMostFrequency(collection: list[E]) -> T:
         return max(set(collection), key=collection.count)
 
     @staticmethod
     def binarySearch(
-        collection: list[T],
+        collection: list[E],
         item: T,
-        comparator: Callable[[T, T], int] = lambda x, y: x == y,
+        comparator: Callable[[T, E], int] = lambda x, y: x == y,
         nearest: bool = False
     ) -> int:
         low, high = 0, len(collection) - 1
@@ -132,21 +133,21 @@ class Lists:
 
     @staticmethod
     def linearSearch(
-        collection: list[T],
+        collection: list[E],
         item: T,
-        comparator: Callable[[T, T], int] = lambda x, y: 0 if x == y else -1
+        comparator: Callable[[T, E], int] = lambda x, y: 0 if x == y else -1
     ) -> int:
         for index, element in enumerate(collection):
-            if comparator(element, item) == 0:
+            if comparator(item, element) == 0:
                 return index
         # Not found
         return -1
 
     @staticmethod
     def nearestLinearSearch(
-        collection: list[T],
+        collection: list[E],
         item: T,
-        comparator: Callable[[T, T], int] = lambda x, y: 0 if x == y else -1
+        comparator: Callable[[T, E], int] = lambda x, y: 0 if x == y else -1
     ) -> int:
         if len(collection) == 0:
             return 0

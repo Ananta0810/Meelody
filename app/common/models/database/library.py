@@ -152,7 +152,7 @@ class Library(Playlist, metaclass=SingletonMeta):
                 song.deleted.disconnect(lambda: self.remove(song))
 
         def hasSongWithTitle(self, title: str) -> bool:
-            return title.strip().lower() in {song.getTitle().lower() for song in self.toList()}
+            return Lists.binarySearch(self._songs, title, comparator=lambda t_, song: Strings.compare(t_, song.getTitle())) >= 0
 
         @returnOnFailed(0)
         def getSongIndexWithId(self, songId: str) -> int:
