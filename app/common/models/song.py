@@ -1,5 +1,4 @@
 import os
-import uuid
 from typing import Optional, Callable
 
 from PyQt5.QtCore import QObject, pyqtSignal, QThread, pyqtBoundSignal
@@ -28,7 +27,7 @@ class Song(QObject):
     def __init__(self, location: str = None, title: str = None, artist: str = None, cover: bytes = None, length: float = 0, sampleRate: float = 48000,
                  loved: bool = False):
         super().__init__()
-        self.__id = str(uuid.uuid4())
+        self.__id = location
         self.__location = location
         self.__title = title
         self.__artist = artist
@@ -145,26 +144,19 @@ class Song(QObject):
         if self.__cover is not None:
             self.coverChanged.emit(self.__cover)
 
-    def updateInfo(self, title: str, artist: str) -> None:
+    def updateInfo(self, title: str, artist: str, force=False) -> None:
         """
         Rename title and artist of the song.
         throws: ResourceException if update failed
         """
         writer = SongWriter(self.__location)
 
-        if not Strings.equals(self.__title, title):
-            newLocation = f"library/{Strings.sanitizeFileName(title)}.mp3"
-            if os.path.exists(newLocation):
-                raise ResourceException("File existed.")
-
-            os.rename(self.__location, newLocation)
-
-            self.__location = newLocation
+        if force or not Strings.equals(self.__title, title):
+            writer.writeTitle(title)
             self.__title = title
-
             self.updated.emit("title")
 
-        if not Strings.equals(self.__artist, artist):
+        if force or not Strings.equals(self.__artist, artist):
             writer.writeArtist(artist)
             self.__artist = artist
             self.updated.emit("artist")

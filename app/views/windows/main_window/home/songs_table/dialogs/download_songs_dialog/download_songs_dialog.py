@@ -1,4 +1,3 @@
-import os
 from urllib.error import URLError
 
 from PyQt5.QtCore import Qt, pyqtSignal, pyqtBoundSignal
@@ -250,7 +249,7 @@ class _SongInfoDialog(BaseDialog):
             self._titleErrorLabel.setText(translator.translate("SONG.VALIDATE.TITLE_LENGTH"))
             return False
 
-        if os.path.exists(f"library/{Strings.sanitizeFileName(title)}.mp3"):
+        if appCenter.library.getSongs().hasSongWithTitle(title):
             self._titleErrorLabel.show()
             self._titleErrorLabel.setText(translator.translate("SONG.VALIDATE.TITLE_EXISTED"))
             return False

@@ -283,7 +283,7 @@ class ConvertSongThread(QThread):
         self.__artist = artist
 
     def run(self) -> None:
-        songLocation = f"library/{Strings.sanitizeFileName(self.__title)}.mp3"
+        songLocation = f"library/{Strings.randomId()}.mp3"
         if os.path.exists(songLocation):
             self.failed.emit(FileExistsError())
             Logger.error(f"Can't convert song '{self.__title}' because it is already existed in library.")
@@ -293,11 +293,10 @@ class ConvertSongThread(QThread):
             editor.toMp3FileFromBytes(self.__songData, songLocation)
             song = Song.fromFile(songLocation, self.__title)
 
-            if Strings.isNotBlank(self.__artist):
-                try:
-                    song.updateInfo(self.__title, self.__artist)
-                except AttributeError:
-                    raise ResourceException.brokenFile()
+            try:
+                song.updateInfo(self.__title, self.__artist, force=True)
+            except AttributeError:
+                raise ResourceException.brokenFile()
 
             Logger.info(f"Download song '{self.__title}' successfully")
             self.succeed.emit(song.getLocation())

@@ -156,7 +156,6 @@ class SongsMenu(SmoothVerticalScrollArea):
         if oldIndex >= 0:
             rowToMove = self.widgets()[oldIndex]
             self.moveWidget(rowToMove, newIndex)
-            rowToMove.showMoreButtons(False)
             self.__rowMoved.emit(newIndex)
 
     def __showSongsOfPlaylist(self, playlist: Playlist) -> None:

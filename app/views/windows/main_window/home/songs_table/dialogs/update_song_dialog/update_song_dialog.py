@@ -1,12 +1,10 @@
-import os
-
 from PyQt5.QtCore import Qt
 from PyQt5.QtGui import QKeySequence
 from PyQt5.QtWidgets import QWidget, QShortcut
 
 from app.common.exceptions import ResourceException
 from app.common.models import Song
-from app.common.others import translator
+from app.common.others import translator, appCenter
 from app.common.statics.qt import Images
 from app.components.base import FontFactory
 from app.components.buttons import ActionButton
@@ -148,7 +146,7 @@ class UpdateSongDialog(BaseDialog):
             self._titleErrorLabel.setText(translator.translate("SONG.VALIDATE.TITLE_LENGTH"))
             return False
 
-        if not Strings.equals(self.__song.getTitle(), title) and os.path.exists(f"library/{Strings.sanitizeFileName(title)}.mp3"):
+        if not Strings.equals(self.__song.getTitle(), title) and appCenter.library.getSongs().hasSongWithTitle(title):
             self._titleErrorLabel.show()
             self._titleErrorLabel.setText(translator.translate("SONG.VALIDATE.TITLE_EXISTED"))
             return False

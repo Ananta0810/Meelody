@@ -1,4 +1,3 @@
-import os
 from typing import Optional
 
 from PyQt5.QtCore import pyqtSignal, Qt, pyqtBoundSignal
@@ -7,8 +6,8 @@ from PyQt5.QtWidgets import QWidget, QShortcut, QVBoxLayout
 
 from app.common.exceptions import ResourceException
 from app.common.models import Song
-from app.common.models.song import SongReader
-from app.common.others import translator
+from app.common.models.song import SongReader, SongWriter
+from app.common.others import translator, appCenter
 from app.common.statics.qt import Images
 from app.components.base import FontFactory
 from app.components.buttons import ActionButton
@@ -122,9 +121,11 @@ class ImportSongItem(ExtendableStyleWidget):
                 raise ResourceException.brokenFile()
 
             title = reader.getTitle() or Strings.getFileBasename(self._path)
+            if appCenter.library.getSongs().hasSongWithTitle(title):
+                raise ResourceException.fileExisted()
+
             songPath = self.__moveFileToLibrary(title)
             self.succeed.emit(songPath)
-            self.__markSucceed()
         except ResourceException as e:
             self.failed.emit(e)
         except Exception as e:
@@ -134,8 +135,9 @@ class ImportSongItem(ExtendableStyleWidget):
         self.imported.emit()
 
     def __moveFileToLibrary(self, title: str) -> str:
-        songPath = f"library/{Strings.sanitizeFileName(title)}.mp3"
+        songPath = f"library/{Strings.randomId()}.mp3"
         Files.copyFile(self._path, songPath)
+        SongWriter(songPath).writeTitle(title)
         Logger.info(f"Import song from '{self._path}' to library successfully.")
         return songPath
 
@@ -154,8 +156,13 @@ class ImportSongItem(ExtendableStyleWidget):
             return
 
         if isinstance(exception, ResourceException):
-            self._descriptionLabel.setTranslateText("IMPORT_SONGS_DIALOG.IMPORT_FAILED_BROKEN")
-            return
+            if exception.isExisted():
+                self._descriptionLabel.setTranslateText("IMPORT_SONGS_DIALOG.IMPORT_FAILED_EXISTED")
+                return
+
+            if exception.isBroken():
+                self._descriptionLabel.setTranslateText("IMPORT_SONGS_DIALOG.IMPORT_FAILED_BROKEN")
+                return
 
         self._descriptionLabel.setTranslateText("IMPORT_SONGS_DIALOG.IMPORT_FAILED")
 
@@ -276,7 +283,7 @@ class UpdateImportSongDialog(BaseDialog):
             self._titleErrorLabel.setText(translator.translate("SONG.VALIDATE.TITLE_LENGTH"))
             return False
 
-        if os.path.exists(f"library/{Strings.sanitizeFileName(title)}.mp3"):
+        if appCenter.library.getSongs().hasSongWithTitle(title):
             self._titleErrorLabel.show()
             self._titleErrorLabel.setText(translator.translate("SONG.VALIDATE.TITLE_EXISTED"))
             return False

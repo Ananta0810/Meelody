@@ -126,6 +126,9 @@ class Library(Playlist, metaclass=SingletonMeta):
             super().moveSong(fromIndex, toIndex)
             self.updated.emit()
 
+        def hasSongWithTitle(self, title: str) -> bool:
+            return title.strip().lower() in {song.getTitle().lower() for song in self.toList()}
+
         @returnOnFailed(0)
         def getSongIndexWithId(self, songId: str) -> int:
             if self.size() == 0:
@@ -147,3 +150,6 @@ class Library(Playlist, metaclass=SingletonMeta):
 
     def clone(self) -> 'Playlist':
         return self
+
+    def getSongs(self) -> 'Library.Songs':
+        return super().getSongs()
