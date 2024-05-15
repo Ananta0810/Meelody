@@ -15,6 +15,10 @@ class Icons:
         return AppIcon("resource/images/logo.ico")
 
     @memoizeStaticProperty
+    def export(self) -> AppIcon:
+        return AppIcon("resource/images/icons/export.png")
+
+    @memoizeStaticProperty
     def delete(self) -> AppIcon:
         return AppIcon("resource/images/icons/delete.png")
 

@@ -2,7 +2,7 @@ from contextlib import suppress
 from typing import Optional
 
 from PyQt5.QtCore import Qt, QThread
-from PyQt5.QtGui import QMouseEvent
+from PyQt5.QtGui import QMouseEvent, QResizeEvent
 from PyQt5.QtWidgets import QWidget, QHBoxLayout, QFileDialog
 
 from app.common.exceptions import ResourceException
@@ -17,9 +17,10 @@ from app.components.buttons import ButtonFactory
 from app.components.dialogs import Dialogs
 from app.components.images.cover import CoverWithPlaceHolder, Cover
 from app.components.labels import LabelWithPlaceHolder
+from app.components.others import DotPage
 from app.components.widgets import ExtendableStyleWidget, FlexBox
 from app.helpers.files import ImageEditor
-from app.utils.base import silence, nothing
+from app.utils.base import silence
 from app.utils.others import Times, Logger
 from app.utils.qt import Widgets
 from app.utils.reflections import suppressException
@@ -29,7 +30,7 @@ from app.views.windows.main_window.home.songs_table.dialogs.update_song_dialog i
 class SongRow(ExtendableStyleWidget):
     def __init__(self, song: Song):
         self.__song = song
-        self.__editable = True
+        self.__isEditable = True
 
         super().__init__()
         super()._initComponent()
@@ -107,14 +108,9 @@ class SongRow(ExtendableStyleWidget):
         self._mainButtonsLayout.addWidget(self._loveBtn)
         self._mainButtonsLayout.addWidget(self._playBtn)
 
-        self._mainLayout.addWidget(self._mainButtons)
+        self._moreMenu = None
 
-    def __isCreatedMoreMenu(self) -> bool:
-        try:
-            nothing(self._moreMenu)
-            return True
-        except AttributeError:
-            return False
+        self._mainLayout.addWidget(self._mainButtons)
 
     def __createMoreMenu(self) -> None:
         # ============================================ MORE BUTTONS # ============================================
@@ -123,6 +119,7 @@ class SongRow(ExtendableStyleWidget):
         self._moreMenu.setClassName("bg-black-4 rounded-12 dark:bg-white-4")
         self._moreMenu.applyTheme()
         self._moreMenu.translateUI()
+        self.setEditable(self.__isEditable)
 
         self._moreMenu.editCoverBtn.clicked.connect(lambda: self.__changeCover())
         self._moreMenu.editSongBtn.clicked.connect(lambda: self.__changeSongInfo())
@@ -132,7 +129,7 @@ class SongRow(ExtendableStyleWidget):
 
     def mousePressEvent(self, a0: Optional[QMouseEvent]) -> None:
         super().mousePressEvent(a0)
-        if self.__isCreatedMoreMenu():
+        if self._moreMenu is not None:
             clickedOutsideMoreMenu = not self._moreMenu.geometry().contains(a0.pos())
             if clickedOutsideMoreMenu:
                 self.__showMoreMenu(False)
@@ -168,15 +165,15 @@ class SongRow(ExtendableStyleWidget):
 
     @suppressException
     def setEditable(self, editable: bool) -> None:
-        self.__editable = editable
-        if self.__isCreatedMoreMenu():
+        self.__isEditable = editable
+        if self._moreMenu is not None:
             self._moreMenu.setEditable(editable and musicPlayer.getCurrentSong() != self.__song)
 
     @suppressException
     def __checkEditable(self, currentPlayingSong: Song) -> None:
-        if self.__editable:
+        if self.__isEditable:
             editable = currentPlayingSong != self.__song
-            if self.__isCreatedMoreMenu():
+            if self._moreMenu is not None:
                 self._moreMenu.setEditable(editable)
 
     @suppressException
@@ -214,10 +211,10 @@ class SongRow(ExtendableStyleWidget):
 
     @suppressException
     def __showMoreMenu(self, show: bool) -> None:
-        if not show and not self.__isCreatedMoreMenu():
+        if not show and self._moreMenu is None:
             return
 
-        if not self.__isCreatedMoreMenu():
+        if self._moreMenu is None:
             self.__createMoreMenu()
 
         self._mainButtons.setVisible(not show)
@@ -331,13 +328,27 @@ class _MoreMenu(ExtendableStyleWidget):
         self.deleteBtn.setDarkModeIcon(Icons.delete.withColor(Colors.white))
         self.deleteBtn.setClassName("hover:bg-primary-12 rounded-full", "dark:hover:bg-white-20")
 
+        self.exportBtn = ButtonFactory.createIconButton(size=Icons.large, padding=Paddings.RELATIVE_50)
+        self.exportBtn.setLightModeIcon(Icons.export.withColor(Colors.primary))
+        self.exportBtn.setDarkModeIcon(Icons.export.withColor(Colors.white))
+        self.exportBtn.setClassName("hover:bg-primary-12 rounded-full", "dark:hover:bg-white-20")
+        self.exportBtn.hide()
+
+        self._dotPage = DotPage(self)
+        self._dotPage.setTotalPages(2)
+        self._dotPage.setAlignment(Qt.AlignRight)
+        self._dotPage.setContentsMargins(8, 8, 8, 8)
+        self._dotPage.setActivePage(0)
+
         self._layout = FlexBox(self)
-        self._layout.setContentsMargins(8, 4, 8, 4)
-        self._layout.setSpacing(8)
+        self._layout.setAlignment(Qt.AlignLeft)
+        self._layout.setContentsMargins(23, 4, 23, 4)
+        self._layout.setSpacing(27)
 
         self._layout.addWidget(self.editSongBtn)
         self._layout.addWidget(self.editCoverBtn)
         self._layout.addWidget(self.deleteBtn)
+        self._layout.addWidget(self.exportBtn)
 
         self.applyTheme()
         self.applyThemeToChildren()
@@ -347,8 +358,37 @@ class _MoreMenu(ExtendableStyleWidget):
         self.editSongBtn.setToolTip(translator.translate("SONG_ROW.EDIT_BTN"))
         self.editCoverBtn.setToolTip(translator.translate("SONG_ROW.EDIT_COVER_BTN"))
         self.deleteBtn.setToolTip(translator.translate("SONG_ROW.DELETE_BTN"))
+        self.exportBtn.setToolTip(translator.translate("SONG_ROW.EXPORT_BTN"))
+        self._dotPage.setToolTip(translator.translate("SONG_ROW.NEXT_PAGE"))
+
+    def _connectSignalSlots(self) -> None:
+        super()._connectSignalSlots()
+        self._dotPage.pageChanged.connect(lambda page: self.__showPageItems(page))
+
+    def resizeEvent(self, a0: Optional[QResizeEvent]) -> None:
+        super().resizeEvent(a0)
+        self._dotPage.setFixedWidth(self.width())
 
     def setEditable(self, editable: bool) -> None:
         self.editSongBtn.setVisible(editable)
         self.editCoverBtn.setVisible(editable)
         self.deleteBtn.setVisible(editable)
+        self._dotPage.setVisible(editable)
+
+        self.exportBtn.hide()
+        if editable:
+            self._dotPage.setActivePage(0)
+
+    def setContentsMargins(self, left: int, top: int, right: int, bottom: int) -> None:
+        self._layout.setContentsMargins(left, top, right, bottom)
+
+    def __showPageItems(self, page: int) -> None:
+        self.editSongBtn.setVisible(page == 0)
+        self.editCoverBtn.setVisible(page == 0)
+        self.deleteBtn.setVisible(page == 0)
+        self.exportBtn.setVisible(page == 1)
+
+    def mousePressEvent(self, a0: Optional[QMouseEvent]) -> None:
+        super().mousePressEvent(a0)
+        if a0.button() == Qt.RightButton:
+            self._dotPage.nextPage()
