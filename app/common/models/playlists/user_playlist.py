@@ -68,10 +68,6 @@ class UserPlaylist(Playlist):
                 song.updated.disconnect(lambda updatedField: self._onSongUpdated(song, updatedField))
                 song.deleted.disconnect(lambda: self.remove(song))
 
-        def moveSong(self, fromIndex: int, toIndex: int) -> None:
-            super().moveSong(fromIndex, toIndex)
-            self.updated.emit()
-
         def clone(self) -> Playlist.Songs:
             return UserPlaylist.Songs(self.toList(), self._isSorted)
 

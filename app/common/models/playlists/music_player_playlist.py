@@ -81,6 +81,3 @@ class MusicPlayerPlaylistSongs(Playlist.Songs):
 
     def removeAll(self, songs: list[Song]) -> None:
         pass
-
-    def moveSong(self, fromIndex: int, toIndex: int) -> None:
-        pass

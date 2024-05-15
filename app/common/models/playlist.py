@@ -81,12 +81,6 @@ class Playlist:
             """
             ...
 
-        def moveSong(self, fromIndex: int, toIndex: int) -> None:
-            """
-                Move a song from certain position to another position.
-            """
-            ...
-
         def size(self) -> int:
             """
                 return the number of songs in the list

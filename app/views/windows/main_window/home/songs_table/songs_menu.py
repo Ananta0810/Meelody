@@ -46,6 +46,7 @@ class SongsMenu(SmoothVerticalScrollArea):
         self.__rowMoved.connect(lambda index: self.__askToScrollToSongAt(index))
 
         appCenter.library.getSongs().updated.connect(lambda: self.__updateLayoutBasedOnLibrary(appCenter.library.getSongs().toList()))
+        appCenter.library.getSongs().moved.connect(lambda fromIndex, toIndex: self.__moveRow(fromIndex, toIndex))
         appCenter.currentPlaylistChanged.connect(lambda playlist: self.__showSongsOfPlaylist(playlist))
 
         musicPlayer.songChanged.connect(lambda song: self.__scrollToSong(song))
@@ -129,8 +130,6 @@ class SongsMenu(SmoothVerticalScrollArea):
             row = self.__songRowDict[song.getId()]
             self.__removeRow(row)
 
-        self.__moveRows(songs)
-
         maxHeight = sum([row.sizeHint().height() for row in self.__songRowDict.values()])
         self._menu.setMaximumHeight(maxHeight)
 
@@ -150,12 +149,13 @@ class SongsMenu(SmoothVerticalScrollArea):
 
         self.__songRowDict.pop(row.content().getId())
 
-    def __moveRows(self, newSongs: list[Song]) -> None:
-        oldSongs = [row.content() for row in self.widgets()]
-        oldIndex, newIndex = Lists.findMoved(oldSongs, newSongs)
-        if oldIndex >= 0:
-            rowToMove = self.widgets()[oldIndex]
-            self.moveWidget(rowToMove, newIndex)
+    def __moveRow(self, oldIndex: int, newIndex: int) -> None:
+        currentPosition = self.verticalScrollBar().value()
+        rowToMove = self.widgets()[oldIndex]
+        self.moveWidget(rowToMove, newIndex)
+        self.verticalScrollBar().setValue(currentPosition)
+
+        if self.__currentPlaylist.getInfo().getId() == appCenter.library.getInfo().getId():
             self.__rowMoved.emit(newIndex)
 
     def __showSongsOfPlaylist(self, playlist: Playlist) -> None:

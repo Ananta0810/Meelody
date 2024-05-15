@@ -83,9 +83,6 @@ class FavouritesPlaylist(Playlist, metaclass=SingletonMeta):
         def remove(self, song: Song) -> None:
             pass
 
-        def moveSong(self, fromIndex: int, toIndex: int) -> None:
-            pass
-
         def clone(self) -> Playlist.Songs:
             return self
 

@@ -9,7 +9,7 @@ from app.common.models.song import Song
 from app.common.others.translator import translator
 from app.components.asyncs import Debounce
 from app.utils.base import Lists, Strings
-from app.utils.others import Jsons, Files
+from app.utils.others import Jsons, Files, Logger
 from app.utils.reflections import SingletonMeta, returnOnFailed
 
 
@@ -57,6 +57,7 @@ class Library(Playlist, metaclass=SingletonMeta):
 
     class Songs(CommonPlaylist.Songs):
         loaded: pyqtBoundSignal = pyqtSignal()
+        moved: pyqtBoundSignal = pyqtSignal(int, int)
 
         def __init__(self):
             super().__init__(None, isSorted=True)
@@ -96,7 +97,9 @@ class Library(Playlist, metaclass=SingletonMeta):
             songs = Lists.nonNull([Song.fromFile(file, Strings.getFileBasename(file)) for file in validFiles])
             newSongs = [song for song in songs if not self.hasSongWithTitle(song.getTitle())]
 
-            self.insertAll(newSongs)
+            if len(newSongs) > 0:
+                self.insertAll(newSongs)
+                Logger.info(f"Import missing songs successfully: {[song.getTitle() for song in newSongs]}")
 
         def insert(self, song: Song) -> None:
             super().insert(song)
@@ -135,9 +138,11 @@ class Library(Playlist, metaclass=SingletonMeta):
 
         def _onSongUpdated(self, song: Song, updatedField: str) -> None:
             if updatedField == "title":
+                oldPosition = self.indexOf(song)
                 self._songs.remove(song)
                 newPosition = self.__findInsertPosition(song)
                 self._songs.insert(newPosition, song)
+                self.moved.emit(oldPosition, newPosition)
 
             self.updated.emit()
 
@@ -145,10 +150,6 @@ class Library(Playlist, metaclass=SingletonMeta):
             with suppress(TypeError):
                 song.updated.disconnect(lambda updatedField: self._onSongUpdated(song, updatedField))
                 song.deleted.disconnect(lambda: self.remove(song))
-
-        def moveSong(self, fromIndex: int, toIndex: int) -> None:
-            super().moveSong(fromIndex, toIndex)
-            self.updated.emit()
 
         def hasSongWithTitle(self, title: str) -> bool:
             return title.strip().lower() in {song.getTitle().lower() for song in self.toList()}

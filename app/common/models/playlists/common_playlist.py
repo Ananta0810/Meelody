@@ -69,9 +69,6 @@ class CommonPlaylist:
         def hasSong(self, song: Song) -> bool:
             return any(song == song_ for song_ in self._songs)
 
-        def moveSong(self, fromIndex: int, toIndex: int) -> None:
-            Lists.moveElement(self._songs, fromIndex, toIndex)
-
         def size(self) -> int:
             return len(self._songs)
 
@@ -92,11 +89,6 @@ class CommonPlaylist:
 
         def __findInsertPosition(self, song: Song) -> int:
             return Lists.binarySearch(self._songs, song, comparator=self.__comparator(), nearest=True)
-
-        def __moveSongAfterUpdate(self, song: Song) -> None:
-            self._songs.remove(song)
-            newPosition = self.__findInsertPosition(song)
-            self._songs.insert(newPosition, song)
 
         def insertAll(self, songs: list[Song]) -> None:
             if songs is not None:
