@@ -16,6 +16,7 @@ class Application:
     def __configureApplication(self) -> None:
         appCenter.exited.connect(lambda: musicPlayer.stop())
         appCenter.exited.connect(lambda: self._mainWindow.close())
+        appCenter.loaded.connect(lambda: appCenter.library.getSongs().watchMissingSongs())
         appCenter.setTheme(appCenter.settings.theme)
 
     @staticmethod

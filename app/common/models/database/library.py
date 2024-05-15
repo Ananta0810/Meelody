@@ -1,12 +1,13 @@
 import os
 from contextlib import suppress
 
-from PyQt5.QtCore import pyqtSignal, pyqtBoundSignal
+from PyQt5.QtCore import pyqtSignal, pyqtBoundSignal, QFileSystemWatcher
 
 from app.common.models.playlist import Playlist
 from app.common.models.playlists.common_playlist import CommonPlaylist
 from app.common.models.song import Song
 from app.common.others.translator import translator
+from app.components.asyncs import Debounce
 from app.utils.base import Lists, Strings
 from app.utils.others import Jsons, Files
 from app.utils.reflections import SingletonMeta, returnOnFailed
@@ -59,13 +60,21 @@ class Library(Playlist, metaclass=SingletonMeta):
 
         def __init__(self):
             super().__init__(None, isSorted=True)
+            self._path = "library/"
             self._database = _Database("configuration/songs.json")
             self._loadSongs()
 
+            self._watcher = QFileSystemWatcher(self)
+            self._watcherDebounce = Debounce(lambda: self.__insertFailedImportSongs(), self, delay=200)
             self.updated.connect(lambda: self.__saveDatabase())
 
+        def watchMissingSongs(self):
+            self._watcher.addPath(self._path)
+            self._watcherDebounce.call()
+            self._watcher.directoryChanged.connect(lambda paths: self._watcherDebounce.call())
+
         def _loadSongs(self) -> None:
-            for song in self._database.load("library", withExtension="mp3"):
+            for song in self._database.load(self._path, withExtension="mp3"):
                 self._insert(song)
                 self.__connectToSong(song)
 
@@ -73,6 +82,21 @@ class Library(Playlist, metaclass=SingletonMeta):
 
         def setSongs(self, songs: list[Song]) -> None:
             pass
+
+        def __insertFailedImportSongs(self) -> None:
+            """
+                Sometimes our application is error while inserting songs, which make some songs failed to import
+                to database even when it is imported successfully. Therefore, we will watch for those situation.
+            """
+            files = Files.getFrom(self._path, withExtension="mp3")
+
+            newFiles = Lists.itemsInLeftOnly(files, [song.getLocation() for song in self.toList()])
+
+            validFiles = [file for file in newFiles if Strings.isRandomId(Strings.getFileBasename(file))]
+            songs = Lists.nonNull([Song.fromFile(file, Strings.getFileBasename(file)) for file in validFiles])
+            newSongs = [song for song in songs if not self.hasSongWithTitle(song.getTitle())]
+
+            self.insertAll(newSongs)
 
         def insert(self, song: Song) -> None:
             super().insert(song)

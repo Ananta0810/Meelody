@@ -45,6 +45,9 @@ class Song(QObject):
         try:
             data = SongReader(location)
 
+            if not data.isValid():
+                raise ResourceException.brokenFile()
+
             return Song(location,
                         title=data.getTitle() or title,
                         artist=data.getArtist(),

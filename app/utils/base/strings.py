@@ -27,6 +27,12 @@ class Strings:
         return str.join('', choices(POPULATION, k=13))
 
     @staticmethod
+    def isRandomId(value: str) -> bool:
+        if value is None:
+            return False
+        return len(value) == 13 and value.upper() == value
+
+    @staticmethod
     def unaccent(value: str) -> str:
         if value is None:
             return ''
