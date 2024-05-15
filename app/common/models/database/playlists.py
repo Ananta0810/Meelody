@@ -77,5 +77,5 @@ class Playlists(QObject, metaclass=SingletonQObjectMeta):
     def items(self) -> list:
         return self.__items
 
-    def __updateToDatabase(self):
+    def __updateToDatabase(self) -> None:
         return self.__database.save([item for item in self.__items])

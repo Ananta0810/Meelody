@@ -169,7 +169,7 @@ class SongsMenu(SmoothVerticalScrollArea):
         if isPlaylistChanged:
             if self.__currentPlaylist is not None:
                 with suppress(TypeError):
-                    self.__currentPlaylist.getSongs().updated.disconnect()
+                    self.__currentPlaylist.getSongs().updated.disconnect(self.__playlistUpdated.emit)
 
             self.__currentPlaylist = playlist
             self.__currentPlaylist.getSongs().updated.connect(self.__playlistUpdated.emit)
