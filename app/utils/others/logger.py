@@ -83,7 +83,7 @@ class Logger:
 
     @staticmethod
     def warn(message: any) -> None:
-        _colorPrinter.print(f"Warn::{message}", color=_ColorPrinter.YELLOW)
+        _colorPrinter.print(f"Warn::{message}", color=_ColorPrinter.YELLOW_DARK)
 
     @staticmethod
     def info(message: any) -> None:
