@@ -69,7 +69,7 @@ class PlaylistsCarousel(QScrollArea, Component):
         self._addPlaylistBtn.setToolTip(translator.translate("PLAYLIST_CAROUSEL.NEW_PLAYLIST_BTN"))
 
     def _connectSignalSlots(self) -> None:
-        appCenter.playlists.loaded.connect(lambda: self.setPlaylists(appCenter.playlists.items()))
+        appCenter.loaded.connect(lambda: self.setPlaylists(appCenter.playlists.items()))
         appCenter.playlists.changed.connect(lambda playlists: self.setPlaylists(playlists))
         self._addPlaylistBtn.clicked.connect(lambda: self.__openNewPlaylistDialog())
 

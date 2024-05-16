@@ -23,7 +23,6 @@ from app.components.widgets import ExtendableStyleWidget, FlexBox
 from app.helpers.files import ImageEditor
 from app.utils.base import silence, Strings
 from app.utils.others import Times, Logger, Files
-from app.utils.qt import Widgets
 from app.utils.reflections import suppressException
 from app.views.windows.main_window.home.songs_table.dialogs.update_song_dialog import UpdateSongDialog
 
@@ -232,7 +231,7 @@ class SongRow(ExtendableStyleWidget):
 
     @suppressException
     def __displaySongInfo(self) -> None:
-        if self.__song.isCoverLoaded() and Widgets.isInView(self):
+        if self.__song.isCoverLoaded():
             self.__setCover(self.__song.getCover())
 
         self._titleLabel.setText(self.__song.getTitle())
