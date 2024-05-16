@@ -15,7 +15,7 @@ from app.components.base import Component, FontFactory
 from app.components.buttons import ButtonFactory, StateIcon
 from app.components.dialogs import Dialogs
 from app.components.images.cover import CoverWithPlaceHolder, Cover
-from app.components.labels import LabelWithPlaceHolder
+from app.components.labels import LabelWithPlaceHolder, Label
 from app.components.sliders import HorizontalSlider
 from app.utils.others import Times
 from app.views.windows.main_window.player_bar.timer_dialog import TimerDialog
@@ -123,7 +123,7 @@ class MusicPlayerBar(QWidget, Component):
         self._left.addLayout(self._playButtons)
 
         # ======================================== MIDDLE ========================================
-        self._playingTimeLabel = LabelWithPlaceHolder()
+        self._playingTimeLabel = Label()
         self._playingTimeLabel.setFixedWidth(60)
         self._playingTimeLabel.setFont(FontFactory.create(size=9))
         self._playingTimeLabel.setClassName("text-black dark:text-white bg-none")
@@ -138,7 +138,7 @@ class MusicPlayerBar(QWidget, Component):
         self._timeSlider.setProperty("value", 0)
         self._timeSlider.setClassName("dark:handle/bg-white dark:track/active:bg-white")
 
-        self._totalTimeLabel = LabelWithPlaceHolder()
+        self._totalTimeLabel = Label()
         self._totalTimeLabel.setFixedWidth(60)
         self._totalTimeLabel.setFont(FontFactory.create(size=9))
         self._totalTimeLabel.setClassName("text-black dark:text-white bg-none")

@@ -1,5 +1,4 @@
 import typing
-from contextlib import suppress
 from typing import Optional
 
 from PyQt5 import QtGui
@@ -14,12 +13,12 @@ from app.components.images.cover import CoverWithPlaceHolder, Cover
 from app.components.labels import Label
 from app.components.widgets import ExtendableStyleWidget, Box
 from app.helpers.files import ImageEditor
+from app.utils.qt import Widgets
+from app.utils.reflections import suppressException
 
 
 class CurrentSongInfo(ExtendableStyleWidget):
     def __init__(self, parent: Optional[QWidget] = None):
-        self.__song: Optional[Song] = None
-
         super().__init__(parent)
         super()._initComponent()
 
@@ -57,6 +56,7 @@ class CurrentSongInfo(ExtendableStyleWidget):
 
     def _connectSignalSlots(self) -> None:
         musicPlayer.songChanged.connect(lambda song: self.__displaySongInfo(song))
+        self.destroyed.connect(lambda: Widgets.disconnect(musicPlayer.songChanged, lambda song: self.__displaySongInfo(song)))
 
     def resizeEvent(self, a0: typing.Optional[QtGui.QResizeEvent]) -> None:
         super().resizeEvent(a0)
@@ -64,15 +64,10 @@ class CurrentSongInfo(ExtendableStyleWidget):
         self._titleLabel.setFixedWidth(a0.size().width() - self.contentsMargins().left() - self.contentsMargins().right())
         self._artistLabel.setFixedWidth(a0.size().width() - self.contentsMargins().left() - self.contentsMargins().right())
 
+    @suppressException
     def __displaySongInfo(self, song: Song) -> None:
         if song is None:
             return
-
-        if self.__song is not None:
-            with suppress(TypeError):
-                self.__song.coverChanged.disconnect(self.__setCover)
-
-        self.__song = song
 
         self._titleLabel.setText(song.getTitle())
         self._artistLabel.setText(song.getArtist())
@@ -84,6 +79,7 @@ class CurrentSongInfo(ExtendableStyleWidget):
             song.coverChanged.connect(self.__setCover)
             song.loadCover()
 
+    @suppressException
     def __setCover(self, cover: Optional[bytes]) -> None:
         self._cover.setCover(Cover.Props.fromBytes(cover, width=256, height=256, radius=16))
 

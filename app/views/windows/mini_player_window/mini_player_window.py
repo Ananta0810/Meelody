@@ -122,6 +122,12 @@ class MiniPlayerWindow(TitleBarWindow, Component):
         self.moveToCenter()
         self._toolbar.setWindow(self.windowHandle())
 
+    def close(self) -> bool:
+        self._songInfo.deleteLater()
+        self._musicPlayerBar.deleteLater()
+        self._toolbar.deleteLater()
+        return super().close()
+
     def showMainWindow(self) -> None:
         self.__mainWindow.show()
         self.close()

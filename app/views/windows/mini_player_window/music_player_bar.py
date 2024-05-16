@@ -13,10 +13,12 @@ from app.common.statics.styles import Colors
 from app.common.statics.styles import Paddings
 from app.components.base import Component, FontFactory
 from app.components.buttons import ButtonFactory, StateIcon
-from app.components.labels import LabelWithPlaceHolder
+from app.components.labels import Label
 from app.components.sliders import HorizontalSlider
 from app.components.widgets import Box, FlexBox
 from app.utils.others import Times
+from app.utils.qt import Widgets
+from app.utils.reflections import suppressException
 from app.views.windows.main_window.player_bar.timer_dialog import TimerDialog
 
 
@@ -47,14 +49,14 @@ class MusicPlayerBar(QWidget, Component):
             self._playerTrackingThread.start()
 
     def _createUI(self) -> None:
-        self.setAttribute(Qt.WA_StyledBackground, True)
+        self.setAttribute(Qt.WA_StyledBackground)
 
         self._mainLayout = Box(self)
         self.setLayout(self._mainLayout)
 
-        self._upperLayout = FlexBox(self)
+        self._upperLayout = FlexBox()
         self._upperLayout.setContentsMargins(8, 0, 8, 0)
-        self._lowerLayout = FlexBox(self)
+        self._lowerLayout = FlexBox()
 
         self._mainLayout.addLayout(self._upperLayout)
         self._mainLayout.addSpacing(8)
@@ -88,7 +90,7 @@ class MusicPlayerBar(QWidget, Component):
         self._lowerLayout.addWidget(self._right)
 
         # ======================================== UPPER ========================================
-        self._playingTimeLabel = LabelWithPlaceHolder()
+        self._playingTimeLabel = Label()
         self._playingTimeLabel.setFixedWidth(48)
         self._playingTimeLabel.setFont(FontFactory.create(size=9))
         self._playingTimeLabel.setClassName("text-black dark:text-white bg-none")
@@ -102,7 +104,7 @@ class MusicPlayerBar(QWidget, Component):
         self._timeSlider.setProperty("value", 0)
         self._timeSlider.setClassName("dark:handle/bg-white dark:track/active:bg-white")
 
-        self._totalTimeLabel = LabelWithPlaceHolder()
+        self._totalTimeLabel = Label()
         self._totalTimeLabel.setFixedWidth(48)
         self._totalTimeLabel.setFont(FontFactory.create(size=9))
         self._totalTimeLabel.setClassName("text-black dark:text-white bg-none")
@@ -290,6 +292,7 @@ class MusicPlayerBar(QWidget, Component):
         shortcut9 = QShortcut(QKeySequence(Qt.Key_9), self._timeSlider)
         shortcut9.activated.connect(lambda: self.__skipTo(90))
 
+    @suppressException
     def __skipTo(self, position: int) -> None:
         self._timeSlider.setValue(position)
         try:
@@ -297,24 +300,33 @@ class MusicPlayerBar(QWidget, Component):
         except AttributeError:
             self._timeSlider.setValue(0)
 
+    @suppressException
     def __setPLaying(self, isPlaying: bool) -> None:
         self._playSongBtn.setVisible(not isPlaying)
         self._pauseSongBtn.setVisible(isPlaying)
 
+    @suppressException
     def setTotalTime(self, time: float) -> None:
         self.__songLength = time
         self._totalTimeLabel.setText(Times.toString(time))
 
+    @suppressException
     def setPlayingTime(self, time: float) -> None:
         if not self.__canRunTimeSlider:
             return
+
+        if Widgets.isDeleted(self._playingTimeLabel):
+            return
+
         self._playingTimeLabel.setText(Times.toString(time))
         position = 0 if self.__songLength == 0 else int(time * 100 / self.__songLength)
         self._timeSlider.setSliderPosition(position)
 
+    @suppressException
     def __setCanRunTimeSlider(self, enable: bool) -> None:
         self.__canRunTimeSlider = enable
 
+    @suppressException
     def __selectSong(self, song: Song) -> None:
         if self.__currentSong is not None:
             self.__currentSong.loved.disconnect(self.__updateLoveState)
@@ -331,9 +343,11 @@ class MusicPlayerBar(QWidget, Component):
         self.setTotalTime(song.getLength())
         self.__updateLoveState(song.isLoved())
 
+    @suppressException
     def __updateLoveState(self, state: bool) -> None:
         self._loveBtn.setActive(state)
 
+    @suppressException
     def __changeVolumeIcon(self, volume: int) -> None:
         VOLUME_UP_STATE: int = 0
         VOLUME_DOWN_STATE: int = 1
@@ -346,10 +360,14 @@ class MusicPlayerBar(QWidget, Component):
             state = VOLUME_UP_STATE
         self.volumeBtn.setActiveState(state)
 
+    @suppressException
     def __openTimer(self) -> None:
         if self._timerDialog is None:
             self._timerDialog = TimerDialog()
         self._timerDialog.show()
+
+    def close(self) -> bool:
+        return super().close()
 
 
 class PlayerTrackingThread(QThread):
@@ -358,9 +376,10 @@ class PlayerTrackingThread(QThread):
         super().__init__()
         self.__musicPlayerUI = musicPlayerUI
 
+    @suppressException
     def run(self) -> None:
         interval: float = musicPlayer.refreshRate()
 
-        while musicPlayer.isPlaying():
+        while musicPlayer.isPlaying() and not Widgets.isDeleted(self.__musicPlayerUI):
             self.__musicPlayerUI.setPlayingTime(musicPlayer.getPlayingTime())
             sleep(interval)
