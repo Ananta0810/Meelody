@@ -16,6 +16,7 @@ class MenuBody(SmoothVerticalScrollArea):
 
     songSelected: pyqtBoundSignal = pyqtSignal(Song)
     songUnSelected: pyqtBoundSignal = pyqtSignal(Song)
+    songsLoaded: pyqtBoundSignal = pyqtSignal()
 
     def __init__(self, parent: Optional[QWidget] = None) -> None:
         self.__rowDict: dict[str, SongRow] = {}
@@ -76,6 +77,10 @@ class MenuBody(SmoothVerticalScrollArea):
             self.__rowDict[song.getId()] = songRow
 
         self.__updateTitleMaps(songs)
+        self.songsLoaded.emit()
+
+    def deleteLater(self) -> None:
+        super().deleteLater()
 
     def __updateTitleMaps(self, songs: list[Song]) -> None:
         self.__titleKeys = {}

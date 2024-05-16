@@ -5,6 +5,7 @@ from typing import final, Optional
 from app.common.others import appCenter, translator
 from app.helpers.stylesheets import ClassNameTranslator
 from app.utils.base import Strings
+from app.utils.qt import Widgets
 from app.utils.reflections import suppressException
 
 
@@ -20,11 +21,15 @@ class Component:
         self._connectSignalSlots()
         self._assignShortcuts()
 
-        translator.changed.connect(lambda: self.translateUI())
+        translator.changed.connect(lambda: self.translateUI() if not Widgets.isDeleted(self) else None)
 
         if autoChangeTheme:
             with suppress(RuntimeError, Exception):
-                appCenter.themeChanged.connect(lambda light: self.applyLightMode() if light else self.applyDarkMode())
+                appCenter.themeChanged.connect(lambda light: self.appThemeMode(light))
+
+    def appThemeMode(self, lightMode: bool) -> None:
+        if not Widgets.isDeleted(self):
+            self.applyLightMode() if lightMode else self.applyDarkMode()
 
     def _createUI(self) -> None:
         pass
@@ -60,6 +65,9 @@ class Component:
 
     @final
     def applyTheme(self) -> None:
+        if Widgets.isDeleted(self):
+            return
+
         if appCenter.isLightMode:
             self.applyLightMode()
         else:
@@ -67,6 +75,9 @@ class Component:
 
     @suppressException
     def applyThemeToChildren(self) -> None:
+        if Widgets.isDeleted(self):
+            return
+
         children = self.findChildren(Component)
 
         if appCenter.isLightMode:

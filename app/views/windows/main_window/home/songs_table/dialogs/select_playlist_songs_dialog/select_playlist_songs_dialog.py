@@ -21,8 +21,6 @@ class SelectPlaylistSongsDialog(BaseDialog):
         super().__init__()
         super()._initComponent()
 
-        self._menuBody.setSelectedSongs(playlist.getSongs().toList())
-
     def _createUI(self) -> None:
         super()._createUI()
         self.setContentsMargins(20, 20, 20, 20)
@@ -80,6 +78,7 @@ class SelectPlaylistSongsDialog(BaseDialog):
         self._menuBody.songUnSelected.connect(lambda song: self._unSelectSong(song))
         self._applyBtn.clicked.connect(lambda: self._savePlaylist())
         VisibleObserver(self, delay=10).visible.connect(lambda: self._menuBody.showSongs())
+        self._menuBody.songsLoaded.connect(lambda: self._menuBody.setSelectedSongs(self.__playlist.getSongs().toList()))
 
     def _selectSong(self, song: Song) -> None:
         if not self.__selectedSongs.hasSong(song):
@@ -103,3 +102,7 @@ class SelectPlaylistSongsDialog(BaseDialog):
     @staticmethod
     def __songIdsOf(songs: list[Song]) -> list[str]:
         return sorted([song.getId() for song in songs])
+
+    def close(self) -> bool:
+        self.deleteAllChildren()
+        return super().close()
