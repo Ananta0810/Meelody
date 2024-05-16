@@ -172,14 +172,17 @@ class IconButton(QPushButton, Component):
         if self.icon() is None:
             self.setIcon(icon)
 
+    @suppressException
     def applyLightMode(self) -> None:
         super().applyLightMode()
         self.setIcon(self.__lightModeIcon)
 
+    @suppressException
     def applyDarkMode(self) -> None:
         super().applyDarkMode()
         self.setIcon(self.__darkModeIcon or self.__lightModeIcon)
 
+    @suppressException
     def setDisabled(self, disabled: bool) -> None:
         super().setDisabled(disabled)
         if not isinstance(self.icon(), AppIcon):

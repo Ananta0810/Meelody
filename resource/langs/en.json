@@ -62,7 +62,8 @@
     "HEADER.LENGTH": "LENGTH",
     "HEADER.DOWNLOAD_BTN": "Download songs",
     "HEADER.IMPORT_BTN": "Import songs",
-    "HEADER.UPDATE_PLAYLIST_BTN": "Change playlist songs"
+    "HEADER.UPDATE_PLAYLIST_BTN": "Change playlist songs",
+    "MESSAGE_NO_SONG": "Oh no! This playlist is empty. Please add more songs to the playlist."
   },
   "DOWNLOAD_DIALOG": {
     "LABEL": "Download Youtube Song",

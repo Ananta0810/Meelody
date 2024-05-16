@@ -4,6 +4,7 @@ from app.utils.base import Bytes
 class Images:
     timer: bytes = Bytes.fromFile("resource/images/defaults/timer.png")
     download: bytes = Bytes.fromFile("resource/images/defaults/download.png")
+    empty: bytes = Bytes.fromFile("resource/images/defaults/empty.png")
     importSongs: bytes = Bytes.fromFile("resource/images/defaults/import-songs.png")
     success: bytes = Bytes.fromFile("resource/images/defaults/succeed.png")
     edit: bytes = Bytes.fromFile("resource/images/defaults/edit.png")
