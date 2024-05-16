@@ -1,3 +1,5 @@
+import locale
+from contextlib import suppress
 from typing import final
 
 
@@ -28,3 +30,11 @@ class Systems:
     @staticmethod
     def isUsingLightMode() -> bool:
         return not Systems.isUsingDarkMode()
+
+    @staticmethod
+    def getLanguage() -> str:
+        with suppress(Exception):
+            lang = locale.getlocale()[0]
+            if "vietnamese" in lang.lower():
+                return "vi"
+        return "en"

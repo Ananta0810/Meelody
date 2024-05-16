@@ -9,6 +9,7 @@ from app.components.asyncs import Debounce
 from app.utils.base import Numbers
 from app.utils.others import Jsons
 from app.utils.reflections import SingletonQObjectMeta
+from app.utils.systems import Systems
 
 SETTINGS_PATH = "configuration/settings.json"
 
@@ -85,7 +86,14 @@ class AppSettings(QObject, metaclass=SingletonQObjectMeta):
 
     @staticmethod
     def __loadSettings() -> (str, bool, bool):
-        defaultSettings = {'song_id': None, 'loop': False, 'shuffle': False, 'theme': f"{ThemeMode.SYSTEM}", 'lang': "en", 'vol': 100}
+        defaultSettings = {
+            'song_id': None,
+            'loop': False,
+            'shuffle': False,
+            'theme': f"{ThemeMode.SYSTEM}",
+            'lang': Systems.getLanguage(),
+            'vol': 100
+        }
 
         with suppress(Exception):
             if os.path.exists(SETTINGS_PATH):
