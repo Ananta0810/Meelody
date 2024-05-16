@@ -7,8 +7,8 @@ from app.components.buttons import ActionButton
 from app.components.dialogs import BaseDialog
 from app.components.events import VisibleObserver
 from app.components.widgets import StyleWidget, FlexBox, Box
-from app.views.windows.main_window.home.songs_table.dialogs.select_playlist_songs_dialog.select_playlist_songs_menu_body import MenuBody
-from app.views.windows.main_window.home.songs_table.dialogs.select_playlist_songs_dialog.select_playlist_songs_menu_header import MenuHeader
+from .select_playlist_songs_menu_body import MenuBody
+from .select_playlist_songs_menu_header import MenuHeader
 
 
 class SelectPlaylistSongsDialog(BaseDialog):
@@ -40,7 +40,8 @@ class SelectPlaylistSongsDialog(BaseDialog):
         self._menuBody = MenuBody()
         self._menuBody.setFixedSize(640, 480)
         self._menuBody.setContentsMargins(0, 0, 0, 0)
-        self._menuBody.setClassName("scroll/bg-primary-75 scroll/hover:bg-primary scroll/rounded-2 bg-none border-gray-12 dark:border-white-[b20]")
+        self._menuBody.setClassName("scroll/bg-primary-75 scroll/hover:bg-primary scroll/rounded-2")
+        self._menuBody.widget().setClassName("bg-white border-l border-gray-12 dark:border-white-[b20]")
 
         self._menuBodyWrapperLayout.addWidget(self._menuBody)
 

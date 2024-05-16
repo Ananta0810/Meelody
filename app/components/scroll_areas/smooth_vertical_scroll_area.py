@@ -2,10 +2,11 @@ from typing import Optional, Union
 
 from PyQt5.QtCore import pyqtSignal, QVariantAnimation, QEasingCurve, Qt, pyqtBoundSignal
 from PyQt5.QtGui import QWheelEvent, QPaintEvent
-from PyQt5.QtWidgets import QWidget
+from PyQt5.QtWidgets import QWidget, QFrame
 
+from app.common.statics.qt import Cursors
 from app.components.scroll_areas.style_scroll_area import StyleScrollArea
-from app.components.widgets import Box
+from app.components.widgets import Box, StyleWidget
 from app.utils.base import Numbers
 from app.utils.qt import Widgets
 
@@ -25,8 +26,10 @@ class SmoothVerticalScrollArea(StyleScrollArea):
     def _createUI(self) -> None:
         self.setHorizontalScrollBarPolicy(Qt.ScrollBarAlwaysOff)
         self.setWidgetResizable(True)
+        self.setFrameShape(QFrame.NoFrame)
+        self.verticalScrollBar().setCursor(Cursors.pointer)
 
-        self._menu = QWidget()
+        self._menu = StyleWidget()
         self._menu.setContentsMargins(8, 0, 8, 8)
 
         self._mainLayout = Box(self._menu)

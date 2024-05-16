@@ -27,7 +27,7 @@ class Song(QObject):
     def __init__(self, location: str = None, title: str = None, artist: str = None, cover: bytes = None, length: float = 0, sampleRate: float = 48000,
                  loved: bool = False):
         super().__init__()
-        self.__id = location
+        self.__id = Strings.getFileBasename(location)
         self.__location = location
         self.__title = title
         self.__artist = artist
