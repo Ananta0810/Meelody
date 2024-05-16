@@ -240,6 +240,7 @@ class SongRow(ExtendableStyleWidget):
         self._artistLabel.setText(self.__song.getArtist())
         self._lengthLabel.setText(Times.toString(self.__song.getLength()))
         self._loveBtn.setActive(self.__song.isLoved())
+        self.__setShortcutToolTip()
 
     @suppressException
     def __setCover(self, cover: bytes) -> None:
@@ -249,12 +250,18 @@ class SongRow(ExtendableStyleWidget):
     def __updateSongField(self, field: str) -> None:
         if field == "title":
             self._titleLabel.setText(self.__song.getTitle())
+            self.__setShortcutToolTip()
 
         if field == "artist":
             self._artistLabel.setText(self.__song.getArtist())
 
         if field == "love":
             self._loveBtn.setActive(self.__song.isLoved())
+
+    def __setShortcutToolTip(self) -> None:
+        shortcutKey = self.__song.getTitle()[0].upper()
+        if shortcutKey.isalpha():
+            self.setToolTip(f"(Alt+{shortcutKey})")
 
     def __changeCover(self) -> None:
         path = QFileDialog.getOpenFileName(self, filter=FileType.image)[0]
