@@ -102,7 +102,3 @@ class SelectPlaylistSongsDialog(BaseDialog):
     @staticmethod
     def __songIdsOf(songs: list[Song]) -> list[str]:
         return sorted([song.getId() for song in songs])
-
-    def close(self) -> bool:
-        self.deleteAllChildren()
-        return super().close()

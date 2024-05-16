@@ -16,6 +16,7 @@ from app.common.statics.styles import Paddings
 from app.components.base import FontFactory
 from app.components.buttons import ButtonFactory
 from app.components.dialogs import Dialogs
+from app.components.events import SignalConnector
 from app.components.images.cover import CoverWithPlaceHolder, Cover
 from app.components.labels import LabelWithPlaceHolder
 from app.components.others import DotPage
@@ -109,6 +110,7 @@ class SongRow(ExtendableStyleWidget):
         self._mainButtonsLayout.addWidget(self._playBtn)
 
         self._moreMenu = None
+        self._signalConnector = SignalConnector(self)
 
         self._mainLayout.addWidget(self._mainButtons)
 
@@ -150,9 +152,9 @@ class SongRow(ExtendableStyleWidget):
         self.__song.coverChanged.connect(lambda cover: self.__setCover(cover))
         self.__song.updated.connect(lambda updatedField: self.__updateSongField(updatedField))
 
-        musicPlayer.songChanged.connect(lambda song: self.__checkEditable(song))
-        musicPlayer.played.connect(self.__updatePlayBtn)
-        musicPlayer.paused.connect(self.__onMusicPlayerPaused)
+        self._signalConnector.connect(musicPlayer.songChanged, lambda song: self.__checkEditable(song))
+        self._signalConnector.connect(musicPlayer.played, self.__updatePlayBtn)
+        self._signalConnector.connect(musicPlayer.paused, self.__onMusicPlayerPaused)
 
     @suppressException
     def applyLightMode(self) -> None:

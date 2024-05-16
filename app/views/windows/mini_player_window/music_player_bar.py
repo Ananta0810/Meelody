@@ -13,6 +13,7 @@ from app.common.statics.styles import Colors
 from app.common.statics.styles import Paddings
 from app.components.base import Component, FontFactory
 from app.components.buttons import ButtonFactory, StateIcon
+from app.components.events import SignalConnector
 from app.components.labels import Label
 from app.components.sliders import HorizontalSlider
 from app.components.widgets import Box, FlexBox
@@ -193,6 +194,7 @@ class MusicPlayerBar(QWidget, Component):
         self._rightLayout.addWidget(self._timerBtn)
 
         self._timerDialog = None
+        self._signalConnector = SignalConnector(self)
 
     def _createThreads(self):
         self._playerTrackingThread = PlayerTrackingThread(self)
@@ -239,15 +241,15 @@ class MusicPlayerBar(QWidget, Component):
         self._shuffleBtn.clicked.connect(lambda: musicPlayer.setShuffle(self._shuffleBtn.isActive()))
         self._timerBtn.clicked.connect(lambda: self.__openTimer())
 
-        musicPlayer.played.connect(lambda: self.__setPLaying(True))
-        musicPlayer.paused.connect(lambda: self.__setPLaying(False))
+        self._signalConnector.connect(musicPlayer.played, lambda: self.__setPLaying(True))
+        self._signalConnector.connect(musicPlayer.paused, lambda: self.__setPLaying(False))
 
-        musicPlayer.played.connect(lambda: self._playerTrackingThread.start())
-        musicPlayer.paused.connect(lambda: self._playerTrackingThread.quit())
-        musicPlayer.songChanged.connect(lambda song: self.__selectSong(song))
-        musicPlayer.loopChanged.connect(lambda a0: self._loopBtn.setActive(a0))
-        musicPlayer.shuffleChanged.connect(lambda a0: self._shuffleBtn.setActive(a0))
-        musicPlayer.volumeChanged.connect(lambda volume: self.__changeVolumeIcon(volume))
+        self._signalConnector.connect(musicPlayer.played, lambda: self._playerTrackingThread.start())
+        self._signalConnector.connect(musicPlayer.paused, lambda: self._playerTrackingThread.quit())
+        self._signalConnector.connect(musicPlayer.songChanged, lambda song: self.__selectSong(song))
+        self._signalConnector.connect(musicPlayer.loopChanged, lambda a0: self._loopBtn.setActive(a0))
+        self._signalConnector.connect(musicPlayer.shuffleChanged, lambda a0: self._shuffleBtn.setActive(a0))
+        self._signalConnector.connect(musicPlayer.volumeChanged, lambda volume: self.__changeVolumeIcon(volume))
 
     def _assignShortcuts(self) -> None:
         playShortcut = QShortcut(QKeySequence(Qt.CTRL + Qt.Key_Space), self._playSongBtn)

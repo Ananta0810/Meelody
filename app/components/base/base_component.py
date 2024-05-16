@@ -24,8 +24,7 @@ class Component:
         translator.changed.connect(lambda: self.translateUI() if not Widgets.isDeleted(self) else None)
 
         if autoChangeTheme:
-            with suppress(RuntimeError, Exception):
-                appCenter.themeChanged.connect(lambda light: self.appThemeMode(light))
+            appCenter.themeChanged.connect(lambda light: self.appThemeMode(light))
 
     def appThemeMode(self, lightMode: bool) -> None:
         if not Widgets.isDeleted(self):

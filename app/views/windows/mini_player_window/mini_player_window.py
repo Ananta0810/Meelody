@@ -8,7 +8,7 @@ from app.common.others import appCenter, musicPlayer, translator
 from app.common.statics.qt import Icons
 from app.common.statics.styles import Colors
 from app.components.base import Component
-from app.components.events import VisibleObserver
+from app.components.events import VisibleObserver, SignalConnector
 from app.components.sliders import VerticalSlider
 from app.components.windows.windows import TitleBarWindow
 from app.views.windows.mini_player_window.current_song_info import CurrentSongInfo
@@ -70,6 +70,8 @@ class MiniPlayerWindow(TitleBarWindow, Component):
         self._toolbar.addButton(self._toolbarPlayBtn)
         self._toolbar.addButton(self._toolbarNextBtn)
 
+        self._signalConnector = SignalConnector(self)
+
     def translateUI(self) -> None:
         super().translateUI()
         self._maximizeBtn.setToolTip(translator.translate("TITLE_BAR.EXIT_MINI_PLAYER_BTN"))
@@ -94,13 +96,15 @@ class MiniPlayerWindow(TitleBarWindow, Component):
         self._toolbarPlayBtn.clicked.connect(lambda: musicPlayer.pause() if musicPlayer.isPlaying() else musicPlayer.play())
         self._toolbarNextBtn.clicked.connect(lambda: musicPlayer.playNextSong())
 
-        musicPlayer.played.connect(lambda: self._toolbarPlayBtn.setToolTip(translator.translate("MUSIC_PLAYER.TOOLTIP_PAUSE_BTN")))
-        musicPlayer.played.connect(lambda: self._toolbarPlayBtn.setIcon(Icons.pause.withColor(Colors.primary)))
+        self._signalConnector.connect(musicPlayer.played,
+                                      lambda: self._toolbarPlayBtn.setToolTip(translator.translate("MUSIC_PLAYER.TOOLTIP_PAUSE_BTN")))
+        self._signalConnector.connect(musicPlayer.played, lambda: self._toolbarPlayBtn.setIcon(Icons.pause.withColor(Colors.primary)))
 
-        musicPlayer.paused.connect(lambda: self._toolbarPlayBtn.setToolTip(translator.translate("MUSIC_PLAYER.TOOLTIP_PLAY_BTN")))
-        musicPlayer.paused.connect(lambda: self._toolbarPlayBtn.setIcon(Icons.play.withColor(Colors.primary)))
+        self._signalConnector.connect(musicPlayer.paused,
+                                      lambda: self._toolbarPlayBtn.setToolTip(translator.translate("MUSIC_PLAYER.TOOLTIP_PLAY_BTN")))
+        self._signalConnector.connect(musicPlayer.paused, lambda: self._toolbarPlayBtn.setIcon(Icons.play.withColor(Colors.primary)))
 
-        musicPlayer.volumeChanged.connect(lambda volume: self._volumeSlider.setValue(volume))
+        self._signalConnector.connect(musicPlayer.volumeChanged, lambda volume: self._volumeSlider.setValue(volume))
 
     def applyLightMode(self) -> None:
         super().applyLightMode()

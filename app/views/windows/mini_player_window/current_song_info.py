@@ -9,11 +9,12 @@ from app.common.models import Song
 from app.common.others import musicPlayer
 from app.common.statics.qt import Images
 from app.components.base import FontFactory
+from app.components.events import SignalConnector
 from app.components.images.cover import CoverWithPlaceHolder, Cover
 from app.components.labels import Label
 from app.components.widgets import ExtendableStyleWidget, Box
 from app.helpers.files import ImageEditor
-from app.utils.qt import Widgets
+from app.utils.qt import Signals
 from app.utils.reflections import suppressException
 
 
@@ -54,9 +55,11 @@ class CurrentSongInfo(ExtendableStyleWidget):
         self._mainLayout.addWidget(self._artistLabel, alignment=Qt.AlignHCenter)
         self._mainLayout.addStretch()
 
+        self._signalConnector = SignalConnector(self)
+
     def _connectSignalSlots(self) -> None:
-        musicPlayer.songChanged.connect(lambda song: self.__displaySongInfo(song))
-        self.destroyed.connect(lambda: Widgets.disconnect(musicPlayer.songChanged, lambda song: self.__displaySongInfo(song)))
+        self._signalConnector.connect(musicPlayer.songChanged, lambda song: self.__displaySongInfo(song))
+        self.destroyed.connect(lambda: Signals.disconnect(musicPlayer.songChanged, lambda song: self.__displaySongInfo(song)))
 
     def resizeEvent(self, a0: typing.Optional[QtGui.QResizeEvent]) -> None:
         super().resizeEvent(a0)

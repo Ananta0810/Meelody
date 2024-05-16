@@ -10,7 +10,7 @@ from app.components.base import FontFactory
 from app.components.images import Cover
 from app.components.labels import Label
 from app.components.widgets import ExtendableStyleWidget, Box
-from app.utils.qt import Widgets
+from app.utils.qt import Signals
 from app.views.windows.main_window.home.songs_table.songs_menu import SongsMenu
 from app.views.windows.main_window.home.songs_table.songs_table_header import SongsTableHeader
 
@@ -72,7 +72,7 @@ class SongsTable(ExtendableStyleWidget):
 
     def __setCurrentPlaylist(self, playlist: Playlist) -> None:
         if self.__currentPlaylist is not None:
-            Widgets.disconnect(self.__currentPlaylist.getSongs().updated, lambda: self.__updateNoSongMessageVisible())
+            Signals.disconnect(self.__currentPlaylist.getSongs().updated, lambda: self.__updateNoSongMessageVisible())
 
         self.__currentPlaylist = playlist
         self.__currentPlaylist.getSongs().updated.connect(lambda: self.__updateNoSongMessageVisible())

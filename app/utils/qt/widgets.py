@@ -1,7 +1,6 @@
-from contextlib import suppress
 from typing import final
 
-from PyQt5.QtCore import QObject, pyqtBoundSignal
+from PyQt5.QtCore import QObject
 from PyQt5.QtWidgets import QWidget
 from PyQt5.sip import isdeleted
 
@@ -25,8 +24,3 @@ class Widgets:
     @staticmethod
     def isDeleted(widget: QWidget) -> bool:
         return isdeleted(widget)
-
-    @staticmethod
-    def disconnect(signal: pyqtBoundSignal, fn: callable) -> None:
-        with suppress(TypeError):
-            signal.disconnect(fn)
