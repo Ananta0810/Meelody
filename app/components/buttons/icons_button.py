@@ -3,6 +3,7 @@ from typing import Optional
 from PyQt5.QtWidgets import QWidget, QPushButton
 
 from app.common.others import appCenter
+from app.common.statics.styles import Colors
 from app.components.base.app_icon import AppIcon
 from app.components.base.base_component import Component
 from app.helpers.stylesheets import ClassNameTheme
@@ -178,3 +179,14 @@ class IconButton(QPushButton, Component):
     def applyDarkMode(self) -> None:
         super().applyDarkMode()
         self.setIcon(self.__darkModeIcon or self.__lightModeIcon)
+
+    def setDisabled(self, disabled: bool) -> None:
+        super().setDisabled(disabled)
+        if not isinstance(self.icon(), AppIcon):
+            return
+
+        icon = self.__lightModeIcon if appCenter.isLightMode else self.__darkModeIcon or self.__lightModeIcon
+        if disabled:
+            self.setIcon(icon.withColor(Colors.gray))
+        else:
+            self.setIcon(icon)

@@ -84,10 +84,13 @@ class MainWindow(TitleBarWindow, Component):
         musicPlayer.paused.connect(lambda: self._toolbarPlayBtn.setToolTip(translator.translate("MUSIC_PLAYER.TOOLTIP_PLAY_BTN")))
         musicPlayer.paused.connect(lambda: self._toolbarPlayBtn.setIcon(Icons.play.withColor(Colors.primary)))
 
+        appCenter.library.getSongs().updated.connect(lambda: self._disableMinimizePlayerIfNoSongInLibrary())
+
     def show(self) -> None:
         super().show()
         self.moveToCenter()
         self._toolbar.setWindow(self.windowHandle())
+        self._disableMinimizePlayerIfNoSongInLibrary()
 
     def showEvent(self, a0: QShowEvent) -> None:
         super().showEvent(a0)
@@ -98,6 +101,10 @@ class MainWindow(TitleBarWindow, Component):
             timer.start(10)
 
     def showMiniPlayerWindow(self) -> None:
-        self.hide()
-        window = MiniPlayerWindow(self)
-        window.show()
+        if appCenter.library.getSongs().hasAnySong():
+            self.hide()
+            window = MiniPlayerWindow(self)
+            window.show()
+
+    def _disableMinimizePlayerIfNoSongInLibrary(self) -> None:
+        self._maximizeBtn.setDisabled(not appCenter.library.getSongs().hasAnySong())
