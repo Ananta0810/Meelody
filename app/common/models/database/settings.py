@@ -14,7 +14,7 @@ from app.utils.systems import Systems
 SETTINGS_PATH = "configuration/settings.json"
 
 
-class AppSettings(QObject, metaclass=SingletonQObjectMeta):
+class Settings(QObject, metaclass=SingletonQObjectMeta):
 
     def __init__(self) -> None:
         super().__init__()

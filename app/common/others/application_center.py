@@ -1,9 +1,7 @@
 from PyQt5.QtCore import QObject, pyqtSignal, pyqtBoundSignal
 
 from app.common.models import Playlist
-from app.common.models.database import Library
-from app.common.models.database.playlists import Playlists
-from app.common.others.application_settings import AppSettings
+from app.common.models.database import Library, Playlists, Settings
 from app.common.others.translator import Translator
 from app.common.statics.enums import ThemeMode
 from app.utils.systems import Systems
@@ -17,7 +15,7 @@ class ApplicationCenter(QObject):
 
     def __init__(self) -> None:
         super().__init__()
-        self.settings: AppSettings = AppSettings()
+        self.settings: Settings = Settings()
         self.translator: Translator = Translator()
         self.translator.setLanguage(self.settings.language)
 
