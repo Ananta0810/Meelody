@@ -1,6 +1,6 @@
 from PyQt5.QtCore import qInstallMessageHandler, QtMsgType, QMessageLogContext, QtCriticalMsg, QtFatalMsg, QtWarningMsg, QtInfoMsg, QtDebugMsg
 
-from app.common.others import appCenter, musicPlayer, translator
+from app.common.others import appCenter, musicPlayer
 from app.utils.others import Logger
 from app.views.windows.main_window import MainWindow
 
@@ -9,7 +9,6 @@ class Application:
     def __init__(self):
         self.__configureUI()
         self.__createUI()
-        self.__configureInternational()
         self.__configureDatabase()
         self.__configureMusicPlayer()
         self.__configureApplication()
@@ -45,10 +44,6 @@ class Application:
         appCenter.exited.connect(lambda: self._mainWindow.close())
         appCenter.loaded.connect(lambda: appCenter.library.getSongs().watchMissingSongs())
         appCenter.setTheme(appCenter.settings.theme)
-
-    @staticmethod
-    def __configureInternational() -> None:
-        translator.setLanguage(appCenter.settings.language)
 
     @staticmethod
     def __configureDatabase() -> None:

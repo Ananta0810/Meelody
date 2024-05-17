@@ -8,7 +8,7 @@ from PyQt5.QtWidgets import QWidget, QHBoxLayout, QFileDialog
 
 from app.common.exceptions import ResourceException
 from app.common.models import Song
-from app.common.others import musicPlayer, appCenter, translator
+from app.common.others import musicPlayer, appCenter
 from app.common.statics.enums import FileType
 from app.common.statics.qt import Icons, Images
 from app.common.statics.styles import Colors
@@ -139,9 +139,9 @@ class SongRow(ExtendableStyleWidget):
 
     @suppressException
     def translateUI(self) -> None:
-        self._moreBtn.setToolTip(translator.translate("SONG_ROW.MORE_BTN"))
-        self._loveBtn.setToolTips([translator.translate("SONG_ROW.UNLOVE_BTN"), translator.translate("SONG_ROW.LOVE_BTN")])
-        self._playBtn.setToolTips([translator.translate("SONG_ROW.PAUSE_BTN"), translator.translate("SONG_ROW.PLAY_BTN")])
+        self._moreBtn.setToolTip(self.translate("SONG_ROW.MORE_BTN"))
+        self._loveBtn.setToolTips([self.translate("SONG_ROW.UNLOVE_BTN"), self.translate("SONG_ROW.LOVE_BTN")])
+        self._playBtn.setToolTips([self.translate("SONG_ROW.PAUSE_BTN"), self.translate("SONG_ROW.PLAY_BTN")])
 
     def _connectSignalSlots(self) -> None:
         self._moreBtn.clicked.connect(lambda: silence(lambda: self.__showMoreMenu(True)))
@@ -274,13 +274,13 @@ class SongRow(ExtendableStyleWidget):
             Logger.info("Update song cover succeed.")
         except ResourceException as e:
             if e.isNotFound():
-                Dialogs.alert(message=translator.translate("SONG_ROW.EDIT_FAILED_NOT_FOUND"))
+                Dialogs.alert(message=self.translate("SONG_ROW.EDIT_FAILED_NOT_FOUND"))
             if e.isBeingUsed():
-                Dialogs.alert(message=translator.translate("SONG_ROW.EDIT_FAILED_SONG_PLAYING"))
+                Dialogs.alert(message=self.translate("SONG_ROW.EDIT_FAILED_SONG_PLAYING"))
         except Exception as e:
             Logger.error(e)
             Logger.error("Update song cover failed.")
-            Dialogs.alert(message=translator.translate("SONG_ROW.EDIT_COVER_FAILED"))
+            Dialogs.alert(message=self.translate("SONG_ROW.EDIT_COVER_FAILED"))
 
     def __changeSongInfo(self) -> None:
         dialog = UpdateSongDialog(self.__song)
@@ -288,8 +288,8 @@ class SongRow(ExtendableStyleWidget):
 
     def __confirmToDeleteSong(self) -> None:
         Dialogs.confirm(
-            message=translator.translate("SONG_ROW.DELETE_SONG_MSG"),
-            acceptText=translator.translate("SONG_ROW.DELETE_SONG_BTN"),
+            message=self.translate("SONG_ROW.DELETE_SONG_MSG"),
+            acceptText=self.translate("SONG_ROW.DELETE_SONG_BTN"),
             onAccept=lambda: self.__deleteCurrentSong()
         )
 
@@ -299,11 +299,11 @@ class SongRow(ExtendableStyleWidget):
             Logger.info("Delete song succeed.")
         except ResourceException as e:
             if e.isBeingUsed():
-                Dialogs.alert(message=translator.translate("SONG_ROW.DELETE_FAILED_PLAYING"))
+                Dialogs.alert(message=self.translate("SONG_ROW.DELETE_FAILED_PLAYING"))
         except Exception as e:
             Logger.error(e)
             Logger.error("Delete song failed.")
-            Dialogs.alert(message=translator.translate("SONG_ROW.DELETE_FAILED"))
+            Dialogs.alert(message=self.translate("SONG_ROW.DELETE_FAILED"))
 
     def __exportSong(self) -> None:
         directory = QFileDialog.getExistingDirectory(self, 'Select folder to export')
@@ -314,16 +314,16 @@ class SongRow(ExtendableStyleWidget):
             destiny = Strings.joinPath(directory, f"{self.__song.getTitle()}.mp3")
 
             if os.path.exists(destiny):
-                Dialogs.alert(message=translator.translate("SONG_ROW.EXPORT_FAILED_EXISTED"))
+                Dialogs.alert(message=self.translate("SONG_ROW.EXPORT_FAILED_EXISTED"))
                 return
 
             Files.copyFile(self.__song.getLocation(), destiny)
 
             Dialogs.confirm(
-                header=translator.translate("SONG_ROW.EXPORT_HEADER"),
-                message=translator.translate("SONG_ROW.EXPORT_MESSAGE"),
-                acceptText=translator.translate("SONG_ROW.EXPORT_ACCEPT_BTN"),
-                cancelText=translator.translate("SONG_ROW.EXPORT_CANCEL_BTN"),
+                header=self.translate("SONG_ROW.EXPORT_HEADER"),
+                message=self.translate("SONG_ROW.EXPORT_MESSAGE"),
+                acceptText=self.translate("SONG_ROW.EXPORT_ACCEPT_BTN"),
+                cancelText=self.translate("SONG_ROW.EXPORT_CANCEL_BTN"),
                 onAccept=lambda: os.startfile(directory),
                 variant="info"
             )
@@ -331,7 +331,7 @@ class SongRow(ExtendableStyleWidget):
         except Exception as e:
             print(e)
             Logger.error(f"Failed to export song '{self.__song.getTitle()}' to '{directory}'")
-            Dialogs.alert(message=translator.translate("SONG_ROW.EXPORT_FAILED"))
+            Dialogs.alert(message=self.translate("SONG_ROW.EXPORT_FAILED"))
 
 
 class LoadCoverThread(QThread):
@@ -393,11 +393,11 @@ class _MoreMenu(ExtendableStyleWidget):
         self.translateUI()
 
     def translateUI(self) -> None:
-        self.editSongBtn.setToolTip(translator.translate("SONG_ROW.EDIT_BTN"))
-        self.editCoverBtn.setToolTip(translator.translate("SONG_ROW.EDIT_COVER_BTN"))
-        self.deleteBtn.setToolTip(translator.translate("SONG_ROW.DELETE_BTN"))
-        self.exportBtn.setToolTip(translator.translate("SONG_ROW.EXPORT_BTN"))
-        self._dotPage.setToolTip(translator.translate("SONG_ROW.NEXT_PAGE"))
+        self.editSongBtn.setToolTip(self.translate("SONG_ROW.EDIT_BTN"))
+        self.editCoverBtn.setToolTip(self.translate("SONG_ROW.EDIT_COVER_BTN"))
+        self.deleteBtn.setToolTip(self.translate("SONG_ROW.DELETE_BTN"))
+        self.exportBtn.setToolTip(self.translate("SONG_ROW.EXPORT_BTN"))
+        self._dotPage.setToolTip(self.translate("SONG_ROW.NEXT_PAGE"))
 
     def _connectSignalSlots(self) -> None:
         super()._connectSignalSlots()

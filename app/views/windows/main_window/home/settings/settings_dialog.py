@@ -223,17 +223,17 @@ class SettingsDialog(FramelessWindow):
         self._animation = Fade(self)
 
     def translateUI(self) -> None:
-        self._closeBtn.setToolTip(f'{translator.translate("TITLE_BAR.CLOSE_BTN")} (Esc)')
-        self._dialogTitle.setText(translator.translate("SETTINGS.LABEL"))
-        self._languageTitleLabel.setText(translator.translate("SETTINGS.LANGUAGE_LABEL"))
-        self._languageDescriptionLabel.setText(translator.translate("SETTINGS.LANGUAGE_DESCRIPTION"))
-        self._themeTitleLabel.setText(translator.translate("SETTINGS.THEME_LABEL"))
-        self._themeDescriptionLabel.setText(translator.translate("SETTINGS.THEME_DESCRIPTION"))
-        self._systemModeLabel.setText(translator.translate("SETTINGS.SYSTEM_MODE"))
-        self._lightModeLabel.setText(translator.translate("SETTINGS.LIGHT_MODE"))
-        self._darkModeLabel.setText(translator.translate("SETTINGS.DARK_MODE"))
-        self._cancelBtn.setText(translator.translate("SETTINGS.CANCEL_BTN"))
-        self._saveBtn.setText(translator.translate("SETTINGS.SAVE_BTN"))
+        self._closeBtn.setToolTip(f'{self.translate("TITLE_BAR.CLOSE_BTN")} (Esc)')
+        self._dialogTitle.setText(self.translate("SETTINGS.LABEL"))
+        self._languageTitleLabel.setText(self.translate("SETTINGS.LANGUAGE_LABEL"))
+        self._languageDescriptionLabel.setText(self.translate("SETTINGS.LANGUAGE_DESCRIPTION"))
+        self._themeTitleLabel.setText(self.translate("SETTINGS.THEME_LABEL"))
+        self._themeDescriptionLabel.setText(self.translate("SETTINGS.THEME_DESCRIPTION"))
+        self._systemModeLabel.setText(self.translate("SETTINGS.SYSTEM_MODE"))
+        self._lightModeLabel.setText(self.translate("SETTINGS.LIGHT_MODE"))
+        self._darkModeLabel.setText(self.translate("SETTINGS.DARK_MODE"))
+        self._cancelBtn.setText(self.translate("SETTINGS.CANCEL_BTN"))
+        self._saveBtn.setText(self.translate("SETTINGS.SAVE_BTN"))
 
     def _connectSignalSlots(self) -> None:
         super()._connectSignalSlots()

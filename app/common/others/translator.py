@@ -3,8 +3,10 @@ import os.path
 
 from PyQt5.QtCore import QObject, pyqtSignal, pyqtBoundSignal
 
+from app.utils.reflections import SingletonQObjectMeta
 
-class Translator(QObject):
+
+class Translator(QObject, metaclass=SingletonQObjectMeta):
     changed: pyqtBoundSignal = pyqtSignal()
 
     def __init__(self):
@@ -24,6 +26,3 @@ class Translator(QObject):
     def translate(self, key: str) -> str:
         section, key = key.split(".", maxsplit=1)
         return self.__dictionary.get(section).get(key)
-
-
-translator = Translator()

@@ -9,7 +9,7 @@ from PyQt5.QtWidgets import QWidget, QShortcut, QFileDialog
 
 from app.common.exceptions import StorageException
 from app.common.models.playlists import UserPlaylist
-from app.common.others import appCenter, translator
+from app.common.others import appCenter
 from app.common.statics.enums import FileType
 from app.common.statics.qt import Images
 from app.components.base import FontFactory
@@ -73,9 +73,9 @@ class NewPlaylistDialog(BaseDialog):
     def translateUI(self) -> None:
         super().translateUI()
         self._acceptBtn.setToolTip("(Enter)")
-        self._titleInput.setPlaceholderText(translator.translate("PLAYLIST_CAROUSEL.TITLE_PLACEHOLDER"))
-        self._acceptBtn.setText(translator.translate("PLAYLIST_CAROUSEL.NEW_PLAYLIST.ACCEPT_BTN"))
-        self._editCoverBtn.setText(translator.translate("PLAYLIST_CAROUSEL.NEW_PLAYLIST.CHOOSE_COVER_BTN"))
+        self._titleInput.setPlaceholderText(self.translate("PLAYLIST_CAROUSEL.TITLE_PLACEHOLDER"))
+        self._acceptBtn.setText(self.translate("PLAYLIST_CAROUSEL.NEW_PLAYLIST.ACCEPT_BTN"))
+        self._editCoverBtn.setText(self.translate("PLAYLIST_CAROUSEL.NEW_PLAYLIST.CHOOSE_COVER_BTN"))
 
     def _connectSignalSlots(self) -> None:
         super()._connectSignalSlots()
@@ -133,6 +133,6 @@ class NewPlaylistDialog(BaseDialog):
                 Files.removeFile(path)
 
             Dialogs.alert(
-                header=translator.translate("PLAYLIST_CAROUSEL.NEW_PLAYLIST.FAILED_HEADER"),
-                message=translator.translate("PLAYLIST_CAROUSEL.NEW_PLAYLIST.FAILED_MSG"),
+                header=self.translate("PLAYLIST_CAROUSEL.NEW_PLAYLIST.FAILED_HEADER"),
+                message=self.translate("PLAYLIST_CAROUSEL.NEW_PLAYLIST.FAILED_MSG"),
             )

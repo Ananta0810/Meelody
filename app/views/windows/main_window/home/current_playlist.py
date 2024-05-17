@@ -5,7 +5,7 @@ from PyQt5.QtCore import Qt
 from PyQt5.QtWidgets import QWidget, QVBoxLayout, QHBoxLayout
 
 from app.common.models import Playlist
-from app.common.others import appCenter, translator
+from app.common.others import appCenter
 from app.common.statics.qt import Images
 from app.components.base import Component, FontFactory
 from app.components.images.cover import CoverWithPlaceHolder, Cover
@@ -68,7 +68,7 @@ class _Info(QVBoxLayout, Component):
         self.__playlist.getSongs().updated.connect(lambda: self.__setTotalSongs(self.__playlist))
 
     def __setTotalSongs(self, playlist: Playlist) -> None:
-        self._totalSongsLabel.setText(f"{playlist.getSongs().size()} {translator.translate('CURRENT_PLAYLIST.TRACKS')}")
+        self._totalSongsLabel.setText(f"{playlist.getSongs().size()} {self.translate('CURRENT_PLAYLIST.TRACKS')}")
 
     @staticmethod
     def __createCover(data: bytes) -> Optional[Cover.Props]:

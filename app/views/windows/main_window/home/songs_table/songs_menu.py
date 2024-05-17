@@ -6,7 +6,7 @@ from PyQt5.QtGui import QKeyEvent
 from PyQt5.QtWidgets import QWidget, qApp
 
 from app.common.models import Song, Playlist
-from app.common.others import appCenter, musicPlayer, translator
+from app.common.others import appCenter, musicPlayer
 from app.components.asyncs import ChunksConsumer
 from app.components.dialogs import Dialogs
 from app.components.scroll_areas import SmoothVerticalScrollArea
@@ -91,10 +91,10 @@ class SongsMenu(SmoothVerticalScrollArea):
 
     def __askToScrollToSongAt(self, index: int) -> None:
         Dialogs.confirm(
-            header=translator.translate("UPDATE_SONG.SUCCESS"),
-            message=translator.translate("UPDATE_SONG.MOVED_MSG"),
-            acceptText=translator.translate("UPDATE_SONG.MOVED_ACCEPT_BTN"),
-            cancelText=translator.translate("UPDATE_SONG.MOVED_CANCEL_BTN"),
+            header=self.translate("UPDATE_SONG.SUCCESS"),
+            message=self.translate("UPDATE_SONG.MOVED_MSG"),
+            acceptText=self.translate("UPDATE_SONG.MOVED_ACCEPT_BTN"),
+            cancelText=self.translate("UPDATE_SONG.MOVED_CANCEL_BTN"),
             onAccept=lambda: self.scrollToItemAt(index),
             variant="info"
         )

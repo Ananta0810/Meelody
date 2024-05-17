@@ -2,7 +2,7 @@ from contextlib import suppress
 from msilib.schema import Component
 from typing import final, Optional
 
-from app.common.others import appCenter, translator
+from app.common.others import appCenter
 from app.helpers.stylesheets import ClassNameTranslator
 from app.utils.base import Strings
 from app.utils.qt import Widgets
@@ -20,8 +20,9 @@ class Component:
         self._createThreads()
         self._connectSignalSlots()
         self._assignShortcuts()
-
-        translator.changed.connect(lambda: self.translateUI() if not Widgets.isDeleted(self) else None)
+        self.translateUI()
+        
+        appCenter.translator.changed.connect(lambda: self.translateUI() if not Widgets.isDeleted(self) else None)
 
         if autoChangeTheme:
             appCenter.themeChanged.connect(lambda light: self.appThemeMode(light))
@@ -45,6 +46,10 @@ class Component:
     @suppressException
     def translateUI(self) -> None:
         pass
+
+    @staticmethod
+    def translate(key: str) -> str:
+        return appCenter.translator.translate(key)
 
     @suppressException
     def setClassName(self, *classNames: str) -> None:

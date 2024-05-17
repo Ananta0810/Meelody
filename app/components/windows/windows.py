@@ -5,7 +5,6 @@ from PyQt5.QtCore import Qt
 from PyQt5.QtGui import QShowEvent, QResizeEvent, QMouseEvent
 from PyQt5.QtWidgets import QMainWindow, QWidget, QLayout, QHBoxLayout, QGraphicsDropShadowEffect, QApplication
 
-from app.common.others import translator
 from app.common.statics.qt import Icons
 from app.common.statics.styles import Colors
 from app.common.statics.styles import Paddings
@@ -132,8 +131,8 @@ class TitleBarWindow(FramelessWindow):
 
     def translateUI(self) -> None:
         super().translateUI()
-        self._minimizeBtn.setToolTip(translator.translate("TITLE_BAR.MINIMIZE_BNT"))
-        self._closeBtn.setToolTip(translator.translate("TITLE_BAR.CLOSE_BTN"))
+        self._minimizeBtn.setToolTip(self.translate("TITLE_BAR.MINIMIZE_BNT"))
+        self._closeBtn.setToolTip(self.translate("TITLE_BAR.CLOSE_BTN"))
 
     def mousePressEvent(self, event: QMouseEvent) -> None:
         super().mousePressEvent(event)

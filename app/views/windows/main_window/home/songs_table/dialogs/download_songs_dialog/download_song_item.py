@@ -13,7 +13,6 @@ from pytube import YouTube, Stream
 
 from app.common.exceptions import ResourceException
 from app.common.models import Song
-from app.common.others import translator
 from app.common.statics.qt import Images, Icons, Cursors
 from app.common.statics.styles import Colors
 from app.common.statics.styles import Paddings
@@ -176,11 +175,11 @@ class DownloadSongItem(ExtendableStyleWidget):
             self._convertingLabel.movie().jumpToNextFrame()
 
     def __onLoading(self) -> None:
-        self._descriptionLabel.setText(f"{translator.translate('DOWNLOAD_DIALOG.LOADING')}{int(self._dot) * '.'}")
+        self._descriptionLabel.setText(f"{self.translate('DOWNLOAD_DIALOG.LOADING')}{int(self._dot) * '.'}")
         self._dot = (self._dot + 1) % 4
 
     def __onConverting(self) -> None:
-        self._descriptionLabel.setText(f"{translator.translate('DOWNLOAD_DIALOG.CONVERTING')}{int(self._dot) * '.'}")
+        self._descriptionLabel.setText(f"{self.translate('DOWNLOAD_DIALOG.CONVERTING')}{int(self._dot) * '.'}")
         self._dot = (self._dot + 1) % 4
 
     def __onDownloading(self, bytesDownloaded: int, totalSize: int, estimateTime: int) -> None:
@@ -188,7 +187,7 @@ class DownloadSongItem(ExtendableStyleWidget):
         downloadedStr = Strings.convertBytes(bytesDownloaded)
         totalStr = Strings.convertBytes(totalSize)
 
-        estimateText = translator.translate('DOWNLOAD_DIALOG.ESTIMATE')
+        estimateText = self.translate('DOWNLOAD_DIALOG.ESTIMATE')
         description = f"{int(percentage)}%  |  {downloadedStr}/{totalStr}  |  {estimateText}: {Times.toString(estimateTime)}"
         self.setProgress(percentage)
         self._descriptionLabel.setText(description)

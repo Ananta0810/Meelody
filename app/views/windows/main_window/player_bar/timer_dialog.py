@@ -5,7 +5,7 @@ from PyQt5.QtCore import Qt, QRegExp, QThread, QObject, pyqtSignal, pyqtBoundSig
 from PyQt5.QtGui import QRegExpValidator, QWheelEvent, QResizeEvent
 from PyQt5.QtWidgets import QWidget
 
-from app.common.others import musicPlayer, translator
+from app.common.others import musicPlayer
 from app.common.statics.qt import Images
 from app.components.base import FontFactory
 from app.components.buttons import ActionButton
@@ -102,8 +102,8 @@ class TimerDialog(BaseDialog, metaclass=SingletonQObjectMeta):
         self.addWidget(self._mainView)
 
     def translateUI(self) -> None:
-        self._startBtn.setText(translator.translate("MUSIC_PLAYER.TIMER_START_BTN"))
-        self._stopBtn.setText(translator.translate("MUSIC_PLAYER.TIMER_STOP_BTN"))
+        self._startBtn.setText(self.translate("MUSIC_PLAYER.TIMER_START_BTN"))
+        self._stopBtn.setText(self.translate("MUSIC_PLAYER.TIMER_STOP_BTN"))
 
     def _createThreads(self) -> None:
         self._countDownThread = CountDownThread()

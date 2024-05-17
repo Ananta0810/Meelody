@@ -4,7 +4,7 @@ from PyQt5.QtCore import Qt
 from PyQt5.QtWidgets import QWidget, QVBoxLayout
 
 from app.common.models import Playlist
-from app.common.others import appCenter, translator
+from app.common.others import appCenter
 from app.common.statics.qt import Cursors, Images
 from app.components.base import FontFactory
 from app.components.images import Cover
@@ -65,7 +65,7 @@ class SongsTable(ExtendableStyleWidget):
         self._mainLayout.addWidget(self._menu)
 
     def translateUI(self) -> None:
-        self._noSongMessage.setText(translator.translate("SONGS_MENU.MESSAGE_NO_SONG"))
+        self._noSongMessage.setText(self.translate("SONGS_MENU.MESSAGE_NO_SONG"))
 
     def _connectSignalSlots(self) -> None:
         appCenter.currentPlaylistChanged.connect(lambda: self.__setCurrentPlaylist(appCenter.currentPlaylist))

@@ -1,7 +1,6 @@
 from PyQt5.QtCore import Qt
 
 from app.common.models import Playlist, Song
-from app.common.others import translator
 from app.components.base import FontFactory
 from app.components.buttons import ActionButton
 from app.components.dialogs import BaseDialog
@@ -70,7 +69,7 @@ class SelectPlaylistSongsDialog(BaseDialog):
 
     def translateUI(self) -> None:
         super().translateUI()
-        self._applyBtn.setText(translator.translate("SELECT_PLAYLIST_SONGS_DIALOG.SAVE_BTN"))
+        self._applyBtn.setText(self.translate("SELECT_PLAYLIST_SONGS_DIALOG.SAVE_BTN"))
 
     def _connectSignalSlots(self) -> None:
         super()._connectSignalSlots()

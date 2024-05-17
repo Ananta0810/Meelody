@@ -4,7 +4,6 @@ from PyQt5.QtCore import Qt
 from PyQt5.QtGui import QResizeEvent, QFontMetrics
 from PyQt5.QtWidgets import QLabel, QWidget
 
-from app.common.others import translator
 from app.components.base import Component
 from app.utils.base import Strings
 
@@ -30,7 +29,7 @@ class AutoTranslateLabel(QLabel, Component):
 
     def translateUI(self) -> None:
         if self.__translateKey is not None:
-            self.setText(translator.translate(self.__translateKey))
+            self.setText(self.translate(self.__translateKey))
 
 
 class LabelWithPlaceHolder(QLabel, Component):

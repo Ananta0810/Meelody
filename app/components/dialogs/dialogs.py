@@ -4,7 +4,6 @@ from PyQt5.QtCore import Qt, pyqtSignal, pyqtBoundSignal
 from PyQt5.QtGui import QKeySequence, QResizeEvent
 from PyQt5.QtWidgets import QShortcut, QVBoxLayout, QHBoxLayout
 
-from app.common.others import translator
 from app.common.statics.qt import Images
 from app.components.animations import Fade
 from app.components.base import FontFactory
@@ -206,7 +205,7 @@ class Dialogs:
              image: bytes = Images.success,
              onAccept: Optional[callable] = None) -> None:
         dialog = _AlertDialog()
-        dialog.setInfo(image, header, message, acceptText or translator.translate("DIALOG.CLOSE"), onAccept)
+        dialog.setInfo(image, header, message, acceptText or dialog.translate("DIALOG.CLOSE"), onAccept)
         dialog.setState("info")
         dialog.show()
 
@@ -217,7 +216,7 @@ class Dialogs:
                 image: bytes = Images.success,
                 onAccept: Optional[callable] = None) -> None:
         dialog = _AlertDialog()
-        dialog.setInfo(image, header or translator.translate("DIALOG.SUCCESS"), message, acceptText or translator.translate("DIALOG.CLOSE"), onAccept)
+        dialog.setInfo(image, header or dialog.translate("DIALOG.SUCCESS"), message, acceptText or dialog.translate("DIALOG.CLOSE"), onAccept)
         dialog.setState("success")
         dialog.show()
 
@@ -228,7 +227,7 @@ class Dialogs:
               image: bytes = Images.warning,
               onAccept: Optional[callable] = None) -> None:
         dialog = _AlertDialog()
-        dialog.setInfo(image, header or translator.translate("DIALOG.WARNING"), message, acceptText or translator.translate("DIALOG.CLOSE"), onAccept)
+        dialog.setInfo(image, header or dialog.translate("DIALOG.WARNING"), message, acceptText or dialog.translate("DIALOG.CLOSE"), onAccept)
         dialog.setState("danger")
         dialog.show()
 
@@ -244,10 +243,10 @@ class Dialogs:
     ) -> None:
         dialog = _ConfirmDialog()
         dialog.setInfo(
-            header or translator.translate("DIALOG.WARNING"),
+            header or dialog.translate("DIALOG.WARNING"),
             message,
-            acceptText or translator.translate("DIALOG.CONTINUE"),
-            cancelText or translator.translate("DIALOG.CANCEL"),
+            acceptText or dialog.translate("DIALOG.CONTINUE"),
+            cancelText or dialog.translate("DIALOG.CANCEL"),
             variant
         )
 

@@ -7,7 +7,7 @@ from PyQt5.QtGui import QKeySequence
 from PyQt5.QtWidgets import QWidget, QShortcut
 
 from app.common.models import Song
-from app.common.others import musicPlayer, translator
+from app.common.others import musicPlayer
 from app.common.statics.qt import Icons
 from app.common.statics.styles import Colors
 from app.common.statics.styles import Paddings
@@ -200,33 +200,33 @@ class MusicPlayerBar(QWidget, Component):
         self._playerTrackingThread = PlayerTrackingThread(self)
 
     def translateUI(self) -> None:
-        self._prevSongBtn.setToolTip(f'{translator.translate("MUSIC_PLAYER.TOOLTIP_PREV_BTN")} (Ctrl + ←)')
-        self._nextSongBtn.setToolTip(f'{translator.translate("MUSIC_PLAYER.TOOLTIP_NEXT_BTN")} (Ctrl + →)')
-        self._pauseSongBtn.setToolTip(f'{translator.translate("MUSIC_PLAYER.TOOLTIP_PAUSE_BTN")} (Ctrl + Space)')
-        self._playSongBtn.setToolTip(f'{translator.translate("MUSIC_PLAYER.TOOLTIP_PLAY_BTN")} (Ctrl + Space)')
+        self._prevSongBtn.setToolTip(f'{self.translate("MUSIC_PLAYER.TOOLTIP_PREV_BTN")} (Ctrl + ←)')
+        self._nextSongBtn.setToolTip(f'{self.translate("MUSIC_PLAYER.TOOLTIP_NEXT_BTN")} (Ctrl + →)')
+        self._pauseSongBtn.setToolTip(f'{self.translate("MUSIC_PLAYER.TOOLTIP_PAUSE_BTN")} (Ctrl + Space)')
+        self._playSongBtn.setToolTip(f'{self.translate("MUSIC_PLAYER.TOOLTIP_PLAY_BTN")} (Ctrl + Space)')
 
         self._loopBtn.setToolTips([
-            translator.translate("MUSIC_PLAYER.TOOLTIP_UN_LOOP_BTN"),
-            translator.translate("MUSIC_PLAYER.TOOLTIP_LOOP_BTN")
+            self.translate("MUSIC_PLAYER.TOOLTIP_UN_LOOP_BTN"),
+            self.translate("MUSIC_PLAYER.TOOLTIP_LOOP_BTN")
         ])
 
         self._shuffleBtn.setToolTips([
-            translator.translate("MUSIC_PLAYER.TOOLTIP_UN_SHUFFLE_BTN"),
-            translator.translate("MUSIC_PLAYER.TOOLTIP_SHUFFLE_BTN")
+            self.translate("MUSIC_PLAYER.TOOLTIP_UN_SHUFFLE_BTN"),
+            self.translate("MUSIC_PLAYER.TOOLTIP_SHUFFLE_BTN")
         ])
 
         self._loveBtn.setToolTips([
-            translator.translate("MUSIC_PLAYER.TOOLTIP_UN_LOVE_BTN"),
-            translator.translate("MUSIC_PLAYER.TOOLTIP_LOVE_BTN")
+            self.translate("MUSIC_PLAYER.TOOLTIP_UN_LOVE_BTN"),
+            self.translate("MUSIC_PLAYER.TOOLTIP_LOVE_BTN")
         ])
 
         self.volumeBtn.setToolTips([
-            translator.translate("MUSIC_PLAYER.TOOLTIP_VOLUME_BTN"),
-            translator.translate("MUSIC_PLAYER.TOOLTIP_VOLUME_BTN"),
-            translator.translate("MUSIC_PLAYER.TOOLTIP_VOLUME_BTN"),
+            self.translate("MUSIC_PLAYER.TOOLTIP_VOLUME_BTN"),
+            self.translate("MUSIC_PLAYER.TOOLTIP_VOLUME_BTN"),
+            self.translate("MUSIC_PLAYER.TOOLTIP_VOLUME_BTN"),
         ])
 
-        self._timerBtn.setToolTip(translator.translate("MUSIC_PLAYER.TOOLTIP_TIMER_BTN"))
+        self._timerBtn.setToolTip(self.translate("MUSIC_PLAYER.TOOLTIP_TIMER_BTN"))
 
     def _connectSignalSlots(self) -> None:
         self._timeSlider.sliderPressed.connect(lambda: self.__setCanRunTimeSlider(False))

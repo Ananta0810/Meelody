@@ -4,7 +4,6 @@ from PyQt5.QtCore import Qt, QSize
 from PyQt5.QtGui import QShowEvent, QWheelEvent, QKeySequence
 from PyQt5.QtWidgets import QWidget, QVBoxLayout, QScrollArea, QHBoxLayout, QShortcut
 
-from app.common.others import translator
 from app.common.statics.qt import Icons
 from app.common.statics.styles import Colors
 from app.common.statics.styles import Paddings
@@ -56,7 +55,7 @@ class HomeBody(QScrollArea, Component):
         self._mainLayout.addWidget(self._currentPlaylist)
 
     def translateUI(self) -> None:
-        self._settingsBtn.setToolTip(f'{translator.translate("SETTINGS.LABEL")} (Ctrl+.)')
+        self._settingsBtn.setToolTip(f'{self.translate("SETTINGS.LABEL")} (Ctrl+.)')
 
     def _assignShortcuts(self) -> None:
         super()._assignShortcuts()

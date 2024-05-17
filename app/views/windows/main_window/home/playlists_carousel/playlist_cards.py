@@ -7,7 +7,7 @@ from PyQt5.QtWidgets import QWidget, QVBoxLayout, QHBoxLayout, QFileDialog
 
 from app.common.models import Playlist
 from app.common.models.playlists import FavouritesPlaylist
-from app.common.others import appCenter, translator
+from app.common.others import appCenter
 from app.common.statics.enums import FileType
 from app.common.statics.qt import Cursors, Images, Icons
 from app.common.statics.styles import Colors
@@ -107,7 +107,7 @@ class LibraryPlaylistCard(PlaylistCard):
         super().setCover(Images.defaultPlaylistCover)
 
     def translateUI(self) -> None:
-        self._title.setText(translator.translate("PLAYLIST_CAROUSEL.LIBRARY"))
+        self._title.setText(self.translate("PLAYLIST_CAROUSEL.LIBRARY"))
         super().translateUI()
 
     def _connectSignalSlots(self) -> None:
@@ -148,8 +148,8 @@ class FavouritePlaylistCard(PlaylistCard):
         self._mainLayout.insertLayout(0, self._topLayout)
 
     def translateUI(self) -> None:
-        self._title.setText(translator.translate("PLAYLIST_CAROUSEL.FAVOURITES"))
-        self._editCoverBtn.setToolTip(translator.translate("PLAYLIST_CAROUSEL.FAVOURITES.EDIT_COVER_BTN"))
+        self._title.setText(self.translate("PLAYLIST_CAROUSEL.FAVOURITES"))
+        self._editCoverBtn.setToolTip(self.translate("PLAYLIST_CAROUSEL.FAVOURITES.EDIT_COVER_BTN"))
 
     def _connectSignalSlots(self) -> None:
         super()._connectSignalSlots()
@@ -184,8 +184,8 @@ class FavouritePlaylistCard(PlaylistCard):
         except Exception as e:
             Logger.error(e)
             Dialogs.alert(
-                header=translator.translate("PLAYLIST_CAROUSEL.PLAYLIST.UPDATED_COVER_FAILED_HEADER"),
-                message=translator.translate("PLAYLIST_CAROUSEL.PLAYLIST.UPDATED_COVER_FAILED_MSG"),
+                header=self.translate("PLAYLIST_CAROUSEL.PLAYLIST.UPDATED_COVER_FAILED_HEADER"),
+                message=self.translate("PLAYLIST_CAROUSEL.PLAYLIST.UPDATED_COVER_FAILED_MSG"),
             )
 
 
@@ -224,8 +224,8 @@ class UserPlaylistCard(PlaylistCard):
         self._mainLayout.insertLayout(0, self._topLayout)
 
     def translateUI(self) -> None:
-        self._editBtn.setToolTip(translator.translate("PLAYLIST_CAROUSEL.PLAYLIST.EDIT_BTN"))
-        self._deleteBtn.setToolTip(translator.translate("PLAYLIST_CAROUSEL.PLAYLIST.DELETE_BTN"))
+        self._editBtn.setToolTip(self.translate("PLAYLIST_CAROUSEL.PLAYLIST.EDIT_BTN"))
+        self._deleteBtn.setToolTip(self.translate("PLAYLIST_CAROUSEL.PLAYLIST.DELETE_BTN"))
 
     def _connectSignalSlots(self) -> None:
         self.clicked.connect(lambda: self.__selectCurrentPlaylist())
@@ -246,12 +246,12 @@ class UserPlaylistCard(PlaylistCard):
 
     def __openDeletePlaylistConfirm(self) -> None:
         if appCenter.currentPlaylist.getInfo().getId() == self.__playlist.getInfo().getId():
-            Dialogs.alert(message=translator.translate("PLAYLIST_CAROUSEL.PLAYLIST.DELETE_CURRENT_PLAYLIST"))
+            Dialogs.alert(message=self.translate("PLAYLIST_CAROUSEL.PLAYLIST.DELETE_CURRENT_PLAYLIST"))
             return
 
         Dialogs.confirm(
-            message=translator.translate("PLAYLIST_CAROUSEL.PLAYLIST.DELETE_CONFIRM_MESSAGE"),
-            acceptText=translator.translate("PLAYLIST_CAROUSEL.PLAYLIST.DELETE_CONFIRM_OK"),
+            message=self.translate("PLAYLIST_CAROUSEL.PLAYLIST.DELETE_CONFIRM_MESSAGE"),
+            acceptText=self.translate("PLAYLIST_CAROUSEL.PLAYLIST.DELETE_CONFIRM_OK"),
             onAccept=self.__deletePlaylist
         )
 

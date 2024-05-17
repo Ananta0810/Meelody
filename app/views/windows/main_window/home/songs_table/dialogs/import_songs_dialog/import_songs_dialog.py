@@ -2,7 +2,7 @@ from PyQt5.QtCore import Qt, pyqtSignal, QTimer, pyqtBoundSignal
 from PyQt5.QtWidgets import QWidget, QVBoxLayout
 
 from app.common.models import Song
-from app.common.others import appCenter, translator
+from app.common.others import appCenter
 from app.common.statics.qt import Images
 from app.components.asyncs import ChunksConsumer
 from app.components.base import FontFactory
@@ -71,8 +71,8 @@ class ImportSongsDialog(BaseDialog):
 
     def translateUI(self) -> None:
         super().translateUI()
-        self._header.setText(translator.translate("IMPORT_SONGS_DIALOG.LABEL"))
-        self._closeBtn.setText(translator.translate("IMPORT_SONGS_DIALOG.CLOSE_BTN"))
+        self._header.setText(self.translate("IMPORT_SONGS_DIALOG.LABEL"))
+        self._closeBtn.setText(self.translate("IMPORT_SONGS_DIALOG.CLOSE_BTN"))
 
     def _connectSignalSlots(self) -> None:
         super()._connectSignalSlots()

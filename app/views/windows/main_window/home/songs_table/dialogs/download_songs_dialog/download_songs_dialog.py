@@ -7,7 +7,7 @@ from pytube import YouTube
 from pytube.exceptions import RegexMatchError
 
 from app.common.models import Song
-from app.common.others import appCenter, translator
+from app.common.others import appCenter
 from app.common.statics.qt import Images, Cursors
 from app.components.base import FontFactory
 from app.components.buttons import ActionButton
@@ -77,9 +77,9 @@ class DownloadSongsDialog(BaseDialog, metaclass=SingletonQObjectMeta):
     def translateUI(self) -> None:
         super().translateUI()
         self._searchBtn.setToolTip("(Enter)")
-        self._header.setText(translator.translate("DOWNLOAD_DIALOG.LABEL"))
-        self._input.setPlaceholderText(translator.translate("DOWNLOAD_DIALOG.PLACE_HOLDER"))
-        self._searchBtn.setText(translator.translate("DOWNLOAD_DIALOG.SEARCH_BTN"))
+        self._header.setText(self.translate("DOWNLOAD_DIALOG.LABEL"))
+        self._input.setPlaceholderText(self.translate("DOWNLOAD_DIALOG.PLACE_HOLDER"))
+        self._searchBtn.setText(self.translate("DOWNLOAD_DIALOG.SEARCH_BTN"))
 
     def _connectSignalSlots(self) -> None:
         super()._connectSignalSlots()
@@ -105,12 +105,12 @@ class DownloadSongsDialog(BaseDialog, metaclass=SingletonQObjectMeta):
             dialog.acceptDownload.connect(lambda yt, title, artist: self.__downloadSong(yt, title, artist))
             dialog.show()
         except RegexMatchError:
-            Dialogs.alert(message=translator.translate("DOWNLOAD_DIALOG.INVALID_URL"))
+            Dialogs.alert(message=self.translate("DOWNLOAD_DIALOG.INVALID_URL"))
         except URLError:
-            Dialogs.alert(message=translator.translate("DOWNLOAD_DIALOG.NO_INTERNET"))
+            Dialogs.alert(message=self.translate("DOWNLOAD_DIALOG.NO_INTERNET"))
         except Exception as e:
             Logger.error(e)
-            Dialogs.alert(message=translator.translate("DOWNLOAD_DIALOG.VIDEO_NOT_FOUND"))
+            Dialogs.alert(message=self.translate("DOWNLOAD_DIALOG.VIDEO_NOT_FOUND"))
 
         self._searchBtn.setCursor(Cursors.pointer)
 
@@ -127,7 +127,7 @@ class DownloadSongsDialog(BaseDialog, metaclass=SingletonQObjectMeta):
         try:
             appCenter.library.getSongs().insert(Song.fromFile(path, Strings.getFileBasename(path)))
         except:
-            Dialogs.alert(message=translator.translate("DOWNLOAD_DIALOG.INSERT_FAILED"))
+            Dialogs.alert(message=self.translate("DOWNLOAD_DIALOG.INSERT_FAILED"))
 
 
 class _SongInfoDialog(BaseDialog):
@@ -215,10 +215,10 @@ class _SongInfoDialog(BaseDialog):
     def translateUI(self) -> None:
         super().translateUI()
         self._acceptBtn.setToolTip("(Enter)")
-        self._header.setText(translator.translate("DOWNLOAD_DIALOG.LABEL"))
-        self._acceptBtn.setText(translator.translate("DOWNLOAD_DIALOG.DOWNLOAD_BTN"))
-        self._artistLabel.setText(translator.translate("SONG.TITLE"))
-        self._titleLabel.setText(translator.translate("SONG.ARTIST"))
+        self._header.setText(self.translate("DOWNLOAD_DIALOG.LABEL"))
+        self._acceptBtn.setText(self.translate("DOWNLOAD_DIALOG.DOWNLOAD_BTN"))
+        self._artistLabel.setText(self.translate("SONG.TITLE"))
+        self._titleLabel.setText(self.translate("SONG.ARTIST"))
 
     def _connectSignalSlots(self) -> None:
         super()._connectSignalSlots()
@@ -241,17 +241,17 @@ class _SongInfoDialog(BaseDialog):
 
         if Strings.isBlank(title):
             self._titleErrorLabel.show()
-            self._titleErrorLabel.setText(translator.translate("SONG.VALIDATE.TITLE_BLANK"))
+            self._titleErrorLabel.setText(self.translate("SONG.VALIDATE.TITLE_BLANK"))
             return False
 
         if len(title) > 128:
             self._titleErrorLabel.show()
-            self._titleErrorLabel.setText(translator.translate("SONG.VALIDATE.TITLE_LENGTH"))
+            self._titleErrorLabel.setText(self.translate("SONG.VALIDATE.TITLE_LENGTH"))
             return False
 
         if appCenter.library.getSongs().hasSongWithTitle(title):
             self._titleErrorLabel.show()
-            self._titleErrorLabel.setText(translator.translate("SONG.VALIDATE.TITLE_EXISTED"))
+            self._titleErrorLabel.setText(self.translate("SONG.VALIDATE.TITLE_EXISTED"))
             return False
 
         self._titleErrorLabel.hide()
@@ -261,7 +261,7 @@ class _SongInfoDialog(BaseDialog):
         artist = self._artistInput.text().strip()
         if len(artist) > 64:
             self._artistErrorLabel.show()
-            self._artistErrorLabel.setText(translator.translate("SONG.VALIDATE.ARTIST_LENGTH"))
+            self._artistErrorLabel.setText(self.translate("SONG.VALIDATE.ARTIST_LENGTH"))
             return False
 
         self._artistErrorLabel.hide()

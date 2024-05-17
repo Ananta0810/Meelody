@@ -6,7 +6,7 @@ from PyQt5.QtWidgets import QWidget, QHBoxLayout, QFileDialog
 from app.common.models import Playlist
 from app.common.models.database import Library
 from app.common.models.playlists import FavouritesPlaylist
-from app.common.others import appCenter, translator
+from app.common.others import appCenter
 from app.common.statics.enums import FileType
 from app.common.statics.qt import Icons, Cursors
 from app.common.statics.styles import Colors
@@ -88,12 +88,12 @@ class SongsTableHeader(QWidget, Component):
         self._downloadDialog = None
 
     def translateUI(self) -> None:
-        self._trackLabel.setText(translator.translate("SONGS_MENU.HEADER.TRACK"))
-        self._artistLabel.setText(translator.translate("SONGS_MENU.HEADER.ARTIST"))
-        self._lengthLabel.setText(translator.translate("SONGS_MENU.HEADER.LENGTH"))
-        self._downloadSongsToLibraryBtn.setToolTip(translator.translate("SONGS_MENU.HEADER.DOWNLOAD_BTN"))
-        self._importSongsToLibraryBtn.setToolTip(translator.translate("SONGS_MENU.HEADER.IMPORT_BTN"))
-        self._selectSongsToPlaylistBtn.setToolTip(translator.translate("SONGS_MENU.HEADER.UPDATE_PLAYLIST_BTN"))
+        self._trackLabel.setText(self.translate("SONGS_MENU.HEADER.TRACK"))
+        self._artistLabel.setText(self.translate("SONGS_MENU.HEADER.ARTIST"))
+        self._lengthLabel.setText(self.translate("SONGS_MENU.HEADER.LENGTH"))
+        self._downloadSongsToLibraryBtn.setToolTip(self.translate("SONGS_MENU.HEADER.DOWNLOAD_BTN"))
+        self._importSongsToLibraryBtn.setToolTip(self.translate("SONGS_MENU.HEADER.IMPORT_BTN"))
+        self._selectSongsToPlaylistBtn.setToolTip(self.translate("SONGS_MENU.HEADER.UPDATE_PLAYLIST_BTN"))
 
     def _connectSignalSlots(self) -> None:
         appCenter.currentPlaylistChanged.connect(lambda playlist: self.__showActionsToPlaylist(playlist))

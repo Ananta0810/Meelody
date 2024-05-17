@@ -4,7 +4,6 @@ from PyQt5 import QtGui
 from PyQt5.QtCore import Qt
 from PyQt5.QtWidgets import QWidget
 
-from app.common.others import translator
 from app.components.base import FontFactory
 from app.components.labels import Label
 from app.components.widgets import ExtendableStyleWidget, FlexBox
@@ -50,9 +49,9 @@ class MenuHeader(ExtendableStyleWidget):
         self._mainLayout.addStretch()
 
     def translateUI(self) -> None:
-        self._titleLabel.setText(translator.translate("SELECT_PLAYLIST_SONGS_DIALOG.HEADER.TITLE"))
-        self._artistLabel.setText(translator.translate("SELECT_PLAYLIST_SONGS_DIALOG.HEADER.ARTIST"))
-        self._lengthLabel.setText(translator.translate("SELECT_PLAYLIST_SONGS_DIALOG.HEADER.TIME"))
+        self._titleLabel.setText(self.translate("SELECT_PLAYLIST_SONGS_DIALOG.HEADER.TITLE"))
+        self._artistLabel.setText(self.translate("SELECT_PLAYLIST_SONGS_DIALOG.HEADER.ARTIST"))
+        self._lengthLabel.setText(self.translate("SELECT_PLAYLIST_SONGS_DIALOG.HEADER.TIME"))
 
     def showEvent(self, a0: Optional[QtGui.QShowEvent]) -> None:
         super().showEvent(a0)

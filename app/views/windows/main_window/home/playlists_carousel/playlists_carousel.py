@@ -4,7 +4,7 @@ from PyQt5.QtCore import Qt
 from PyQt5.QtWidgets import QScrollArea, QWidget
 
 from app.common.models import Playlist
-from app.common.others import appCenter, translator
+from app.common.others import appCenter
 from app.common.statics.qt import Icons
 from app.common.statics.styles import Colors
 from app.common.statics.styles import Paddings
@@ -66,7 +66,7 @@ class PlaylistsCarousel(QScrollArea, Component):
         self._mainLayout.addStretch()
 
     def translateUI(self) -> None:
-        self._addPlaylistBtn.setToolTip(translator.translate("PLAYLIST_CAROUSEL.NEW_PLAYLIST_BTN"))
+        self._addPlaylistBtn.setToolTip(self.translate("PLAYLIST_CAROUSEL.NEW_PLAYLIST_BTN"))
 
     def _connectSignalSlots(self) -> None:
         appCenter.loaded.connect(lambda: self.setPlaylists(appCenter.playlists.items()))

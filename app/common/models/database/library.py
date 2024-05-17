@@ -6,7 +6,7 @@ from PyQt5.QtCore import pyqtSignal, pyqtBoundSignal, QFileSystemWatcher
 from app.common.models.playlist import Playlist
 from app.common.models.playlists.common_playlist import CommonPlaylist
 from app.common.models.song import Song
-from app.common.others.translator import translator
+from app.common.others.translator import Translator
 from app.components.asyncs import Debounce
 from app.utils.base import Lists, Strings
 from app.utils.others import Jsons, Files, Logger
@@ -43,7 +43,8 @@ class Library(Playlist, metaclass=SingletonMeta):
     class Info(CommonPlaylist.Info, metaclass=SingletonMeta):
 
         def __init__(self):
-            super().__init__(id="Library", name="Library")
+            translator = Translator()
+            super().__init__(id="Library", name=translator.translate("PLAYLIST_CAROUSEL.LIBRARY"))
             translator.changed.connect(lambda: self.__setName(translator.translate("PLAYLIST_CAROUSEL.LIBRARY")))
 
         def setName(self, name: str) -> None:

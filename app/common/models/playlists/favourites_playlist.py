@@ -2,20 +2,21 @@ from contextlib import suppress
 
 from app.common.models.playlist import Playlist
 from app.common.models.song import Song
-from app.common.others.translator import translator
 from app.utils.base import Bytes, Lists
 from app.utils.reflections import SingletonMeta
 from .common_playlist import CommonPlaylist
+from ...others.translator import Translator
 
 
 class FavouritesPlaylist(Playlist, metaclass=SingletonMeta):
     class Info(CommonPlaylist.Info, metaclass=SingletonMeta):
         def __init__(self):
+            translator = Translator()
             super().__init__(id="Favourites",
                              name=translator.translate("PLAYLIST_CAROUSEL.FAVOURITES"),
                              cover=Bytes.fromFile("configuration/playlists/favourite-cover.png"))
 
-            translator.changed.connect(lambda: self.__setName(translator.translate("PLAYLIST_CAROUSEL.FAVOURITES")))
+            Translator().changed.connect(lambda: self.__setName(translator.translate("PLAYLIST_CAROUSEL.FAVOURITES")))
 
         def setName(self, name: str) -> None:
             pass

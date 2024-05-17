@@ -4,7 +4,6 @@ from PyQt5.QtCore import Qt, pyqtSignal, pyqtBoundSignal
 from PyQt5.QtGui import QKeySequence, QResizeEvent
 from PyQt5.QtWidgets import QHBoxLayout, QShortcut, QWidget, QLayout
 
-from app.common.others import translator
 from app.common.statics.qt import Icons
 from app.common.statics.styles import Colors
 from app.common.statics.styles import Paddings
@@ -46,7 +45,7 @@ class BaseDialog(FramelessWindow):
         self._animation = Fade(self)
 
     def translateUI(self) -> None:
-        self._btnClose.setToolTip(f'{translator.translate("TITLE_BAR.CLOSE_BTN")} (Esc)')
+        self._btnClose.setToolTip(f'{self.translate("TITLE_BAR.CLOSE_BTN")} (Esc)')
 
     def _connectSignalSlots(self) -> None:
         self._btnClose.clicked.connect(lambda: self.closed.emit())

@@ -4,7 +4,7 @@ from PyQt5.QtWidgets import QWidget, QShortcut
 
 from app.common.exceptions import ResourceException
 from app.common.models import Song
-from app.common.others import translator, appCenter
+from app.common.others import appCenter
 from app.common.statics.qt import Images
 from app.components.base import FontFactory
 from app.components.buttons import ActionButton
@@ -101,11 +101,11 @@ class UpdateSongDialog(BaseDialog):
         super().translateUI()
         self._acceptBtn.setToolTip("(Enter)")
 
-        self._header.setText(translator.translate("UPDATE_SONG.LABEL"))
-        self._acceptBtn.setText(translator.translate("UPDATE_SONG.SAVE_BTN"))
+        self._header.setText(self.translate("UPDATE_SONG.LABEL"))
+        self._acceptBtn.setText(self.translate("UPDATE_SONG.SAVE_BTN"))
 
-        self._titleLabel.setText(translator.translate("SONG.TITLE"))
-        self._artistLabel.setText(translator.translate("SONG.ARTIST"))
+        self._titleLabel.setText(self.translate("SONG.TITLE"))
+        self._artistLabel.setText(self.translate("SONG.ARTIST"))
 
     def _connectSignalSlots(self) -> None:
         super()._connectSignalSlots()
@@ -138,17 +138,17 @@ class UpdateSongDialog(BaseDialog):
 
         if Strings.isBlank(title):
             self._titleErrorLabel.show()
-            self._titleErrorLabel.setText(translator.translate("SONG.VALIDATE.TITLE_BLANK"))
+            self._titleErrorLabel.setText(self.translate("SONG.VALIDATE.TITLE_BLANK"))
             return False
 
         if len(title) > 128:
             self._titleErrorLabel.show()
-            self._titleErrorLabel.setText(translator.translate("SONG.VALIDATE.TITLE_LENGTH"))
+            self._titleErrorLabel.setText(self.translate("SONG.VALIDATE.TITLE_LENGTH"))
             return False
 
         if not Strings.equals(self.__song.getTitle(), title) and appCenter.library.getSongs().hasSongWithTitle(title):
             self._titleErrorLabel.show()
-            self._titleErrorLabel.setText(translator.translate("SONG.VALIDATE.TITLE_EXISTED"))
+            self._titleErrorLabel.setText(self.translate("SONG.VALIDATE.TITLE_EXISTED"))
             return False
 
         self._titleErrorLabel.hide()
@@ -158,7 +158,7 @@ class UpdateSongDialog(BaseDialog):
         artist = self._artistInput.text().strip()
         if len(artist) > 64:
             self._artistErrorLabel.show()
-            self._artistErrorLabel.setText(translator.translate("SONG.VALIDATE.ARTIST_LENGTH"))
+            self._artistErrorLabel.setText(self.translate("SONG.VALIDATE.ARTIST_LENGTH"))
             return False
 
         self._artistErrorLabel.hide()
@@ -178,18 +178,18 @@ class UpdateSongDialog(BaseDialog):
             self.closeWithAnimation()
         except ResourceException as e:
             if e.isNotFound():
-                Dialogs.alert(message=translator.translate("UPDATE_SONG.NOT_FOUND"))
+                Dialogs.alert(message=self.translate("UPDATE_SONG.NOT_FOUND"))
                 self.closeWithAnimation()
             if e.isBeingUsed():
-                Dialogs.alert(message=translator.translate("UPDATE_SONG.USED"))
+                Dialogs.alert(message=self.translate("UPDATE_SONG.USED"))
                 self.closeWithAnimation()
             if e.isExisted():
-                Dialogs.alert(message=translator.translate("UPDATE_SONG.EXISTED"))
+                Dialogs.alert(message=self.translate("UPDATE_SONG.EXISTED"))
         except PermissionError as e:
-            Dialogs.alert(message=translator.translate("UPDATE_SONG.USED"))
+            Dialogs.alert(message=self.translate("UPDATE_SONG.USED"))
             self.closeWithAnimation()
         except Exception as e:
             Logger.error(e)
             Logger.error("Update song infor failed.")
-            Dialogs.alert(message=translator.translate("UPDATE_SONG.FAILED"))
+            Dialogs.alert(message=self.translate("UPDATE_SONG.FAILED"))
             self.closeWithAnimation()
