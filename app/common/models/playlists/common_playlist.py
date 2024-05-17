@@ -81,6 +81,9 @@ class CommonPlaylist:
             self._insert(song)
 
         def _insert(self, song: Song) -> None:
+            if self.hasSong(song):
+                return
+            
             if self._isSorted:
                 position = self.__findInsertPosition(song)
                 self._songs.insert(position, song)

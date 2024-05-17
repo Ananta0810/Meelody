@@ -140,10 +140,12 @@ class Library(Playlist, metaclass=SingletonMeta):
 
         def _onSongUpdated(self, song: Song, updatedField: str) -> None:
             if updatedField == "title":
-                oldPosition = self.indexOf(song)
-                self._songs.remove(song)
-                newPosition = self.__findInsertPosition(song)
-                self._songs.insert(newPosition, song)
+                oldSongs = [song for song in self._songs]
+                super().remove(song)
+                super().insert(song)
+                newSongs = [song for song in self._songs]
+
+                oldPosition, newPosition = Lists.findMoved(oldSongs, newSongs)
                 self.moved.emit(oldPosition, newPosition)
 
             self.updated.emit()
