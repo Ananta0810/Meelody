@@ -1,3 +1,5 @@
+import io
+import sys
 import traceback
 from sys import argv, exit
 
@@ -33,6 +35,10 @@ def runApplication():
 
 if __name__ == '__main__':
     try:
+        if sys.stderr is None:
+            stream = io.StringIO()
+            sys.stdout = stream
+            sys.stderr = stream
         runApplication()
     except Exception as e:
         traceback.print_exc()

@@ -12,7 +12,7 @@ class Gif(QLabel):
     def __init__(self, path: str, fps: int = 24, parent: Optional[QWidget] = None):
         super().__init__(parent)
 
-        self.__animationThread = UpdateUIThread(action=lambda: self.__updateAnimation(), interval=1000 / fps)
+        self.__animationThread = UpdateUIThread(action=lambda: self.__updateAnimation(), interval=1000 / fps, parent=self)
         self._createUI(path)
 
     def _createUI(self, path: str) -> None:

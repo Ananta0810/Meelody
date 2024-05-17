@@ -142,7 +142,7 @@ class Song(QObject):
 
     def loadCover(self) -> None:
         if not self.isCoverLoaded():
-            CoverLoaderThread(self.__location, onLoaded=self.__setCover).run()
+            CoverLoaderThread(self.__location, onLoaded=self.__setCover, parent=self).run()
 
     def __setCover(self, cover: bytes) -> None:
         self.__cover = cover
@@ -203,8 +203,8 @@ class Song(QObject):
 
 
 class CoverLoaderThread(QThread):
-    def __init__(self, location: str, onLoaded: Callable[[bytes], None]) -> None:
-        super().__init__()
+    def __init__(self, location: str, onLoaded: Callable[[bytes], None], parent: QObject) -> None:
+        super().__init__(parent)
         self.__location = location
         self.__onLoaded = onLoaded
 

@@ -39,7 +39,7 @@ class MusicPlayer(QObject):
         self.__isLooping = False
         self.__isShuffle = False
 
-        self.__finishTrackerThread = _MusicFinishedTrackThread(onSongFinished=lambda: self.__onSongFinished())
+        self.__finishTrackerThread = _MusicFinishedTrackThread(onSongFinished=lambda: self.__onSongFinished(), parent=self)
         self.__checkThreadTimer = QTimer(self)
         self.__checkThreadTimer.timeout.connect(lambda: self.__startTrackingIfNotStarted())
 
@@ -232,8 +232,8 @@ class MusicPlayer(QObject):
 
 class _MusicFinishedTrackThread(QThread):
 
-    def __init__(self, onSongFinished: Callable) -> None:
-        super().__init__()
+    def __init__(self, onSongFinished: Callable, parent: QObject) -> None:
+        super().__init__(parent)
         self.__onSongFinished = onSongFinished
         self.__threadId: int = 0
 

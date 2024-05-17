@@ -4,7 +4,7 @@ from PyQt5.QtCore import Qt, pyqtSignal, pyqtBoundSignal
 from PyQt5.QtGui import QResizeEvent, QKeySequence
 from PyQt5.QtWidgets import QHBoxLayout, QVBoxLayout, QWidget, QShortcut
 
-from app.common.others import appCenter, translator
+from app.common.others import appCenter
 from app.common.statics.enums import ThemeMode
 from app.common.statics.qt import Icons, Images, Cursors
 from app.common.statics.styles import Colors
@@ -287,7 +287,7 @@ class SettingsDialog(FramelessWindow):
 
         lang = self.__languages[self._languageDropdown.currentText()]
         appCenter.settings.setLanguage(lang)
-        translator.setLanguage(lang)
+        appCenter.translator.setLanguage(lang)
 
         self._saveBtn.setCursor(Cursors.pointer)
         self.closeWithAnimation()

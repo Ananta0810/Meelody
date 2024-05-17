@@ -128,8 +128,8 @@ class DownloadSongItem(ExtendableStyleWidget):
     def download(self, yt: YouTube, title: str, artist: str) -> None:
         self._titleLabel.setText(Strings.join(" | ", [title, artist if Strings.isNotBlank(artist) else None]))
 
-        downloadSongThread = DownloadSongThread(yt, onDownloading=self.__onDownloading)
-        loadingAnimationThread = UpdateUIThread(action=lambda: self.__onLoading(), interval=250)
+        downloadSongThread = DownloadSongThread(yt, onDownloading=self.__onDownloading, parent=self)
+        loadingAnimationThread = UpdateUIThread(action=self.__onLoading, interval=250, parent=self)
 
         downloadSongThread.loaded.connect(lambda: loadingAnimationThread.quit())
         downloadSongThread.loaded.connect(lambda: self._downloadLabel.show())
@@ -153,12 +153,12 @@ class DownloadSongItem(ExtendableStyleWidget):
         self._dot = 0
         self._convertingLabel.show()
 
-        textAnimationThread = UpdateUIThread(action=lambda: self.__onConverting(), interval=250)
+        textAnimationThread = UpdateUIThread(action=lambda: self.__onConverting(), interval=250, parent=self)
 
         self._convertingLabel.start()
         textAnimationThread.start()
 
-        thread = ConvertSongThread(data, title, artist)
+        thread = ConvertSongThread(data, title, artist, parent=self)
 
         thread.succeed.connect(lambda: self._convertingLabel.stop())
         thread.succeed.connect(lambda: textAnimationThread.quit())
@@ -238,8 +238,8 @@ class DownloadSongThread(QThread):
     succeed: pyqtBoundSignal = pyqtSignal(io.BytesIO)
     failed: pyqtBoundSignal = pyqtSignal(Exception)
 
-    def __init__(self, ytb: YouTube, onDownloading: Callable[[int, int, int], None]) -> None:
-        super().__init__()
+    def __init__(self, ytb: YouTube, onDownloading: Callable[[int, int, int], None], parent: QWidget) -> None:
+        super().__init__(parent)
         self.__ytb = ytb
         self.__onDownloading = onDownloading
         self.__loaded = False
@@ -259,25 +259,28 @@ class DownloadSongThread(QThread):
             self.failed.emit(e)
 
     def __onProgress(self, stream: Stream, bytesRemaining: int, downloadStartTime: datetime) -> None:
-        if not self.__loaded:
-            self.__loaded = True
-            self.loaded.emit()
+        try:
+            if not self.__loaded:
+                self.__loaded = True
+                self.loaded.emit()
 
-        totalSize = stream.filesize
-        bytesDownloaded = totalSize - bytesRemaining
+            totalSize = stream.filesize
+            bytesDownloaded = totalSize - bytesRemaining
 
-        secondsSinceDownloadStart = (datetime.now() - downloadStartTime).total_seconds()
-        speed = round(((bytesDownloaded / 1024) / 1024) / secondsSinceDownloadStart, 2)
-        secondsLeft = int(round(((bytesRemaining / 1024) / 1024) / float(speed), 2))
-        self.__onDownloading(bytesDownloaded, totalSize, secondsLeft)
+            secondsSinceDownloadStart = (datetime.now() - downloadStartTime).total_seconds()
+            speed = round(((bytesDownloaded / 1024) / 1024) / secondsSinceDownloadStart, 2)
+            secondsLeft = int(round(((bytesRemaining / 1024) / 1024) / float(speed), 2))
+            self.__onDownloading(bytesDownloaded, totalSize, secondsLeft)
+        except:
+            print("Rip here")
 
 
 class ConvertSongThread(QThread):
     succeed: pyqtBoundSignal = pyqtSignal(str)
     failed: pyqtBoundSignal = pyqtSignal(Exception)
 
-    def __init__(self, songData: io.BytesIO, title: str, artist: str) -> None:
-        super().__init__()
+    def __init__(self, songData: io.BytesIO, title: str, artist: str, parent: QWidget) -> None:
+        super().__init__(parent)
         self.__songData = songData
         self.__title = title
         self.__artist = artist

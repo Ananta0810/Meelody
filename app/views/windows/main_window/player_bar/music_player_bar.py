@@ -410,7 +410,7 @@ class MusicPlayerBar(QWidget, Component):
 class PlayerTrackingThread(QThread):
 
     def __init__(self, musicPlayerUI: MusicPlayerBar) -> None:
-        super().__init__()
+        super().__init__(musicPlayerUI)
         self.__musicPlayerUI = musicPlayerUI
 
     def run(self) -> None:

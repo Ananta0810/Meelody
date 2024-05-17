@@ -106,7 +106,7 @@ class TimerDialog(BaseDialog, metaclass=SingletonQObjectMeta):
         self._stopBtn.setText(self.translate("MUSIC_PLAYER.TIMER_STOP_BTN"))
 
     def _createThreads(self) -> None:
-        self._countDownThread = CountDownThread()
+        self._countDownThread = CountDownThread(self)
 
     def _connectSignalSlots(self) -> None:
         super()._connectSignalSlots()
