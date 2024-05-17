@@ -2,6 +2,7 @@ from contextlib import suppress
 
 from app.common.models.playlist import Playlist
 from app.common.models.song import Song
+from app.common.others.data_location import DataLocation
 from app.utils.base import Bytes, Lists
 from app.utils.reflections import SingletonMeta
 from .common_playlist import CommonPlaylist
@@ -14,7 +15,7 @@ class FavouritesPlaylist(Playlist, metaclass=SingletonMeta):
             translator = Translator()
             super().__init__(id="Favourites",
                              name=translator.translate("PLAYLIST_CAROUSEL.FAVOURITES"),
-                             cover=Bytes.fromFile("configuration/playlists/favourite-cover.png"))
+                             cover=Bytes.fromFile(f"{DataLocation().configuration}/playlists/favourite-cover.png"))
 
             Translator().changed.connect(lambda: self.__setName(translator.translate("PLAYLIST_CAROUSEL.FAVOURITES")))
 

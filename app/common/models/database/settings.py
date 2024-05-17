@@ -4,6 +4,7 @@ from typing import Optional
 
 from PyQt5.QtCore import QObject
 
+from app.common.others.data_location import DataLocation
 from app.common.statics.enums import ThemeMode
 from app.components.asyncs import Debounce
 from app.utils.base import Numbers
@@ -11,15 +12,14 @@ from app.utils.others import Jsons
 from app.utils.reflections import SingletonQObjectMeta
 from app.utils.systems import Systems
 
-SETTINGS_PATH = "configuration/settings.json"
-
 
 class Settings(QObject, metaclass=SingletonQObjectMeta):
 
     def __init__(self) -> None:
         super().__init__()
+        self.__path = f"{DataLocation().configuration}/settings.json"
+        
         data = self.__loadSettings()
-
         self.__saveDebounce = Debounce(lambda: self.__save(), self)
 
         self.__playingSongId: Optional[str] = data.get('song_id')
@@ -84,8 +84,7 @@ class Settings(QObject, metaclass=SingletonQObjectMeta):
             self.__language = a0
             self.__saveDebounce.call()
 
-    @staticmethod
-    def __loadSettings() -> (str, bool, bool):
+    def __loadSettings(self) -> (str, bool, bool):
         defaultSettings = {
             'song_id': None,
             'loop': False,
@@ -96,8 +95,8 @@ class Settings(QObject, metaclass=SingletonQObjectMeta):
         }
 
         with suppress(Exception):
-            if os.path.exists(SETTINGS_PATH):
-                data: dict = Jsons.readFromFile(SETTINGS_PATH) or {}
+            if os.path.exists(self.__path):
+                data: dict = Jsons.readFromFile(self.__path) or {}
                 return {
                     'song_id': data.get('song_id', defaultSettings['song_id']),
                     'loop': data.get('loop', defaultSettings['loop']),
@@ -107,11 +106,11 @@ class Settings(QObject, metaclass=SingletonQObjectMeta):
                     'vol': data.get('vol', defaultSettings['vol']),
                 }
 
-        Jsons.writeToFile(SETTINGS_PATH, defaultSettings)
+        Jsons.writeToFile(self.__path, defaultSettings)
         return defaultSettings
 
     def __save(self) -> None:
-        Jsons.writeToFile(SETTINGS_PATH,
+        Jsons.writeToFile(self.__path,
                           {'song_id': self.playingSongId,
                            'loop': self.isLooping,
                            'shuffle': self.isShuffle,

@@ -6,6 +6,7 @@ from PyQt5.QtCore import pyqtSignal, pyqtBoundSignal, QFileSystemWatcher
 from app.common.models.playlist import Playlist
 from app.common.models.playlists.common_playlist import CommonPlaylist
 from app.common.models.song import Song
+from app.common.others.data_location import DataLocation
 from app.common.others.translator import Translator
 from app.components.asyncs import Debounce
 from app.utils.base import Lists, Strings
@@ -62,8 +63,8 @@ class Library(Playlist, metaclass=SingletonMeta):
 
         def __init__(self):
             super().__init__(None, isSorted=True)
-            self._path = "library/"
-            self._database = _Database("configuration/songs.json")
+            self._path = DataLocation().library
+            self._database = _Database(f"{DataLocation().configuration}/songs.json")
             self._loadSongs()
 
             self._watcher = QFileSystemWatcher(self)

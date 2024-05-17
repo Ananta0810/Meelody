@@ -130,7 +130,7 @@ class FavouritePlaylistCard(PlaylistCard):
         super().__init__(parent)
         super()._initComponent()
 
-        self.__coverPath = "configuration/playlists/favourite-cover.png"
+        self.__coverPath = f"{appCenter.paths.configuration}/playlists/favourite-cover.png"
         super().setCover(Bytes.fromFile(self.__coverPath))
 
     def _createUI(self) -> None:

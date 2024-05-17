@@ -116,14 +116,14 @@ class NewPlaylistDialog(BaseDialog):
     def _addPlaylist(self) -> None:
         id = str(uuid.uuid4())
         name = self._titleInput.text().strip()
-        path = f"configuration/playlists/{id}.png"
+        path = f"{appCenter.paths.configuration}/playlists/{id}.png"
         cover = self.__coverData
 
         try:
             if cover is not None:
-                Files.createDirectoryIfNotExisted("configuration/playlists")
+                Files.createDirectoryIfNotExisted(f"{appCenter.paths.configuration}/playlists")
                 image = Image.open(io.BytesIO(cover))
-                image.save(f"configuration/playlists/{id}.png")
+                image.save(f"{appCenter.paths.configuration}/playlists/{id}.png")
 
             playlist = UserPlaylist(UserPlaylist.Info(name=name, cover=cover, id=id, coverPath=path), UserPlaylist.Songs())
             appCenter.playlists.append(playlist)

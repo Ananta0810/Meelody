@@ -13,6 +13,7 @@ from pytube import YouTube, Stream
 
 from app.common.exceptions import ResourceException
 from app.common.models import Song
+from app.common.others import appCenter
 from app.common.statics.qt import Images, Icons, Cursors
 from app.common.statics.styles import Colors
 from app.common.statics.styles import Paddings
@@ -282,7 +283,7 @@ class ConvertSongThread(QThread):
         self.__artist = artist
 
     def run(self) -> None:
-        songLocation = f"library/{Strings.randomId()}.mp3"
+        songLocation = f"{appCenter.paths.library}/{Strings.randomId()}.mp3"
         if os.path.exists(songLocation):
             self.failed.emit(FileExistsError())
             Logger.error(f"Can't convert song '{self.__title}' because it is already existed in library.")

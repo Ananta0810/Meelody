@@ -4,6 +4,7 @@ from PyQt5.QtCore import QObject, pyqtSignal, pyqtBoundSignal
 
 from app.common.models import Song, Playlist
 from app.common.models.playlists import UserPlaylist
+from app.common.others.data_location import DataLocation
 from app.utils.others import Jsons
 from app.utils.reflections import SingletonQObjectMeta
 
@@ -34,7 +35,7 @@ class Playlists(QObject, metaclass=SingletonQObjectMeta):
     def __init__(self, librarySongs: list[Song]) -> None:
         super().__init__()
         self.__items = []
-        self.__database = _Database("configuration/playlists.json")
+        self.__database = _Database(f"{DataLocation().configuration}/playlists.json")
         self.__load(librarySongs)
 
         self.changed.connect(lambda playlists_: self.__updateToDatabase())

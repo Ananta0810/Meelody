@@ -135,7 +135,7 @@ class UpdatePlaylistDialog(BaseDialog):
 
         try:
             if cover is not None:
-                Files.createDirectoryIfNotExisted("configuration/playlists")
+                Files.createDirectoryIfNotExisted(f"{appCenter.paths.configuration}/playlists")
                 image = Image.open(io.BytesIO(cover))
                 image.save(tempPlaylist.getInfo().getCoverPath())
                 tempPlaylist.getInfo().setCover(cover)

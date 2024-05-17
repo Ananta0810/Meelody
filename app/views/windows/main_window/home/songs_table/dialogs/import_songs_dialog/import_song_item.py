@@ -135,7 +135,7 @@ class ImportSongItem(ExtendableStyleWidget):
         self.imported.emit()
 
     def __moveFileToLibrary(self, title: str) -> str:
-        songPath = f"library/{Strings.randomId()}.mp3"
+        songPath = f"{appCenter.paths.library}/{Strings.randomId()}.mp3"
         Files.copyFile(self._path, songPath)
         SongWriter(songPath).writeTitle(title)
         Logger.info(f"Import song from '{self._path}' to library successfully.")

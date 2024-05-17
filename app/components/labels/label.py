@@ -19,9 +19,9 @@ class Label(QLabel, Component):
 class AutoTranslateLabel(QLabel, Component):
 
     def __init__(self, parent: Optional[QWidget] = None, autoChangeTheme: bool = True):
+        self.__translateKey = None
         super().__init__(parent)
         super()._initComponent(autoChangeTheme)
-        self.__translateKey = None
 
     def setTranslateText(self, text: str) -> None:
         self.__translateKey = text
