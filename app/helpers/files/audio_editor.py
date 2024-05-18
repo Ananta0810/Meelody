@@ -21,7 +21,6 @@ class AudioEditor(metaclass=SingletonMeta):
                 source = spec.loader.get_source(moduleName)
                 if source is None:
                     continue
-                print(source)
                 snippet = "__import__('subprocess').STARTUPINFO(dwFlags=__import__('subprocess').STARTF_USESHOWWINDOW)"
                 source, n = re.subn(r"(Popen)\((.+?)\)", rf"\1(\2, startupinfo={snippet})", source, flags=re.DOTALL)
                 module = util.module_from_spec(spec)

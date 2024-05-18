@@ -119,6 +119,7 @@ class DownloadSongsDialog(BaseDialog, metaclass=SingletonQObjectMeta):
             item = self._menu.addItem()
             item.download(ytb, title, artist)
             item.songDownloaded.connect(lambda songLocation: self.__insertSongToLibrary(songLocation))
+            self._input.clear()
         except Exception as e:
             print(e)
 

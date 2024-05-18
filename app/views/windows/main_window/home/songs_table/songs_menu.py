@@ -36,7 +36,7 @@ class SongsMenu(SmoothVerticalScrollArea):
 
         self._initComponent()
 
-        self.__loadLibrarySongs(appCenter.library.getSongs().toList())
+        self.__loadLibrarySongs(appCenter.library.getSongs())
         qApp.installEventFilter(self)
 
     def _connectSignalSlots(self) -> None:
@@ -45,7 +45,7 @@ class SongsMenu(SmoothVerticalScrollArea):
         self.__playlistUpdated.connect(lambda: self.__showSongsOfPlaylist(self.__currentPlaylist))
         self.__rowMoved.connect(lambda index: self.__askToScrollToSongAt(index))
 
-        appCenter.library.getSongs().updated.connect(lambda: self.__updateLayoutBasedOnLibrary(appCenter.library.getSongs().toList()))
+        appCenter.library.getSongs().updated.connect(lambda: self.__updateLayoutBasedOnLibrary(appCenter.library.getSongs()))
         appCenter.library.getSongs().moved.connect(lambda fromIndex, toIndex: self.__moveRow(fromIndex, toIndex))
         appCenter.currentPlaylistChanged.connect(lambda playlist: self.__showSongsOfPlaylist(playlist))
 
@@ -99,7 +99,7 @@ class SongsMenu(SmoothVerticalScrollArea):
             variant="info"
         )
 
-    def __loadLibrarySongs(self, songs: list[Song]) -> None:
+    def __loadLibrarySongs(self, songs: Playlist.Songs) -> None:
         """
             This function is used to create rows on song menu on startup. Those rows will be re-used later to shown as items on menu.
         """
@@ -107,24 +107,25 @@ class SongsMenu(SmoothVerticalScrollArea):
             appCenter.loaded.connect(lambda: self.__loadLibrarySongs(songs))
             return
 
-        for song in songs:
-            self.__addRow(song)
-
+        self.__updateLayoutBasedOnLibrary(songs)
         self.__playlistUpdated.emit()
 
-    def __updateLayoutBasedOnLibrary(self, songs: list[Song]) -> None:
+    def __updateLayoutBasedOnLibrary(self, songs: Playlist.Songs) -> None:
         """
             This function is used to create rows on song menu on realtime. Those rows will be re-used later to shown as items on menu.
         """
         currentSongs = [row.content() for row in self.__songRowDict.values()]
 
-        addedSongs = Lists.itemsInRightOnly(currentSongs, songs)
-        removedSongs = Lists.itemsInLeftOnly(currentSongs, songs)
+        songList = songs.toList()
+
+        addedSongs = Lists.itemsInRightOnly(currentSongs, songList)
+        removedSongs = Lists.itemsInLeftOnly(currentSongs, songList)
 
         currentPosition = self.verticalScrollBar().value()
 
         for song in addedSongs:
-            self.__addRow(song)
+            index = songs.indexOf(song)
+            self.__insertRow(index, song)
 
         for song in removedSongs:
             row = self.__songRowDict[song.getId()]
@@ -135,12 +136,13 @@ class SongsMenu(SmoothVerticalScrollArea):
 
         self.verticalScrollBar().setValue(currentPosition)
 
-    def __addRow(self, song):
+    def __insertRow(self, index: int, song: Song) -> None:
         songRow = SongRow(song)
         songRow.applyTheme()
         songRow.setMinimumSize(songRow.sizeHint())
         songRow.hide()
-        self.addWidget(songRow)
+
+        self.insertWidget(index, songRow)
         self.__songRowDict[song.getId()] = songRow
 
     def __removeRow(self, row: SongRow) -> None:
