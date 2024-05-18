@@ -8,6 +8,7 @@ from app.utils.base import Lists, Strings
 class CommonPlaylist:
     class Info(Playlist.Info):
         def __init__(self, name: str = None, cover: bytes = None, coverPath: str = None, id: str | None = None):
+            super().__init__()
             self._name: str = name
             self._cover: bytes = cover
             self._coverPath: str = coverPath
@@ -24,9 +25,11 @@ class CommonPlaylist:
 
         def setName(self, name: str) -> None:
             self._name = name
+            self.updated.emit()
 
         def setCover(self, cover: bytes) -> None:
             self._cover = cover
+            self.updated.emit()
 
         def getCover(self) -> bytes:
             return self._cover
@@ -83,7 +86,7 @@ class CommonPlaylist:
         def _insert(self, song: Song) -> None:
             if self.hasSong(song):
                 return
-            
+
             if self._isSorted:
                 position = self.__findInsertPosition(song)
                 self._songs.insert(position, song)

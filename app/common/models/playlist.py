@@ -4,7 +4,8 @@ from app.common.models.song import Song
 
 
 class Playlist:
-    class Info:
+    class Info(QObject):
+        updated: pyqtBoundSignal = pyqtSignal()
 
         def getId(self) -> str:
             """

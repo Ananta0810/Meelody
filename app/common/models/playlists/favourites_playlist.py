@@ -4,13 +4,13 @@ from app.common.models.playlist import Playlist
 from app.common.models.song import Song
 from app.common.others.data_location import DataLocation
 from app.utils.base import Bytes, Lists
-from app.utils.reflections import SingletonMeta
+from app.utils.reflections import SingletonMeta, SingletonQObjectMeta
 from .common_playlist import CommonPlaylist
 from ...others.translator import Translator
 
 
 class FavouritesPlaylist(Playlist, metaclass=SingletonMeta):
-    class Info(CommonPlaylist.Info, metaclass=SingletonMeta):
+    class Info(CommonPlaylist.Info, metaclass=SingletonQObjectMeta):
         def __init__(self):
             translator = Translator()
             super().__init__(id="Favourites",
@@ -24,9 +24,6 @@ class FavouritesPlaylist(Playlist, metaclass=SingletonMeta):
 
         def __setName(self, name: str) -> None:
             self._name = name
-
-        def setCover(self, cover: bytes) -> None:
-            pass
 
     class Songs(CommonPlaylist.Songs):
 
@@ -91,7 +88,7 @@ class FavouritesPlaylist(Playlist, metaclass=SingletonMeta):
     def __init__(self, library: Playlist):
         super().__init__(FavouritesPlaylist.Info(), FavouritesPlaylist.Songs(library))
 
-    def load(self) -> None:
+    def loadSongs(self) -> None:
         self.getSongs().load()
 
     def clone(self) -> 'Playlist':

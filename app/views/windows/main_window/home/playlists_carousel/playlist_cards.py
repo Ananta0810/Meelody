@@ -127,6 +127,8 @@ class LibraryPlaylistCard(PlaylistCard):
 class FavouritePlaylistCard(PlaylistCard):
 
     def __init__(self, parent: Optional[QWidget] = None):
+        self.__playlist = FavouritesPlaylist(appCenter.library)
+
         super().__init__(parent)
         super()._initComponent()
 
@@ -153,6 +155,7 @@ class FavouritePlaylistCard(PlaylistCard):
 
     def _connectSignalSlots(self) -> None:
         super()._connectSignalSlots()
+        self.__playlist.getInfo().updated.connect(lambda: self.setInfo(self.__playlist.getInfo()))
         self.clicked.connect(lambda: self.__selectFavouritesPlaylist())
         self._editCoverBtn.clicked.connect(lambda: self.__chooseCover())
 
@@ -160,15 +163,12 @@ class FavouritePlaylistCard(PlaylistCard):
         super().showEvent(a0)
         self.adaptTitleColorToCover()
 
-    @staticmethod
-    def __selectFavouritesPlaylist() -> None:
+    def __selectFavouritesPlaylist(self) -> None:
         if appCenter.currentPlaylist.getInfo().getId() == FavouritesPlaylist.Info().getId():
             return
 
-        favouritePlaylist = FavouritesPlaylist(appCenter.library)
-        favouritePlaylist.load()
-
-        appCenter.setActivePlaylist(favouritePlaylist)
+        self.__playlist.loadSongs()
+        appCenter.setActivePlaylist(self.__playlist)
 
     def __chooseCover(self) -> None:
         path = QFileDialog.getOpenFileName(self, filter=FileType.image)[0]
@@ -180,7 +180,7 @@ class FavouritePlaylistCard(PlaylistCard):
             cover = imageEditor.square().resize(320, 320).toBytes()
             Files.saveImageFile(cover, self.__coverPath)
 
-            super().setCover(cover)
+            self.__playlist.getInfo().setCover(cover)
         except Exception as e:
             Logger.error(e)
             Dialogs.alert(
@@ -192,10 +192,11 @@ class FavouritePlaylistCard(PlaylistCard):
 class UserPlaylistCard(PlaylistCard):
 
     def __init__(self, playlist: Playlist):
+        self.__playlist = playlist
+
         super().__init__()
         super()._initComponent()
 
-        self.__playlist = playlist
         self.setInfo(playlist.getInfo())
         self.applyLightMode()
         self.translateUI()
@@ -228,6 +229,8 @@ class UserPlaylistCard(PlaylistCard):
         self._deleteBtn.setToolTip(self.translate("PLAYLIST_CAROUSEL.PLAYLIST.DELETE_BTN"))
 
     def _connectSignalSlots(self) -> None:
+        super()._connectSignalSlots()
+        self.__playlist.getInfo().updated.connect(lambda: self.setInfo(self.__playlist.getInfo()))
         self.clicked.connect(lambda: self.__selectCurrentPlaylist())
         self._editBtn.clicked.connect(lambda: UpdatePlaylistDialog(self.__playlist).show())
         self._deleteBtn.clicked.connect(lambda: self.__openDeletePlaylistConfirm())

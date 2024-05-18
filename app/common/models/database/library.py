@@ -11,7 +11,7 @@ from app.common.others.translator import Translator
 from app.components.asyncs import Debounce
 from app.utils.base import Lists, Strings
 from app.utils.others import Jsons, Files, Logger
-from app.utils.reflections import SingletonMeta, returnOnFailed
+from app.utils.reflections import SingletonMeta, returnOnFailed, SingletonQObjectMeta
 
 
 class _Database:
@@ -41,7 +41,7 @@ class _Database:
 
 
 class Library(Playlist, metaclass=SingletonMeta):
-    class Info(CommonPlaylist.Info, metaclass=SingletonMeta):
+    class Info(CommonPlaylist.Info, metaclass=SingletonQObjectMeta):
 
         def __init__(self):
             translator = Translator()
@@ -146,7 +146,8 @@ class Library(Playlist, metaclass=SingletonMeta):
                 newSongs = [song for song in self._songs]
 
                 oldPosition, newPosition = Lists.findMoved(oldSongs, newSongs)
-                self.moved.emit(oldPosition, newPosition)
+                if oldPosition >= 0 and newPosition >= 0:
+                    self.moved.emit(oldPosition, newPosition)
 
             self.updated.emit()
 
