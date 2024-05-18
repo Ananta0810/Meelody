@@ -35,7 +35,7 @@ class AudioEditor(metaclass=SingletonMeta):
 
         from pydub import AudioSegment
         basedir = os.path.dirname(sys.argv[0])
-        path = Strings.joinPath(basedir, "ffmpeg/ffmpeg.exe")
+        path = Strings.joinPath(basedir, "ffmpeg.exe")
         AudioSegment.converter = path
 
     @staticmethod

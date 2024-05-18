@@ -1,5 +1,6 @@
 import io
 import os
+import traceback
 from contextlib import suppress
 from datetime import datetime
 from typing import Callable
@@ -29,6 +30,7 @@ from app.components.widgets import ExtendableStyleWidget, Box, FlexBox
 from app.helpers.files import AudioEditor
 from app.utils.base import Strings
 from app.utils.others import Times, Files, Logger
+from app.utils.reflections import suppressException
 
 
 class DownloadSongItem(ExtendableStyleWidget):
@@ -258,21 +260,19 @@ class DownloadSongThread(QThread):
             Logger.error(e)
             self.failed.emit(e)
 
+    @suppressException
     def __onProgress(self, stream: Stream, bytesRemaining: int, downloadStartTime: datetime) -> None:
-        try:
-            if not self.__loaded:
-                self.__loaded = True
-                self.loaded.emit()
+        if not self.__loaded:
+            self.__loaded = True
+            self.loaded.emit()
 
-            totalSize = stream.filesize
-            bytesDownloaded = totalSize - bytesRemaining
+        totalSize = stream.filesize
+        bytesDownloaded = totalSize - bytesRemaining
 
-            secondsSinceDownloadStart = (datetime.now() - downloadStartTime).total_seconds()
-            speed = round(((bytesDownloaded / 1024) / 1024) / secondsSinceDownloadStart, 2)
-            secondsLeft = int(round(((bytesRemaining / 1024) / 1024) / float(speed), 2))
-            self.__onDownloading(bytesDownloaded, totalSize, secondsLeft)
-        except:
-            print("Rip here")
+        secondsSinceDownloadStart = (datetime.now() - downloadStartTime).total_seconds()
+        speed = round(((bytesDownloaded / 1024) / 1024) / secondsSinceDownloadStart, 2)
+        secondsLeft = int(round(((bytesRemaining / 1024) / 1024) / float(speed), 2))
+        self.__onDownloading(bytesDownloaded, totalSize, secondsLeft)
 
 
 class ConvertSongThread(QThread):
@@ -310,6 +310,8 @@ class ConvertSongThread(QThread):
             self.failed.emit(e)
 
         except Exception as e:
+            tb = traceback.format_exc()
+            print(tb)
             Logger.error(f"Convert song '{self.__title}' failed  with following error: {e}")
             Files.removeFile(songLocation)
             self.failed.emit(e)
