@@ -4,6 +4,7 @@ from sys import argv, exit
 
 from PyQt5.QtCore import Qt
 
+from app.common.statics.qt import Icons
 from app.components.applications import SingletonApplication
 from app.utils.others import Times
 from app.views import Application
@@ -33,6 +34,7 @@ def runApplication():
     app = SingletonApplication(argv, APP_NAME)
     app.setAttribute(Qt.AA_DontCreateNativeWidgetSiblings)
     app.setApplicationName(APP_NAME)
+    app.setWindowIcon(Icons.logo)
 
     Times.measure(lambda: Application().run(), lambda time_: print(f"Total time to run application is: {time_}"))
 
