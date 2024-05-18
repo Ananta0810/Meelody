@@ -9,7 +9,9 @@ from app.common.others import appCenter
 from app.common.statics.qt import Images
 from app.components.base import Component, FontFactory
 from app.components.images.cover import CoverWithPlaceHolder, Cover
-from app.components.labels import LabelWithPlaceHolder
+from app.components.labels import Label
+from app.components.labels.ellipsis_label import EllipsisLabel
+from app.utils.qt import Signals
 from app.views.windows.main_window.home.songs_table import SongsTable
 
 
@@ -27,13 +29,13 @@ class _Info(QVBoxLayout, Component):
         self._cover.setFixedSize(320, 320)
         self._cover.setPlaceHolderCover(self.__createCover(Images.defaultPlaylistCover))
 
-        self._titleLabel = LabelWithPlaceHolder()
+        self._titleLabel = EllipsisLabel()
         self._titleLabel.enableEllipsis()
         self._titleLabel.setFixedWidth(320)
         self._titleLabel.setFont(FontFactory.create(size=20, bold=True))
         self._titleLabel.setClassName("text-black dark:text-white")
 
-        self._totalSongsLabel = LabelWithPlaceHolder()
+        self._totalSongsLabel = Label()
         self._totalSongsLabel.setFixedWidth(320)
         self._totalSongsLabel.setFont(FontFactory.create(size=10))
         self._totalSongsLabel.setClassName("text-black dark:text-white")
@@ -57,15 +59,20 @@ class _Info(QVBoxLayout, Component):
     def __setPlaylist(self, playlist: Playlist) -> None:
         if self.__playlist is not None:
             with suppress(TypeError, AttributeError):
-                self.__playlist.getSongs().updated.disconnect(lambda: self.__setTotalSongs(self.__playlist))
+                Signals.disconnect(self.__playlist.getInfo().updated, lambda: self.__setPlaylistInfo(playlist))
+                Signals.disconnect(self.__playlist.getSongs().updated, lambda: self.__setTotalSongs(self.__playlist))
 
         self.__playlist = playlist
 
-        self._cover.setCover(self.__createCover(playlist.getInfo().getCover()))
-        self._titleLabel.setText(playlist.getInfo().getName())
+        self.__setPlaylistInfo(playlist)
         self.__setTotalSongs(playlist)
 
+        self.__playlist.getInfo().updated.connect(lambda: self.__setPlaylistInfo(playlist))
         self.__playlist.getSongs().updated.connect(lambda: self.__setTotalSongs(self.__playlist))
+
+    def __setPlaylistInfo(self, playlist: Playlist) -> None:
+        self._cover.setCover(self.__createCover(playlist.getInfo().getCover()))
+        self._titleLabel.setText(playlist.getInfo().getName())
 
     def __setTotalSongs(self, playlist: Playlist) -> None:
         self._totalSongsLabel.setText(f"{playlist.getSongs().size()} {self.translate('CURRENT_PLAYLIST.TRACKS')}")
