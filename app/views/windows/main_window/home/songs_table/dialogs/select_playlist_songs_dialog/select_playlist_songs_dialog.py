@@ -57,7 +57,7 @@ class SelectPlaylistSongsDialog(BaseDialog):
         self._applyBtn.setFont(FontFactory.create(family="Segoe UI Semibold", size=10))
         self._applyBtn.setClassName(
             "text-white rounded-4 bg-black-90 hover:bg-black py-8 px-24 disabled:bg-gray-10 disabled:text-gray",
-            "dark:bg-primary dark:bg-primary-[w120]"
+            "dark:bg-primary dark:hover:bg-primary-[w120]"
         )
         self._applyBtn.setDisabled(True)
 

@@ -152,6 +152,8 @@ class SongsMenu(SmoothVerticalScrollArea):
         self.__songRowDict.pop(row.content().getId())
 
     def __moveRow(self, oldIndex: int, newIndex: int) -> None:
+        if oldIndex < 0 or newIndex < 0:
+            return
         currentPosition = self.verticalScrollBar().value()
         rowToMove = self.widgets()[oldIndex]
         self.moveWidget(rowToMove, newIndex)
