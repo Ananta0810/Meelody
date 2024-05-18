@@ -122,8 +122,7 @@ class DownloadSongsDialog(BaseDialog, metaclass=SingletonQObjectMeta):
         except Exception as e:
             print(e)
 
-    @staticmethod
-    def __insertSongToLibrary(path: str) -> None:
+    def __insertSongToLibrary(self, path: str) -> None:
         try:
             appCenter.library.getSongs().insert(Song.fromFile(path, Strings.getFileBasename(path)))
         except:
@@ -217,8 +216,8 @@ class _SongInfoDialog(BaseDialog):
         self._acceptBtn.setToolTip("(Enter)")
         self._header.setText(self.translate("DOWNLOAD_DIALOG.LABEL"))
         self._acceptBtn.setText(self.translate("DOWNLOAD_DIALOG.DOWNLOAD_BTN"))
-        self._artistLabel.setText(self.translate("SONG.TITLE"))
-        self._titleLabel.setText(self.translate("SONG.ARTIST"))
+        self._titleLabel.setText(self.translate("SONG.TITLE"))
+        self._artistLabel.setText(self.translate("SONG.ARTIST"))
 
     def _connectSignalSlots(self) -> None:
         super()._connectSignalSlots()
