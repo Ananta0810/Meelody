@@ -10,31 +10,32 @@
 
 ## Features
 
-- Import and play local songs
+- Play music with options and in mini player screen.
 
-  ![Download song](docs/play-song.gif)
+  ![Play song song](docs/play-song.gif)
 
-- Download songs on YouTube
+- Download songs from YouTube.
 
   ![Download song](docs/download-song.gif)
 
-- Edit song meta data
+- Import song and change its meta data.
 
-  ![Edit song meta data](docs/song-meta.gif)
+  ![Import song](docs/import-songs.gif)
 
 - Manage playlists
 
   ![Manage playlists](docs/manage-playlist.gif)
 
+- Change application theme (Light/Dark) and language (English/Vietnamese)
+
+  ![Change settings](docs/settings.gif)
+
 ## Installation
 
-1. Download following
-   file: [Meelody](https://drive.google.com/file/d/1HScwy2rGNzWGNhqB4dPUhAexL03BHcEa/view?usp=sharing).
-2. Extract the file and move the extracted folder to any place you want.
-3. Open file Meelody.exe inside to open application.
+1. Download application via releases: [Meelody Release](https://github.com/Ananta0810/Meelody/releases).
+2. Install the downloaded execution file.
+3. Enjoy the application.
 
 ### Known Issues
 
-1. Sometimes the application takes a long time to start.
-2. Download music from YouTube might be failed sometimes due to version changes.
-3. The settings to change theme and language is not added.
+1. Import more than 20 songs at once may lead to crash in some devices.
