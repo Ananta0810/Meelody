@@ -26,6 +26,11 @@ class MiniPlayerWindow(TitleBarWindow, Component):
         self.setFixedHeight(540)
         self._volumeSlider.setValue(musicPlayer.getVolume())
 
+        if musicPlayer.isPlaying():
+            self.__onMusicPlaying()
+        else:
+            self.__onMusicPaused()
+
     def _createUI(self) -> None:
         self.setAttribute(Qt.WA_DeleteOnClose)
         self._inner.setClassName("rounded-12 bg-white dark:bg-dark")
@@ -96,15 +101,17 @@ class MiniPlayerWindow(TitleBarWindow, Component):
         self._toolbarPlayBtn.clicked.connect(lambda: musicPlayer.pause() if musicPlayer.isPlaying() else musicPlayer.play())
         self._toolbarNextBtn.clicked.connect(lambda: musicPlayer.playNextSong())
 
-        self._signalConnector.connect(musicPlayer.played,
-                                      lambda: self._toolbarPlayBtn.setToolTip(self.translate("MUSIC_PLAYER.TOOLTIP_PAUSE_BTN")))
-        self._signalConnector.connect(musicPlayer.played, lambda: self._toolbarPlayBtn.setIcon(Icons.pause.withColor(Colors.primary)))
-
-        self._signalConnector.connect(musicPlayer.paused,
-                                      lambda: self._toolbarPlayBtn.setToolTip(self.translate("MUSIC_PLAYER.TOOLTIP_PLAY_BTN")))
-        self._signalConnector.connect(musicPlayer.paused, lambda: self._toolbarPlayBtn.setIcon(Icons.play.withColor(Colors.primary)))
-
+        self._signalConnector.connect(musicPlayer.played, lambda: self.__onMusicPlaying())
+        self._signalConnector.connect(musicPlayer.paused, lambda: self.__onMusicPlaying())
         self._signalConnector.connect(musicPlayer.volumeChanged, lambda volume: self._volumeSlider.setValue(volume))
+
+    def __onMusicPlaying(self) -> None:
+        self._toolbarPlayBtn.setIcon(Icons.pause.withColor(Colors.primary))
+        self._toolbarPlayBtn.setToolTip(self.translate("MUSIC_PLAYER.TOOLTIP_PAUSE_BTN"))
+
+    def __onMusicPaused(self) -> None:
+        self._toolbarPlayBtn.setIcon(Icons.play.withColor(Colors.primary))
+        self._toolbarPlayBtn.setToolTip(self.translate("MUSIC_PLAYER.TOOLTIP_PLAY_BTN"))
 
     def applyLightMode(self) -> None:
         super().applyLightMode()
